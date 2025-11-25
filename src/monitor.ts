@@ -33,9 +33,111 @@ interface Folder{
   full_pathname: string //where the package.json is 
   folders:Array<Folder>
   runners:Array<Runner>
+  scriptsmon:Scriptsmon
+}
+function is_valid_watch(a:unknown){
+  if (a==null)
+    return true
+  return is_string_array(a)
+}
+function is_valid_watcher(a:unknown){
+  if (typeof a==='string' || is_string_array(a))
+      return true 
+  if (!is_object(a))
+    return "expecting object"
+  if (!is_valid_watch(a.watch)){
+    return 'watch: expecting  array of strings'
+  }
+
+  for (const k of Object.keys(a))
+    if (!['watch','env','filter','pre'].includes(k))
+      return `${k}:invalid key`
+  return true
+}
+function is_non_watcher(k:string){
+  return  (['autorun','$watch'].includes(k))
+}
+function is_config2(a:unknown){
+  if (!is_object(a))
+    return false
+  const {$watch}=a
+  if (!is_valid_watch($watch)){
+    console.log('watch: must be string or array of string')
+    return false  
+  }
+  for (const [k,v] of Object.entries(a)){
+    if (is_non_watcher(k))
+      continue
+    const valid_watcher=is_valid_watcher(v)
+    if (valid_watcher!==true){
+      console.log(`${k}: invalid watcher:${valid_watcher}`)
+      return false
+    }
+
+  }
+  return true
+
+}
+function parse_config(filename:string,pkgJson:s2u|undefined):Scriptsmon{
+  if (pkgJson==null)
+    return{}
+  const {scriptsmon}=pkgJson
+  if (scriptsmon==null)
+    return {}
+  const ans=is_config2(scriptsmon);
+  if (ans)
+    return scriptsmon as Scriptsmon
+  console.warn(ans)
+  return {}  
+}
+function parse_scripts(pkgJson:s2u):s2s{
+
+  if (pkgJson==null)
+    return {}
+  const {scripts}=pkgJson
+  if (scripts==null)
+    return {}  
+  return scripts as s2s
+}
+function normalize_watch(a:string[]|undefined){
+  if (a==null)
+    return []
+  return a
+}
+function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
+  const $watch=normalize_watch(watchers.$watch)
+  const autorun=normalize_watch(watchers.autorun)
+  const ans=[]
+  for (const [name,v] of Object.entries(watchers)){
+    if (is_non_watcher(name))
+      continue
+    const watcher:Watcher=function(){
+      if (is_string_array(v)){
+        return {watch:normalize_watch(v)}
+      }
+      return v
+    }()
+    const script=scripts[name]
+    if (script==null){
+      console.warn(`missing script ${name}`)
+      continue
+    }
+    const runner:Runner=function(){
+      return {
+        ...watcher, //i like this
+        name,
+        script,
+        full_pathname:path.dirname(pkgPath),
+        watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)],
+        autorun:autorun.includes(name)
+      }
+    }()
+    ans.push(runner)
+  }
+  return ans
 }
 export async function read_package_json(
-  full_pathnamezs: string[]
+  full_pathnames: string[]
 ) {
 
   const folder_index: Record<string, Folder> = {}; //by full_pathname
@@ -48,13 +150,13 @@ export async function read_package_json(
       return exists
     }    
     //const pkgJson = await 
-     read_json_object(pkgPath,'package.json')
+    const pkgJson=await read_json_object(pkgPath,'package.json')
     if (pkgJson==null)
       return null
     console.warn(`${green}${pkgPath}${reset}`)
-    const watchers=parse_watchers(pkgPath,pkgJson)
+    const scriptsmon=parse_config(pkgPath,pkgJson)
     const scripts=parse_scripts(pkgJson)
-    const runners=watchers_to_runners(pkgPath,watchers,scripts)
+    const runners=scriptsmon_to_runners(pkgPath,scriptsmon,scripts)
     const {workspaces} = pkgJson
     const folders=[]
     if (is_string_array(workspaces))
@@ -65,11 +167,12 @@ export async function read_package_json(
         }
 
     
-    const ans:Folder= {runners,folders,name,full_pathname,watchers}
+    const ans:Folder= {runners,folders,name,full_pathname,scriptsmon}
     return ans
   }
   const folders=[]
-  for (const full_pathname of full_pathnames){
+  for (const pathname of full_pathnames){
+    const full_pathname=path.resolve(pathname)
     const ret=await f(full_pathname,path.basename(full_pathname))
       if (ret!=null)
         folders.push(ret)
@@ -79,7 +182,7 @@ export async function read_package_json(
     full_pathname: '',
     folders,
     runners:[],
-    watchers:{}
+    scriptsmon:{}
   }
   //const keys=Object.keys(ans)
   //const common_prefix=getCommonPrefix(keys)

@@ -18,6 +18,7 @@ interface Folder {
     full_pathname: string;
     folders: Array<Folder>;
     runners: Array<Runner>;
+    scriptsmon: Scriptsmon;
 }
-export declare function read_package_json(full_pathnamezs: string[]): Promise<Folder>;
+export declare function read_package_json(full_pathnames: string[]): Promise<Folder>;
 export {};

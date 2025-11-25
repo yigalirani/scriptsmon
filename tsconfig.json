@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022",                // JS output target (change if needed)
-    "module": "NodeNext",              // or "ESNext" if you're using ES modules
+    "target": "es2022",                // JS output target (change if needed)
+    "module": "nodenext",              // or "ESNext" if you're using ES modules
     "declaration": true,               // <-- generate .d.ts files
     "outDir": "types",                  // output directory for compiled files
     "rootDir": ".",                  // your TypeScript source folder
@@ -10,10 +10,10 @@
     "skipLibCheck": true,              // speed up compilation
     "sourceMap": false,                  // (optional) generate .map files for debugging
     "allowJs": true,
-    "allowImportingTsExtensions":true,
-    "emitDeclarationOnly": true,
-    "moduleResolution":"nodenext"
+    "allowImportingTsExtensions":false,
+    "moduleResolution":"nodenext",
+    "emitDeclarationOnly":true
   },
   "include": ["src/**/*","bin/**/*","eslint.config.mjs"],             // include all .ts files in src/
-  "exclude": ["node_modules", "dist"]  // avoid compiling output & deps
+  "exclude": ["node_modules", "dist","types/**/*"]  // avoid compiling output & deps
 }

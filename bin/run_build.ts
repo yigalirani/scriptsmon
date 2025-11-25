@@ -5,10 +5,10 @@ await esbuild.build({
   bundle: true,
   outdir: './dist', 
   sourcemap: true,
-  target: 'node10',
+  target: 'node22',
   minifySyntax:false,
   format: 'esm',
-  external:['vscode']
+  external:['vscode','node']
 })
  
 

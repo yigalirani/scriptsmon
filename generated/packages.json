@@ -1,0 +1,249 @@
+{
+  "name": "root",
+  "full_pathname": "",
+  "folders": [
+    {
+      "runners": [
+        {
+          "watch": [
+            "src",
+            "package.json",
+            "./bin/run_build.ts",
+            "./dist/test.ts"
+          ],
+          "name": "test",
+          "script": "node ./dist/test.js",
+          "full_pathname": "c:\\yigal\\scriptsmon",
+          "autorun": true
+        },
+        {
+          "watch": [
+            "src",
+            "package.json",
+            "./bin/run_build.ts",
+            "$watch",
+            "tsconfig.json"
+          ],
+          "name": "tsc",
+          "script": "npx tsc",
+          "full_pathname": "c:\\yigal\\scriptsmon",
+          "autorun": true
+        },
+        {
+          "watch": [
+            "src",
+            "package.json",
+            "./bin/run_build.ts",
+            "$watch",
+            "tsconfig.json",
+            "eslint.config.mjs"
+          ],
+          "filter": "npx @yigal/eslint_filter",
+          "pre": "set TIMING=1",
+          "name": "eslint",
+          "script": "npx eslint . --debug --color '",
+          "full_pathname": "c:\\yigal\\scriptsmon",
+          "autorun": true
+        }
+      ],
+      "folders": [],
+      "name": "scriptsmon",
+      "full_pathname": "c:\\yigal\\scriptsmon",
+      "scriptsmon": {
+        "$watch": [
+          "src",
+          "package.json",
+          "./bin/run_build.ts"
+        ],
+        "test": [
+          "./dist/test.ts"
+        ],
+        "tsc": [
+          "$watch",
+          "tsconfig.json"
+        ],
+        "eslint": {
+          "watch": [
+            "$watch",
+            "tsconfig.json",
+            "eslint.config.mjs"
+          ],
+          "filter": "npx @yigal/eslint_filter",
+          "pre": "set TIMING=1"
+        },
+        "autorun": [
+          "test",
+          "build",
+          "tsc",
+          "eslint"
+        ]
+      }
+    },
+    {
+      "runners": [
+        {
+          "watch": [
+            "main/src",
+            "converter/src",
+            "filesrvr/src",
+            "package.json",
+            "tsconfig.json",
+            "tsconfig.settings.json",
+            "$watch",
+            "biome.json"
+          ],
+          "name": "biome",
+          "script": "biome lint",
+          "full_pathname": "c:\\yigal\\million_try3",
+          "autorun": true
+        },
+        {
+          "watch": [
+            "main/src",
+            "converter/src",
+            "filesrvr/src",
+            "package.json",
+            "tsconfig.json",
+            "tsconfig.settings.json",
+            "$watch",
+            ".oxlintrc.json"
+          ],
+          "name": "oxlint",
+          "script": "npx oxlint --type-aware",
+          "full_pathname": "c:\\yigal\\million_try3",
+          "autorun": true
+        },
+        {
+          "pre": "set TIMING=1",
+          "filter": "eslint_filter",
+          "watch": [
+            "main/src",
+            "converter/src",
+            "filesrvr/src",
+            "package.json",
+            "tsconfig.json",
+            "tsconfig.settings.json",
+            "$watch",
+            "eslint.config.mjs"
+          ],
+          "name": "eslint",
+          "script": "npx eslint . --debug --color",
+          "full_pathname": "c:\\yigal\\million_try3",
+          "autorun": true
+        }
+      ],
+      "folders": [
+        {
+          "runners": [
+            {
+              "watch": [
+                "src",
+                "build.mjs",
+                "package.json"
+              ],
+              "name": "build",
+              "script": "node build.mjs",
+              "full_pathname": "c:\\yigal\\million_try3\\converter",
+              "autorun": true
+            }
+          ],
+          "folders": [],
+          "name": "converter",
+          "full_pathname": "c:\\yigal\\million_try3\\converter",
+          "scriptsmon": {
+            "build": [
+              "src",
+              "build.mjs",
+              "package.json"
+            ],
+            "autorun": [
+              "build"
+            ]
+          }
+        },
+        {
+          "runners": [],
+          "folders": [],
+          "name": "main",
+          "full_pathname": "c:\\yigal\\million_try3\\main",
+          "scriptsmon": {}
+        },
+        {
+          "runners": [
+            {
+              "watch": [
+                "src",
+                "build.mjs"
+              ],
+              "name": "build",
+              "script": "node build.mjs",
+              "full_pathname": "c:\\yigal\\million_try3\\filesrvr",
+              "autorun": true
+            },
+            {
+              "watch": [
+                "dist/index.js"
+              ],
+              "name": "run",
+              "script": "node dist/index.js",
+              "full_pathname": "c:\\yigal\\million_try3\\filesrvr",
+              "autorun": true
+            }
+          ],
+          "folders": [],
+          "name": "filesrvr",
+          "full_pathname": "c:\\yigal\\million_try3\\filesrvr",
+          "scriptsmon": {
+            "build": [
+              "src",
+              "build.mjs"
+            ],
+            "run": [
+              "dist/index.js"
+            ],
+            "autorun": [
+              "run",
+              "build"
+            ]
+          }
+        }
+      ],
+      "name": "million_try3",
+      "full_pathname": "c:\\yigal\\million_try3",
+      "scriptsmon": {
+        "$watch": [
+          "main/src",
+          "converter/src",
+          "filesrvr/src",
+          "package.json",
+          "tsconfig.json",
+          "tsconfig.settings.json"
+        ],
+        "biome": [
+          "$watch",
+          "biome.json"
+        ],
+        "oxlint": [
+          "$watch",
+          ".oxlintrc.json"
+        ],
+        "eslint": {
+          "pre": "set TIMING=1",
+          "filter": "eslint_filter",
+          "watch": [
+            "$watch",
+            "eslint.config.mjs"
+          ]
+        },
+        "autorun": [
+          "biome",
+          "eslint",
+          "oxlint",
+          "tsc"
+        ]
+      }
+    }
+  ],
+  "runners": [],
+  "scriptsmon": {}
+}
