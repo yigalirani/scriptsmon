@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/extension.ts"],
+  "sourcesContent": ["import path from 'node:path';\nimport {readFile,glob} from 'node:fs/promises';\nimport * as vscode from 'vscode';\n\nexport function activate(context: vscode.ExtensionContext) {\n  console.log('Congratulations, your extension \"helloworld-sample\" is now active!');\n  const outputChannel = vscode.window.createOutputChannel(\"NPMScriptsMonitor\");  \n  vscode.tasks.onDidEndTaskProcess((event) => {\n    const task = event.execution.task;\n    const exitCode = event.exitCode;\n    outputChannel.append(JSON.stringify(event,null,2))\n  })\n  const disposable = vscode.commands.registerCommand('NPMScriptsMonitor.start',async  () => {\n  });\n  context.subscriptions.push(disposable);\n}\n\n// this method is called when your extension is deactivated\nexport function deactivate() {}\n\n"],
+  "mappings": ";AAEA,YAAY,YAAY;AAEjB,SAAS,SAAS,SAAkC;AACzD,UAAQ,IAAI,oEAAoE;AAChF,QAAM,gBAAuB,cAAO,oBAAoB,mBAAmB;AAC3E,EAAO,aAAM,oBAAoB,CAAC,UAAU;AAC1C,UAAM,OAAO,MAAM,UAAU;AAC7B,UAAM,WAAW,MAAM;AACvB,kBAAc,OAAO,KAAK,UAAU,OAAM,MAAK,CAAC,CAAC;AAAA,EACnD,CAAC;AACD,QAAM,aAAoB,gBAAS,gBAAgB,2BAA0B,YAAa;AAAA,EAC1F,CAAC;AACD,UAAQ,cAAc,KAAK,UAAU;AACvC;AAGO,SAAS,aAAa;AAAC;",
+  "names": []
+}

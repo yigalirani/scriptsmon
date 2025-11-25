@@ -1,0 +1,70 @@
+{
+    "name": "Scriptsmon",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "dist/extension.js",
+    "types": "types/src/extension.d.ts",
+    "scripts": {
+        "test": "node ./dist/test.ts",
+        "build": "node ./bin/run_build.ts",
+        "tsc": "npx tsc",
+        "eslint": "npx eslint . --debug --color '"
+    },
+    "scriptsmon": {
+        "$watch": [
+            "src",
+            "package.json",
+            "./bin/run_build.ts"
+        ],
+        "test": {
+            "watch": "./dist/test.ts"
+        },
+        "tsc": [
+            "$watch",
+            "tsconfig.json"
+        ],
+        "eslint": {
+            "watch": [
+                "$watch",
+                "tsconfig.json",
+                "eslint.config.mjs"
+            ],
+            "filter": "npx @yigal/eslint_filter",
+            "pre": "set TIMING=1"
+        },
+        "autorun": [
+            "test",
+            "build",
+            "tsc",
+            "eslint"
+        ]
+    },
+    "keywords": [],
+    "contributes": {
+        "commands": [
+            {
+                "command": "Scriptsmon.start",
+                "title": "Scriptsmon: start"
+            }
+        ]
+    },
+    "engines": {
+        "vscode": "^1.51.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "9.39.1",
+        "@types/node": "24.10.0",
+        "@types/vscode": "^1.105.0",
+        "esbuild": "0.25.12",
+        "eslint-plugin-import-x": "4.16.1",
+        "typescript": "5.9.3",
+        "typescript-eslint": "8.46.3"
+    },
+    "dependencies": {
+        "@yigal/base_types": "^1.4.0",
+        "@yigal/watch_runner": "^2.0.0"
+    }
+}

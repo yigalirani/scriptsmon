@@ -1,0 +1,3 @@
+node_modules
+types/bin
+types/eslint.config.d.mts

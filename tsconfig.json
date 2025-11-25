@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",                // JS output target (change if needed)
+    "module": "NodeNext",              // or "ESNext" if you're using ES modules
+    "declaration": true,               // <-- generate .d.ts files
+    "outDir": "types",                  // output directory for compiled files
+    "rootDir": ".",                  // your TypeScript source folder
+    "strict": true,                    // enable all strict type-checking options
+    "esModuleInterop": true,           // smoother interop with CommonJS modules
+    "skipLibCheck": true,              // speed up compilation
+    "sourceMap": false,                  // (optional) generate .map files for debugging
+    "allowJs": true,
+    "allowImportingTsExtensions":true,
+    "emitDeclarationOnly": true,
+    "moduleResolution":"nodenext"
+  },
+  "include": ["src/**/*","bin/**/*","eslint.config.mjs"],             // include all .ts files in src/
+  "exclude": ["node_modules", "dist"]  // avoid compiling output & deps
+}
