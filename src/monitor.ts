@@ -110,16 +110,17 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
   const autorun=normalize_watch(watchers.autorun)
   const ans=[]
-  for (const [name,v] of Object.entries(watchers)){
+  for (const [name,script] of Object.entries(scripts)){
     if (is_non_watcher(name))
       continue
     const watcher:Watcher=function(){
-      if (is_string_array(v)){
+      const v=watchers[name]
+      if (v==null||is_string_array(v)){
         return {watch:normalize_watch(v)}
       }
       return v
     }()
-    const script=scripts[name]
+    //const script=scripts[name]
     if (script==null){
       console.warn(`missing script ${name}`)
       continue

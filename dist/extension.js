@@ -129,16 +129,16 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   const $watch = normalize_watch(watchers.$watch);
   const autorun = normalize_watch(watchers.autorun);
   const ans = [];
-  for (const [name, v] of Object.entries(watchers)) {
+  for (const [name, script] of Object.entries(scripts)) {
     if (is_non_watcher(name))
       continue;
     const watcher = (function() {
-      if (is_string_array(v)) {
+      const v = watchers[name];
+      if (v == null || is_string_array(v)) {
         return { watch: normalize_watch(v) };
       }
       return v;
     })();
-    const script = scripts[name];
     if (script == null) {
       console.warn(`missing script ${name}`);
       continue;
@@ -233,7 +233,7 @@ var MonitorProvider = class {
 };
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  const outputChannel = vscode.window.createOutputChannel("scripts2");
+  const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event, null, 2));
   });
