@@ -194,6 +194,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
     }
     const runner = (function() {
       return {
+        type: "runner",
         ...watcher,
         //i like this
         name,
@@ -232,7 +233,7 @@ async function read_package_json(full_pathnames) {
         if (ret != null)
           folders2.push(ret);
       }
-    const ans = { runners, folders: folders2, name, full_pathname, scriptsmon };
+    const ans = { runners, folders: folders2, name, full_pathname, scriptsmon, type: "folder" };
     return ans;
   }
   const folders = [];
@@ -247,9 +248,10 @@ async function read_package_json(full_pathnames) {
     full_pathname: "",
     folders,
     runners: [],
-    scriptsmon: {}
+    scriptsmon: {},
+    type: "folder"
   };
-  await mkdir_write_file("generated/packages.json", JSON.stringify(root, null, 2));
+  await mkdir_write_file("c:\\yigal\\generated\\packages.json", JSON.stringify(root, null, 2));
   return root;
 }
 

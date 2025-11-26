@@ -7,13 +7,15 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     $watch?: string[];
     autorun?: string[];
 };
-interface Runner extends Watcher {
+export interface Runner extends Watcher {
+    type: 'runner';
     name: string;
     full_pathname: string;
     script: string;
     autorun: boolean;
 }
-interface Folder {
+export interface Folder {
+    type: 'folder';
     name: string;
     full_pathname: string;
     folders: Array<Folder>;

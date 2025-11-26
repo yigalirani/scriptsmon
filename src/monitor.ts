@@ -21,14 +21,16 @@ export type Scriptsmon=  Record<string,Watcher|string[]>&
   autorun?:string[]
 }
 
-interface Runner extends Watcher{//adds some runtime
+export interface Runner extends Watcher{//adds some runtime
+  type:'runner'
   name:string
   full_pathname: string //where the package.json is   
   script:string //coming from the scripts section of package.json
   autorun:boolean
 }
 
-interface Folder{
+export interface Folder{
+  type:'folder'
   name:string 
   full_pathname: string //where the package.json is 
   folders:Array<Folder>
@@ -124,6 +126,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
     }
     const runner:Runner=function(){
       return {
+        type:'runner',
         ...watcher, //i like this
         name,
         script,
@@ -167,7 +170,7 @@ export async function read_package_json(
         }
 
     
-    const ans:Folder= {runners,folders,name,full_pathname,scriptsmon}
+    const ans:Folder= {runners,folders,name,full_pathname,scriptsmon,type:'folder'}
     return ans
   }
   const folders=[]
@@ -182,12 +185,13 @@ export async function read_package_json(
     full_pathname: '',
     folders,
     runners:[],
-    scriptsmon:{}
+    scriptsmon:{},
+    type:'folder'
   }
   //const keys=Object.keys(ans)
   //const common_prefix=getCommonPrefix(keys)
   //const extra={keys,common_prefix}
   //await mkdir_write_file('generated/extra.json',JSON.stringify(extra,null,2))
-  await mkdir_write_file('generated/packages.json',JSON.stringify(root,null,2))
+  await mkdir_write_file('c:\\yigal\\generated\\packages.json',JSON.stringify(root,null,2))
   return root
 }

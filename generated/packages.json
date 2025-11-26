@@ -5,6 +5,7 @@
     {
       "runners": [
         {
+          "type": "runner",
           "watch": [
             "src",
             "package.json",
@@ -17,6 +18,7 @@
           "autorun": true
         },
         {
+          "type": "runner",
           "watch": [
             "src",
             "package.json",
@@ -30,6 +32,7 @@
           "autorun": true
         },
         {
+          "type": "runner",
           "watch": [
             "src",
             "package.json",
@@ -77,11 +80,13 @@
           "tsc",
           "eslint"
         ]
-      }
+      },
+      "type": "folder"
     },
     {
       "runners": [
         {
+          "type": "runner",
           "watch": [
             "main/src",
             "converter/src",
@@ -98,6 +103,7 @@
           "autorun": true
         },
         {
+          "type": "runner",
           "watch": [
             "main/src",
             "converter/src",
@@ -114,6 +120,7 @@
           "autorun": true
         },
         {
+          "type": "runner",
           "pre": "set TIMING=1",
           "filter": "eslint_filter",
           "watch": [
@@ -136,6 +143,7 @@
         {
           "runners": [
             {
+              "type": "runner",
               "watch": [
                 "src",
                 "build.mjs",
@@ -159,18 +167,21 @@
             "autorun": [
               "build"
             ]
-          }
+          },
+          "type": "folder"
         },
         {
           "runners": [],
           "folders": [],
           "name": "main",
           "full_pathname": "c:\\yigal\\million_try3\\main",
-          "scriptsmon": {}
+          "scriptsmon": {},
+          "type": "folder"
         },
         {
           "runners": [
             {
+              "type": "runner",
               "watch": [
                 "src",
                 "build.mjs"
@@ -181,6 +192,7 @@
               "autorun": true
             },
             {
+              "type": "runner",
               "watch": [
                 "dist/index.js"
               ],
@@ -205,7 +217,8 @@
               "run",
               "build"
             ]
-          }
+          },
+          "type": "folder"
         }
       ],
       "name": "million_try3",
@@ -241,9 +254,11 @@
           "oxlint",
           "tsc"
         ]
-      }
+      },
+      "type": "folder"
     }
   ],
   "runners": [],
-  "scriptsmon": {}
+  "scriptsmon": {},
+  "type": "folder"
 }
