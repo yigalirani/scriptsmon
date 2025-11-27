@@ -214,9 +214,19 @@ var MonitorProvider = class {
     this.root = root;
   }
   getTreeItem(element) {
+    const ans = { label: element.name };
+    if (element.type === "folder")
+      return {
+        ...ans,
+        collapsibleState: 2,
+        iconPath: new vscode.ThemeIcon("symbol-object"),
+        tooltip: element.full_pathname //information overlowd
+      };
     return {
-      label: element.name,
-      collapsibleState: element.type === "folder" ? 2 : 0
+      ...ans,
+      collapsibleState: 0,
+      iconPath: new vscode.ThemeIcon("file"),
+      description: element.script
     };
   }
   getChildren(element) {

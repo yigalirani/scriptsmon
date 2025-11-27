@@ -11,9 +11,17 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   }
 
   getTreeItem(element: MonitorNode): vscode.TreeItem {
-    return {
-      label:element.name,
-      collapsibleState:element.type==='folder'?2:0
+    const ans={label:element.name}
+    if (element.type==='folder')
+      return {...ans,
+        collapsibleState:2,
+        iconPath:new vscode.ThemeIcon("symbol-object"),
+        description:element.full_pathname
+      }
+    return {...ans,
+      collapsibleState:0,
+      iconPath:new vscode.ThemeIcon("file"),
+      description:element.script      
     }
   }
 
