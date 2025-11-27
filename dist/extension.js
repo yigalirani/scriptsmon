@@ -210,8 +210,12 @@ async function read_package_json(full_pathnames) {
 import * as vscode from "vscode";
 var MonitorProvider = class {
   root;
-  constructor(root) {
+  folderIconPath;
+  fileIconPath;
+  constructor(root, context) {
     this.root = root;
+    this.folderIconPath = vscode.Uri.joinPath(context.extensionUri, "resources", "icons", "folder.svg");
+    this.fileIconPath = vscode.Uri.joinPath(context.extensionUri, "resources", "icons", "file.svg");
   }
   getTreeItem(element) {
     const ans = { label: element.name };
@@ -219,13 +223,13 @@ var MonitorProvider = class {
       return {
         ...ans,
         collapsibleState: 2,
-        iconPath: new vscode.ThemeIcon("symbol-object"),
-        tooltip: element.full_pathname //information overlowd
+        iconPath: this.folderIconPath,
+        description: element.full_pathname
       };
     return {
       ...ans,
       collapsibleState: 0,
-      iconPath: new vscode.ThemeIcon("file"),
+      iconPath: this.fileIconPath,
       description: element.script
     };
   }
@@ -251,7 +255,7 @@ async function activate(context) {
   const folders = ["c:\\yigal\\million_try3"];
   const root = await read_package_json(folders);
   vscode.window.createTreeView("Scriptsmon.tree", {
-    treeDataProvider: new MonitorProvider(root)
+    treeDataProvider: new MonitorProvider(root, context)
   });
   const disposable = vscode.commands.registerCommand("Scriptsmon.start", () => {
     outputChannel.append("start");

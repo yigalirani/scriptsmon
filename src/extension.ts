@@ -6,8 +6,13 @@ type MonitorNode=Runner|Folder
 
 export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   root: Folder
-  constructor( root: Folder) {
+  private folderIconPath: vscode.Uri
+  private fileIconPath: vscode.Uri
+  
+  constructor( root: Folder, context: vscode.ExtensionContext) {
     this.root=root
+    this.folderIconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icons', 'folder.svg')
+    this.fileIconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icons', 'file.svg')
   }
 
   getTreeItem(element: MonitorNode): vscode.TreeItem {
@@ -15,12 +20,12 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
     if (element.type==='folder')
       return {...ans,
         collapsibleState:2,
-        iconPath:new vscode.ThemeIcon("symbol-object"),
+        iconPath:this.folderIconPath,
         description:element.full_pathname
       }
     return {...ans,
       collapsibleState:0,
-      iconPath:new vscode.ThemeIcon("file"),
+      iconPath:this.fileIconPath,
       description:element.script      
     }
   }
@@ -50,7 +55,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const folders=["c:\\yigal\\million_try3"]
   const root=await  read_package_json(folders)
   vscode.window.createTreeView('Scriptsmon.tree', {
-    treeDataProvider: new MonitorProvider(root)
+    treeDataProvider: new MonitorProvider(root, context)
   });
 
   const disposable = vscode.commands.registerCommand('Scriptsmon.start',  () => {
