@@ -5,7 +5,11 @@ export declare class MonitorProvider implements vscode.TreeDataProvider<MonitorN
     root: Folder;
     private folderIconPath;
     private fileIconPath;
+    private context;
+    private _onDidChangeTreeData;
+    readonly onDidChangeTreeData: vscode.Event<MonitorNode | undefined | null | void>;
     constructor(root: Folder, context: vscode.ExtensionContext);
+    private updateIcons;
     getTreeItem(element: MonitorNode): vscode.TreeItem;
     getChildren(element?: MonitorNode): Thenable<MonitorNode[]>;
 }

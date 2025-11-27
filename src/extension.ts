@@ -8,11 +8,29 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   root: Folder
   private folderIconPath: vscode.Uri
   private fileIconPath: vscode.Uri
+  private context: vscode.ExtensionContext
+  private _onDidChangeTreeData: vscode.EventEmitter<MonitorNode | undefined | null | void> = new vscode.EventEmitter<MonitorNode | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<MonitorNode | undefined | null | void> = this._onDidChangeTreeData.event;
   
   constructor( root: Folder, context: vscode.ExtensionContext) {
     this.root=root
-    this.folderIconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icons', 'folder.svg')
-    this.fileIconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icons', 'file.svg')
+    this.context=context
+    this.updateIcons()
+    
+    // Listen for theme changes
+    vscode.window.onDidChangeActiveColorTheme(() => {
+      this.updateIcons()
+      this._onDidChangeTreeData.fire()
+    })
+  }
+  
+  private updateIcons() {
+    const isDark = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark || 
+                   vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast
+    const themeSuffix = isDark ? 'dark' : 'light'
+    
+    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'resources', 'icons', `folder-${themeSuffix}.svg`)
+    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'resources', 'icons', `file-${themeSuffix}.svg`)
   }
 
   getTreeItem(element: MonitorNode): vscode.TreeItem {

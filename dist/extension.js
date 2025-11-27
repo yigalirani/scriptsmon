@@ -212,10 +212,23 @@ var MonitorProvider = class {
   root;
   folderIconPath;
   fileIconPath;
+  context;
+  _onDidChangeTreeData = new vscode.EventEmitter();
+  onDidChangeTreeData = this._onDidChangeTreeData.event;
   constructor(root, context) {
     this.root = root;
-    this.folderIconPath = vscode.Uri.joinPath(context.extensionUri, "resources", "icons", "folder.svg");
-    this.fileIconPath = vscode.Uri.joinPath(context.extensionUri, "resources", "icons", "file.svg");
+    this.context = context;
+    this.updateIcons();
+    vscode.window.onDidChangeActiveColorTheme(() => {
+      this.updateIcons();
+      this._onDidChangeTreeData.fire();
+    });
+  }
+  updateIcons() {
+    const isDark = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark || vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast;
+    const themeSuffix = isDark ? "dark" : "light";
+    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, "resources", "icons", `folder-${themeSuffix}.svg`);
+    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, "resources", "icons", `file-${themeSuffix}.svg`);
   }
   getTreeItem(element) {
     const ans = { label: element.name };
