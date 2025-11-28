@@ -67,9 +67,23 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   }
 }
 
-function getWebviewContent(context: vscode.ExtensionContext): string {
+function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const htmlPath = path.join(context.extensionPath, 'resources', 'webview.html');
-  return fs.readFileSync(htmlPath, 'utf-8');
+  let html = fs.readFileSync(htmlPath, 'utf-8');
+  
+  // Get URIs for CSS and JS files
+  const cssUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, 'resources', 'webview.css')
+  );
+  const jsUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, 'resources', 'webview.js')
+  );
+  
+  // Replace placeholders with actual URIs
+  html = html.replace('{{cssUri}}', cssUri.toString());
+  html = html.replace('{{jsUri}}', jsUri.toString());
+  
+  return html;
 }
 
 function createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPanel {
@@ -85,7 +99,7 @@ function createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPan
   );
 
   // Load content from static file
-  panel.webview.html = getWebviewContent(context);
+  panel.webview.html = getWebviewContent(context, panel.webview);
 
   // Handle messages from the webview
   panel.webview.onDidReceiveMessage(

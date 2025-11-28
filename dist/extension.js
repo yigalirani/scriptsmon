@@ -263,9 +263,18 @@ var MonitorProvider = class {
     return Promise.resolve([...element.folders, ...element.runners]);
   }
 };
-function getWebviewContent(context) {
+function getWebviewContent(context, webview) {
   const htmlPath = path2.join(context.extensionPath, "resources", "webview.html");
-  return fs.readFileSync(htmlPath, "utf-8");
+  let html = fs.readFileSync(htmlPath, "utf-8");
+  const cssUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, "resources", "webview.css")
+  );
+  const jsUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, "resources", "webview.js")
+  );
+  html = html.replace("{{cssUri}}", cssUri.toString());
+  html = html.replace("{{jsUri}}", jsUri.toString());
+  return html;
 }
 function createWebviewPanel(context) {
   let counter = 0;
@@ -278,7 +287,7 @@ function createWebviewPanel(context) {
       retainContextWhenHidden: true
     }
   );
-  panel.webview.html = getWebviewContent(context);
+  panel.webview.html = getWebviewContent(context, panel.webview);
   panel.webview.onDidReceiveMessage(
     (message) => {
       switch (message.command) {

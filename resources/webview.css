@@ -1,0 +1,34 @@
+body {
+    font-family: var(--vscode-font-family);
+    color: var(--vscode-foreground);
+    background-color: var(--vscode-editor-background);
+    padding: 20px;
+    margin: 0;
+}
+h1 {
+    color: var(--vscode-textLink-foreground);
+    margin-top: 0;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 2px;
+}
+button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+.message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--vscode-input-background);
+    border-radius: 4px;
+}
+
