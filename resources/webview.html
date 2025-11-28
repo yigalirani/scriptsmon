@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scriptsmon Webview</title>
+    <style>
+        body {
+            font-family: var(--vscode-font-family);
+            color: var(--vscode-foreground);
+            background-color: var(--vscode-editor-background);
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: var(--vscode-textLink-foreground);
+            margin-top: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        button:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: var(--vscode-input-background);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scriptsmon Webview</h1>
+        <p>This is a webview loaded from a static HTML file.</p>
+        <button id="sendMessage">Send Message to Extension</button>
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        
+        const sendButton = document.getElementById('sendMessage');
+        const messageDiv = document.getElementById('message');
+        
+        sendButton.addEventListener('click', () => {
+            vscode.postMessage({
+                command: 'buttonClick',
+                text: 'Hello from webview!'
+            });
+        });
+        
+        // Listen for messages from the extension
+        window.addEventListener('message', event => {
+            const message = event.data;
+            switch (message.command) {
+                case 'updateContent':
+                    messageDiv.textContent = message.text;
+                    messageDiv.style.display = 'block';
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
+

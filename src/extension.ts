@@ -1,7 +1,13 @@
-// import path from 'node:path';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
 import {read_package_json,type Runner,type Folder} from './monitor.js'
 import * as vscode from 'vscode';
 type MonitorNode=Runner|Folder
+
+interface WebviewMessage {
+  command: string;
+  text?: string;
+}
 
 export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   root: Folder
@@ -61,6 +67,45 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   }
 }
 
+function getWebviewContent(context: vscode.ExtensionContext): string {
+  const htmlPath = path.join(context.extensionPath, 'resources', 'webview.html');
+  return fs.readFileSync(htmlPath, 'utf-8');
+}
+
+function createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPanel {
+  const panel = vscode.window.createWebviewPanel(
+    'scriptsmonWebview',
+    'Scriptsmon Webview',
+    vscode.ViewColumn.One,
+    {
+      enableScripts: true,
+      retainContextWhenHidden: true
+    }
+  );
+
+  // Load content from static file
+  panel.webview.html = getWebviewContent(context);
+
+  // Handle messages from the webview
+  panel.webview.onDidReceiveMessage(
+    (message: WebviewMessage) => {
+      switch (message.command) {
+        case 'buttonClick':
+          vscode.window.showInformationMessage(`Received: ${message.text ?? ''}`);
+          // Send message back to webview
+          panel.webview.postMessage({
+            command: 'updateContent',
+            text: `Extension received: ${message.text ?? ''}`
+          });
+          break;
+      }
+    },
+    undefined,
+    context.subscriptions
+  );
+
+  return panel;
+}
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
@@ -139,6 +184,12 @@ export async function activate(context: vscode.ExtensionContext) {
     outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
   });
   context.subscriptions.push(debugDisposable);
+
+  const webviewDisposable = vscode.commands.registerCommand('Scriptsmon.webview.open', () => {
+    const panel = createWebviewPanel(context);
+    context.subscriptions.push(panel);
+  });
+  context.subscriptions.push(webviewDisposable);
 }
 
 // this method is called when your extension is deactivated

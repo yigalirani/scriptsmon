@@ -61,6 +61,10 @@
                 "command" : "Scriptsmon.runner.debug",
                 "title" : "Debug",
                 "icon" : "$(debug)"
+            },
+            {
+                "command" : "Scriptsmon.webview.open",
+                "title" : "Open Webview"
             }
         ],
         "menus" : {

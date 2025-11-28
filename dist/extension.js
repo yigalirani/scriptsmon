@@ -1,3 +1,7 @@
+// src/extension.ts
+import * as path2 from "node:path";
+import * as fs from "node:fs";
+
 // src/monitor.ts
 import * as path from "node:path";
 
@@ -22,25 +26,25 @@ async function get_node() {
   if (typeof window !== "undefined") {
     throw new Error("getFileContents() requires Node.js");
   }
-  const path2 = await import("node:path");
-  const fs = await import("node:fs/promises");
-  return { fs, path: path2 };
+  const path3 = await import("node:path");
+  const fs2 = await import("node:fs/promises");
+  return { fs: fs2, path: path3 };
 }
 async function mkdir_write_file(filePath, data) {
-  const { path: path2, fs } = await get_node();
-  const directory = path2.dirname(filePath);
+  const { path: path3, fs: fs2 } = await get_node();
+  const directory = path3.dirname(filePath);
   try {
-    await fs.mkdir(directory, { recursive: true });
-    await fs.writeFile(filePath, data);
+    await fs2.mkdir(directory, { recursive: true });
+    await fs2.writeFile(filePath, data);
     console.log(`File '${filePath}' has been written successfully.`);
   } catch (err) {
     console.error("Error writing file", err);
   }
 }
 async function read_json_object(filename, object_type) {
-  const { fs } = await get_node();
+  const { fs: fs2 } = await get_node();
   try {
-    const data = await fs.readFile(filename, "utf-8");
+    const data = await fs2.readFile(filename, "utf-8");
     const ans = JSON.parse(data);
     if (!is_object(ans))
       throw `not a valid ${object_type}`;
@@ -259,6 +263,38 @@ var MonitorProvider = class {
     return Promise.resolve([...element.folders, ...element.runners]);
   }
 };
+function getWebviewContent(context) {
+  const htmlPath = path2.join(context.extensionPath, "resources", "webview.html");
+  return fs.readFileSync(htmlPath, "utf-8");
+}
+function createWebviewPanel(context) {
+  const panel = vscode.window.createWebviewPanel(
+    "scriptsmonWebview",
+    "Scriptsmon Webview",
+    vscode.ViewColumn.One,
+    {
+      enableScripts: true,
+      retainContextWhenHidden: true
+    }
+  );
+  panel.webview.html = getWebviewContent(context);
+  panel.webview.onDidReceiveMessage(
+    (message) => {
+      switch (message.command) {
+        case "buttonClick":
+          vscode.window.showInformationMessage(`Received: ${message.text ?? ""}`);
+          panel.webview.postMessage({
+            command: "updateContent",
+            text: `Extension received: ${message.text ?? ""}`
+          });
+          break;
+      }
+    },
+    void 0,
+    context.subscriptions
+  );
+  return panel;
+}
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
@@ -322,6 +358,11 @@ async function activate(context) {
     outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
   });
   context.subscriptions.push(debugDisposable);
+  const webviewDisposable = vscode.commands.registerCommand("Scriptsmon.webview.open", () => {
+    const panel = createWebviewPanel(context);
+    context.subscriptions.push(panel);
+  });
+  context.subscriptions.push(webviewDisposable);
 }
 function deactivate() {
 }
