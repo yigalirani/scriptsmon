@@ -72,9 +72,21 @@ export async function activate(context: vscode.ExtensionContext) {
   //const folders=(workspaceFolders||[]).map(x=>x.uri.fsPath)
   const folders=["c:\\yigal\\million_try3"]
   const root=await  read_package_json(folders)
-  vscode.window.createTreeView('Scriptsmon.tree', {
+  const treeView=vscode.window.createTreeView('Scriptsmon.tree', {
     treeDataProvider: new MonitorProvider(root, context)
-  });
+  })
+  context.subscriptions.push(treeView)
+
+  const focusDisposable=treeView.onDidChangeSelection((event)=>{
+    const selected=event.selection?.[0]
+    if (!selected || selected.type!=='runner')
+      return
+    const terminalName=`${selected.full_pathname} ${selected.name}`
+    const terminal=vscode.window.terminals.find(t=>t.name===terminalName)
+    if (terminal)
+      terminal.show()
+  })
+  context.subscriptions.push(focusDisposable)
 
   const disposable = vscode.commands.registerCommand('Scriptsmon.start',  () => {
     outputChannel.append('start')
