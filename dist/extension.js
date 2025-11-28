@@ -268,6 +268,7 @@ function getWebviewContent(context) {
   return fs.readFileSync(htmlPath, "utf-8");
 }
 function createWebviewPanel(context) {
+  let counter = 0;
   const panel = vscode.window.createWebviewPanel(
     "scriptsmonWebview",
     "Scriptsmon Webview",
@@ -282,10 +283,11 @@ function createWebviewPanel(context) {
     (message) => {
       switch (message.command) {
         case "buttonClick":
+          counter++;
           vscode.window.showInformationMessage(`Received: ${message.text ?? ""}`);
           panel.webview.postMessage({
             command: "updateContent",
-            text: `Extension received: ${message.text ?? ""}`
+            text: `Extension received: ${message.text ?? ""},extension counter=${counter}`
           });
           break;
       }
