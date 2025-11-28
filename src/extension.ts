@@ -1,13 +1,12 @@
-import path from 'node:path';
-import {readFile,glob} from 'node:fs/promises';
+// import path from 'node:path';
 import {read_package_json,type Runner,type Folder} from './monitor.js'
 import * as vscode from 'vscode';
 type MonitorNode=Runner|Folder
 
 export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   root: Folder
-  private folderIconPath: vscode.Uri
-  private fileIconPath: vscode.Uri
+  private folderIconPath!: vscode.Uri
+  private fileIconPath!: vscode.Uri
   private context: vscode.ExtensionContext
   private _onDidChangeTreeData: vscode.EventEmitter<MonitorNode | undefined | null | void> = new vscode.EventEmitter<MonitorNode | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<MonitorNode | undefined | null | void> = this._onDidChangeTreeData.event;
@@ -69,7 +68,7 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event,null,2))
   })
-  const {workspaceFolders}= vscode.workspace
+  const {workspaceFolders: _workspaceFolders}= vscode.workspace
   //const folders=(workspaceFolders||[]).map(x=>x.uri.fsPath)
   const folders=["c:\\yigal\\million_try3"]
   const root=await  read_package_json(folders)
@@ -82,53 +81,50 @@ export async function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(disposable);
 
-  const playDisposable = vscode.commands.registerCommand('Scriptsmon.runner.play', async (runner: Runner) => {
+  const playDisposable = vscode.commands.registerCommand('Scriptsmon.runner.play', (runner: Runner) => {
     if (!runner || runner.type !== 'runner') {
       vscode.window.showErrorMessage('Invalid runner');
       return;
     }
-    const task = new vscode.Task(
-      { type: 'npm', script: runner.name },
-      vscode.TaskScope.Workspace,
-      runner.name,
-      'npm',
-      new vscode.ShellExecution(`npm run ${runner.name}`, {
+
+    const terminalName = `${runner.full_pathname} ${runner.name}`;
+
+    // Reuse existing terminal for this runner if it exists, otherwise create a new one
+    let terminal = vscode.window.terminals.find(t => t.name === terminalName);
+    if (!terminal) {
+      terminal = vscode.window.createTerminal({
+        name: terminalName,
         cwd: runner.full_pathname
-      })
-    );
-    task.presentationOptions = {
-      reveal: vscode.TaskRevealKind.Always,
-      panel: vscode.TaskPanelKind.Dedicated,
-      clear: false
-    };
-    await vscode.tasks.executeTask(task);
-    outputChannel.appendLine(`Running script: ${runner.name} in ${runner.full_pathname}`);
+      });
+    }
+
+    terminal.show();
+    terminal.sendText(`npm run ${runner.name}`);
+
+    outputChannel.appendLine(`Running script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
   });
   context.subscriptions.push(playDisposable);
 
-  const debugDisposable = vscode.commands.registerCommand('Scriptsmon.runner.debug', async (runner: Runner) => {
+  const debugDisposable = vscode.commands.registerCommand('Scriptsmon.runner.debug', (runner: Runner) => {
     if (!runner || runner.type !== 'runner') {
       vscode.window.showErrorMessage('Invalid runner');
       return;
     }
-    const task = new vscode.Task(
-      { type: 'npm', script: runner.name },
-      vscode.TaskScope.Workspace,
-      `${runner.name} (debug)`,
-      'npm',
-      new vscode.ShellExecution(`npm run ${runner.name}`, {
+
+    const terminalName = `${runner.full_pathname} ${runner.name} (debug)`;
+
+    let terminal = vscode.window.terminals.find(t => t.name === terminalName);
+    if (!terminal) {
+      terminal = vscode.window.createTerminal({
+        name: terminalName,
         cwd: runner.full_pathname
-      })
-    );
-    task.presentationOptions = {
-      reveal: vscode.TaskRevealKind.Always,
-      panel: vscode.TaskPanelKind.Dedicated,
-      clear: false
-    };
-    // For debug, we could also use the debug API, but for now using task with a debug flag
-    // You might want to configure a launch.json entry for proper debugging
-    await vscode.tasks.executeTask(task);
-    outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname}`);
+      });
+    }
+
+    terminal.show();
+    terminal.sendText(`npm run ${runner.name}`);
+
+    outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
   });
   context.subscriptions.push(debugDisposable);
 }
