@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+
 export function start(){
   const sendButton = document.getElementById('sendMessage');
   const messageDiv = document.getElementById('message');
@@ -6,7 +6,7 @@ export function start(){
     throw 'sendButton or messageDiv not found'
 
   sendButton.addEventListener('click', () => {
-      vscode.postMessage({
+      postMessage({
           command: 'buttonClick',
           text: 'Hello from webview!'
       });
