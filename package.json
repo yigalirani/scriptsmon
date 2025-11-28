@@ -51,8 +51,32 @@
             {
                 "command" : "Scriptsmon.start",
                 "title" : "Scriptsmon: start"
+            },
+            {
+                "command" : "Scriptsmon.runner.play",
+                "title" : "Play",
+                "icon" : "$(play)"
+            },
+            {
+                "command" : "Scriptsmon.runner.debug",
+                "title" : "Debug",
+                "icon" : "$(debug)"
             }
         ],
+        "menus" : {
+            "view/item/context" : [
+                {
+                    "command" : "Scriptsmon.runner.play",
+                    "when" : "view == Scriptsmon.tree && viewItem == 'runner'",
+                    "group" : "inline"
+                },
+                {
+                    "command" : "Scriptsmon.runner.debug",
+                    "when" : "view == Scriptsmon.tree && viewItem == 'runner'",
+                    "group" : "inline"
+                }
+            ]
+        },
         "views" : {
             "explorer" : [
                 {

@@ -44,7 +44,8 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
     return {...ans,
       collapsibleState:0,
       iconPath:this.fileIconPath,
-      description:element.script      
+      description:element.script,
+      contextValue:'runner'
     }
   }
 
@@ -80,6 +81,56 @@ export async function activate(context: vscode.ExtensionContext) {
     outputChannel.append('start')
   });
   context.subscriptions.push(disposable);
+
+  const playDisposable = vscode.commands.registerCommand('Scriptsmon.runner.play', async (runner: Runner) => {
+    if (!runner || runner.type !== 'runner') {
+      vscode.window.showErrorMessage('Invalid runner');
+      return;
+    }
+    const task = new vscode.Task(
+      { type: 'npm', script: runner.name },
+      vscode.TaskScope.Workspace,
+      runner.name,
+      'npm',
+      new vscode.ShellExecution(`npm run ${runner.name}`, {
+        cwd: runner.full_pathname
+      })
+    );
+    task.presentationOptions = {
+      reveal: vscode.TaskRevealKind.Always,
+      panel: vscode.TaskPanelKind.Dedicated,
+      clear: false
+    };
+    await vscode.tasks.executeTask(task);
+    outputChannel.appendLine(`Running script: ${runner.name} in ${runner.full_pathname}`);
+  });
+  context.subscriptions.push(playDisposable);
+
+  const debugDisposable = vscode.commands.registerCommand('Scriptsmon.runner.debug', async (runner: Runner) => {
+    if (!runner || runner.type !== 'runner') {
+      vscode.window.showErrorMessage('Invalid runner');
+      return;
+    }
+    const task = new vscode.Task(
+      { type: 'npm', script: runner.name },
+      vscode.TaskScope.Workspace,
+      `${runner.name} (debug)`,
+      'npm',
+      new vscode.ShellExecution(`npm run ${runner.name}`, {
+        cwd: runner.full_pathname
+      })
+    );
+    task.presentationOptions = {
+      reveal: vscode.TaskRevealKind.Always,
+      panel: vscode.TaskPanelKind.Dedicated,
+      clear: false
+    };
+    // For debug, we could also use the debug API, but for now using task with a debug flag
+    // You might want to configure a launch.json entry for proper debugging
+    await vscode.tasks.executeTask(task);
+    outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname}`);
+  });
+  context.subscriptions.push(debugDisposable);
 }
 
 // this method is called when your extension is deactivated
