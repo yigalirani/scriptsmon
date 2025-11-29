@@ -23,6 +23,13 @@ function is_object(value) {
   if (value instanceof Map) return false;
   return true;
 }
+function pk(obj, ...keys) {
+  const ret = {};
+  keys.forEach((key) => {
+    ret[key] = obj?.[key];
+  });
+  return ret;
+}
 async function get_node() {
   if (typeof window !== "undefined") {
     throw new Error("getFileContents() requires Node.js");
@@ -73,6 +80,23 @@ async function sleep(ms) {
 function is_ready_to_start(state) {
   return state !== "running" && state !== "spawning";
 }
+var runner_base_keys = [
+  "watch",
+  "filter",
+  "pre",
+  "type",
+  "name",
+  "full_pathname",
+  "script",
+  "autorun",
+  "state",
+  "last_start_time",
+  "last_end_time",
+  "start_time",
+  "reason",
+  "last_reason",
+  "last_err"
+];
 function is_valid_watch(a) {
   if (a == null)
     return true;
@@ -289,6 +313,20 @@ async function read_package_json(full_pathnames) {
 
 // src/extension.ts
 import * as vscode from "vscode";
+function make_runner_report(root) {
+  const runners = [];
+  function f(folder) {
+    for (const runner of folder.runners) {
+      const runner_base = pk(runner, ...runner_base_keys);
+      runners.push(runner_base);
+    }
+    for (const subfolder of folder.folders) {
+      f(subfolder);
+    }
+  }
+  f(root);
+  return { runners, command: "RunnerReport" };
+}
 var MonitorProvider = class {
   root;
   folderIconPath;
@@ -349,7 +387,7 @@ function getWebviewContent(context, webview) {
   html = html.replaceAll("./", base);
   return html;
 }
-function createWebviewPanel(context) {
+function createWebviewPanel(context, root) {
   let counter = 0;
   const panel = vscode.window.createWebviewPanel(
     "scriptsmonWebview",
@@ -360,10 +398,17 @@ function createWebviewPanel(context) {
       retainContextWhenHidden: true
     }
   );
+  function send_report(root2) {
+    const report = make_runner_report(root2);
+    panel.webview.postMessage(report);
+  }
   panel.webview.html = getWebviewContent(context, panel.webview);
   panel.webview.onDidReceiveMessage(
     (message) => {
       switch (message.command) {
+        case "get_report":
+          send_report(root);
+          break;
         case "buttonClick":
           counter++;
           vscode.window.showInformationMessage(`Received: ${message.text ?? ""}`);
@@ -443,7 +488,7 @@ async function activate(context) {
   });
   context.subscriptions.push(debugDisposable);
   const webviewDisposable = vscode.commands.registerCommand("Scriptsmon.webview.open", () => {
-    const panel = createWebviewPanel(context);
+    const panel = createWebviewPanel(context, root);
     context.subscriptions.push(panel);
   });
   context.subscriptions.push(webviewDisposable);

@@ -27,7 +27,7 @@ type State="ready"|"done"|"crashed"|"running"|"failed"|"spawning"|"stopped"
 function is_ready_to_start(state:State){
   return state!=="running"&&state!=="spawning"
 }
-export interface Runner extends Watcher{//adds some runtime
+export interface RunnerBase extends Watcher{//adds some runtime
   type           : 'runner'
   name           : string
   full_pathname  : string            //where the package.json is   
@@ -40,10 +40,30 @@ export interface Runner extends Watcher{//adds some runtime
   start_time      : number|undefined
   reason          : string
   last_reason     : string
-  child           : ChildProcessWithoutNullStreams|undefined
-  start           : (reason:string)=>Promise<void>
   last_err        : Error|undefined
+}
+export const runner_base_keys:(keyof RunnerBase)[]=[
+  "watch",
+  "filter",
+  "pre",
+  "type",          
+  "name",
+  "full_pathname",
+  "script",
+  "autorun",      
+  "state",     
+  "last_start_time",
+  "last_end_time",
+  "start_time",
+  "reason",  
+  "last_reason",
+  "last_err"
+]
+
+export interface Runner extends RunnerBase{
   abort_controller: AbortController
+  child           : ChildProcessWithoutNullStreams|undefined
+  start           : (reason:string)=>Promise<void>    
 }
 
 export interface Folder{

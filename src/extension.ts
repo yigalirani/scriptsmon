@@ -1,14 +1,36 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,type Runner,type Folder} from './monitor.js'
+import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys} from './monitor.js'
 import * as vscode from 'vscode';
+import {pk} from '@yigal/base_types'
 type MonitorNode=Runner|Folder
 
 
-export interface WebviewMessage {
-  command: "buttonClick"|"updateContent";
+export interface WebviewMessageSimple {
+  command: "buttonClick"|"updateContent"|"get_report";
   text?: string;
 }
+export interface RunnerReport{
+   command: "RunnerReport";
+   runners:RunnerBase[]
+}
+export type WebviewMessage=WebviewMessageSimple|RunnerReport
+function make_runner_report(root:Folder):RunnerReport{
+  const runners:RunnerBase[]=[]
+  function f(folder:Folder){
+    for (const runner of folder.runners){
+      const runner_base:RunnerBase=pk(runner,...runner_base_keys)
+      runners.push(runner_base)
+    }
+    for (const subfolder of folder.folders){
+      f(subfolder)
+    }
+  }
+  f(root)
+  return {runners,command: "RunnerReport"}
+}
+
+
 export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   root: Folder
   private folderIconPath!: vscode.Uri
@@ -84,8 +106,9 @@ function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Web
   return html;
 }
 
-function createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPanel {
+function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscode.WebviewPanel {
   let counter=0
+
   const panel = vscode.window.createWebviewPanel(
     'scriptsmonWebview',
     'Scriptsmon Webview',
@@ -95,14 +118,20 @@ function createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPan
       retainContextWhenHidden: true
     }
   );
-
+  function send_report(root:Folder){
+    const report=make_runner_report(root)
+    panel.webview.postMessage(report)
+  }  
   // Load content from static file
   panel.webview.html = getWebviewContent(context, panel.webview);
-
+  
   // Handle messages from the webview
   panel.webview.onDidReceiveMessage(
     (message: WebviewMessage) => {
       switch (message.command) {
+        case 'get_report':
+          send_report(root)
+          break
         case 'buttonClick':
           counter++
           vscode.window.showInformationMessage(`Received: ${message.text ?? ''}`);
@@ -200,7 +229,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(debugDisposable);
 
   const webviewDisposable = vscode.commands.registerCommand('Scriptsmon.webview.open', () => {
-    const panel = createWebviewPanel(context);
+    const panel = createWebviewPanel(context,root);
     context.subscriptions.push(panel);
   });
   context.subscriptions.push(webviewDisposable);

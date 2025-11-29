@@ -9,7 +9,7 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     autorun?: string[];
 };
 type State = "ready" | "done" | "crashed" | "running" | "failed" | "spawning" | "stopped";
-export interface Runner extends Watcher {
+export interface RunnerBase extends Watcher {
     type: 'runner';
     name: string;
     full_pathname: string;
@@ -21,10 +21,13 @@ export interface Runner extends Watcher {
     start_time: number | undefined;
     reason: string;
     last_reason: string;
+    last_err: Error | undefined;
+}
+export declare const runner_base_keys: (keyof RunnerBase)[];
+export interface Runner extends RunnerBase {
+    abort_controller: AbortController;
     child: ChildProcessWithoutNullStreams | undefined;
     start: (reason: string) => Promise<void>;
-    last_err: Error | undefined;
-    abort_controller: AbortController;
 }
 export interface Folder {
     type: 'folder';

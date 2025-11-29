@@ -1,10 +1,15 @@
-import { type Runner, type Folder } from './monitor.js';
+import { type Runner, type Folder, type RunnerBase } from './monitor.js';
 import * as vscode from 'vscode';
 type MonitorNode = Runner | Folder;
-export interface WebviewMessage {
-    command: "buttonClick" | "updateContent";
+export interface WebviewMessageSimple {
+    command: "buttonClick" | "updateContent" | "get_report";
     text?: string;
 }
+export interface RunnerReport {
+    command: "RunnerReport";
+    runners: RunnerBase[];
+}
+export type WebviewMessage = WebviewMessageSimple | RunnerReport;
 export declare class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
     root: Folder;
     private folderIconPath;
