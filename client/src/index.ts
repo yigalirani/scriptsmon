@@ -4,10 +4,7 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-export interface WebviewMessage {
-  command: string;
-  text?: string;
-}
+import {WebviewMessage} from '../../src/extension.js'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
 function start(){
