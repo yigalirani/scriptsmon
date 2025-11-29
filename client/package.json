@@ -14,10 +14,12 @@
             "build"
         ]
     },
-
     "devDependencies": {
         "@types/chrome": "^0.0.277",
         "@types/he": "^1.2.3",
         "esbuild": "0.27.0"
+    },
+    "dependencies": {
+        "@xterm/xterm": "^5.5.0"
     }
 }
