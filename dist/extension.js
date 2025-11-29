@@ -4,6 +4,7 @@ import * as fs from "node:fs";
 
 // src/monitor.ts
 import * as path from "node:path";
+import { spawn } from "child_process";
 
 // node_modules/@yigal/base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
@@ -62,8 +63,16 @@ function is_string_array(a) {
       return false;
   return true;
 }
+async function sleep(ms) {
+  return await new Promise((resolve2) => {
+    setTimeout(() => resolve2(void 0), ms);
+  });
+}
 
 // src/monitor.ts
+function is_ready_to_start(state) {
+  return state !== "running" && state !== "spawning";
+}
 function is_valid_watch(a) {
   if (a == null)
     return true;
@@ -129,8 +138,60 @@ function normalize_watch(a) {
     return [];
   return a;
 }
+function run_runner({
+  //this is not async function on purpuse
+  runner,
+  reason
+}) {
+  const { abort_controller } = runner;
+  const { signal } = abort_controller;
+  void new Promise((resolve2, _reject) => {
+    const { script, full_pathname } = runner;
+    runner.state = "spawning";
+    const child = spawn(script, {
+      signal,
+      shell: true,
+      env: { ...process.env, FORCE_COLOR: "1", cwd: full_pathname }
+    });
+    if (child === null)
+      return;
+    child.on("spawn", () => {
+      runner.start_time = Date.now();
+      runner.state = "running";
+      runner.reason = reason;
+    });
+    child.on("exit", (code) => {
+      runner.state = code === 0 ? "done" : "crashed";
+      runner.last_end_time = Date.now();
+      runner.last_start_time = runner.start_time;
+      runner.start_time = void 0;
+      runner.last_reason = runner.reason;
+      resolve2(null);
+    });
+    child.on("error", (err) => {
+      runner.state = "failed";
+      runner.last_err = get_error(err);
+      resolve2(null);
+    });
+  });
+}
+async function stop(runner) {
+  const { state, abort_controller, abort_controller: { signal } } = runner;
+  let was_stopped = false;
+  while (true) {
+    if (is_ready_to_start(runner.state)) {
+      if (was_stopped)
+        runner.state = "stopped";
+      return Promise.resolve();
+    }
+    signal.addEventListener("abort", () => was_stopped = true, { once: true });
+    await sleep(10);
+  }
+}
 function make_start(runner) {
-  return function() {
+  return async function(reason) {
+    await stop(runner);
+    run_runner({ runner, reason });
   };
 }
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
@@ -164,10 +225,13 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         state: "ready",
         child: void 0,
         start_time: 0,
-        last_duration: void 0,
-        start: () => void 0,
-        cur_reason: "",
-        last_reason: ""
+        last_end_time: void 0,
+        last_start_time: void 0,
+        start: (reason) => Promise.resolve(),
+        reason: "",
+        last_reason: "",
+        last_err: void 0,
+        abort_controller: new AbortController()
       };
       ans2.start = make_start(ans2);
       return ans2;

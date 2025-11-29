@@ -103,7 +103,7 @@
         "typescript-eslint" : "8.46.3"
     },
     "dependencies" : {
-        "@yigal/base_types" : "^1.4.0",
+        "@yigal/base_types" : "^1.5.0",
         "@yigal/watch_runner" : "^2.0.0"
     }
 }

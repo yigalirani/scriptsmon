@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { ChildProcessWithoutNullStreams } from "child_process";
+import { ChildProcessWithoutNullStreams,spawn } from "child_process";
 import {
   is_object,
   s2t,
@@ -9,7 +9,9 @@ import {
   reset,
   green,
   is_string_array,
-  s2s
+  s2s,
+  get_error,
+  sleep
 } from "@yigal/base_types";
 interface Watcher{
   watch?:string[]
@@ -21,20 +23,27 @@ export type Scriptsmon=  Record<string,Watcher|string[]>&
   $watch?:string[]
   autorun?:string[]
 }
-type State="ready"|"done"|"crashed"|"running"
+type State="ready"|"done"|"crashed"|"running"|"failed"|"spawning"|"stopped"
+function is_ready_to_start(state:State){
+  return state!=="running"&&state!=="spawning"
+}
 export interface Runner extends Watcher{//adds some runtime
-  type         : 'runner'
-  name         : string
-  full_pathname: string                                    //where the package.json is   
-  script       : string                                    //coming from the scripts section of package.json
-  autorun      : boolean
-  state        : State
-  start_time   : number|undefined
-  last_duration: number|undefined
-  cur_reason   : string
-  last_reason  : string
-  child        : ChildProcessWithoutNullStreams|undefined
-  start        : ()=>void
+  type           : 'runner'
+  name           : string
+  full_pathname  : string            //where the package.json is   
+  script         : string            //coming from the scripts section of package.json
+  autorun        : boolean
+  state          : State
+  last_start_time: number|undefined
+  last_end_time  : number|undefined
+  
+  start_time      : number|undefined
+  reason          : string
+  last_reason     : string
+  child           : ChildProcessWithoutNullStreams|undefined
+  start           : (reason:string)=>Promise<void>
+  last_err        : Error|undefined
+  abort_controller: AbortController
 }
 
 export interface Folder{
@@ -114,9 +123,67 @@ function normalize_watch(a:string[]|undefined){
     return []
   return a
 }
-function make_start(runner:Runner){
-  return function(){
+function run_runner({ //this is not async function on purpuse
+  runner,
+  reason
+}: {
+  runner: Runner;
+  reason:string
+}) {
+  const {abort_controller}=runner
+  const {signal}=abort_controller
+  void new Promise((resolve, _reject) => { 
+    const {script,full_pathname}=runner
+    runner.state='spawning'
+    const child = spawn(script, {
+      signal,
+      shell: true,
+      env: { ...process.env, FORCE_COLOR: "1",cwd:full_pathname },  
+    });
+    if (child===null)
+      return
+    child.on('spawn',()=>{
+      runner.start_time=Date.now()
+      runner.state='running'
+      runner.reason=reason
+    })
+
+    child.on("exit", (code) => {
+      runner.state=(code===0?'done':'crashed') //todo: should think of aborted
+      runner.last_end_time=Date.now()
+      runner.last_start_time=runner.start_time
+      runner.start_time=undefined
+      runner.last_reason=runner.reason
+      resolve(null);
+    });
+
+    child.on("error", (err) => {
+      runner.state='failed'
+      runner.last_err=get_error(err)
+      resolve(null);
+    });
+  });
+}
+async function stop(runner: Runner): Promise<void> {
+  const { state,abort_controller,abort_controller:{signal} } = runner;
+  let was_stopped=false
+  while(true){
+    if (is_ready_to_start(runner.state)) {
+      if (was_stopped)
+        runner.state='stopped'
+      return Promise.resolve()
+    }
+    signal.addEventListener('abort', () => was_stopped=true, { once: true });
+    await sleep(10)
   }
+}
+function make_start(runner:Runner){
+  return  async function(reason:string){
+    await stop(runner)
+    run_runner({runner,reason})
+
+  }
+  
 }
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
@@ -149,11 +216,13 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         state:'ready',
         child:undefined,
         start_time:0,
-        last_duration:undefined,
-        start:()=>undefined,
-        cur_reason:'',
-        last_reason:''
-
+        last_end_time:undefined,
+        last_start_time:undefined,
+        start:(reason:string)=>Promise.resolve(),
+        reason:'',
+        last_reason:'',
+        last_err:undefined,
+        abort_controller:new AbortController()
       }
       ans.start=make_start(ans)
       return ans
