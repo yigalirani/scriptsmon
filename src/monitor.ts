@@ -1,4 +1,5 @@
 import * as path from "node:path";
+import { ChildProcessWithoutNullStreams } from "child_process";
 import {
   is_object,
   s2t,
@@ -20,13 +21,18 @@ export type Scriptsmon=  Record<string,Watcher|string[]>&
   $watch?:string[]
   autorun?:string[]
 }
-
+type State="ready"|"done"|"crashed"|"running"
 export interface Runner extends Watcher{//adds some runtime
-  type:'runner'
-  name:string
-  full_pathname: string //where the package.json is   
-  script:string //coming from the scripts section of package.json
-  autorun:boolean
+  type         : 'runner'
+  name         : string
+  full_pathname: string                                    //where the package.json is   
+  script       : string                                    //coming from the scripts section of package.json
+  autorun      : boolean
+  state        : State
+  start_time   : number|undefined
+  last_duration: number|undefined
+  child        : ChildProcessWithoutNullStreams|undefined
+  start        : ()=>undefined
 }
 
 export interface Folder{
@@ -133,7 +139,12 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         script,
         full_pathname:path.dirname(pkgPath),
         watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)],
-        autorun:autorun.includes(name)
+        autorun:autorun.includes(name),
+        state:'ready',
+        child:undefined,
+        start_time:0,
+        last_duration:undefined,
+        start:()=>undefined
       }
     }()
     ans.push(runner)

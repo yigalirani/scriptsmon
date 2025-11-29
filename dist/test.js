@@ -201,7 +201,12 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         script,
         full_pathname: path.dirname(pkgPath),
         watch: [...normalize_watch($watch), ...normalize_watch(watcher.watch)],
-        autorun: autorun.includes(name)
+        autorun: autorun.includes(name),
+        state: "ready",
+        child: void 0,
+        start_time: 0,
+        last_duration: void 0,
+        start: () => void 0
       };
     })();
     ans.push(runner);

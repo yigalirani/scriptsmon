@@ -1,3 +1,4 @@
+import { ChildProcessWithoutNullStreams } from "child_process";
 interface Watcher {
     watch?: string[];
     filter?: string;
@@ -7,12 +8,18 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     $watch?: string[];
     autorun?: string[];
 };
+type State = "ready" | "done" | "crashed" | "running";
 export interface Runner extends Watcher {
     type: 'runner';
     name: string;
     full_pathname: string;
     script: string;
     autorun: boolean;
+    state: State;
+    start_time: number | undefined;
+    last_duration: number | undefined;
+    child: ChildProcessWithoutNullStreams | undefined;
+    start: () => undefined;
 }
 export interface Folder {
     type: 'folder';

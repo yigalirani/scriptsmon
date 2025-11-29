@@ -4,10 +4,7 @@ import {read_package_json,type Runner,type Folder} from './monitor.js'
 import * as vscode from 'vscode';
 type MonitorNode=Runner|Folder
 
-interface WebviewMessage {
-  command: string;
-  text?: string;
-}
+import {WebviewMessage} from '../client/src/index.js'
 
 export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
   root: Folder

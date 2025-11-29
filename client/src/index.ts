@@ -4,7 +4,10 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-
+export interface WebviewMessage {
+  command: string;
+  text?: string;
+}
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
 function start(){
@@ -28,7 +31,7 @@ function start(){
   });
 
   // Listen for messages from the extension
-  window.addEventListener('message', event => {
+  window.addEventListener('message', (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
           case 'updateContent':
