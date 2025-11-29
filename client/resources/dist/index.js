@@ -1,5 +1,6 @@
 // src/index.ts
 function start() {
+  alert("start");
   const sendButton = document.getElementById("sendMessage");
   const messageDiv = document.getElementById("message");
   if (sendButton == null || messageDiv == null)
@@ -19,7 +20,5 @@ function start() {
     }
   });
 }
-export {
-  start
-};
+start();
 //# sourceMappingURL=index.js.map

@@ -1,5 +1,6 @@
 
-export function start(){
+function start(){
+  alert('start')
   const sendButton = document.getElementById('sendMessage');
   const messageDiv = document.getElementById('message');
   if (sendButton==null||messageDiv==null)
@@ -22,3 +23,4 @@ export function start(){
       }
   });
 }
+start()

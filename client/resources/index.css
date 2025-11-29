@@ -30,5 +30,6 @@ button:hover {
     padding: 10px;
     background-color: var(--vscode-input-background);
     border-radius: 4px;
+    border-color: red; 
 }
 
