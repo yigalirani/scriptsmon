@@ -78,7 +78,7 @@ function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Web
 
   
   // Replace placeholders with actual URIs
-  html = html.replace('./', base);
+  html = html.replaceAll('./', base);
 
   
   return html;

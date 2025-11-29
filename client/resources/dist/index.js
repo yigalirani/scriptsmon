@@ -1,11 +1,13 @@
 // src/index.ts
 function start() {
-  alert("start");
+  console.log("start");
+  debugger;
   const sendButton = document.getElementById("sendMessage");
   const messageDiv = document.getElementById("message");
   if (sendButton == null || messageDiv == null)
     throw "sendButton or messageDiv not found";
   sendButton.addEventListener("click", () => {
+    messageDiv.insertAdjacentHTML("beforeend", `<li> clicked!!!@!@</li>`);
     postMessage({
       command: "buttonClick",
       text: "Hello from webview!"

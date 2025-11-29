@@ -269,7 +269,7 @@ function getWebviewContent(context, webview) {
   const base = webview.asWebviewUri(
     vscode.Uri.joinPath(context.extensionUri, "client", "resources")
   ).toString() + "/";
-  html = html.replace("./", base);
+  html = html.replaceAll("./", base);
   return html;
 }
 function createWebviewPanel(context) {
