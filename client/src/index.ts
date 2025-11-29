@@ -1,3 +1,4 @@
+const vscode = acquireVsCodeApi();
 
 function start(){
   console.log('start')
@@ -9,7 +10,7 @@ function start(){
 
   sendButton.addEventListener('click', () => {
      messageDiv.insertAdjacentHTML("beforeend", `<li> clicked!!!@!@</li>`);
-      postMessage({
+    vscode.postMessage({
           command: 'buttonClick',
           text: 'Hello from webview!'
       });

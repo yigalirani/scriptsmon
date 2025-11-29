@@ -1,4 +1,5 @@
 // src/index.ts
+var vscode = acquireVsCodeApi();
 function start() {
   console.log("start");
   debugger;
@@ -8,7 +9,7 @@ function start() {
     throw "sendButton or messageDiv not found";
   sendButton.addEventListener("click", () => {
     messageDiv.insertAdjacentHTML("beforeend", `<li> clicked!!!@!@</li>`);
-    postMessage({
+    vscode.postMessage({
       command: "buttonClick",
       text: "Hello from webview!"
     });
