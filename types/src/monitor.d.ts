@@ -18,8 +18,10 @@ export interface Runner extends Watcher {
     state: State;
     start_time: number | undefined;
     last_duration: number | undefined;
+    cur_reason: string;
+    last_reason: string;
     child: ChildProcessWithoutNullStreams | undefined;
-    start: () => undefined;
+    start: () => void;
 }
 export interface Folder {
     type: 'folder';

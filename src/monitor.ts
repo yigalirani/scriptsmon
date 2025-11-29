@@ -31,8 +31,10 @@ export interface Runner extends Watcher{//adds some runtime
   state        : State
   start_time   : number|undefined
   last_duration: number|undefined
+  cur_reason   : string
+  last_reason  : string
   child        : ChildProcessWithoutNullStreams|undefined
-  start        : ()=>undefined
+  start        : ()=>void
 }
 
 export interface Folder{
@@ -112,6 +114,10 @@ function normalize_watch(a:string[]|undefined){
     return []
   return a
 }
+function make_start(runner:Runner){
+  return function(){
+  }
+}
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
   const autorun=normalize_watch(watchers.autorun)
@@ -131,8 +137,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
       console.warn(`missing script ${name}`)
       continue
     }
-    const runner:Runner=function(){
-      return {
+    const runner=function(){
+      const ans:Runner= {
         type:'runner',
         ...watcher, //i like this
         name,
@@ -144,8 +150,13 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         child:undefined,
         start_time:0,
         last_duration:undefined,
-        start:()=>undefined
+        start:()=>undefined,
+        cur_reason:'',
+        last_reason:''
+
       }
+      ans.start=make_start(ans)
+      return ans
     }()
     ans.push(runner)
   }

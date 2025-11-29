@@ -174,6 +174,10 @@ function normalize_watch(a) {
     return [];
   return a;
 }
+function make_start(runner) {
+  return function() {
+  };
+}
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   const $watch = normalize_watch(watchers.$watch);
   const autorun = normalize_watch(watchers.autorun);
@@ -193,7 +197,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
       continue;
     }
     const runner = (function() {
-      return {
+      const ans2 = {
         type: "runner",
         ...watcher,
         //i like this
@@ -206,8 +210,12 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         child: void 0,
         start_time: 0,
         last_duration: void 0,
-        start: () => void 0
+        start: () => void 0,
+        cur_reason: "",
+        last_reason: ""
       };
+      ans2.start = make_start(ans2);
+      return ans2;
     })();
     ans.push(runner);
   }
