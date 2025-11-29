@@ -231,8 +231,8 @@ var MonitorProvider = class {
   updateIcons() {
     const isDark = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark || vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast;
     const themeSuffix = isDark ? "dark" : "light";
-    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, "resources", "icons", `folder-${themeSuffix}.svg`);
-    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, "resources", "icons", `file-${themeSuffix}.svg`);
+    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, "client", "resources", "icons", `folder-${themeSuffix}.svg`);
+    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, "client", "resources", "icons", `file-${themeSuffix}.svg`);
   }
   getTreeItem(element) {
     const ans = { label: element.name };
@@ -264,16 +264,12 @@ var MonitorProvider = class {
   }
 };
 function getWebviewContent(context, webview) {
-  const htmlPath = path2.join(context.extensionPath, "resources", "webview.html");
+  const htmlPath = path2.join(context.extensionPath, "client", "resources", "index.html");
   let html = fs.readFileSync(htmlPath, "utf-8");
-  const cssUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(context.extensionUri, "resources", "webview.css")
-  );
-  const jsUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(context.extensionUri, "resources", "webview.js")
-  );
-  html = html.replace("{{cssUri}}", cssUri.toString());
-  html = html.replace("{{jsUri}}", jsUri.toString());
+  const base = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, "client", "resources")
+  ).toString() + "/";
+  html = html.replace("./", base);
   return html;
 }
 function createWebviewPanel(context) {

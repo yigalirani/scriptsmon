@@ -34,8 +34,8 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
                    vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast
     const themeSuffix = isDark ? 'dark' : 'light'
     
-    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'resources', 'icons', `folder-${themeSuffix}.svg`)
-    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'resources', 'icons', `file-${themeSuffix}.svg`)
+    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'client','resources', 'icons', `folder-${themeSuffix}.svg`)
+    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'client','resources', 'icons', `file-${themeSuffix}.svg`)
   }
 
   getTreeItem(element: MonitorNode): vscode.TreeItem {
@@ -68,20 +68,18 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
 }
 
 function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Webview): string {
-  const htmlPath = path.join(context.extensionPath, 'resources', 'webview.html');
+  const htmlPath = path.join(context.extensionPath, 'client','resources', 'index.html');
   let html = fs.readFileSync(htmlPath, 'utf-8');
   
   // Get URIs for CSS and JS files
-  const cssUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(context.extensionUri, 'resources', 'webview.css')
-  );
-  const jsUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(context.extensionUri, 'resources', 'webview.js')
-  );
+  const base = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri,'client','resources')
+  ).toString()+'/'
+
   
   // Replace placeholders with actual URIs
-  html = html.replace('{{cssUri}}', cssUri.toString());
-  html = html.replace('{{jsUri}}', jsUri.toString());
+  html = html.replace('./', base);
+
   
   return html;
 }

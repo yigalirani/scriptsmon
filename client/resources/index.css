@@ -14,7 +14,7 @@ h1 {
     margin: 0 auto;
 }
 button {
-    background-color: var(--vscode-button-background);
+    background-color: red;
     color: var(--vscode-button-foreground);
     border: none;
     padding: 8px 16px;
