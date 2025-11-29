@@ -2,7 +2,6 @@
 var vscode = acquireVsCodeApi();
 function start() {
   console.log("start");
-  debugger;
   const sendButton = document.getElementById("sendMessage");
   const messageDiv = document.getElementById("message");
   if (sendButton == null || messageDiv == null)

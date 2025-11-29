@@ -1,8 +1,13 @@
-const vscode = acquireVsCodeApi();
+interface VSCodeApi {
+  postMessage(message: unknown): void;
+  getState(): unknown;
+  setState(state: unknown): void;
+}
 
+declare function acquireVsCodeApi(): VSCodeApi;
+const vscode = acquireVsCodeApi();
 function start(){
   console.log('start')
-  debugger
   const sendButton = document.getElementById('sendMessage');
   const messageDiv = document.getElementById('message');
   if (sendButton==null||messageDiv==null)
