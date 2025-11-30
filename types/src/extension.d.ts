@@ -10,15 +10,20 @@ export interface RunnerReport {
     runners: RunnerBase[];
 }
 export type WebviewMessage = WebviewMessageSimple | RunnerReport;
+declare class IconPaths {
+    context: vscode.ExtensionContext;
+    changed: vscode.EventEmitter<undefined>;
+    folderIconPath: vscode.Uri | undefined;
+    fileIconPath: vscode.Uri | undefined;
+    constructor(context: vscode.ExtensionContext, changed: vscode.EventEmitter<undefined>);
+    calc_paths(): void;
+}
 export declare class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
     root: Folder;
-    private folderIconPath;
-    private fileIconPath;
-    private context;
-    private _onDidChangeTreeData;
-    readonly onDidChangeTreeData: vscode.Event<MonitorNode | undefined | null | void>;
+    paths: IconPaths;
+    changed: vscode.EventEmitter<undefined>;
+    onDidChangeTreeData: vscode.Event<undefined>;
     constructor(root: Folder, context: vscode.ExtensionContext);
-    private updateIcons;
     getTreeItem(element: MonitorNode): vscode.TreeItem;
     getChildren(element?: MonitorNode): Thenable<MonitorNode[]>;
 }

@@ -29,35 +29,41 @@ function make_runner_report(root:Folder):RunnerReport{
   f(root)
   return {runners,command: "RunnerReport"}
 }
+    function calc_icons_paths(){
 
+    }
 
-export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
-  root: Folder
-  private folderIconPath!: vscode.Uri
-  private fileIconPath!: vscode.Uri
-  private context: vscode.ExtensionContext
-  private _onDidChangeTreeData: vscode.EventEmitter<MonitorNode | undefined | null | void> = new vscode.EventEmitter<MonitorNode | undefined | null | void>();
-  readonly onDidChangeTreeData: vscode.Event<MonitorNode | undefined | null | void> = this._onDidChangeTreeData.event;
-  
-  constructor( root: Folder, context: vscode.ExtensionContext) {
-    this.root=root
-    this.context=context
-    this.updateIcons()
-    
-    // Listen for theme changes
+class IconPaths{
+  folderIconPath:vscode.Uri|undefined
+  fileIconPath:vscode.Uri|undefined
+  constructor(
+    public context: vscode.ExtensionContext,
+    public changed:vscode.EventEmitter<undefined>
+  ){
+    this.calc_paths()
     vscode.window.onDidChangeActiveColorTheme(() => {
-      this.updateIcons()
-      this._onDidChangeTreeData.fire()
+      this.calc_paths()
+      this.changed.fire(undefined)
     })
   }
-  
-  private updateIcons() {
+  calc_paths(){
     const isDark = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark || 
-                   vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast
+                  vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast
     const themeSuffix = isDark ? 'dark' : 'light'
-    
-    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'client','resources', 'icons', `folder-${themeSuffix}.svg`)
-    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'client','resources', 'icons', `file-${themeSuffix}.svg`)
+    this.folderIconPath=vscode.Uri.joinPath(this.context.extensionUri, 'client','resources', 'icons', `folder-${themeSuffix}.svg`)
+    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, 'client','resources', 'icons', `file-${themeSuffix}.svg`)    
+  }
+}
+
+export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
+  root
+  paths
+  changed = new vscode.EventEmitter<undefined>();
+  onDidChangeTreeData = this.changed.event;  
+
+  constructor( root: Folder, context: vscode.ExtensionContext) {
+    this.root=root
+    this.paths=new IconPaths(context,this.changed)
   }
 
   getTreeItem(element: MonitorNode): vscode.TreeItem {
@@ -65,12 +71,12 @@ export class MonitorProvider implements vscode.TreeDataProvider<MonitorNode> {
     if (element.type==='folder')
       return {...ans,
         collapsibleState:2,
-        iconPath:this.folderIconPath,
+        iconPath:this.paths.folderIconPath,
         description:element.full_pathname
       }
     return {...ans,
       collapsibleState:0,
-      iconPath:this.fileIconPath,
+      iconPath:this.paths.fileIconPath,
       description:element.script,
       contextValue:'runner'
     }

@@ -327,27 +327,33 @@ function make_runner_report(root) {
   f(root);
   return { runners, command: "RunnerReport" };
 }
-var MonitorProvider = class {
-  root;
-  folderIconPath;
-  fileIconPath;
-  context;
-  _onDidChangeTreeData = new vscode.EventEmitter();
-  onDidChangeTreeData = this._onDidChangeTreeData.event;
-  constructor(root, context) {
-    this.root = root;
+var IconPaths = class {
+  constructor(context, changed) {
     this.context = context;
-    this.updateIcons();
+    this.changed = changed;
+    this.calc_paths();
     vscode.window.onDidChangeActiveColorTheme(() => {
-      this.updateIcons();
-      this._onDidChangeTreeData.fire();
+      this.calc_paths();
+      this.changed.fire(void 0);
     });
   }
-  updateIcons() {
+  folderIconPath;
+  fileIconPath;
+  calc_paths() {
     const isDark = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark || vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast;
     const themeSuffix = isDark ? "dark" : "light";
     this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, "client", "resources", "icons", `folder-${themeSuffix}.svg`);
     this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, "client", "resources", "icons", `file-${themeSuffix}.svg`);
+  }
+};
+var MonitorProvider = class {
+  root;
+  paths;
+  changed = new vscode.EventEmitter();
+  onDidChangeTreeData = this.changed.event;
+  constructor(root, context) {
+    this.root = root;
+    this.paths = new IconPaths(context, this.changed);
   }
   getTreeItem(element) {
     const ans = { label: element.name };
@@ -355,13 +361,13 @@ var MonitorProvider = class {
       return {
         ...ans,
         collapsibleState: 2,
-        iconPath: this.folderIconPath,
+        iconPath: this.paths.folderIconPath,
         description: element.full_pathname
       };
     return {
       ...ans,
       collapsibleState: 0,
-      iconPath: this.fileIconPath,
+      iconPath: this.paths.fileIconPath,
       description: element.script,
       contextValue: "runner"
     };
