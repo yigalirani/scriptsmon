@@ -207,6 +207,8 @@ function run_runner({
     });
     if (child === null)
       return;
+    child.stdout.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
+    child.stderr.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
     child.on("spawn", () => {
       runner.start_time = Date.now();
       runner.state = "running";
@@ -283,7 +285,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         reason: "",
         last_reason: "",
         last_err: void 0,
-        abort_controller: new AbortController()
+        abort_controller: new AbortController(),
+        output: []
       };
       ans2.start = make_start(ans2);
       return ans2;

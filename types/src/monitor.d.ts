@@ -9,6 +9,11 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     autorun?: string[];
 };
 type State = "ready" | "done" | "crashed" | "running" | "failed" | "spawning" | "stopped";
+type StrType = 'stderr' | 'stdout';
+interface Mystring {
+    type: StrType;
+    data: string;
+}
 export interface RunnerBase extends Watcher {
     type: 'runner';
     name: string;
@@ -22,6 +27,7 @@ export interface RunnerBase extends Watcher {
     reason: string;
     last_reason: string;
     last_err: Error | undefined;
+    output: Mystring[];
 }
 export declare const runner_base_keys: (keyof RunnerBase)[];
 export interface Runner extends RunnerBase {

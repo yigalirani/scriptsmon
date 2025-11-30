@@ -27,6 +27,11 @@ type State="ready"|"done"|"crashed"|"running"|"failed"|"spawning"|"stopped"
 function is_ready_to_start(state:State){
   return state!=="running"&&state!=="spawning"
 }
+type StrType='stderr'|'stdout'
+interface Mystring{
+  type:StrType 
+  data:string
+}
 export interface RunnerBase extends Watcher{//adds some runtime
   type           : 'runner'
   name           : string
@@ -41,6 +46,8 @@ export interface RunnerBase extends Watcher{//adds some runtime
   reason          : string
   last_reason     : string
   last_err        : Error|undefined
+  output          : Mystring[] 
+
 }
 export const runner_base_keys:(keyof RunnerBase)[]=[
   "watch",
@@ -57,7 +64,8 @@ export const runner_base_keys:(keyof RunnerBase)[]=[
   "start_time",
   "reason",  
   "last_reason",
-  "last_err"
+  "last_err",
+  "output"
 ]
 
 export interface Runner extends RunnerBase{
@@ -162,6 +170,8 @@ function run_runner({ //this is not async function on purpuse
     });
     if (child===null)
       return
+    child.stdout.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stdout'}))
+    child.stderr.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stdout'}))
     child.on('spawn',()=>{
       runner.start_time=Date.now()
       runner.state='running'
@@ -242,7 +252,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         reason:'',
         last_reason:'',
         last_err:undefined,
-        abort_controller:new AbortController()
+        abort_controller:new AbortController(),
+        output:[]
       }
       ans.start=make_start(ans)
       return ans

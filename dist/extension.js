@@ -95,7 +95,8 @@ var runner_base_keys = [
   "start_time",
   "reason",
   "last_reason",
-  "last_err"
+  "last_err",
+  "output"
 ];
 function is_valid_watch(a) {
   if (a == null)
@@ -179,6 +180,8 @@ function run_runner({
     });
     if (child === null)
       return;
+    child.stdout.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
+    child.stderr.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
     child.on("spawn", () => {
       runner.start_time = Date.now();
       runner.state = "running";
@@ -255,7 +258,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         reason: "",
         last_reason: "",
         last_err: void 0,
-        abort_controller: new AbortController()
+        abort_controller: new AbortController(),
+        output: []
       };
       ans2.start = make_start(ans2);
       return ans2;
@@ -437,7 +441,7 @@ async function activate(context) {
     outputChannel.append(JSON.stringify(event, null, 2));
   });
   const { workspaceFolders: _workspaceFolders } = vscode.workspace;
-  const folders = ["c:\\yigal\\million_try3"];
+  const folders = ["c:\\yigal\\scriptsmon"];
   const root = await read_package_json(folders);
   const treeView = vscode.window.createTreeView("Scriptsmon.tree", {
     treeDataProvider: new MonitorProvider(root, context)
@@ -457,22 +461,12 @@ async function activate(context) {
     outputChannel.append("start");
   });
   context.subscriptions.push(disposable);
-  const playDisposable = vscode.commands.registerCommand("Scriptsmon.runner.play", (runner) => {
+  const playDisposable = vscode.commands.registerCommand("Scriptsmon.runner.play", async (runner) => {
     if (!runner || runner.type !== "runner") {
       vscode.window.showErrorMessage("Invalid runner");
       return;
     }
-    const terminalName = `${runner.full_pathname} ${runner.name}`;
-    let terminal = vscode.window.terminals.find((t) => t.name === terminalName);
-    if (!terminal) {
-      terminal = vscode.window.createTerminal({
-        name: terminalName,
-        cwd: runner.full_pathname
-      });
-    }
-    terminal.show();
-    terminal.sendText(`npm run ${runner.name}`);
-    outputChannel.appendLine(`Running script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
+    await runner.start("user");
   });
   context.subscriptions.push(playDisposable);
   const debugDisposable = vscode.commands.registerCommand("Scriptsmon.runner.debug", (runner) => {

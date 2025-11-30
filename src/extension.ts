@@ -164,7 +164,8 @@ export async function activate(context: vscode.ExtensionContext) {
   })
   const {workspaceFolders: _workspaceFolders}= vscode.workspace
   //const folders=(workspaceFolders||[]).map(x=>x.uri.fsPath)
-  const folders=["c:\\yigal\\million_try3"]
+  //const folders=["c:\\yigal\\million_try3"]
+  const folders=["c:\\yigal\\scriptsmon"]
   const root=await  read_package_json(folders)
   const treeView=vscode.window.createTreeView('Scriptsmon.tree', {
     treeDataProvider: new MonitorProvider(root, context)
@@ -187,27 +188,13 @@ export async function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(disposable);
 
-  const playDisposable = vscode.commands.registerCommand('Scriptsmon.runner.play', (runner: Runner) => {
+  const playDisposable = vscode.commands.registerCommand('Scriptsmon.runner.play', async (runner: Runner) => {
     if (!runner || runner.type !== 'runner') {
       vscode.window.showErrorMessage('Invalid runner');
       return;
     }
+    await runner.start('user')
 
-    const terminalName = `${runner.full_pathname} ${runner.name}`;
-
-    // Reuse existing terminal for this runner if it exists, otherwise create a new one
-    let terminal = vscode.window.terminals.find(t => t.name === terminalName);
-    if (!terminal) {
-      terminal = vscode.window.createTerminal({
-        name: terminalName,
-        cwd: runner.full_pathname
-      });
-    }
-
-    terminal.show();
-    terminal.sendText(`npm run ${runner.name}`);
-
-    outputChannel.appendLine(`Running script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
   });
   context.subscriptions.push(playDisposable);
 
