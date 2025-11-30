@@ -47,6 +47,7 @@ export interface RunnerBase extends Watcher{//adds some runtime
   last_reason     : string
   last_err        : Error|undefined
   output          : Mystring[] 
+  id              : string//unique aacross runners
 
 }
 export const runner_base_keys:(keyof RunnerBase)[]=[
@@ -65,7 +66,8 @@ export const runner_base_keys:(keyof RunnerBase)[]=[
   "reason",  
   "last_reason",
   "last_err",
-  "output"
+  "output",
+  "id"
 ]
 
 export interface Runner extends RunnerBase{
@@ -235,12 +237,13 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
       continue
     }
     const runner=function(){
+      const full_pathname=path.dirname(pkgPath)
       const ans:Runner= {
         type:'runner',
         ...watcher, //i like this
         name,
         script,
-        full_pathname:path.dirname(pkgPath),
+        full_pathname,
         watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)],
         autorun:autorun.includes(name),
         state:'ready',
@@ -253,7 +256,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         last_reason:'',
         last_err:undefined,
         abort_controller:new AbortController(),
-        output:[]
+        output:[],
+        id:`${full_pathname} ${name}`
       }
       ans.start=make_start(ans)
       return ans

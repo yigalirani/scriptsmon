@@ -28,6 +28,7 @@ export interface RunnerBase extends Watcher {
     last_reason: string;
     last_err: Error | undefined;
     output: Mystring[];
+    id: string;
 }
 export declare const runner_base_keys: (keyof RunnerBase)[];
 export interface Runner extends RunnerBase {

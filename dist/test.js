@@ -267,13 +267,14 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
       continue;
     }
     const runner = (function() {
+      const full_pathname = path.dirname(pkgPath);
       const ans2 = {
         type: "runner",
         ...watcher,
         //i like this
         name,
         script,
-        full_pathname: path.dirname(pkgPath),
+        full_pathname,
         watch: [...normalize_watch($watch), ...normalize_watch(watcher.watch)],
         autorun: autorun.includes(name),
         state: "ready",
@@ -286,7 +287,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         last_reason: "",
         last_err: void 0,
         abort_controller: new AbortController(),
-        output: []
+        output: [],
+        id: `${full_pathname} ${name}`
       };
       ans2.start = make_start(ans2);
       return ans2;
