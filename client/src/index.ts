@@ -12,7 +12,7 @@ function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
     return ans as HTMLElement //todo check that it is HTMLElement
   const template = document.createElement("template")
   template.innerHTML = `
-<div class="term_panel" id="${id} style={display='block'};">
+<div class="term_panel" id="${id}" style={display='none'};">
   <table class=stats>
   </table>
   <div class=term>
@@ -123,6 +123,14 @@ function start(){
             //append(json)
             break
           }
+          case 'set_selected':
+            update_child_html(document.body,'#selected', message.selected)
+            for (const panel of document.querySelectorAll('.term_panel')){
+              if (!(panel instanceof HTMLElement))
+                continue
+              panel.style.display=(panel.id===message.selected)?'block':'none'
+            }
+            break
           case 'updateContent':
             append(message.text||'<no message>')
             break;

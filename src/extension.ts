@@ -15,7 +15,14 @@ export interface RunnerReport{
    command: "RunnerReport";
    runners:RunnerBase[]
 }
-export type WebviewMessage=WebviewMessageSimple|RunnerReport
+export interface SetSelected{
+   command: "set_selected";
+   selected:string
+}
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected
+function post_message(view:vscode.Webview,msg:WebviewMessage){
+  view.postMessage(msg)
+}
 function make_runner_report(root:Folder):RunnerReport{
   const runners:RunnerBase[]=[]
   function f(folder:Folder){
@@ -113,7 +120,6 @@ function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Web
   
   return html;
 }
-
 function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscode.WebviewPanel {
   let counter=0
 
@@ -128,7 +134,7 @@ function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscod
   );
   function send_report(root:Folder){
     const report=make_runner_report(root)
-    panel.webview.postMessage(report)
+    post_message(panel.webview,report)
   }  
   // Load content from static file
   panel.webview.html = getWebviewContent(context, panel.webview);
@@ -146,7 +152,7 @@ function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscod
           counter++
           vscode.window.showInformationMessage(`Received: ${message.text ?? ''}`);
           // Send message back to webview
-          panel.webview.postMessage({
+          post_message(panel.webview,{
             command: 'updateContent',
             text: `Extension received: ${message.text ?? ''},extension counter=${counter}`
           });
@@ -175,11 +181,13 @@ export async function activate(context: vscode.ExtensionContext) {
     treeDataProvider: new MonitorProvider(root, context)
   })
   context.subscriptions.push(treeView)
-
+  const webview_panel = createWebviewPanel(context,root);
+  context.subscriptions.push(webview_panel);
   const focusDisposable=treeView.onDidChangeSelection((event)=>{
     const selected=event.selection?.[0]
     if (!selected || selected.type!=='runner')
       return
+    post_message(webview_panel.webview,{command:'set_selected',selected:selected.id})
     const terminalName=`${selected.full_pathname} ${selected.name}`
     const terminal=vscode.window.terminals.find(t=>t.name===terminalName)
     if (terminal)
@@ -225,11 +233,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(debugDisposable);
 
-  const webviewDisposable = vscode.commands.registerCommand('Scriptsmon.webview.open', () => {
-    const panel = createWebviewPanel(context,root);
-    context.subscriptions.push(panel);
-  });
-  context.subscriptions.push(webviewDisposable);
+
 }
 
 // this method is called when your extension is deactivated

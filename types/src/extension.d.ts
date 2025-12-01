@@ -10,7 +10,11 @@ export interface RunnerReport {
     command: "RunnerReport";
     runners: RunnerBase[];
 }
-export type WebviewMessage = WebviewMessageSimple | RunnerReport;
+export interface SetSelected {
+    command: "set_selected";
+    selected: string;
+}
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected;
 declare class IconPaths {
     context: vscode.ExtensionContext;
     changed: vscode.EventEmitter<undefined>;

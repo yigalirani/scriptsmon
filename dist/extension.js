@@ -321,6 +321,9 @@ async function read_package_json(full_pathnames) {
 
 // src/extension.ts
 import * as vscode from "vscode";
+function post_message(view, msg) {
+  view.postMessage(msg);
+}
 function make_runner_report(root) {
   const runners = [];
   function f(folder) {
@@ -415,7 +418,7 @@ function createWebviewPanel(context, root) {
   );
   function send_report(root2) {
     const report = make_runner_report(root2);
-    panel.webview.postMessage(report);
+    post_message(panel.webview, report);
   }
   panel.webview.html = getWebviewContent(context, panel.webview);
   setInterval(() => {
@@ -430,7 +433,7 @@ function createWebviewPanel(context, root) {
         case "buttonClick":
           counter++;
           vscode.window.showInformationMessage(`Received: ${message.text ?? ""}`);
-          panel.webview.postMessage({
+          post_message(panel.webview, {
             command: "updateContent",
             text: `Extension received: ${message.text ?? ""},extension counter=${counter}`
           });
@@ -455,10 +458,13 @@ async function activate(context) {
     treeDataProvider: new MonitorProvider(root, context)
   });
   context.subscriptions.push(treeView);
+  const webview_panel = createWebviewPanel(context, root);
+  context.subscriptions.push(webview_panel);
   const focusDisposable = treeView.onDidChangeSelection((event) => {
     const selected = event.selection?.[0];
     if (!selected || selected.type !== "runner")
       return;
+    post_message(webview_panel.webview, { command: "set_selected", selected: selected.id });
     const terminalName = `${selected.full_pathname} ${selected.name}`;
     const terminal = vscode.window.terminals.find((t) => t.name === terminalName);
     if (terminal)
@@ -495,11 +501,6 @@ async function activate(context) {
     outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
   });
   context.subscriptions.push(debugDisposable);
-  const webviewDisposable = vscode.commands.registerCommand("Scriptsmon.webview.open", () => {
-    const panel = createWebviewPanel(context, root);
-    context.subscriptions.push(panel);
-  });
-  context.subscriptions.push(webviewDisposable);
 }
 function deactivate() {
 }
