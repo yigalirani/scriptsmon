@@ -183,8 +183,9 @@ function create_terminal_element(parent, id) {
     return ans;
   const template = document.createElement("template");
   template.innerHTML = `
-<div class="term_panel" id="${id}" style={display='none'};">
+<div class="term_panel" id="${id}" style="display: none;">
   <table class=stats>
+    <tr><td></td></tr>
   </table>
   <div class=term>
   </div>
@@ -206,7 +207,7 @@ function update_child_html(el, selector, html) {
   child.innerHTML = html;
 }
 function append(txt, el = null) {
-  if (el == null)
+  if (el == null || txt === "")
     el = document.getElementById("terminal");
   if (el == null)
     return;
@@ -215,7 +216,7 @@ function append(txt, el = null) {
   el.scrollTop = el.scrollHeight;
 }
 function calc_stats_html(new_runner) {
-  return Object.entries(new_runner).map(([k, v]) => `<tr>
+  return Object.entries(new_runner).filter(([k, v]) => k !== "output").map(([k, v]) => `<tr>
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join("\n");
 }
@@ -227,14 +228,18 @@ var Terminal = class {
     this.parent = parent;
     this.runner = runner;
     this.el = create_terminal_element(parent, runner.id);
+    this.update(runner, true);
   }
   el;
-  update(new_runner) {
+  update(new_runner, force = false) {
     const term = query_selector(this.el, ".term");
     const new_lines = calc_new_lines(new_runner);
-    append(new_lines, term);
+    if (new_lines !== "")
+      append(new_lines, term);
+    if (!force && JSON.stringify(this.runner) === JSON.stringify(new_runner))
+      return;
     const stats = calc_stats_html(new_runner);
-    update_child_html(this.el, ".stats", stats);
+    update_child_html(this.el, ".stats>tbody", stats);
     this.runner = new_runner;
   }
 };
@@ -285,7 +290,7 @@ function start() {
         for (const panel of document.querySelectorAll(".term_panel")) {
           if (!(panel instanceof HTMLElement))
             continue;
-          panel.style.display = panel.id === message.selected ? "block" : "none";
+          panel.style.display = panel.id === message.selected ? "flex" : "none";
         }
         break;
       case "updateContent":

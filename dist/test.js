@@ -203,7 +203,8 @@ function run_runner({
     const child = spawn(script, {
       signal,
       shell: true,
-      env: { ...process.env, FORCE_COLOR: "1", cwd: full_pathname }
+      cwd: full_pathname,
+      env: { ...process.env, FORCE_COLOR: "1" }
     });
     if (child === null)
       return;
