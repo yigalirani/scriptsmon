@@ -1,5 +1,6 @@
 import { type Runner, type Folder, type RunnerBase } from './monitor.js';
 import * as vscode from 'vscode';
+export { type RunnerBase };
 type MonitorNode = Runner | Folder;
 export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";
@@ -29,4 +30,3 @@ export declare class MonitorProvider implements vscode.TreeDataProvider<MonitorN
 }
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;
-export {};

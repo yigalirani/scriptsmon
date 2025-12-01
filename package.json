@@ -15,6 +15,7 @@
         "ls" : "ls -la",
         "vscode:prepublish" : "npm run compile"
     },
+    "workspaces":["client"],
     "scriptsmon" : {
         "$watch" : [
             "src",

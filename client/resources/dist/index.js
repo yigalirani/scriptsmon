@@ -8,6 +8,7 @@ function append(txt) {
 `);
   term_div.scrollTop = term_div.scrollHeight;
 }
+
 function start() {
   console.log("start");
   const sendButton = document.getElementById("sendMessage");
@@ -35,6 +36,7 @@ function start() {
     switch (message.command) {
       case "RunnerReport": {
         const json = JSON.stringify(message.runners, null, 2);
+        void navigator.clipboard.writeText(text);
         append(json);
         break;
       }
