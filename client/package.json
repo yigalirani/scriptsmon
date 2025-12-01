@@ -15,11 +15,11 @@
         ]
     },
     "devDependencies": {
+        "@types/ansi-html": "^0.0.0",
         "@types/chrome": "^0.0.277",
-        "@types/he": "^1.2.3",
-        "esbuild": "0.27.0"
+        "@types/he": "^1.2.3"
     },
     "dependencies": {
-        "@xterm/xterm": "^5.5.0"
+        "ansi-html": "^0.0.9"
     }
 }

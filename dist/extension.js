@@ -326,6 +326,7 @@ function make_runner_report(root) {
   function f(folder) {
     for (const runner of folder.runners) {
       const runner_base = pk(runner, ...runner_base_keys);
+      runner.output = [];
       runners.push(runner_base);
     }
     for (const subfolder of folder.folders) {
@@ -417,6 +418,9 @@ function createWebviewPanel(context, root) {
     panel.webview.postMessage(report);
   }
   panel.webview.html = getWebviewContent(context, panel.webview);
+  setInterval(() => {
+    send_report(root);
+  }, 100);
   panel.webview.onDidReceiveMessage(
     (message) => {
       switch (message.command) {

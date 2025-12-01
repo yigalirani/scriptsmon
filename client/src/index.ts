@@ -1,4 +1,4 @@
-
+import ansiHTML from 'ansi-html';
 interface VSCodeApi {
   postMessage(message: unknown): void;
   getState(): unknown;
@@ -48,7 +48,7 @@ function calc_stats_html(new_runner:RunnerBase){
     </tr>`).join('\n')
 }
 function calc_new_lines(new_runner:RunnerBase){
-  return new_runner.output.map((line)=>`<div class=${line.type}>${line.data}</div>`).join('\n')
+  return new_runner.output.map((line)=>`<div class=${line.type}>${ansiHTML(line.data)}</div>`).join('\n')
 }
 class Terminal{
   el:HTMLElement
@@ -57,7 +57,7 @@ class Terminal{
     public runner:RunnerBase,
   ){
     this.el=create_terminal_element(parent,runner.id)
-    this.update(runner)
+    //this.update(runner) fixed bug by commenting this out
   }
   update(new_runner:RunnerBase){
     const term=query_selector(this.el,'.term')
@@ -117,10 +117,10 @@ function start(){
       switch (message.command) {
           case 'RunnerReport':{
             for (const runner of message.runners)
-              terminals.get_terminal(runner)
-            const json=JSON.stringify(message.runners,null,2)
-            void navigator.clipboard.writeText(json);
-            append(json)
+              terminals.get_terminal(runner).update(runner)
+            //const json=JSON.stringify(message.runners,null,2)
+            //void navigator.clipboard.writeText(json);
+            //append(json)
             break
           }
           case 'updateContent':

@@ -21,6 +21,7 @@ function make_runner_report(root:Folder):RunnerReport{
   function f(folder:Folder){
     for (const runner of folder.runners){
       const runner_base:RunnerBase=pk(runner,...runner_base_keys)
+      runner.output=[]
       runners.push(runner_base)
     }
     for (const subfolder of folder.folders){
@@ -131,7 +132,9 @@ function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscod
   }  
   // Load content from static file
   panel.webview.html = getWebviewContent(context, panel.webview);
-  
+  setInterval(() => {
+    send_report(root)
+  }, 100);
   // Handle messages from the webview
   panel.webview.onDidReceiveMessage(
     (message: WebviewMessage) => {
