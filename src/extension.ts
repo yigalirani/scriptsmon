@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys} from './monitor.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
-export {type RunnerBase}
+export {type RunnerBase,runner_base_keys}
 type MonitorNode=Runner|Folder
 
 

@@ -238,6 +238,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
     }
     const runner=function(){
       const full_pathname=path.dirname(pkgPath)
+      const id=`${full_pathname} ${name}`.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
       const ans:Runner= {
         type:'runner',
         ...watcher, //i like this
@@ -257,7 +258,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         last_err:undefined,
         abort_controller:new AbortController(),
         output:[],
-        id:`${full_pathname} ${name}`
+        id
       }
       ans.start=make_start(ans)
       return ans
