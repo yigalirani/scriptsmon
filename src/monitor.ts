@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { spawn, IPty } from "@lydell/node-pty";
+import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 
 import {
   is_object,
@@ -168,6 +168,10 @@ function run_runner({ //this is not async function on purpuse
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
     const child = spawn(shell, shellArgs,  {
+      name: 'xterm-color',
+      useConpty:false,
+  cols: 80,
+  rows: 30,
       cwd:full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" },
 

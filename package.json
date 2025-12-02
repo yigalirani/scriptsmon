@@ -105,7 +105,7 @@
         "typescript-eslint": "8.46.3"
     },
     "dependencies": {
-        "@lydell/node-pty": "^1.1.0",
+        "@homebridge/node-pty-prebuilt-multiarch": "^0.13.1",
         "@yigal/base_types": "^1.5.0",
         "@yigal/watch_runner": "^2.0.0"
     }

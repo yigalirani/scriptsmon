@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 
 // src/monitor.ts
 import * as path from "node:path";
-import { spawn } from "@lydell/node-pty";
+import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
 
 // node_modules/@yigal/base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
@@ -175,6 +175,10 @@ function run_runner({
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
+      name: "xterm-color",
+      useConpty: false,
+      cols: 80,
+      rows: 30,
       cwd: full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" }
     });

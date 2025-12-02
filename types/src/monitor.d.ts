@@ -1,4 +1,4 @@
-import { IPty } from "@lydell/node-pty";
+import { IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 interface Watcher {
     watch?: string[];
     filter?: string;
