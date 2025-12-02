@@ -24,7 +24,7 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
 
-function make_runner_report(root:Folder):RunnerReport{
+function make_runner_report(root:object):RunnerReport{
   const runners:RunnerBase[]=[]
   function f(folder:Folder){
     for (const runner of folder.runners){
