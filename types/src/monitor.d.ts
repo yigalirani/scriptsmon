@@ -1,3 +1,4 @@
+import { IPty } from "@lydell/node-pty";
 interface Watcher {
     watch?: string[];
     filter?: string;
@@ -32,7 +33,7 @@ export interface RunnerBase extends Watcher {
 export declare const runner_base_keys: (keyof RunnerBase)[];
 export interface Runner extends RunnerBase {
     abort_controller: AbortController;
-    child: ChildProcessWithoutNullStreams | undefined;
+    child: IPty | undefined;
     start: (reason: string) => Promise<void>;
 }
 export interface Folder {

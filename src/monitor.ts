@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { spawn, IPty } from "node-pty";
+import { spawn, IPty } from "@lydell/node-pty";
 
 import {
   is_object,
@@ -73,7 +73,7 @@ export const runner_base_keys:(keyof RunnerBase)[]=[
 
 export interface Runner extends RunnerBase{
   abort_controller: AbortController
-  child           : ChildProcessWithoutNullStreams|undefined
+  child           : IPty|undefined
   start           : (reason:string)=>Promise<void>    
 }
 
@@ -166,7 +166,7 @@ function run_runner({ //this is not async function on purpuse
   void new Promise((resolve, _reject) => { 
     const {script,full_pathname}=runner
     runner.state='spawning'
-    const child = spawn(script, {
+    const child = spawn(script,[],  {
       signal,
       shell: true,
       cwd:full_pathname,

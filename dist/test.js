@@ -1,6 +1,6 @@
 // src/monitor.ts
 import * as path from "node:path";
-import { spawn } from "node-pty";
+import { spawn } from "@lydell/node-pty";
 
 // node_modules/@yigal/base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
@@ -200,7 +200,7 @@ function run_runner({
   void new Promise((resolve2, _reject) => {
     const { script, full_pathname } = runner;
     runner.state = "spawning";
-    const child = spawn(script, {
+    const child = spawn(script, [], {
       signal,
       shell: true,
       cwd: full_pathname,
