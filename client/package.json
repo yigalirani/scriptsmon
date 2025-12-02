@@ -20,6 +20,7 @@
         "@types/he": "^1.2.3"
     },
     "dependencies": {
+        "ansi_up": "^6.0.6",
         "ansi-html": "^0.0.9"
     }
 }

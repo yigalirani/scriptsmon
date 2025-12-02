@@ -201,10 +201,8 @@ function run_runner({
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
-      name: "xterm-color",
+      // name: 'xterm-color',
       useConpty: false,
-      cols: 80,
-      rows: 30,
       cwd: full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" }
     });
@@ -214,7 +212,8 @@ function run_runner({
     runner.state = "running";
     runner.reason = reason;
     const dataDisposable = child.onData((data) => {
-      runner.output.push({ data, type: "stdout" });
+      runner.output.push(data);
+      runner.output_time = Date.now();
     });
     const exitDisposable = child.onExit(({ exitCode }) => {
       dataDisposable.dispose();

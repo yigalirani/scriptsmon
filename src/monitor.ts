@@ -29,10 +29,10 @@ function is_ready_to_start(state:State){
   return state!=="running"&&state!=="spawning"
 }
 type StrType='stderr'|'stdout'
-interface Mystring{
+/*export interface Mystring{
   type:StrType 
   data:string
-}
+}*/
 export interface RunnerBase extends Watcher{//adds some runtime
   type           : 'runner'
   name           : string
@@ -47,8 +47,9 @@ export interface RunnerBase extends Watcher{//adds some runtime
   reason          : string
   last_reason     : string
   last_err        : Error|undefined
-  output          : Mystring[] 
+  output          : string[] 
   id              : string//unique aacross runners
+  output_time?    : number
 
 }
 export const runner_base_keys:(keyof RunnerBase)[]=[
@@ -168,10 +169,8 @@ function run_runner({ //this is not async function on purpuse
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
     const child = spawn(shell, shellArgs,  {
-      name: 'xterm-color',
+     // name: 'xterm-color',
       useConpty:false,
-  cols: 80,
-  rows: 30,
       cwd:full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" },
 
@@ -185,7 +184,8 @@ function run_runner({ //this is not async function on purpuse
     
     // Listen to data events (both stdout and stderr come through onData)
     const dataDisposable = child.onData((data: string) => {
-      runner.output.push({data, type: 'stdout'})
+      runner.output.push(data)
+      runner.output_time=Date.now()
     });
     
     // Listen to exit events

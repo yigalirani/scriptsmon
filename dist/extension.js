@@ -175,10 +175,8 @@ function run_runner({
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
-      name: "xterm-color",
+      // name: 'xterm-color',
       useConpty: false,
-      cols: 80,
-      rows: 30,
       cwd: full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" }
     });
@@ -188,7 +186,8 @@ function run_runner({
     runner.state = "running";
     runner.reason = reason;
     const dataDisposable = child.onData((data) => {
-      runner.output.push({ data, type: "stdout" });
+      runner.output.push(data);
+      runner.output_time = Date.now();
     });
     const exitDisposable = child.onExit(({ exitCode }) => {
       dataDisposable.dispose();
@@ -326,12 +325,42 @@ import * as vscode from "vscode";
 function post_message(view, msg) {
   view.postMessage(msg);
 }
+function concat_output(runner) {
+  const { output, output_time } = runner;
+  const joined = output.join("");
+  const splited = joined.split("\n\r");
+  if (splited.length === 1) {
+    if (Date.now() - (output_time || 0) > 200)
+      return {
+        to_send: [splited[0]],
+        new_output: []
+      };
+    return {
+      to_send: [],
+      new_output: [splited[0]]
+    };
+  }
+  if (splited.length === 2) {
+    return {
+      to_send: [splited[0] + "\n\r"],
+      new_output: [splited[1]]
+    };
+  }
+  throw new Error("unexpected length");
+}
 function make_runner_report(root) {
   const runners = [];
   function f(folder) {
     for (const runner of folder.runners) {
       const runner_base = pk(runner, ...runner_base_keys);
-      runner.output = [];
+      if (runner.output.length === 0)
+        continue;
+      const { new_output, to_send } = concat_output(runner);
+      runner.output = new_output;
+      runner_base.output = to_send;
+      if (to_send.length !== 0) {
+        console.log(`runner ${runner.name} ${JSON.stringify(to_send)}`);
+      }
       runners.push(runner_base);
     }
     for (const subfolder of folder.folders) {

@@ -1,6 +1,6 @@
-import { type Runner, type Folder, type RunnerBase, runner_base_keys } from './monitor.js';
+import { type Runner, type Folder, type RunnerBase, runner_base_keys, type Mystring } from './monitor.js';
 import * as vscode from 'vscode';
-export { type RunnerBase, runner_base_keys };
+export { type RunnerBase, runner_base_keys, type Mystring };
 type MonitorNode = Runner | Folder;
 export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";

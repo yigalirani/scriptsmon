@@ -1,10 +1,12 @@
 import ansiHTML from 'ansi-html';
+import { AnsiUp } from 'ansi_up'
+const ansi_up = new AnsiUp();
 interface VSCodeApi {
   postMessage(message: unknown): void;
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage,RunnerBase} from '../../src/extension.js'
+import {WebviewMessage,RunnerBase,type Mystring} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
@@ -48,8 +50,17 @@ function calc_stats_html(new_runner:RunnerBase){
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
+function convert_line(line:string){
+  //const ansi=ansiHTML(line.data)
+  const ans= ansi_up.ansi_to_html(line)
+  return ans
+  //return `<div class=${line}>${ansi}</div>`
+}
 function calc_new_lines(new_runner:RunnerBase){
-  return new_runner.output.map((line)=>`<div class=${line.type}>${ansiHTML(line.data)}</div>`).join('\n')
+  const output=new_runner.output.join('')
+  if (output==='')
+    return ''
+  return convert_line(output)
 }
 class Terminal{
   el:HTMLElement
