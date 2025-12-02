@@ -15,12 +15,10 @@
         ]
     },
     "devDependencies": {
-        "@types/ansi-html": "^0.0.0",
         "@types/chrome": "^0.0.277",
         "@types/he": "^1.2.3"
     },
     "dependencies": {
-        "ansi_up": "^6.0.6",
-        "ansi-html": "^0.0.9"
+        "@xterm/xterm": "^5.5.0"
     }
 }

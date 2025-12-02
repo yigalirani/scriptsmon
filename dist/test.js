@@ -123,7 +123,7 @@ async function sleep(ms) {
 
 // src/monitor.ts
 function is_ready_to_start(state) {
-  return state !== "running" && state !== "spawning";
+  return state !== "running";
 }
 function is_valid_watch(a) {
   if (a == null)
@@ -197,11 +197,12 @@ function run_runner({
 }) {
   void new Promise((resolve2, _reject) => {
     const { script, full_pathname } = runner;
-    runner.state = "spawning";
+    runner.state = "running";
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
       // name: 'xterm-color',
+      cols: 200,
       useConpty: false,
       cwd: full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" }
@@ -289,8 +290,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         reason: "",
         last_reason: "",
         last_err: void 0,
-        output: [],
-        id
+        id,
+        output: []
       };
       ans2.start = make_start(ans2);
       return ans2;

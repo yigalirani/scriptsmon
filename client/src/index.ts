@@ -1,13 +1,11 @@
-import ansiHTML from 'ansi-html';
-import { AnsiUp } from 'ansi_up'
-const ansi_up = new AnsiUp();
 interface VSCodeApi {
   postMessage(message: unknown): void;
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage,RunnerBase,type Mystring} from '../../src/extension.js'
+import {WebviewMessage,RunnerBase} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
+import { Terminal } from '@xterm/xterm';
 function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
   if (ans!=null)
@@ -50,47 +48,45 @@ function calc_stats_html(new_runner:RunnerBase){
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
-function convert_line(line:string){
-  //const ansi=ansiHTML(line.data)
-  const ans= ansi_up.ansi_to_html(line)
-  return ans
-  //return `<div class=${line}>${ansi}</div>`
-}
-function calc_new_lines(new_runner:RunnerBase){
+
+/*function calc_new_lines(new_runner:RunnerBase){
   const output=new_runner.output.join('')
   if (output==='')
     return ''
   return convert_line(output)
-}
-class Terminal{
+}*/
+class TerminalPanel{
   el:HTMLElement
+  term:Terminal
+  last_runner:RunnerBase|undefined=undefined
   constructor(
     public parent:HTMLElement,
-    public runner:RunnerBase,
+    id:string//used just for the id
   ){
-    this.el=create_terminal_element(parent,runner.id)
-    this.update(runner,true) //fixed bug by commenting this out or maybe not!!
+    this.el=create_terminal_element(parent,id)
+    this.term=new Terminal()
+    const term_container=query_selector(this.el,'.term')
+    this.term.open(term_container);
   }
-  update(new_runner:RunnerBase,force=false){
-    const term=query_selector(this.el,'.term')
-    const new_lines=calc_new_lines(new_runner)
-    if (new_lines!=='')
-      append(new_lines,term)
-    if (!force&&JSON.stringify(this.runner)===JSON.stringify(new_runner))
+  update(new_runner:RunnerBase){
+    //const term=query_selector(this.el,'.term')
+    for (const line of new_runner.output)
+      this.term.write(line)
+    if (this.last_runner!=null&&JSON.stringify(this.last_runner)===JSON.stringify(new_runner))
       return
     const stats=calc_stats_html(new_runner)
     update_child_html(this.el,'.stats>tbody',stats)
-    this.runner=new_runner//should we at all hold on to it
+    this.last_runner=new_runner//should we at all hold on to it
   }
 }
 class Terminals{
-  terminals:s2t<Terminal>={}
+  terminals:s2t<TerminalPanel>={}
   constructor(
     public parent:HTMLElement
   ){
   }
   get_terminal(runner:RunnerBase){
-    const ans=this.terminals[runner.id] ??= new Terminal(this.parent, runner)
+    const ans=this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner.id)
     return ans
   }
 }

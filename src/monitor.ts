@@ -24,9 +24,9 @@ export type Scriptsmon=  Record<string,Watcher|string[]>&
   $watch?:string[]
   autorun?:string[]
 }
-type State="ready"|"done"|"crashed"|"running"|"failed"|"spawning"|"stopped"
+type State="ready"|"done"|"crashed"|"running"|"failed"|"stopped"
 function is_ready_to_start(state:State){
-  return state!=="running"&&state!=="spawning"
+  return state!=="running"
 }
 type StrType='stderr'|'stdout'
 /*export interface Mystring{
@@ -47,7 +47,7 @@ export interface RunnerBase extends Watcher{//adds some runtime
   reason          : string
   last_reason     : string
   last_err        : Error|undefined
-  output          : string[] 
+  output          : string[]
   id              : string//unique aacross runners
   output_time?    : number
 
@@ -155,6 +155,7 @@ function normalize_watch(a:string[]|undefined){
     return []
   return a
 }
+
 function run_runner({ //this is not async function on purpuse
   runner,
   reason
@@ -164,12 +165,13 @@ function run_runner({ //this is not async function on purpuse
 }) {
   void new Promise((resolve, _reject) => { 
     const {script,full_pathname}=runner
-    runner.state='spawning'
+    runner.state='running'
     // Spawn a shell with the script as command
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
     const child = spawn(shell, shellArgs,  {
      // name: 'xterm-color',
+      cols:200,
       useConpty:false,
       cwd:full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" },
@@ -265,8 +267,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         reason:'',
         last_reason:'',
         last_err:undefined,
-        output:[],
-        id
+        id,
+        output:[]
       }
       ans.start=make_start(ans)
       return ans

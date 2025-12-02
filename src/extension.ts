@@ -1,9 +1,9 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys,type Mystring} from './monitor.js'
+import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys} from './monitor.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
-export {type RunnerBase,runner_base_keys,type Mystring}
+export {type RunnerBase,runner_base_keys}
 type MonitorNode=Runner|Folder
 
 
@@ -23,49 +23,23 @@ export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
-function concat_output(runner:Runner){
-  //const {new_output,to_send}
-  const {output,output_time}=runner  
-  const joined=output.join('')
-  const splited=joined.split('\n\r')
-  if (splited.length===1){
-    if (Date.now()-(output_time||0) >200)
-      return {
-        to_send:[splited[0]],
-        new_output:[]
-      }
-    return {
-      to_send:[],
-      new_output:[splited[0]]
-    }
-  }
-  if (splited.length===2){
-     return {
-        to_send:[splited[0]+'\n\r'],
-        new_output:[splited[1]]
-      }
-  }
-  throw new Error('unexpected length')
-}
+
 function make_runner_report(root:Folder):RunnerReport{
   const runners:RunnerBase[]=[]
   function f(folder:Folder){
     for (const runner of folder.runners){
       const runner_base:RunnerBase=pk(runner,...runner_base_keys)
-      if (runner.output.length===0)
-        continue
-      const {new_output,to_send}=concat_output(runner)
-      runner.output=new_output//note that creating new array
-      runner_base.output=to_send
-      if (to_send.length!==0){
-        console.log(`runner ${runner.name} ${JSON.stringify(to_send)}`)
+      if (runner.output.length!==0){
+        console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`)
+        runner.output=[]
       }
+    
       runners.push(runner_base)
     }
     for (const subfolder of folder.folders){
       f(subfolder)
     }
-  }
+  } 
   f(root)
   return {runners,command: "RunnerReport"}
 }

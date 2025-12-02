@@ -78,7 +78,7 @@ async function sleep(ms) {
 
 // src/monitor.ts
 function is_ready_to_start(state) {
-  return state !== "running" && state !== "spawning";
+  return state !== "running";
 }
 var runner_base_keys = [
   "watch",
@@ -171,11 +171,12 @@ function run_runner({
 }) {
   void new Promise((resolve2, _reject) => {
     const { script, full_pathname } = runner;
-    runner.state = "spawning";
+    runner.state = "running";
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
       // name: 'xterm-color',
+      cols: 200,
       useConpty: false,
       cwd: full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" }
@@ -263,8 +264,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         reason: "",
         last_reason: "",
         last_err: void 0,
-        output: [],
-        id
+        id,
+        output: []
       };
       ans2.start = make_start(ans2);
       return ans2;
@@ -325,41 +326,14 @@ import * as vscode from "vscode";
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-function concat_output(runner) {
-  const { output, output_time } = runner;
-  const joined = output.join("");
-  const splited = joined.split("\n\r");
-  if (splited.length === 1) {
-    if (Date.now() - (output_time || 0) > 200)
-      return {
-        to_send: [splited[0]],
-        new_output: []
-      };
-    return {
-      to_send: [],
-      new_output: [splited[0]]
-    };
-  }
-  if (splited.length === 2) {
-    return {
-      to_send: [splited[0] + "\n\r"],
-      new_output: [splited[1]]
-    };
-  }
-  throw new Error("unexpected length");
-}
 function make_runner_report(root) {
   const runners = [];
   function f(folder) {
     for (const runner of folder.runners) {
       const runner_base = pk(runner, ...runner_base_keys);
-      if (runner.output.length === 0)
-        continue;
-      const { new_output, to_send } = concat_output(runner);
-      runner.output = new_output;
-      runner_base.output = to_send;
-      if (to_send.length !== 0) {
-        console.log(`runner ${runner.name} ${JSON.stringify(to_send)}`);
+      if (runner.output.length !== 0) {
+        console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`);
+        runner.output = [];
       }
       runners.push(runner_base);
     }
