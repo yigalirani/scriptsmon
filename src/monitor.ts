@@ -1,5 +1,6 @@
 import * as path from "node:path";
-import { ChildProcessWithoutNullStreams,spawn } from "child_process";
+import { spawn, IPty } from "node-pty";
+
 import {
   is_object,
   s2t,
@@ -169,12 +170,13 @@ function run_runner({ //this is not async function on purpuse
       signal,
       shell: true,
       cwd:full_pathname,
-      env: { ...process.env, FORCE_COLOR: "1" }
+      env: { ...process.env, FORCE_COLOR: "3" },
+
     });
     if (child===null)
       return
     child.stdout.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stdout'}))
-    child.stderr.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stdout'}))
+    child.stderr.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stderr'}))
     child.on('spawn',()=>{
       runner.start_time=Date.now()
       runner.state='running'

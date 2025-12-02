@@ -1,4 +1,3 @@
-import { ChildProcessWithoutNullStreams } from "child_process";
 interface Watcher {
     watch?: string[];
     filter?: string;

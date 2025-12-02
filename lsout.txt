@@ -1,0 +1,25 @@
+
+> Scriptsmon@1.0.0 ls
+> ls -la  --color=always
+
+total 268
+drwxr-xr-x 1 yigal 197609      0 Dec  1 22:44 [0m[01;34m.[0m
+drwxr-xr-x 1 yigal 197609      0 Dec  1 00:35 [01;34m..[0m
+drwxr-xr-x 1 yigal 197609      0 Dec  1 14:38 [01;34m.git[0m
+-rw-r--r-- 1 yigal 197609     49 Nov 23 16:47 .gitignore
+drwxr-xr-x 1 yigal 197609      0 Nov 25 18:42 [01;34m.vscode[0m
+drwxr-xr-x 1 yigal 197609      0 Nov 25 15:45 [01;34mbin[0m
+drwxr-xr-x 1 yigal 197609      0 Dec  1 04:11 [01;34mclient[0m
+drwxr-xr-x 1 yigal 197609      0 Nov 28 19:05 [01;34mdist[0m
+-rw-r--r-- 1 yigal 197609   3063 Nov 28 18:24 eslint.config.mjs
+-rw-r--r-- 1 yigal 197609  39822 Dec  1 18:39 eslintout.txt
+drwxr-xr-x 1 yigal 197609      0 Nov 25 15:27 [01;34mgenerated[0m
+-rw-r--r-- 1 yigal 197609     49 Dec  1 22:44 lsout.txt
+drwxr-xr-x 1 yigal 197609      0 Dec  1 04:12 [01;34mnode_modules[0m
+-rw-r--r-- 1 yigal 197609 118560 Dec  1 04:17 package-lock.json
+-rw-r--r-- 1 yigal 197609   2959 Dec  1 22:43 package.json
+drwxr-xr-x 1 yigal 197609      0 Dec  1 14:21 [01;34msrc[0m
+-rw-r--r-- 1 yigal 197609     94 Dec  1 19:35 tsc.log
+-rw-r--r-- 1 yigal 197609   1074 Nov 28 23:41 tsconfig.json
+-rw-r--r-- 1 yigal 197609     53 Dec  1 22:38 tscout.txt
+drwxr-xr-x 1 yigal 197609      0 Nov 28 19:44 [01;34mtypes[0m

@@ -8,7 +8,7 @@ await esbuild.build({
   target: 'node22',
   minifySyntax:false,
   format: 'esm',
-  external:['vscode','node']
+  external:['vscode','node','node-pty']
 })
  
 

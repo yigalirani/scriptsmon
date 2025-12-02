@@ -1,6 +1,6 @@
 // src/monitor.ts
 import * as path from "node:path";
-import { spawn } from "child_process";
+import { spawn } from "node-pty";
 
 // node_modules/@yigal/base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
@@ -204,12 +204,12 @@ function run_runner({
       signal,
       shell: true,
       cwd: full_pathname,
-      env: { ...process.env, FORCE_COLOR: "1" }
+      env: { ...process.env, FORCE_COLOR: "3" }
     });
     if (child === null)
       return;
     child.stdout.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
-    child.stderr.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
+    child.stderr.on("data", (data) => runner.output.push({ data: String(data), type: "stderr" }));
     child.on("spawn", () => {
       runner.start_time = Date.now();
       runner.state = "running";

@@ -1,110 +1,112 @@
 {
-    "name" : "Scriptsmon",
-    "version" : "1.0.0",
-    "description" : "",
-    "license" : "ISC",
-    "author" : "",
-    "type" : "module",
-    "main" : "dist/extension.js",
-    "types" : "types/src/extension.d.ts",
-    "scripts" : {
-        "test" : "node ./dist/test.js",
-        "build" : "node ./bin/run_build.ts",
-        "tsc" : "npx tsc",
-        "eslint" : "npx eslint . --debug --color '",
-        "ls" : "ls -la",
-        "vscode:prepublish" : "npm run compile"
+    "name": "Scriptsmon",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "dist/extension.js",
+    "types": "types/src/extension.d.ts",
+    "scripts": {
+        "test": "node ./dist/test.js",
+        "build": "node ./bin/run_build.ts",
+        "tsc": "npx tsc",
+        "eslint": "npx eslint . --color ",
+        "ls": "ls -la  --color=always",
+        "vscode:prepublish": "npm run compile"
     },
-    "workspaces":["client"],
-    "scriptsmon" : {
-        "$watch" : [
+    "workspaces": [
+        "client"
+    ],
+    "scriptsmon": {
+        "$watch": [
             "src",
             "package.json",
             "./bin/run_build.ts"
         ],
-        "test" : [
+        "test": [
             "./dist/test.ts"
         ],
-        "tsc" : [
+        "tsc": [
             "$watch",
             "tsconfig.json"
         ],
-        "eslint" : {
-            "watch" : [
+        "eslint": {
+            "watch": [
                 "$watch",
                 "tsconfig.json",
                 "eslint.config.mjs"
             ],
-            "filter" : "npx @yigal/eslint_filter",
-            "pre" : "set TIMING=1"
+            "filter": "npx @yigal/eslint_filter",
+            "pre": "set TIMING=1"
         },
-        "autorun" : [
+        "autorun": [
             "test",
             "build",
             "tsc",
             "eslint"
         ]
     },
-    "keywords" : [
-    ],
-    "contributes" : {
-        "commands" : [
+    "keywords": [],
+    "contributes": {
+        "commands": [
             {
-                "command" : "Scriptsmon.start",
-                "title" : "Scriptsmon: start"
+                "command": "Scriptsmon.start",
+                "title": "Scriptsmon: start"
             },
             {
-                "command" : "Scriptsmon.runner.play",
-                "title" : "Play",
-                "icon" : "$(play)"
+                "command": "Scriptsmon.runner.play",
+                "title": "Play",
+                "icon": "$(play)"
             },
             {
-                "command" : "Scriptsmon.runner.debug",
-                "title" : "Debug",
-                "icon" : "$(debug)"
+                "command": "Scriptsmon.runner.debug",
+                "title": "Debug",
+                "icon": "$(debug)"
             },
             {
-                "command" : "Scriptsmon.webview.open",
-                "title" : "Open Webview"
+                "command": "Scriptsmon.webview.open",
+                "title": "Open Webview"
             }
         ],
-        "menus" : {
-            "view/item/context" : [
+        "menus": {
+            "view/item/context": [
                 {
-                    "command" : "Scriptsmon.runner.play",
-                    "when" : "view == Scriptsmon.tree && viewItem == 'runner'",
-                    "group" : "inline"
+                    "command": "Scriptsmon.runner.play",
+                    "when": "view == Scriptsmon.tree && viewItem == 'runner'",
+                    "group": "inline"
                 },
                 {
-                    "command" : "Scriptsmon.runner.debug",
-                    "when" : "view == Scriptsmon.tree && viewItem == 'runner'",
-                    "group" : "inline"
+                    "command": "Scriptsmon.runner.debug",
+                    "when": "view == Scriptsmon.tree && viewItem == 'runner'",
+                    "group": "inline"
                 }
             ]
         },
-        "views" : {
-            "explorer" : [
+        "views": {
+            "explorer": [
                 {
-                    "id" : "Scriptsmon.tree",
-                    "name" : "Scriptsmon"
+                    "id": "Scriptsmon.tree",
+                    "name": "Scriptsmon"
                 }
             ]
         }
     },
-    "engines" : {
-        "vscode" : "^1.51.0"
+    "engines": {
+        "vscode": "^1.51.0"
     },
-    "devDependencies" : {
-        "@eslint/js" : "9.39.1",
-        "@types/node" : "24.10.0",
-        "@types/vscode" : "^1.105.0",
-        "esbuild" : "0.25.12",
-        "eslint-plugin-import-x" : "4.16.1",
-        "typescript" : "5.9.3",
-        "typescript-eslint" : "8.46.3"
+    "devDependencies": {
+        "@eslint/js": "9.39.1",
+        "@types/node": "24.10.0",
+        "@types/vscode": "^1.105.0",
+        "esbuild": "0.25.12",
+        "eslint-plugin-import-x": "4.16.1",
+        "typescript": "5.9.3",
+        "typescript-eslint": "8.46.3"
     },
-    "dependencies" : {
-        "@yigal/base_types" : "^1.5.0",
-        "@yigal/watch_runner" : "^2.0.0"
+    "dependencies": {
+        "@lydell/node-pty": "^1.1.0",
+        "@yigal/base_types": "^1.5.0",
+        "@yigal/watch_runner": "^2.0.0"
     }
 }

@@ -1,0 +1,385 @@
+2025-12-01T23:39:18.287Z eslint:cli CLI args: [ '.', '--debug', '--color' ]
+2025-12-01T23:39:18.288Z eslint:cli Using flat config? true
+2025-12-01T23:39:18.290Z eslint:cli Running on files
+2025-12-01T23:39:18.290Z eslint:eslint Using config loader LegacyConfigLoader
+2025-12-01T23:39:18.291Z eslint:eslint Using file patterns: .
+2025-12-01T23:39:18.291Z eslint:eslint Deleting cache file at C:\yigal\scriptsmon\.eslintcache
+2025-12-01T23:39:18.300Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\.git
+2025-12-01T23:39:18.300Z eslint:config-loader Searching for eslint.config.js
+2025-12-01T23:39:18.300Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.300Z eslint:config-loader Calculating config array from config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.301Z eslint:config-loader Loading config file C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:18.301Z eslint:config-loader Loading config from C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:18.301Z eslint:config-loader Config file URL is file:///C:/yigal/scriptsmon/eslint.config.mjs
+2025-12-01T23:39:18.589Z eslint:rules Loading rule 'consistent-return' (remaining=291)
+2025-12-01T23:39:18.598Z eslint:rules Loading rule 'dot-notation' (remaining=290)
+2025-12-01T23:39:18.601Z eslint:rules Loading rule 'init-declarations' (remaining=289)
+2025-12-01T23:39:18.602Z eslint:rules Loading rule 'max-params' (remaining=288)
+2025-12-01T23:39:18.614Z eslint:rules Loading rule 'no-dupe-class-members' (remaining=287)
+2025-12-01T23:39:18.617Z eslint:rules Loading rule 'no-empty-function' (remaining=286)
+2025-12-01T23:39:18.624Z eslint:rules Loading rule 'no-invalid-this' (remaining=285)
+2025-12-01T23:39:18.625Z eslint:rules Loading rule 'no-loop-func' (remaining=284)
+2025-12-01T23:39:18.626Z eslint:rules Loading rule 'no-loss-of-precision' (remaining=283)
+2025-12-01T23:39:18.627Z eslint:rules Loading rule 'no-magic-numbers' (remaining=282)
+2025-12-01T23:39:18.642Z eslint:rules Loading rule 'no-restricted-imports' (remaining=281)
+2025-12-01T23:39:18.686Z eslint:rules Loading rule 'no-unused-expressions' (remaining=280)
+2025-12-01T23:39:18.688Z eslint:rules Loading rule 'no-useless-constructor' (remaining=279)
+2025-12-01T23:39:18.694Z eslint:rules Loading rule 'prefer-destructuring' (remaining=278)
+import.meta.dirname C:\yigal\scriptsmon
+2025-12-01T23:39:18.746Z eslint:config-loader Config file C:\yigal\scriptsmon\eslint.config.mjs is not empty
+2025-12-01T23:39:18.747Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\.gitignore
+2025-12-01T23:39:18.747Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\.gitignore
+2025-12-01T23:39:18.747Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.748Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\.vscode
+2025-12-01T23:39:18.748Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.748Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\.vscode\launch.json
+2025-12-01T23:39:18.748Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\.vscode\launch.json
+2025-12-01T23:39:18.748Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.748Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\.vscode\tasks.json
+2025-12-01T23:39:18.748Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\.vscode\tasks.json
+2025-12-01T23:39:18.748Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.749Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\bin
+2025-12-01T23:39:18.749Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.749Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:18.749Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:18.749Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.752Z eslint:rules Loading rule 'constructor-super' (remaining=277)
+2025-12-01T23:39:18.753Z eslint:rules Loading rule 'for-direction' (remaining=276)
+2025-12-01T23:39:18.754Z eslint:rules Loading rule 'getter-return' (remaining=275)
+2025-12-01T23:39:18.754Z eslint:rules Loading rule 'no-async-promise-executor' (remaining=274)
+2025-12-01T23:39:18.754Z eslint:rules Loading rule 'no-case-declarations' (remaining=273)
+2025-12-01T23:39:18.755Z eslint:rules Loading rule 'no-class-assign' (remaining=272)
+2025-12-01T23:39:18.755Z eslint:rules Loading rule 'no-compare-neg-zero' (remaining=271)
+2025-12-01T23:39:18.755Z eslint:rules Loading rule 'no-cond-assign' (remaining=270)
+2025-12-01T23:39:18.756Z eslint:rules Loading rule 'no-const-assign' (remaining=269)
+2025-12-01T23:39:18.756Z eslint:rules Loading rule 'no-constant-binary-expression' (remaining=268)
+2025-12-01T23:39:18.756Z eslint:rules Loading rule 'no-constant-condition' (remaining=267)
+2025-12-01T23:39:18.757Z eslint:rules Loading rule 'no-control-regex' (remaining=266)
+2025-12-01T23:39:18.757Z eslint:rules Loading rule 'no-debugger' (remaining=265)
+2025-12-01T23:39:18.758Z eslint:rules Loading rule 'no-delete-var' (remaining=264)
+2025-12-01T23:39:18.758Z eslint:rules Loading rule 'no-dupe-args' (remaining=263)
+2025-12-01T23:39:18.758Z eslint:rules Loading rule 'no-dupe-else-if' (remaining=262)
+2025-12-01T23:39:18.759Z eslint:rules Loading rule 'no-dupe-keys' (remaining=261)
+2025-12-01T23:39:18.759Z eslint:rules Loading rule 'no-duplicate-case' (remaining=260)
+2025-12-01T23:39:18.759Z eslint:rules Loading rule 'no-empty' (remaining=259)
+2025-12-01T23:39:18.760Z eslint:rules Loading rule 'no-empty-character-class' (remaining=258)
+2025-12-01T23:39:18.760Z eslint:rules Loading rule 'no-empty-pattern' (remaining=257)
+2025-12-01T23:39:18.760Z eslint:rules Loading rule 'no-empty-static-block' (remaining=256)
+2025-12-01T23:39:18.761Z eslint:rules Loading rule 'no-ex-assign' (remaining=255)
+2025-12-01T23:39:18.761Z eslint:rules Loading rule 'no-extra-boolean-cast' (remaining=254)
+2025-12-01T23:39:18.761Z eslint:rules Loading rule 'no-fallthrough' (remaining=253)
+2025-12-01T23:39:18.762Z eslint:rules Loading rule 'no-func-assign' (remaining=252)
+2025-12-01T23:39:18.762Z eslint:rules Loading rule 'no-global-assign' (remaining=251)
+2025-12-01T23:39:18.762Z eslint:rules Loading rule 'no-import-assign' (remaining=250)
+2025-12-01T23:39:18.763Z eslint:rules Loading rule 'no-invalid-regexp' (remaining=249)
+2025-12-01T23:39:18.763Z eslint:rules Loading rule 'no-irregular-whitespace' (remaining=248)
+2025-12-01T23:39:18.764Z eslint:rules Loading rule 'no-misleading-character-class' (remaining=247)
+2025-12-01T23:39:18.766Z eslint:rules Loading rule 'no-new-native-nonconstructor' (remaining=246)
+2025-12-01T23:39:18.766Z eslint:rules Loading rule 'no-nonoctal-decimal-escape' (remaining=245)
+2025-12-01T23:39:18.766Z eslint:rules Loading rule 'no-obj-calls' (remaining=244)
+2025-12-01T23:39:18.766Z eslint:rules Loading rule 'no-octal' (remaining=243)
+2025-12-01T23:39:18.767Z eslint:rules Loading rule 'no-prototype-builtins' (remaining=242)
+2025-12-01T23:39:18.767Z eslint:rules Loading rule 'no-redeclare' (remaining=241)
+2025-12-01T23:39:18.767Z eslint:rules Loading rule 'no-regex-spaces' (remaining=240)
+2025-12-01T23:39:18.768Z eslint:rules Loading rule 'no-self-assign' (remaining=239)
+2025-12-01T23:39:18.768Z eslint:rules Loading rule 'no-setter-return' (remaining=238)
+2025-12-01T23:39:18.768Z eslint:rules Loading rule 'no-shadow-restricted-names' (remaining=237)
+2025-12-01T23:39:18.768Z eslint:rules Loading rule 'no-sparse-arrays' (remaining=236)
+2025-12-01T23:39:18.769Z eslint:rules Loading rule 'no-this-before-super' (remaining=235)
+2025-12-01T23:39:18.769Z eslint:rules Loading rule 'no-undef' (remaining=234)
+2025-12-01T23:39:18.769Z eslint:rules Loading rule 'no-unexpected-multiline' (remaining=233)
+2025-12-01T23:39:18.770Z eslint:rules Loading rule 'no-unreachable' (remaining=232)
+2025-12-01T23:39:18.770Z eslint:rules Loading rule 'no-unsafe-finally' (remaining=231)
+2025-12-01T23:39:18.770Z eslint:rules Loading rule 'no-unsafe-negation' (remaining=230)
+2025-12-01T23:39:18.770Z eslint:rules Loading rule 'no-unsafe-optional-chaining' (remaining=229)
+2025-12-01T23:39:18.771Z eslint:rules Loading rule 'no-unused-labels' (remaining=228)
+2025-12-01T23:39:18.771Z eslint:rules Loading rule 'no-unused-private-class-members' (remaining=227)
+2025-12-01T23:39:18.771Z eslint:rules Loading rule 'no-unused-vars' (remaining=226)
+2025-12-01T23:39:18.772Z eslint:rules Loading rule 'no-useless-backreference' (remaining=225)
+2025-12-01T23:39:18.772Z eslint:rules Loading rule 'no-useless-catch' (remaining=224)
+2025-12-01T23:39:18.772Z eslint:rules Loading rule 'no-useless-escape' (remaining=223)
+2025-12-01T23:39:18.773Z eslint:rules Loading rule 'no-with' (remaining=222)
+2025-12-01T23:39:18.773Z eslint:rules Loading rule 'require-yield' (remaining=221)
+2025-12-01T23:39:18.774Z eslint:rules Loading rule 'use-isnan' (remaining=220)
+2025-12-01T23:39:18.774Z eslint:rules Loading rule 'valid-typeof' (remaining=219)
+2025-12-01T23:39:18.774Z eslint:rules Loading rule 'no-new-symbol' (remaining=218)
+2025-12-01T23:39:18.775Z eslint:rules Loading rule 'no-var' (remaining=217)
+2025-12-01T23:39:18.775Z eslint:rules Loading rule 'prefer-const' (remaining=216)
+2025-12-01T23:39:18.775Z eslint:rules Loading rule 'prefer-rest-params' (remaining=215)
+2025-12-01T23:39:18.776Z eslint:rules Loading rule 'prefer-spread' (remaining=214)
+2025-12-01T23:39:18.776Z eslint:rules Loading rule 'no-array-constructor' (remaining=213)
+2025-12-01T23:39:18.776Z eslint:rules Loading rule 'no-implied-eval' (remaining=212)
+2025-12-01T23:39:18.777Z eslint:rules Loading rule 'no-throw-literal' (remaining=211)
+2025-12-01T23:39:18.777Z eslint:rules Loading rule 'prefer-promise-reject-errors' (remaining=210)
+2025-12-01T23:39:18.778Z eslint:rules Loading rule 'require-await' (remaining=209)
+2025-12-01T23:39:18.778Z eslint:rules Loading rule 'no-return-await' (remaining=208)
+2025-12-01T23:39:18.779Z eslint:rules Loading rule 'no-duplicate-imports' (remaining=207)
+2025-12-01T23:39:18.779Z eslint:rules Loading rule 'eqeqeq' (remaining=206)
+2025-12-01T23:39:18.800Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.800Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.800Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.800Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client
+2025-12-01T23:39:18.800Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\package-lock.json
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\package-lock.json
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\package.json
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\package.json
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\dist
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.801Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\icons\file-dark.svg
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons\file-dark.svg
+2025-12-01T23:39:18.801Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\icons\file-light.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons\file-light.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\icons\file.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons\file.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\icons\folder-dark.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons\folder-dark.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\icons\folder-light.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons\folder-light.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\icons\folder.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\icons\folder.svg
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\index.css
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\index.css
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\resources\index.html
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\resources\index.html
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\src
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\dist
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.802Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:18.802Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.806Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\eslintout.txt
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\eslintout.txt
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\generated
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.806Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\generated\packages.json
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\generated\packages.json
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\node_modules
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.806Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\package-lock.json
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\package-lock.json
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.806Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\package.json
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\package.json
+2025-12-01T23:39:18.806Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\src
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader Calculating config for file C:\yigal\scriptsmon\tsconfig.json
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\tsconfig.json
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Calculating config for C:\yigal\scriptsmon\types
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Using config file C:\yigal\scriptsmon\eslint.config.mjs and base path C:\yigal\scriptsmon
+2025-12-01T23:39:18.807Z eslint:eslint 12 file(s) found in 516 ms
+2025-12-01T23:39:18.807Z eslint:eslint Linting in single-thread mode.
+2025-12-01T23:39:18.807Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:18.807Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\bin
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\bin
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\bin
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\bin
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\bin
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\client
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\client\src
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\src
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\src
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\src
+2025-12-01T23:39:18.808Z eslint:config-loader Looking up cached config for C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:18.808Z eslint:config-loader [Legacy]: Looking up cached config for C:\yigal\scriptsmon\src
+2025-12-01T23:39:18.809Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\run_build.ts" read in 2 ms
+2025-12-01T23:39:18.810Z eslint:linter Linting code for C:\yigal\scriptsmon\bin\run_build.ts (pass 1)
+2025-12-01T23:39:18.810Z eslint:linter Verify
+2025-12-01T23:39:18.810Z eslint:linter With flat config: C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:18.810Z eslint:languages:js Parsing: C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:19.651Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:19.651Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:19.651Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\bin\run_build.ts
+2025-12-01T23:39:19.695Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\bin\run_build.ts (pass 1)
+2025-12-01T23:39:19.695Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.695Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.695Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\run_build.ts" linted in 886 ms
+2025-12-01T23:39:19.695Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_build.ts" read in 888 ms
+2025-12-01T23:39:19.695Z eslint:linter Linting code for C:\yigal\scriptsmon\bin\watch_build.ts (pass 1)
+2025-12-01T23:39:19.695Z eslint:linter Verify
+2025-12-01T23:39:19.695Z eslint:linter With flat config: C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:19.695Z eslint:languages:js Parsing: C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:19.697Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:19.698Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:19.698Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\bin\watch_build.ts
+2025-12-01T23:39:19.701Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\bin\watch_build.ts (pass 1)
+2025-12-01T23:39:19.701Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.701Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.701Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_build.ts" linted in 5 ms
+2025-12-01T23:39:19.701Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_eslint.ts" read in 893 ms
+2025-12-01T23:39:19.701Z eslint:linter Linting code for C:\yigal\scriptsmon\bin\watch_eslint.ts (pass 1)
+2025-12-01T23:39:19.701Z eslint:linter Verify
+2025-12-01T23:39:19.701Z eslint:linter With flat config: C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:19.701Z eslint:languages:js Parsing: C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:19.702Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:19.702Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:19.702Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\bin\watch_eslint.ts
+2025-12-01T23:39:19.706Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\bin\watch_eslint.ts (pass 1)
+2025-12-01T23:39:19.706Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.706Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.706Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_eslint.ts" linted in 5 ms
+2025-12-01T23:39:19.706Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_tsc.ts" read in 898 ms
+2025-12-01T23:39:19.706Z eslint:linter Linting code for C:\yigal\scriptsmon\bin\watch_tsc.ts (pass 1)
+2025-12-01T23:39:19.706Z eslint:linter Verify
+2025-12-01T23:39:19.706Z eslint:linter With flat config: C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:19.706Z eslint:languages:js Parsing: C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:19.707Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:19.707Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:19.707Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\bin\watch_tsc.ts
+2025-12-01T23:39:19.709Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\bin\watch_tsc.ts (pass 1)
+2025-12-01T23:39:19.709Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.709Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.709Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_tsc.ts" linted in 3 ms
+2025-12-01T23:39:19.709Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_test.ts" read in 901 ms
+2025-12-01T23:39:19.709Z eslint:linter Linting code for C:\yigal\scriptsmon\bin\watch_test.ts (pass 1)
+2025-12-01T23:39:19.709Z eslint:linter Verify
+2025-12-01T23:39:19.709Z eslint:linter With flat config: C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:19.709Z eslint:languages:js Parsing: C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:19.710Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:19.710Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:19.710Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\bin\watch_test.ts
+2025-12-01T23:39:19.713Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\bin\watch_test.ts (pass 1)
+2025-12-01T23:39:19.713Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.713Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.713Z eslint:eslint-helpers File "C:\yigal\scriptsmon\bin\watch_test.ts" linted in 4 ms
+2025-12-01T23:39:19.713Z eslint:eslint-helpers File "C:\yigal\scriptsmon\client\build.ts" read in 905 ms
+2025-12-01T23:39:19.713Z eslint:linter Linting code for C:\yigal\scriptsmon\client\build.ts (pass 1)
+2025-12-01T23:39:19.713Z eslint:linter Verify
+2025-12-01T23:39:19.713Z eslint:linter With flat config: C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:19.713Z eslint:languages:js Parsing: C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:19.714Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:19.714Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:19.714Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\client\build.ts
+2025-12-01T23:39:19.723Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\client\build.ts (pass 1)
+2025-12-01T23:39:19.723Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.723Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.723Z eslint:eslint-helpers File "C:\yigal\scriptsmon\client\build.ts" linted in 11 ms
+2025-12-01T23:39:19.723Z eslint:eslint-helpers File "C:\yigal\scriptsmon\client\src\index.ts" read in 915 ms
+2025-12-01T23:39:19.723Z eslint:linter Linting code for C:\yigal\scriptsmon\client\src\index.ts (pass 1)
+2025-12-01T23:39:19.723Z eslint:linter Verify
+2025-12-01T23:39:19.723Z eslint:linter With flat config: C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:19.723Z eslint:languages:js Parsing: C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:19.733Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:19.733Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:19.733Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\client\src\index.ts
+2025-12-01T23:39:19.822Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\client\src\index.ts (pass 1)
+2025-12-01T23:39:19.822Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.822Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.822Z eslint:eslint-helpers File "C:\yigal\scriptsmon\client\src\index.ts" linted in 99 ms
+2025-12-01T23:39:19.822Z eslint:eslint-helpers File "C:\yigal\scriptsmon\eslint.config.mjs" read in 1014 ms
+2025-12-01T23:39:19.822Z eslint:linter Linting code for C:\yigal\scriptsmon\eslint.config.mjs (pass 1)
+2025-12-01T23:39:19.822Z eslint:linter Verify
+2025-12-01T23:39:19.822Z eslint:linter With flat config: C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:19.822Z eslint:languages:js Parsing: C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:19.825Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:19.825Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:19.825Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\eslint.config.mjs
+2025-12-01T23:39:19.859Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\eslint.config.mjs (pass 1)
+2025-12-01T23:39:19.860Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.860Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.860Z eslint:eslint-helpers File "C:\yigal\scriptsmon\eslint.config.mjs" linted in 37 ms
+2025-12-01T23:39:19.860Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\extension.ts" read in 1052 ms
+2025-12-01T23:39:19.860Z eslint:linter Linting code for C:\yigal\scriptsmon\src\extension.ts (pass 1)
+2025-12-01T23:39:19.860Z eslint:linter Verify
+2025-12-01T23:39:19.860Z eslint:linter With flat config: C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:19.860Z eslint:languages:js Parsing: C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:19.867Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:19.867Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:19.867Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\src\extension.ts
+2025-12-01T23:39:19.927Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\src\extension.ts (pass 1)
+2025-12-01T23:39:19.927Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.927Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.927Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\extension.ts" linted in 67 ms
+2025-12-01T23:39:19.927Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\monitor.ts" read in 1119 ms
+2025-12-01T23:39:19.927Z eslint:linter Linting code for C:\yigal\scriptsmon\src\monitor.ts (pass 1)
+2025-12-01T23:39:19.927Z eslint:linter Verify
+2025-12-01T23:39:19.927Z eslint:linter With flat config: C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:19.927Z eslint:languages:js Parsing: C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:19.935Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:19.935Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:19.935Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\src\monitor.ts
+2025-12-01T23:39:19.989Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\src\monitor.ts (pass 1)
+2025-12-01T23:39:19.989Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.989Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.989Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\monitor.ts" linted in 62 ms
+2025-12-01T23:39:19.989Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\test.ts" read in 1181 ms
+2025-12-01T23:39:19.989Z eslint:linter Linting code for C:\yigal\scriptsmon\src\test.ts (pass 1)
+2025-12-01T23:39:19.989Z eslint:linter Verify
+2025-12-01T23:39:19.989Z eslint:linter With flat config: C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:19.989Z eslint:languages:js Parsing: C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:19.990Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:19.990Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:19.990Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\src\test.ts
+2025-12-01T23:39:19.993Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\src\test.ts (pass 1)
+2025-12-01T23:39:19.993Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:19.993Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:19.993Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\test.ts" linted in 4 ms
+2025-12-01T23:39:19.993Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\test_types.ts" read in 1185 ms
+2025-12-01T23:39:19.993Z eslint:linter Linting code for C:\yigal\scriptsmon\src\test_types.ts (pass 1)
+2025-12-01T23:39:19.993Z eslint:linter Verify
+2025-12-01T23:39:19.993Z eslint:linter With flat config: C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:19.993Z eslint:languages:js Parsing: C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:19.994Z eslint:languages:js Parsing successful: C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:19.994Z eslint:languages:js Scope analysis: C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:19.994Z eslint:languages:js Scope analysis successful: C:\yigal\scriptsmon\src\test_types.ts
+2025-12-01T23:39:20.000Z eslint:linter Generating fixed text for C:\yigal\scriptsmon\src\test_types.ts (pass 1)
+2025-12-01T23:39:20.030Z eslint:source-code-fixer Applying fixes
+2025-12-01T23:39:20.030Z eslint:source-code-fixer shouldFix parameter was false, not attempting fixes
+2025-12-01T23:39:20.030Z eslint:eslint-helpers File "C:\yigal\scriptsmon\src\test_types.ts" linted in 37 ms
