@@ -6114,15 +6114,6 @@ function update_child_html(el, selector, html) {
   if (child.innerHTML === html) return;
   child.innerHTML = html;
 }
-function append(txt, el = null) {
-  if (el == null || txt === "")
-    el = document.getElementById("terminal");
-  if (el == null)
-    return;
-  el.insertAdjacentHTML("beforeend", `${txt}
-`);
-  el.scrollTop = el.scrollHeight;
-}
 function calc_stats_html(new_runner) {
   return Object.entries(new_runner).filter(([k, v]) => k !== "output").map(([k, v]) => `<tr>
       <td><span class=value>${k} = </span>${v}</td>
@@ -6169,14 +6160,12 @@ function start() {
     return;
   }
   sendButton.addEventListener("click", () => {
-    append("buttonClick clicked");
     vscode.postMessage({
       command: "buttonClick",
       text: "Hello from webview!"
     });
   });
   document.getElementById("getReport").addEventListener("click", () => {
-    append("getReport clicked");
     const message = {
       command: "get_report",
       text: "Hello from webview!"
@@ -6200,7 +6189,6 @@ function start() {
         }
         break;
       case "updateContent":
-        append(message.text || "<no message>");
         break;
     }
   });
