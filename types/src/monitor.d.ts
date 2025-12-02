@@ -32,7 +32,6 @@ export interface RunnerBase extends Watcher {
 }
 export declare const runner_base_keys: (keyof RunnerBase)[];
 export interface Runner extends RunnerBase {
-    abort_controller: AbortController;
     child: IPty | undefined;
     start: (reason: string) => Promise<void>;
 }

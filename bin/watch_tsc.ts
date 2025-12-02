@@ -1,6 +1,6 @@
 import {run} from '@yigal/watch_runner'
 void run({
-  cmd:'npx tsc ',
+  cmd:'npx tsc',
   watchfiles:[
     'src',
     'bin',
@@ -8,5 +8,5 @@ void run({
     'eslint.config.mjs',
     'tsconfig.json'
   ]
-})  
+})
 

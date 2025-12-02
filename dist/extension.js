@@ -169,43 +169,37 @@ function run_runner({
   runner,
   reason
 }) {
-  const { abort_controller } = runner;
-  const { signal } = abort_controller;
   void new Promise((resolve2, _reject) => {
     const { script, full_pathname } = runner;
     runner.state = "spawning";
-    const child = spawn(script, [], {
-      signal,
-      shell: true,
+    const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
+    const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
+    const child = spawn(shell, shellArgs, {
       cwd: full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" }
     });
     if (child === null)
       return;
-    child.stdout.on("data", (data) => runner.output.push({ data: String(data), type: "stdout" }));
-    child.stderr.on("data", (data) => runner.output.push({ data: String(data), type: "stderr" }));
-    child.on("spawn", () => {
-      runner.start_time = Date.now();
-      runner.state = "running";
-      runner.reason = reason;
+    runner.start_time = Date.now();
+    runner.state = "running";
+    runner.reason = reason;
+    const dataDisposable = child.onData((data) => {
+      runner.output.push({ data, type: "stdout" });
     });
-    child.on("exit", (code) => {
-      runner.state = code === 0 ? "done" : "crashed";
+    const exitDisposable = child.onExit(({ exitCode }) => {
+      dataDisposable.dispose();
+      exitDisposable.dispose();
+      runner.state = exitCode === 0 ? "done" : "crashed";
       runner.last_end_time = Date.now();
       runner.last_start_time = runner.start_time;
       runner.start_time = void 0;
       runner.last_reason = runner.reason;
       resolve2(null);
     });
-    child.on("error", (err) => {
-      runner.state = "failed";
-      runner.last_err = get_error(err);
-      resolve2(null);
-    });
   });
 }
 async function stop(runner) {
-  const { state, abort_controller, abort_controller: { signal } } = runner;
+  const { state } = runner;
   let was_stopped = false;
   while (true) {
     if (is_ready_to_start(runner.state)) {
@@ -213,7 +207,11 @@ async function stop(runner) {
         runner.state = "stopped";
       return Promise.resolve();
     }
-    signal.addEventListener("abort", () => was_stopped = true, { once: true });
+    if (!was_stopped) {
+      was_stopped = true;
+      console.log(`stopping runner ${runner.name}...`);
+      runner.child?.kill();
+    }
     await sleep(10);
   }
 }
@@ -262,7 +260,6 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         reason: "",
         last_reason: "",
         last_err: void 0,
-        abort_controller: new AbortController(),
         output: [],
         id
       };

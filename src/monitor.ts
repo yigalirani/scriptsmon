@@ -72,7 +72,7 @@ export const runner_base_keys:(keyof RunnerBase)[]=[
 ]
 
 export interface Runner extends RunnerBase{
-  abort_controller: AbortController
+  //abort_controller: AbortController
   child           : IPty|undefined
   start           : (reason:string)=>Promise<void>    
 }
@@ -161,46 +161,44 @@ function run_runner({ //this is not async function on purpuse
   runner: Runner;
   reason:string
 }) {
-  const {abort_controller}=runner
-  const {signal}=abort_controller
   void new Promise((resolve, _reject) => { 
     const {script,full_pathname}=runner
     runner.state='spawning'
-    const child = spawn(script,[],  {
-      signal,
-      shell: true,
+    // Spawn a shell with the script as command
+    const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
+    const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
+    const child = spawn(shell, shellArgs,  {
       cwd:full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" },
 
     });
     if (child===null)
       return
-    child.stdout.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stdout'}))
-    child.stderr.on("data",(data:unknown)=>runner.output.push({data:String(data),type:'stderr'}))
-    child.on('spawn',()=>{
-      runner.start_time=Date.now()
-      runner.state='running'
-      runner.reason=reason
-    })
-
-    child.on("exit", (code) => {
-      runner.state=(code===0?'done':'crashed') //todo: should think of aborted
+    // Set state to running immediately (spawn happens synchronously)
+    runner.start_time=Date.now()
+    runner.state='running'
+    runner.reason=reason
+    
+    // Listen to data events (both stdout and stderr come through onData)
+    const dataDisposable = child.onData((data: string) => {
+      runner.output.push({data, type: 'stdout'})
+    });
+    
+    // Listen to exit events
+    const exitDisposable = child.onExit(({ exitCode }) => {
+      dataDisposable.dispose();
+      exitDisposable.dispose();
+      runner.state=(exitCode===0?'done':'crashed') //todo: should think of aborted
       runner.last_end_time=Date.now()
       runner.last_start_time=runner.start_time
       runner.start_time=undefined
       runner.last_reason=runner.reason
       resolve(null);
     });
-
-    child.on("error", (err) => {
-      runner.state='failed'
-      runner.last_err=get_error(err)
-      resolve(null);
-    });
   });
 }
 async function stop(runner: Runner): Promise<void> {
-  const { state,abort_controller,abort_controller:{signal} } = runner;
+  const { state } = runner;
   let was_stopped=false
   while(true){
     if (is_ready_to_start(runner.state)) {
@@ -208,7 +206,11 @@ async function stop(runner: Runner): Promise<void> {
         runner.state='stopped'
       return Promise.resolve()
     }
-    signal.addEventListener('abort', () => was_stopped=true, { once: true });
+    if (!was_stopped){
+      was_stopped=true
+      console.log(`stopping runner ${runner.name}...`)
+      runner.child?.kill()
+    }
     await sleep(10)
   }
 }
@@ -259,7 +261,6 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         reason:'',
         last_reason:'',
         last_err:undefined,
-        abort_controller:new AbortController(),
         output:[],
         id
       }
