@@ -76,3 +76,14 @@ button:hover {
 .stats tr:hover {
   background-color: rgb(74, 72, 78);
 }
+
+.tree_folder{
+  background-color: #aa86c9;
+}
+.tree_item{
+  background-color: #61ebeb;
+  
+}
+.children{
+  margin-left: 20px;
+}

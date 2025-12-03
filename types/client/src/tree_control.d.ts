@@ -1,20 +1,14 @@
 type MaybePromise<T> = T | Promise<T>;
 export declare function query_selector(el: HTMLElement, selector: string): HTMLElement;
-interface Treecommon {
+export interface TreeNode {
+    type: 'item' | 'folder';
     label: string;
     id: string;
     icon?: string;
     description?: string;
     commands: string[];
-}
-export interface TreeItem extends Treecommon {
-    type: 'item';
-}
-interface TreeFolder extends Treecommon {
-    type: 'folder';
     children: TreeNode[];
 }
-export type TreeNode = TreeItem | TreeFolder;
 export interface TreeDataProvider<T> {
     convert: (root: T) => TreeNode;
     command: (item: T, command: string) => MaybePromise<void>;

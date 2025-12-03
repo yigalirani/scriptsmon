@@ -6,7 +6,7 @@ interface VSCodeApi {
 import {WebviewMessage,RunnerBase,FolderBase,FolderRunner} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal } from '@xterm/xterm';
-import { query_selector,TreeControl,TreeDataProvider,TreeItem,TreeNode } from './tree_control.js';
+import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_control.js';
 function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
   if (ans!=null)
@@ -106,7 +106,7 @@ function convert(root:FolderRunner):TreeNode{
     const children=[...folders,...items]
     return {children,type:'folder',id,label:name,commands:[]}
   }
-  return {type:'item',id,label:name,commands:[]}
+  return {type:'item',id,label:name,commands:[],children:[]}
 }
 const provider:TreeDataProvider<FolderRunner>={
   convert,

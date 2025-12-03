@@ -6,23 +6,17 @@ export function query_selector(el:HTMLElement,selector:string){
       throw new Error('selector not found or not html element')  
     return ans
 }
-interface Treecommon{
+export interface TreeNode{
+  type:'item'|'folder'
   label:string,
   id: string;
   icon?: string
   description?: string
   commands:string[]
-}
-export interface TreeItem extends Treecommon{
-  type:'item'
-}
-
-interface TreeFolder extends Treecommon{
-  type:'folder',
   children: TreeNode[]
 }
-export type TreeNode=TreeItem|TreeFolder
-function make_empty_tree_folder():TreeFolder{
+
+function make_empty_tree_folder():TreeNode{
   return{
     type:'folder',
     children:[],
