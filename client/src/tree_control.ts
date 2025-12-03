@@ -21,7 +21,7 @@ function make_empty_tree_folder():TreeNode{
     type:'folder',
     children:[],
     label:'',
-    id:'root',
+    id:'roottreenode',
     commands:[]  
   }
 }
@@ -29,6 +29,16 @@ export interface TreeDataProvider<T>{
   convert: (root:T)=>TreeNode
   command:(item:T,command:string)=>MaybePromise<void>
 }
+
+function create_element(html:string,parent?:HTMLElement){
+  const template = document.createElement("template")
+  template.innerHTML = html.trim()
+  const ans = template.content.firstElementChild as HTMLElement;
+  if (parent!=null)
+    parent.appendChild(ans)
+  return ans
+}
+
 import isEqual from "lodash.isequal";
 function divs(vals:s2t<string|undefined>){
   const ans=[]
@@ -42,33 +52,35 @@ export class TreeControl<T>{
   last_root:T|undefined
   last_converted:TreeNode=make_empty_tree_folder()
   collapsed_id:Set<string>=new Set()
-  create_node_element(node:TreeNode){
+  create_node_element(node:TreeNode,parent?:HTMLElement){
     const {type,id,description,label}=node
     const template = document.createElement("template")
     const style=this.collapsed_id.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
-    template.innerHTML = `
+    return create_element(`
   <div class="tree_${type}" id="${id}" >
     ${divs({label,description})}
     ${children}
-  </div>
-    `.trim();
-    const element = template.content.firstElementChild as HTMLElement;
-    return element
+  </div>`,parent)
   }  
   constructor(
     public parent:HTMLElement,
     public provider:TreeDataProvider<T>
   ){}
-  create_node(parent:HTMLElement,node:TreeNode){ //todo: compare to last by id to add change animation?
-    const el=this.create_node_element(node)
-    parent.appendChild(el)
-    if (node.type==='item'){
+
+  create_node(parent:HTMLElement,node:TreeNode,atroot:boolean){ //todo: compare to last by id to add change animation?
+    const children_el=(()=>{
+      if (atroot)
+        return create_element('<div class=children></div>',parent)
+      const new_parent=this.create_node_element(node,parent)
+      return new_parent.querySelector('.children') //return value might be null for item node  
+    })()
+    if (children_el==null){
       return
     }
-    const children_el=query_selector(el,'.children')
+
     for (const x of node.children){
-      this.create_node(children_el,x)
+      this.create_node(children_el as HTMLElement,x,false)
     }
     
   }
@@ -80,7 +92,7 @@ export class TreeControl<T>{
     if (is_equal)
       return
     this.parent.innerHTML = '';
-    this.create_node(this.parent,converted) //todo pass the last converted so can do change/cate animation
+    this.create_node(this.parent,converted,true) //todo pass the last converted so can do change/cate animation
     this.last_converted=converted
 
   }

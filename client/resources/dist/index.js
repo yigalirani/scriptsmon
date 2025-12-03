@@ -6800,9 +6800,17 @@ function make_empty_tree_folder() {
     type: "folder",
     children: [],
     label: "",
-    id: "root",
+    id: "roottreenode",
     commands: []
   };
+}
+function create_element(html, parent) {
+  const template = document.createElement("template");
+  template.innerHTML = html.trim();
+  const ans = template.content.firstElementChild;
+  if (parent != null)
+    parent.appendChild(ans);
+  return ans;
 }
 function divs(vals) {
   const ans = [];
@@ -6820,29 +6828,29 @@ var TreeControl = class {
   last_root;
   last_converted = make_empty_tree_folder();
   collapsed_id = /* @__PURE__ */ new Set();
-  create_node_element(node) {
+  create_node_element(node, parent) {
     const { type, id, description, label } = node;
     const template = document.createElement("template");
     const style = this.collapsed_id.has(id) ? 'style="display:none;"' : "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
-    template.innerHTML = `
+    return create_element(`
   <div class="tree_${type}" id="${id}" >
     ${divs({ label, description })}
     ${children}
-  </div>
-    `.trim();
-    const element = template.content.firstElementChild;
-    return element;
+  </div>`, parent);
   }
-  create_node(parent, node) {
-    const el = this.create_node_element(node);
-    parent.appendChild(el);
-    if (node.type === "item") {
+  create_node(parent, node, atroot) {
+    const children_el = (() => {
+      if (atroot)
+        return create_element("<div class=children></div>", parent);
+      const new_parent = this.create_node_element(node, parent);
+      return new_parent.querySelector(".children");
+    })();
+    if (children_el == null) {
       return;
     }
-    const children_el = query_selector(el, ".children");
     for (const x of node.children) {
-      this.create_node(children_el, x);
+      this.create_node(children_el, x, false);
     }
   }
   render(root) {
@@ -6852,7 +6860,7 @@ var TreeControl = class {
     if (is_equal)
       return;
     this.parent.innerHTML = "";
-    this.create_node(this.parent, converted);
+    this.create_node(this.parent, converted, true);
     this.last_converted = converted;
   }
 };
@@ -6931,7 +6939,7 @@ function convert(root) {
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [] };
   }
-  return { type: "item", id, label: name, commands: [] };
+  return { type: "item", id, label: name, commands: [], children: [] };
 }
 var provider = {
   convert,
