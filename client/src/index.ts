@@ -3,9 +3,10 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage,RunnerBase,FolderBase} from '../../src/extension.js'
+import {WebviewMessage,RunnerBase,FolderBase,FolderRunner} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal } from '@xterm/xterm';
+import { query_selector,TreeControl,TreeDataProvider,TreeItem,TreeNode } from './tree_control.js';
 function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
   if (ans!=null)
@@ -24,12 +25,7 @@ function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   parent.appendChild(element);
   return element;
 }
-function query_selector(el:HTMLElement,selector:string){
-    const ans=el.querySelector(selector);
-    if (ans==null ||  !(ans instanceof HTMLElement))
-      throw new Error('selector not found or not html element')  
-    return ans
-}
+
 function update_child_html(el: HTMLElement, selector: string, html: string) {
   const child = query_selector(el,selector)
   if (child.innerHTML === html) return; // skip if same
@@ -101,10 +97,29 @@ function get_terminals(folder:FolderBase,terminals:Terminals){
     terminals.get_terminal(runner).update(runner)
   folder.folders.forEach(x=>get_terminals(x,terminals)) //i dont like carring the terminals like this
 }
+function convert(root:FolderRunner):TreeNode{
+  const {type,name,id}=root
+
+  if (root.type==='folder'){
+    const folders=root.folders.map(convert)
+    const items=root.runners.map(convert)
+    const children=[...folders,...items]
+    return {children,type:'folder',id,label:name,commands:[]}
+  }
+  return {type:'item',id,label:name,commands:[]}
+}
+const provider:TreeDataProvider<FolderRunner>={
+  convert,
+  command(item:FolderRunner,command:string){
+     alert(command)
+  }
+}
 function start(){
   console.log('start')
   const sendButton = document.getElementById('sendMessage');
   const terminals=new Terminals(document.body)
+
+  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider)
   if (sendButton==null){
     console.warn(' div not found')
     return
@@ -132,6 +147,7 @@ function start(){
       switch (message.command) {
           case 'RunnerReport':{
             get_terminals(message.root,terminals)
+            tree.render(message.root)
             //const json=JSON.stringify(message.runners,null,2)
             //void navigator.clipboard.writeText(json);
             //append(json)

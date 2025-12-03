@@ -42,11 +42,13 @@ export interface Folder {
 export interface FolderBase {
     type: 'folder';
     name: string;
+    id: string;
     full_pathname: string;
     folders: Array<FolderBase>;
     runners: Array<RunnerBase>;
     scriptsmon: Scriptsmon;
 }
+export type FolderRunner = RunnerBase | FolderBase;
 export declare function extract_base(folder: Folder): FolderBase;
 export declare function read_package_json(full_pathnames: string[]): Promise<Folder>;
 export {};

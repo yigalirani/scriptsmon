@@ -1,9 +1,9 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys,extract_base,FolderBase} from './monitor.js'
+import {read_package_json,FolderRunner,type Runner,type Folder,type RunnerBase,runner_base_keys,extract_base,FolderBase} from './monitor.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
-export {type RunnerBase,runner_base_keys,FolderBase}
+export {type RunnerBase,runner_base_keys,FolderBase,FolderRunner}
 type MonitorNode=Runner|Folder
 
 

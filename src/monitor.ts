@@ -90,12 +90,15 @@ export interface Folder{
 export interface FolderBase{
   type:'folder'
   name:string 
+  id:string
   full_pathname: string //where the package.json is 
   folders:Array<FolderBase>
   runners:Array<RunnerBase>
   scriptsmon:Scriptsmon
 }
+export type FolderRunner=RunnerBase|FolderBase
 export function extract_base(folder:Folder):FolderBase{
+  const {full_pathname}=folder
   const runners=[]
   for (const runner of folder.runners){
     const runner_base:RunnerBase=pk(runner,...runner_base_keys)
@@ -106,7 +109,7 @@ export function extract_base(folder:Folder):FolderBase{
     runners.push(runner_base)
   }
   const folders=folder.folders.map(extract_base)
-  return {...folder,folders,runners}
+  return {id:full_pathname,...folder,folders,runners}
 }
 function is_valid_watch(a:unknown){
   if (a==null)

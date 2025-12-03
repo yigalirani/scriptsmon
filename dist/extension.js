@@ -100,6 +100,7 @@ var runner_base_keys = [
   "id"
 ];
 function extract_base(folder) {
+  const { full_pathname } = folder;
   const runners = [];
   for (const runner of folder.runners) {
     const runner_base = pk(runner, ...runner_base_keys);
@@ -110,7 +111,7 @@ function extract_base(folder) {
     runners.push(runner_base);
   }
   const folders = folder.folders.map(extract_base);
-  return { ...folder, folders, runners };
+  return { id: full_pathname, ...folder, folders, runners };
 }
 function is_valid_watch(a) {
   if (a == null)
