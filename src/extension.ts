@@ -1,9 +1,9 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys} from './monitor.js'
+import {read_package_json,type Runner,type Folder,type RunnerBase,runner_base_keys,extract_base,FolderBase} from './monitor.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
-export {type RunnerBase,runner_base_keys}
+export {type RunnerBase,runner_base_keys,FolderBase}
 type MonitorNode=Runner|Folder
 
 
@@ -13,7 +13,7 @@ export interface WebviewMessageSimple {
 }
 export interface RunnerReport{
    command: "RunnerReport";
-   runners:RunnerBase[]
+   root:FolderBase
 }
 export interface SetSelected{
    command: "set_selected";
@@ -24,28 +24,7 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
 
-function make_runner_report(root:object):RunnerReport{
-  const runners:RunnerBase[]=[]
-  function f(folder:Folder){
-    for (const runner of folder.runners){
-      const runner_base:RunnerBase=pk(runner,...runner_base_keys)
-      if (runner.output.length!==0){
-        console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`)
-        runner.output=[]
-      }
-    
-      runners.push(runner_base)
-    }
-    for (const subfolder of folder.folders){
-      f(subfolder)
-    }
-  } 
-  f(root)
-  return {runners,command: "RunnerReport"}
-}
-    function calc_icons_paths(){
 
-    }
 
 class IconPaths{
   folderIconPath:vscode.Uri|undefined
@@ -138,8 +117,10 @@ function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscod
     }
   );
   function send_report(root:Folder){
-    const report=make_runner_report(root)
-    post_message(panel.webview,report)
+    post_message(panel.webview,{
+      command:'RunnerReport',
+      root:extract_base(root)
+    })
   }  
   // Load content from static file
   panel.webview.html = getWebviewContent(context, panel.webview);

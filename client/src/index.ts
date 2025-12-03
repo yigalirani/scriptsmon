@@ -3,7 +3,7 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage,RunnerBase} from '../../src/extension.js'
+import {WebviewMessage,RunnerBase,FolderBase} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal } from '@xterm/xterm';
 function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
@@ -96,7 +96,11 @@ declare function acquireVsCodeApi(): VSCodeApi;
 
 const vscode = acquireVsCodeApi();
 
-
+function get_terminals(folder:FolderBase,terminals:Terminals){
+  for (const runner of folder.runners)
+    terminals.get_terminal(runner).update(runner)
+  folder.folders.forEach(x=>get_terminals(x,terminals)) //i dont like carring the terminals like this
+}
 function start(){
   console.log('start')
   const sendButton = document.getElementById('sendMessage');
@@ -127,8 +131,7 @@ function start(){
       const message = event.data;
       switch (message.command) {
           case 'RunnerReport':{
-            for (const runner of message.runners)
-              terminals.get_terminal(runner).update(runner)
+            get_terminals(message.root,terminals)
             //const json=JSON.stringify(message.runners,null,2)
             //void navigator.clipboard.writeText(json);
             //append(json)

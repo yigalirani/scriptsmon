@@ -12,7 +12,8 @@ import {
   is_string_array,
   s2s,
   get_error,
-  sleep
+  sleep,
+  pk
 } from "@yigal/base_types";
 interface Watcher{
   watch?:string[]
@@ -85,6 +86,27 @@ export interface Folder{
   folders:Array<Folder>
   runners:Array<Runner>
   scriptsmon:Scriptsmon
+}
+export interface FolderBase{
+  type:'folder'
+  name:string 
+  full_pathname: string //where the package.json is 
+  folders:Array<FolderBase>
+  runners:Array<RunnerBase>
+  scriptsmon:Scriptsmon
+}
+export function extract_base(folder:Folder):FolderBase{
+  const runners=[]
+  for (const runner of folder.runners){
+    const runner_base:RunnerBase=pk(runner,...runner_base_keys)
+    if (runner.output.length!==0){
+      console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`)
+      runner.output=[]
+    }    
+    runners.push(runner_base)
+  }
+  const folders=folder.folders.map(extract_base)
+  return {...folder,folders,runners}
 }
 function is_valid_watch(a:unknown){
   if (a==null)

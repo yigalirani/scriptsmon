@@ -6151,6 +6151,11 @@ var Terminals = class {
   }
 };
 var vscode = acquireVsCodeApi();
+function get_terminals(folder, terminals) {
+  for (const runner of folder.runners)
+    terminals.get_terminal(runner).update(runner);
+  folder.folders.forEach((x) => get_terminals(x, terminals));
+}
 function start() {
   console.log("start");
   const sendButton = document.getElementById("sendMessage");
@@ -6176,8 +6181,7 @@ function start() {
     const message = event.data;
     switch (message.command) {
       case "RunnerReport": {
-        for (const runner of message.runners)
-          terminals.get_terminal(runner).update(runner);
+        get_terminals(message.root, terminals);
         break;
       }
       case "set_selected":

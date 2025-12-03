@@ -99,6 +99,19 @@ var runner_base_keys = [
   "output",
   "id"
 ];
+function extract_base(folder) {
+  const runners = [];
+  for (const runner of folder.runners) {
+    const runner_base = pk(runner, ...runner_base_keys);
+    if (runner.output.length !== 0) {
+      console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`);
+      runner.output = [];
+    }
+    runners.push(runner_base);
+  }
+  const folders = folder.folders.map(extract_base);
+  return { ...folder, folders, runners };
+}
 function is_valid_watch(a) {
   if (a == null)
     return true;
@@ -326,24 +339,6 @@ import * as vscode from "vscode";
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-function make_runner_report(root) {
-  const runners = [];
-  function f(folder) {
-    for (const runner of folder.runners) {
-      const runner_base = pk(runner, ...runner_base_keys);
-      if (runner.output.length !== 0) {
-        console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`);
-        runner.output = [];
-      }
-      runners.push(runner_base);
-    }
-    for (const subfolder of folder.folders) {
-      f(subfolder);
-    }
-  }
-  f(root);
-  return { runners, command: "RunnerReport" };
-}
 var IconPaths = class {
   constructor(context, changed) {
     this.context = context;
@@ -422,8 +417,10 @@ function createWebviewPanel(context, root) {
     }
   );
   function send_report(root2) {
-    const report = make_runner_report(root2);
-    post_message(panel.webview, report);
+    post_message(panel.webview, {
+      command: "RunnerReport",
+      root: extract_base(root2)
+    });
   }
   panel.webview.html = getWebviewContent(context, panel.webview);
   setInterval(() => {

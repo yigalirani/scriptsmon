@@ -39,5 +39,14 @@ export interface Folder {
     runners: Array<Runner>;
     scriptsmon: Scriptsmon;
 }
+export interface FolderBase {
+    type: 'folder';
+    name: string;
+    full_pathname: string;
+    folders: Array<FolderBase>;
+    runners: Array<RunnerBase>;
+    scriptsmon: Scriptsmon;
+}
+export declare function extract_base(folder: Folder): FolderBase;
 export declare function read_package_json(full_pathnames: string[]): Promise<Folder>;
 export {};
