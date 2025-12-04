@@ -112,3 +112,6 @@ button:hover {
   height: 16px;
   margin-right: 4px;
 }
+.tree_folder.collapsed > .children {
+  display: none;
+}

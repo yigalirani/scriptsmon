@@ -6819,20 +6819,38 @@ function divs(vals) {
       ans.push(`<div class="${k}">${v}</div>`);
   return ans.join("");
 }
+function get_parent_by_class(el, className) {
+  let ans = el;
+  while (ans != null) {
+    if (ans.classList.contains(className))
+      return ans;
+    ans = ans.parentElement;
+  }
+  return null;
+}
 var TreeControl = class {
   constructor(parent, provider2) {
     this.parent = parent;
     this.provider = provider2;
+    parent.addEventListener("click", (evt) => {
+      if (!(evt.target instanceof HTMLElement))
+        return;
+      const clicked = get_parent_by_class(evt.target, "label_row")?.parentElement;
+      if (clicked == null)
+        return;
+      if (clicked.classList.contains("tree_folder"))
+        clicked.classList.toggle("collapsed");
+    });
   }
   base_uri = "";
-  selected;
+  //selected:string|boolean=false
   last_root;
   last_converted = make_empty_tree_folder();
-  collapsed_id = /* @__PURE__ */ new Set();
+  //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
     const { type, id, description, label, icon = "undefined" } = node;
     const template = document.createElement("template");
-    const style = this.collapsed_id.has(id) ? 'style="display:none;"' : "";
+    const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     return create_element(`
   <div class="tree_${type}" id="${id}" >
