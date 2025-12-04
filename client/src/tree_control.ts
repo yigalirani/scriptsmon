@@ -52,7 +52,7 @@ function get_parent_by_class(el:HTMLElement,className:string){
   let ans:HTMLElement|null=el
   while(ans!=null){
     ans=ans.parentElement as HTMLElement
-    if (ans.classList.contains(className))
+    if (ans!=null&&ans.classList.contains(className))
       return ans    
   }
   return null
@@ -68,6 +68,18 @@ function get_prev_selected(selected:HTMLElement){
   }
   return null
 }
+function get_next_selected(selected:HTMLElement){
+  if (selected==null)
+    return null // i like undefined better but want to have the 
+  let cur:ChildNode|null=selected
+  while(cur!=null){
+    cur=cur.nextSibling
+    if (cur instanceof HTMLElement)
+      return cur
+  }
+  return null
+}
+
 function get_children(selected:HTMLElement){
   if (selected.classList.contains('collapsed'))
     return null
@@ -76,6 +88,15 @@ function get_children(selected:HTMLElement){
 function getLastElementChild(parent: HTMLElement): HTMLElement | null {
   // Iterate backwards through child nodes
   for (let i = parent.childNodes.length - 1; i >= 0; i--) {
+    const node = parent.childNodes[i];
+    if (node instanceof HTMLElement) {
+      return node;
+    }
+  }
+  return null;
+}
+function getFirstElementChild(parent: HTMLElement): HTMLElement | null {
+  for (let i = 0;i<parent.childNodes.length; i++) {
     const node = parent.childNodes[i];
     if (node instanceof HTMLElement) {
       return node;
@@ -99,9 +120,35 @@ function element_for_up_arrow(selected:HTMLElement){
     return get_parent_by_class(selected,'tree_folder')
   return get_last_visible(ans)
 }
+function element_for_down_arrow(selected:HTMLElement){
+  const children_div=get_children(selected)
+  if (children_div!=null){
+    const first=getFirstElementChild(children_div)
+    if (first!==null)
+      return first
+  }
+  const ans=get_next_selected(selected)
+  if (ans!=null)
+    return ans
+  let cur=selected
+  while(true){
+    const parent=get_parent_by_class(cur,'tree_folder')
+    if (parent==null)
+      return null
+    const ans=get_next_selected(parent)
+    if (ans!=null)
+      return ans
+    cur=parent
+  }
+  return get_next_selected(selected)
+  //return a
+  //if (ans==null)
+  //  return get_parent_by_class(selected,'tree_folder')
+}
+
 
 function remove_class(el:HTMLElement,className:string){
-  el.querySelectorAll('.selected').forEach(x => x.classList.remove('selected'))      
+  el.querySelectorAll('.selected').forEach(x => x.classList.remove(className))      
 }
 
 export class TreeControl<T>{
@@ -147,18 +194,27 @@ export class TreeControl<T>{
     parent.addEventListener('keydown',(evt)=>{
       if (!(evt.target instanceof HTMLElement))
         return
+      console.log(evt.key)
+      const selected=parent.querySelector('.selected')
+      if (!(selected instanceof HTMLElement))
+        return
       switch(evt.key){
         case 'ArrowUp':{
-          console.log('arrow up')
-          const selected=parent.querySelector('.selected')
-          if (!(selected instanceof HTMLElement))
-            return
           const prev=element_for_up_arrow(selected)
           if (prev==null)
             return
           remove_class(parent,'selected')            
           prev.classList.add('selected')
+          break
         }
+        case 'ArrowDown':{
+          const prev=element_for_down_arrow(selected)
+          if (prev==null)
+            return
+          remove_class(parent,'selected')            
+          prev.classList.add('selected')
+          break
+        }        
       }
 
     })    

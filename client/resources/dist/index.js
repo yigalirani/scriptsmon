@@ -6823,7 +6823,7 @@ function get_parent_by_class(el, className) {
   let ans = el;
   while (ans != null) {
     ans = ans.parentElement;
-    if (ans.classList.contains(className))
+    if (ans != null && ans.classList.contains(className))
       return ans;
   }
   return null;
@@ -6839,6 +6839,17 @@ function get_prev_selected(selected) {
   }
   return null;
 }
+function get_next_selected(selected) {
+  if (selected == null)
+    return null;
+  let cur = selected;
+  while (cur != null) {
+    cur = cur.nextSibling;
+    if (cur instanceof HTMLElement)
+      return cur;
+  }
+  return null;
+}
 function get_children(selected) {
   if (selected.classList.contains("collapsed"))
     return null;
@@ -6846,6 +6857,15 @@ function get_children(selected) {
 }
 function getLastElementChild(parent) {
   for (let i = parent.childNodes.length - 1; i >= 0; i--) {
+    const node = parent.childNodes[i];
+    if (node instanceof HTMLElement) {
+      return node;
+    }
+  }
+  return null;
+}
+function getFirstElementChild(parent) {
+  for (let i = 0; i < parent.childNodes.length; i++) {
     const node = parent.childNodes[i];
     if (node instanceof HTMLElement) {
       return node;
@@ -6868,8 +6888,30 @@ function element_for_up_arrow(selected) {
     return get_parent_by_class(selected, "tree_folder");
   return get_last_visible(ans);
 }
+function element_for_down_arrow(selected) {
+  const children_div = get_children(selected);
+  if (children_div != null) {
+    const first = getFirstElementChild(children_div);
+    if (first !== null)
+      return first;
+  }
+  const ans = get_next_selected(selected);
+  if (ans != null)
+    return ans;
+  let cur = selected;
+  while (true) {
+    const parent = get_parent_by_class(cur, "tree_folder");
+    if (parent == null)
+      return null;
+    const ans2 = get_next_selected(parent);
+    if (ans2 != null)
+      return ans2;
+    cur = parent;
+  }
+  return get_next_selected(selected);
+}
 function remove_class(el, className) {
-  el.querySelectorAll(".selected").forEach((x) => x.classList.remove("selected"));
+  el.querySelectorAll(".selected").forEach((x) => x.classList.remove(className));
 }
 var TreeControl = class {
   constructor(parent, provider2) {
@@ -6891,17 +6933,26 @@ var TreeControl = class {
     parent.addEventListener("keydown", (evt) => {
       if (!(evt.target instanceof HTMLElement))
         return;
+      console.log(evt.key);
+      const selected = parent.querySelector(".selected");
+      if (!(selected instanceof HTMLElement))
+        return;
       switch (evt.key) {
         case "ArrowUp": {
-          console.log("arrow up");
-          const selected = parent.querySelector(".selected");
-          if (!(selected instanceof HTMLElement))
-            return;
           const prev = element_for_up_arrow(selected);
           if (prev == null)
             return;
           remove_class(parent, "selected");
           prev.classList.add("selected");
+          break;
+        }
+        case "ArrowDown": {
+          const prev = element_for_down_arrow(selected);
+          if (prev == null)
+            return;
+          remove_class(parent, "selected");
+          prev.classList.add("selected");
+          break;
         }
       }
     });
