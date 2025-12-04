@@ -6928,7 +6928,7 @@ var TreeControl = class {
       if (clicked.classList.contains("tree_folder"))
         clicked.classList.toggle("collapsed");
       remove_class(parent, "selected");
-      clicked.classList.add("selected");
+      void this.set_selected(clicked);
     });
     parent.addEventListener("keydown", (evt) => {
       if (!(evt.target instanceof HTMLElement))
@@ -6943,7 +6943,7 @@ var TreeControl = class {
           if (prev == null)
             return;
           remove_class(parent, "selected");
-          prev.classList.add("selected");
+          void this.set_selected(prev);
           break;
         }
         case "ArrowDown": {
@@ -6951,7 +6951,7 @@ var TreeControl = class {
           if (prev == null)
             return;
           remove_class(parent, "selected");
-          prev.classList.add("selected");
+          void this.set_selected(prev);
           break;
         }
         case "ArrowRight":
@@ -6987,6 +6987,11 @@ var TreeControl = class {
     </div>
     ${children}
   </div>`, parent);
+  }
+  on_selected_changed = (a) => void 0;
+  async set_selected(el) {
+    el.classList.add("selected");
+    await this.on_selected_changed(el.id);
   }
   create_node(parent, node, depth) {
     const children_el = (() => {
@@ -7104,6 +7109,14 @@ function start() {
   const terminals = new Terminals(document.body);
   let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
+  function on_selected_changed(id) {
+    for (const panel of document.querySelectorAll(".term_panel")) {
+      if (!(panel instanceof HTMLElement))
+        continue;
+      panel.style.display = panel.id === id ? "flex" : "none";
+    }
+  }
+  tree.on_selected_changed = on_selected_changed;
   if (sendButton == null) {
     console.warn(" div not found");
     return;
@@ -7132,11 +7145,7 @@ function start() {
       }
       case "set_selected":
         update_child_html(document.body, "#selected", message.selected);
-        for (const panel of document.querySelectorAll(".term_panel")) {
-          if (!(panel instanceof HTMLElement))
-            continue;
-          panel.style.display = panel.id === message.selected ? "flex" : "none";
-        }
+        on_selected_changed(message.selected);
         break;
       case "updateContent":
         break;

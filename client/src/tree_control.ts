@@ -172,7 +172,12 @@ export class TreeControl<T>{
     </div>
     ${children}
   </div>`,parent)
-  }  
+  }
+  on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
+  async set_selected(el:HTMLElement){
+    el.classList.add('selected')
+    await this.on_selected_changed(el.id)
+  }
   constructor(
     public parent:HTMLElement,
     public provider:TreeDataProvider<T>
@@ -189,7 +194,7 @@ export class TreeControl<T>{
       if (clicked.classList.contains('tree_folder'))
         clicked.classList.toggle('collapsed')
       remove_class(parent,'selected')
-      clicked.classList.add('selected')
+      void this.set_selected(clicked)
     })
     parent.addEventListener('keydown',(evt)=>{
       if (!(evt.target instanceof HTMLElement))
@@ -203,16 +208,16 @@ export class TreeControl<T>{
           const prev=element_for_up_arrow(selected)
           if (prev==null)
             return
-          remove_class(parent,'selected')            
-          prev.classList.add('selected')
-          break
+          remove_class(parent,'selected')   
+          void this.set_selected(prev)         
+         break
         }
         case 'ArrowDown':{
           const prev=element_for_down_arrow(selected)
           if (prev==null)
             return
           remove_class(parent,'selected')            
-          prev.classList.add('selected')
+          void this.set_selected(prev)
           break
         }
         case 'ArrowRight':

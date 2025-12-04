@@ -123,6 +123,14 @@ function start(){
 
 
   const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider)
+  function on_selected_changed(id:string){
+    for (const panel of document.querySelectorAll('.term_panel')){
+      if (!(panel instanceof HTMLElement))
+        continue
+      panel.style.display=(panel.id===id)?'flex':'none'
+    }
+  }
+  tree.on_selected_changed=on_selected_changed
   if (sendButton==null){
     console.warn(' div not found')
     return
@@ -159,11 +167,7 @@ function start(){
           }
           case 'set_selected':
             update_child_html(document.body,'#selected', message.selected)
-            for (const panel of document.querySelectorAll('.term_panel')){
-              if (!(panel instanceof HTMLElement))
-                continue
-              panel.style.display=(panel.id===message.selected)?'flex':'none'
-            }
+            on_selected_changed(message.selected)
             break
           case 'updateContent':
             //append(message.text||'<no message>')
