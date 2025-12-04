@@ -106,7 +106,8 @@ function convert(root:FolderRunner):TreeNode{
     const children=[...folders,...items]
     return {children,type:'folder',id,label:name,commands:[]}
   }
-  return {type:'item',id,label:name,commands:[],children:[]}
+  const {script}=root
+  return {type:'item',id,label:name,commands:[],children:[],description:script}
 }
 const provider:TreeDataProvider<FolderRunner>={
   convert,

@@ -59,7 +59,7 @@ export class TreeControl<T>{
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     return create_element(`
   <div class="tree_${type}" id="${id}" >
-    <div class=label_row><div class=label style='margin-left:${margin}px'>${divs({label,description})}</div></div>
+    <div class=label_row><div class=shifter style='margin-left:${margin}px'>${divs({label,description})}</div></div>
     ${children}
   </div>`,parent)
   }  

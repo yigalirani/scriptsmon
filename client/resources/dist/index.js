@@ -6835,7 +6835,7 @@ var TreeControl = class {
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     return create_element(`
   <div class="tree_${type}" id="${id}" >
-    <div class=label_row><div class=label style='margin-left:${margin}px'>${divs({ label, description })}</div></div>
+    <div class=label_row><div class=shifter style='margin-left:${margin}px'>${divs({ label, description })}</div></div>
     ${children}
   </div>`, parent);
   }
@@ -6939,7 +6939,8 @@ function convert(root) {
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [] };
   }
-  return { type: "item", id, label: name, commands: [], children: [] };
+  const { script } = root;
+  return { type: "item", id, label: name, commands: [], children: [], description: script };
 }
 var provider = {
   convert,
