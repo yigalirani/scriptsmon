@@ -6954,6 +6954,16 @@ var TreeControl = class {
           prev.classList.add("selected");
           break;
         }
+        case "ArrowRight":
+          selected.classList.remove("collapsed");
+          break;
+        case "ArrowLeft":
+          selected.classList.add("collapsed");
+          break;
+        case "Enter":
+        case " ":
+          selected.classList.toggle("collapsed");
+          break;
       }
     });
   }
