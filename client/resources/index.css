@@ -84,7 +84,7 @@ button:hover {
 
 }
 .label_row{
-    padding: 5px;
+    padding: 4px;
 }
 .label_row:hover{
   background-color: var(--vscode-list-hoverBackground);
@@ -110,4 +110,5 @@ button:hover {
   display: block;
   width: 16px;
   height: 16px;
+  margin-right: 4px;
 }

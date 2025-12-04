@@ -6944,10 +6944,10 @@ function convert(root) {
     const folders = root.folders.map(convert);
     const items = root.runners.map(convert);
     const children = [...folders, ...items];
-    return { children, type: "folder", id, label: name, commands: [] };
+    return { children, type: "folder", id, label: name, commands: [], icon: "folder-dark" };
   }
   const { script } = root;
-  return { type: "item", id, label: name, commands: [], children: [], description: script };
+  return { type: "item", id, label: name, commands: [], children: [], description: script, icon: "file-dark" };
 }
 var provider = {
   convert,
