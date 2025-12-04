@@ -3,6 +3,7 @@
       "editorWarning.foreground": "#b8ad8d", // Example: Orange for warnings
       "editor.background": "#000000", // Example: a dark gray background
       "sideBar.background": "#000000"
+      "list.activeSelectionBackground":"red"
   }
   
 }

@@ -92,6 +92,8 @@ export class TreeControl<T>{
       //this.selected=clicked.id
       if (clicked.classList.contains('tree_folder'))
         clicked.classList.toggle('collapsed')
+      parent.querySelectorAll('.selected').forEach(x => x.classList.remove('selected'))
+      clicked.classList.add('selected')
     })
   }
 

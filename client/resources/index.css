@@ -98,6 +98,7 @@ button:hover {
 .shifter{
   display: flex;
   align-items: center;
+  position: relative; 
 
 }
 .children{
@@ -114,4 +115,23 @@ button:hover {
 }
 .tree_folder.collapsed > .children {
   display: none;
+}
+.selected > .label_row{
+  background-color: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+.tree_folder.collapsed>.label_row>.shifter>::before {
+  content: "▷";            /* Collapsed icon (triangle) */
+  position: absolute;
+  left: -15px;
+  font-size: 12px;
+  pointer-events: none;
+}
+.tree_folder:not(.collapsed)>.label_row>.shifter::before {
+  content: "▽";            /* Collapsed icon (triangle) */
+  position: absolute;
+  left: -15px;
+  font-size: 12px;
+  pointer-events: none;
+
 }
