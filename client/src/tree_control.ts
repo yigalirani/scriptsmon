@@ -51,12 +51,59 @@ function divs(vals:s2t<string|undefined>){
 function get_parent_by_class(el:HTMLElement,className:string){
   let ans:HTMLElement|null=el
   while(ans!=null){
+    ans=ans.parentElement as HTMLElement
     if (ans.classList.contains(className))
-      return ans
-    ans=ans.parentElement
+      return ans    
   }
   return null
 }
+function get_prev_selected(selected:HTMLElement){
+  if (selected==null)
+    return null // i like undefined better but want to have the 
+  let cur:ChildNode|null=selected
+  while(cur!=null){
+    cur=cur.previousSibling
+    if (cur instanceof HTMLElement)
+      return cur
+  }
+  return null
+}
+function get_children(selected:HTMLElement){
+  if (selected.classList.contains('collapsed'))
+    return null
+  return selected.querySelector('.children') as HTMLElement//by thoernm is an HTMLElement
+}
+function getLastElementChild(parent: HTMLElement): HTMLElement | null {
+  // Iterate backwards through child nodes
+  for (let i = parent.childNodes.length - 1; i >= 0; i--) {
+    const node = parent.childNodes[i];
+    if (node instanceof HTMLElement) {
+      return node;
+    }
+  }
+  return null;
+}
+function get_last_visible(selected:HTMLElement){
+  const children_div=get_children(selected)
+  if (children_div==null)
+    return selected
+  const last_child=getLastElementChild(children_div)
+  if (last_child==null)
+    return selected
+  return get_last_visible(last_child)
+    
+}
+function element_for_up_arrow(selected:HTMLElement){
+  const ans=get_prev_selected(selected)
+  if (ans==null)
+    return get_parent_by_class(selected,'tree_folder')
+  return get_last_visible(ans)
+}
+
+function remove_class(el:HTMLElement,className:string){
+  el.querySelectorAll('.selected').forEach(x => x.classList.remove('selected'))      
+}
+
 export class TreeControl<T>{
   public base_uri=''
   //selected:string|boolean=false
@@ -86,15 +133,35 @@ export class TreeControl<T>{
     parent.addEventListener('click',(evt)=>{
       if (!(evt.target instanceof HTMLElement))
         return
+      parent.tabIndex = 0;
+      parent.focus();
       const clicked=get_parent_by_class(evt.target,'label_row')?.parentElement
       if (clicked==null)
         return
       //this.selected=clicked.id
       if (clicked.classList.contains('tree_folder'))
         clicked.classList.toggle('collapsed')
-      parent.querySelectorAll('.selected').forEach(x => x.classList.remove('selected'))
+      remove_class(parent,'selected')
       clicked.classList.add('selected')
     })
+    parent.addEventListener('keydown',(evt)=>{
+      if (!(evt.target instanceof HTMLElement))
+        return
+      switch(evt.key){
+        case 'ArrowUp':{
+          console.log('arrow up')
+          const selected=parent.querySelector('.selected')
+          if (!(selected instanceof HTMLElement))
+            return
+          const prev=element_for_up_arrow(selected)
+          if (prev==null)
+            return
+          remove_class(parent,'selected')            
+          prev.classList.add('selected')
+        }
+      }
+
+    })    
   }
 
   create_node(parent:HTMLElement,node:TreeNode,depth:number){ //todo: compare to last by id to add change animation?

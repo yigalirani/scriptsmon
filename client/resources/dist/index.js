@@ -6822,11 +6822,54 @@ function divs(vals) {
 function get_parent_by_class(el, className) {
   let ans = el;
   while (ans != null) {
+    ans = ans.parentElement;
     if (ans.classList.contains(className))
       return ans;
-    ans = ans.parentElement;
   }
   return null;
+}
+function get_prev_selected(selected) {
+  if (selected == null)
+    return null;
+  let cur = selected;
+  while (cur != null) {
+    cur = cur.previousSibling;
+    if (cur instanceof HTMLElement)
+      return cur;
+  }
+  return null;
+}
+function get_children(selected) {
+  if (selected.classList.contains("collapsed"))
+    return null;
+  return selected.querySelector(".children");
+}
+function getLastElementChild(parent) {
+  for (let i = parent.childNodes.length - 1; i >= 0; i--) {
+    const node = parent.childNodes[i];
+    if (node instanceof HTMLElement) {
+      return node;
+    }
+  }
+  return null;
+}
+function get_last_visible(selected) {
+  const children_div = get_children(selected);
+  if (children_div == null)
+    return selected;
+  const last_child = getLastElementChild(children_div);
+  if (last_child == null)
+    return selected;
+  return get_last_visible(last_child);
+}
+function element_for_up_arrow(selected) {
+  const ans = get_prev_selected(selected);
+  if (ans == null)
+    return get_parent_by_class(selected, "tree_folder");
+  return get_last_visible(ans);
+}
+function remove_class(el, className) {
+  el.querySelectorAll(".selected").forEach((x) => x.classList.remove("selected"));
 }
 var TreeControl = class {
   constructor(parent, provider2) {
@@ -6835,13 +6878,32 @@ var TreeControl = class {
     parent.addEventListener("click", (evt) => {
       if (!(evt.target instanceof HTMLElement))
         return;
+      parent.tabIndex = 0;
+      parent.focus();
       const clicked = get_parent_by_class(evt.target, "label_row")?.parentElement;
       if (clicked == null)
         return;
       if (clicked.classList.contains("tree_folder"))
         clicked.classList.toggle("collapsed");
-      parent.querySelectorAll(".selected").forEach((x) => x.classList.remove("selected"));
+      remove_class(parent, "selected");
       clicked.classList.add("selected");
+    });
+    parent.addEventListener("keydown", (evt) => {
+      if (!(evt.target instanceof HTMLElement))
+        return;
+      switch (evt.key) {
+        case "ArrowUp": {
+          console.log("arrow up");
+          const selected = parent.querySelector(".selected");
+          if (!(selected instanceof HTMLElement))
+            return;
+          const prev = element_for_up_arrow(selected);
+          if (prev == null)
+            return;
+          remove_class(parent, "selected");
+          prev.classList.add("selected");
+        }
+      }
     });
   }
   base_uri = "";
