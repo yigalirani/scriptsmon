@@ -14,6 +14,7 @@ export interface WebviewMessageSimple {
 export interface RunnerReport{
    command: "RunnerReport";
    root:FolderBase
+   base_uri:string
 }
 export interface SetSelected{
    command: "set_selected";
@@ -119,7 +120,8 @@ function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscod
   function send_report(root:Folder){
     post_message(panel.webview,{
       command:'RunnerReport',
-      root:extract_base(root)
+      root:extract_base(root),
+      base_uri: panel.webview.asWebviewUri(context.extensionUri).toString()
     })
   }  
   // Load content from static file

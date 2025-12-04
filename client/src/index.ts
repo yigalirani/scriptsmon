@@ -119,6 +119,8 @@ function start(){
   console.log('start')
   const sendButton = document.getElementById('sendMessage');
   const terminals=new Terminals(document.body)
+  let base_uri=''
+
 
   const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider)
   if (sendButton==null){
@@ -148,7 +150,8 @@ function start(){
       switch (message.command) {
           case 'RunnerReport':{
             get_terminals(message.root,terminals)
-            tree.render(message.root)
+            base_uri=message.base_uri
+            tree.render(message.root,base_uri)
             //const json=JSON.stringify(message.runners,null,2)
             //void navigator.clipboard.writeText(json);
             //append(json)

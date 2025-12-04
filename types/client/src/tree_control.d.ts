@@ -16,6 +16,7 @@ export interface TreeDataProvider<T> {
 export declare class TreeControl<T> {
     parent: HTMLElement;
     provider: TreeDataProvider<T>;
+    base_uri: string;
     selected: string | undefined;
     last_root: T | undefined;
     last_converted: TreeNode;
@@ -23,6 +24,6 @@ export declare class TreeControl<T> {
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
     create_node(parent: HTMLElement, node: TreeNode, depth: number): void;
-    render(root: T): void;
+    render(root: T, base_uri: string): void;
 }
 export {};

@@ -83,6 +83,9 @@ button:hover {
 .tree_item{
 
 }
+.label_row{
+    padding: 5px;
+}
 .label_row:hover{
   background-color: var(--vscode-list-hoverBackground);
   cursor: pointer;
@@ -94,10 +97,17 @@ button:hover {
 }
 .shifter{
   display: flex;
+  align-items: center;
+
 }
 .children{
 }
 .description{
   padding-left: 10px;
   color:var(--vscode-descriptionForeground);
+}
+.icon{
+  display: block;
+  width: 16px;
+  height: 16px;
 }

@@ -47,19 +47,26 @@ function divs(vals:s2t<string|undefined>){
       ans.push(`<div class="${k}">${v}</div>`)
   return ans.join('')
 }
+
 export class TreeControl<T>{
+  public base_uri=''
   selected:string|undefined
   last_root:T|undefined
   last_converted:TreeNode=make_empty_tree_folder()
   collapsed_id:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
-    const {type,id,description,label}=node
+    const {type,id,description,label,icon='undefined'}=node
     const template = document.createElement("template")
     const style=this.collapsed_id.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     return create_element(`
   <div class="tree_${type}" id="${id}" >
-    <div class=label_row><div class=shifter style='margin-left:${margin}px'>${divs({label,description})}</div></div>
+    <div class=label_row>
+      <div class=shifter style='margin-left:${margin}px'>
+        <img class=icon src="${this.base_uri}/icons/${icon}.svg"/>
+        ${divs({label,description})}
+      </div>
+    </div>
     ${children}
   </div>`,parent)
   }  
@@ -84,8 +91,9 @@ export class TreeControl<T>{
     }
     
   }
-  render(root:T){
+  render(root:T,base_uri:string){
     /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
+    this.base_uri=base_uri+'/client/resources'
     const converted=this.provider.convert(root)
     const is_equal=isEqual(converted,this.last_converted)
     this.last_root=root

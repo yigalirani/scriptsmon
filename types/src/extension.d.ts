@@ -9,6 +9,7 @@ export interface WebviewMessageSimple {
 export interface RunnerReport {
     command: "RunnerReport";
     root: FolderBase;
+    base_uri: string;
 }
 export interface SetSelected {
     command: "set_selected";

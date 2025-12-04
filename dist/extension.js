@@ -420,7 +420,8 @@ function createWebviewPanel(context, root) {
   function send_report(root2) {
     post_message(panel.webview, {
       command: "RunnerReport",
-      root: extract_base(root2)
+      root: extract_base(root2),
+      base_uri: panel.webview.asWebviewUri(context.extensionUri).toString()
     });
   }
   panel.webview.html = getWebviewContent(context, panel.webview);

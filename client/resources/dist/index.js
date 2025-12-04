@@ -6824,18 +6824,24 @@ var TreeControl = class {
     this.parent = parent;
     this.provider = provider2;
   }
+  base_uri = "";
   selected;
   last_root;
   last_converted = make_empty_tree_folder();
   collapsed_id = /* @__PURE__ */ new Set();
   create_node_element(node, margin, parent) {
-    const { type, id, description, label } = node;
+    const { type, id, description, label, icon = "undefined" } = node;
     const template = document.createElement("template");
     const style = this.collapsed_id.has(id) ? 'style="display:none;"' : "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     return create_element(`
   <div class="tree_${type}" id="${id}" >
-    <div class=label_row><div class=shifter style='margin-left:${margin}px'>${divs({ label, description })}</div></div>
+    <div class=label_row>
+      <div class=shifter style='margin-left:${margin}px'>
+        <img class=icon src="${this.base_uri}/icons/${icon}.svg"/>
+        ${divs({ label, description })}
+      </div>
+    </div>
     ${children}
   </div>`, parent);
   }
@@ -6853,7 +6859,8 @@ var TreeControl = class {
       this.create_node(children_el, x, depth + 1);
     }
   }
-  render(root) {
+  render(root, base_uri) {
+    this.base_uri = base_uri + "/client/resources";
     const converted = this.provider.convert(root);
     const is_equal = (0, import_lodash.default)(converted, this.last_converted);
     this.last_root = root;
@@ -6952,6 +6959,7 @@ function start() {
   console.log("start");
   const sendButton = document.getElementById("sendMessage");
   const terminals = new Terminals(document.body);
+  let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
   if (sendButton == null) {
     console.warn(" div not found");
@@ -6975,7 +6983,8 @@ function start() {
     switch (message.command) {
       case "RunnerReport": {
         get_terminals(message.root, terminals);
-        tree.render(message.root);
+        base_uri = message.base_uri;
+        tree.render(message.root, base_uri);
         break;
       }
       case "set_selected":
