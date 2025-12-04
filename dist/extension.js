@@ -455,7 +455,7 @@ async function activate(context) {
     outputChannel.append(JSON.stringify(event, null, 2));
   });
   const { workspaceFolders: _workspaceFolders } = vscode.workspace;
-  const folders = ["c:\\yigal\\scriptsmon"];
+  const folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
   const root = await read_package_json(folders);
   const treeView = vscode.window.createTreeView("Scriptsmon.tree", {
     treeDataProvider: new MonitorProvider(root, context)

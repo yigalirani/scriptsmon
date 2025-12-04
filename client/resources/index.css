@@ -1,7 +1,7 @@
 html,body {
     font-family: var(--vscode-font-family);
     color: var(--vscode-foreground);
-    background-color: var(--vscode-editor-background);
+    background-color: var(--vscode-panel-background);
 
     margin: 0;
     height: 100%;
@@ -74,16 +74,24 @@ button:hover {
 }
 
 .stats tr:hover {
-  background-color: rgb(74, 72, 78);
+
 }
 
 .tree_folder{
-  background-color: #aa86c9;
+
 }
 .tree_item{
-  background-color: #61ebeb;
+
+}
+.label_row:hover{
+  background-color: var(--vscode-list-hoverBackground);
+  cursor: pointer;
+
+}
+.label{
   
+
 }
 .children{
-  margin-left: 20px;
+
 }

@@ -161,7 +161,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const {workspaceFolders: _workspaceFolders}= vscode.workspace
   //const folders=(workspaceFolders||[]).map(x=>x.uri.fsPath)
   //const folders=["c:\\yigal\\million_try3"]
-  const folders=["c:\\yigal\\scriptsmon"]
+  const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
   const root=await  read_package_json(folders)
   const treeView=vscode.window.createTreeView('Scriptsmon.tree', {
     treeDataProvider: new MonitorProvider(root, context)

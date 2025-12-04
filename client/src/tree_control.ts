@@ -52,14 +52,14 @@ export class TreeControl<T>{
   last_root:T|undefined
   last_converted:TreeNode=make_empty_tree_folder()
   collapsed_id:Set<string>=new Set()
-  create_node_element(node:TreeNode,parent?:HTMLElement){
+  create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {type,id,description,label}=node
     const template = document.createElement("template")
     const style=this.collapsed_id.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     return create_element(`
   <div class="tree_${type}" id="${id}" >
-    ${divs({label,description})}
+    <div class=label_row><div class=label style='margin-left:${margin}px'>${divs({label,description})}</div></div>
     ${children}
   </div>`,parent)
   }  
@@ -68,11 +68,11 @@ export class TreeControl<T>{
     public provider:TreeDataProvider<T>
   ){}
 
-  create_node(parent:HTMLElement,node:TreeNode,atroot:boolean){ //todo: compare to last by id to add change animation?
+  create_node(parent:HTMLElement,node:TreeNode,depth:number){ //todo: compare to last by id to add change animation?
     const children_el=(()=>{
-      if (atroot)
+      if (depth===0)
         return create_element('<div class=children></div>',parent)
-      const new_parent=this.create_node_element(node,parent)
+      const new_parent=this.create_node_element(node,depth*20,parent)
       return new_parent.querySelector('.children') //return value might be null for item node  
     })()
     if (children_el==null){
@@ -80,7 +80,7 @@ export class TreeControl<T>{
     }
 
     for (const x of node.children){
-      this.create_node(children_el as HTMLElement,x,false)
+      this.create_node(children_el as HTMLElement,x,depth+1)
     }
     
   }
@@ -92,7 +92,7 @@ export class TreeControl<T>{
     if (is_equal)
       return
     this.parent.innerHTML = '';
-    this.create_node(this.parent,converted,true) //todo pass the last converted so can do change/cate animation
+    this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation
     this.last_converted=converted
 
   }

@@ -20,9 +20,9 @@ export declare class TreeControl<T> {
     last_root: T | undefined;
     last_converted: TreeNode;
     collapsed_id: Set<string>;
-    create_node_element(node: TreeNode): HTMLElement;
+    create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
-    create_node(parent: HTMLElement, node: TreeNode): void;
+    create_node(parent: HTMLElement, node: TreeNode, depth: number): void;
     render(root: T): void;
 }
 export {};
