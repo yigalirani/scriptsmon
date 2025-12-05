@@ -117,7 +117,6 @@ const provider:TreeDataProvider<FolderRunner>={
 }
 function start(){
   console.log('start')
-  const sendButton = document.getElementById('sendMessage');
   const terminals=new Terminals(document.body)
   let base_uri=''
 
@@ -131,26 +130,22 @@ function start(){
     }
   }
   tree.on_selected_changed=on_selected_changed
-  if (sendButton==null){
-    console.warn(' div not found')
-    return
-  }
 
-  sendButton.addEventListener('click', () => {
+  /*sendButton.addEventListener('click', () => {
     //append('buttonClick clicked');
     vscode.postMessage({
           command: 'buttonClick',
           text: 'Hello from webview!'
       });
-  });
-  document.getElementById('getReport')!.addEventListener('click', () => {
+  });*/
+  /*document.getElementById('getReport')!.addEventListener('click', () => {
     //append('getReport clicked')
     const message:WebviewMessage={
           command: 'get_report',
           text: 'Hello from webview!'
       }
     vscode.postMessage(message);
-  });  
+  });  */
 
   // Listen for messages from the extension
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {

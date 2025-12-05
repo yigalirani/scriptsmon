@@ -7105,7 +7105,6 @@ var provider = {
 };
 function start() {
   console.log("start");
-  const sendButton = document.getElementById("sendMessage");
   const terminals = new Terminals(document.body);
   let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
@@ -7117,23 +7116,6 @@ function start() {
     }
   }
   tree.on_selected_changed = on_selected_changed;
-  if (sendButton == null) {
-    console.warn(" div not found");
-    return;
-  }
-  sendButton.addEventListener("click", () => {
-    vscode.postMessage({
-      command: "buttonClick",
-      text: "Hello from webview!"
-    });
-  });
-  document.getElementById("getReport").addEventListener("click", () => {
-    const message = {
-      command: "get_report",
-      text: "Hello from webview!"
-    };
-    vscode.postMessage(message);
-  });
   window.addEventListener("message", (event) => {
     const message = event.data;
     switch (message.command) {
