@@ -6828,6 +6828,17 @@ function get_parent_by_class(el, className) {
   }
   return null;
 }
+function get_parent_by_classes(el, className) {
+  const classes = Array.isArray(className) ? className : [className];
+  let ans = el;
+  while (ans !== null) {
+    ans = ans.parentElement;
+    if (ans !== null && classes.some((c) => ans.classList.contains(c))) {
+      return ans;
+    }
+  }
+  return null;
+}
 function get_prev_selected(selected) {
   if (selected == null)
     return null;
@@ -6913,6 +6924,11 @@ function element_for_down_arrow(selected) {
 function remove_class(el, className) {
   el.querySelectorAll(".selected").forEach((x) => x.classList.remove(className));
 }
+function getBaseName(path) {
+  const fileName = path.split(/[/\\]/).pop() || "";
+  const lastDot = fileName.lastIndexOf(".");
+  return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
+}
 var TreeControl = class {
   constructor(parent, provider2) {
     this.parent = parent;
@@ -6922,10 +6938,11 @@ var TreeControl = class {
         return;
       parent.tabIndex = 0;
       parent.focus();
+      const command_clicked = this.command_clicked(evt);
       const clicked = get_parent_by_class(evt.target, "label_row")?.parentElement;
       if (clicked == null)
         return;
-      if (clicked.classList.contains("tree_folder"))
+      if (!command_clicked && clicked.classList.contains("tree_folder"))
         clicked.classList.toggle("collapsed");
       remove_class(parent, "selected");
       void this.set_selected(clicked);
@@ -6933,6 +6950,7 @@ var TreeControl = class {
     parent.addEventListener("keydown", (evt) => {
       if (!(evt.target instanceof HTMLElement))
         return;
+      evt.preventDefault();
       console.log(evt.key);
       const selected = parent.querySelector(".selected");
       if (!(selected instanceof HTMLElement))
@@ -6994,6 +7012,24 @@ var TreeControl = class {
   async set_selected(el) {
     el.classList.add("selected");
     await this.on_selected_changed(el.id);
+  }
+  command_clicked(evt) {
+    if (evt.target == null)
+      return false;
+    const command_icon = get_parent_by_class(evt.target, "command_icon");
+    if (command_icon == null)
+      return false;
+    const img = query_selector(command_icon, "img");
+    const src = img.getAttribute("src");
+    if (src == null)
+      return false;
+    const command = getBaseName(src);
+    const item = get_parent_by_classes(evt.target, ["tree_item", "tree_folder"]);
+    if (item == null)
+      return false;
+    const id = item.id;
+    void this.provider.command(id, command);
+    return true;
   }
   create_node(parent, node, depth) {
     const children_el = (() => {
@@ -7102,10 +7138,17 @@ function convert(root) {
   const { script } = root;
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: "file-dark" };
 }
+function post_message(msg) {
+  vscode.postMessage(msg);
+}
 var provider = {
   convert,
-  command(item, command) {
-    alert(command);
+  command(id, command_name) {
+    post_message({
+      command: "command_clicked",
+      id,
+      command_name
+    });
   }
 };
 function start() {

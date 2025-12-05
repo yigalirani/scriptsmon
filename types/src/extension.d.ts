@@ -15,7 +15,12 @@ export interface SetSelected {
     command: "set_selected";
     selected: string;
 }
-export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected;
+export interface CommandClicked {
+    command: "command_clicked";
+    id: string;
+    command_name: string;
+}
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked;
 declare class IconPaths {
     context: vscode.ExtensionContext;
     changed: vscode.EventEmitter<undefined>;

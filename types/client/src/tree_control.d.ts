@@ -11,7 +11,7 @@ export interface TreeNode {
 }
 export interface TreeDataProvider<T> {
     convert: (root: T) => TreeNode;
-    command: (item: T, command: string) => MaybePromise<void>;
+    command: (id: string, command: string) => MaybePromise<void>;
 }
 export declare class TreeControl<T> {
     parent: HTMLElement;
@@ -22,6 +22,7 @@ export declare class TreeControl<T> {
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
     on_selected_changed: (a: string) => MaybePromise<void>;
     set_selected(el: HTMLElement): Promise<void>;
+    command_clicked(evt: Event): boolean;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
     create_node(parent: HTMLElement, node: TreeNode, depth: number): void;
     render(root: T, base_uri: string): void;

@@ -27,7 +27,7 @@ function make_empty_tree_folder():TreeNode{
 }
 export interface TreeDataProvider<T>{
   convert: (root:T)=>TreeNode
-  command:(item:T,command:string)=>MaybePromise<void>
+  command:(id:string,command:string)=>MaybePromise<void>
 }
 
 function create_element(html:string,parent?:HTMLElement){
@@ -56,6 +56,21 @@ function get_parent_by_class(el:HTMLElement,className:string){
       return ans    
   }
   return null
+}
+function get_parent_by_classes(
+  el: HTMLElement,
+  className: string | string[]
+): HTMLElement | null {
+  const classes = Array.isArray(className) ? className : [className];
+  let ans: HTMLElement | null = el;
+
+  while (ans !== null) {
+    ans = ans.parentElement as HTMLElement;
+    if (ans !== null && classes.some(c => ans!.classList.contains(c))) {
+      return ans;
+    }
+  }
+  return null;
 }
 function get_prev_selected(selected:HTMLElement){
   if (selected==null)
@@ -150,7 +165,14 @@ function element_for_down_arrow(selected:HTMLElement){
 function remove_class(el:HTMLElement,className:string){
   el.querySelectorAll('.selected').forEach(x => x.classList.remove(className))      
 }
+function getBaseName(path: string): string {
+  // Extract last path segment
+  const fileName = path.split(/[/\\]/).pop() || "";
 
+  // Remove extension (last dot and everything after)
+  const lastDot = fileName.lastIndexOf(".");
+  return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
+}
 export class TreeControl<T>{
   public base_uri=''
   //selected:string|boolean=false
@@ -180,6 +202,26 @@ export class TreeControl<T>{
     el.classList.add('selected')
     await this.on_selected_changed(el.id)
   }
+  command_clicked(evt:Event){
+    if (evt.target==null)
+      return false
+    const command_icon=get_parent_by_class(evt.target as HTMLElement,'command_icon')
+    if (command_icon==null)
+      return false
+    const img=query_selector(command_icon,'img')
+    const src = img.getAttribute('src');
+    if (src==null)
+      return false
+    const command=getBaseName(src)
+    const item=get_parent_by_classes(evt.target as HTMLElement,['tree_item','tree_folder'])
+    if (item==null)
+      return false
+    const id=item.id
+    void this.provider.command(id,command)
+    return true
+    
+  }
+  
   constructor(
     public parent:HTMLElement,
     public provider:TreeDataProvider<T>
@@ -189,11 +231,13 @@ export class TreeControl<T>{
         return
       parent.tabIndex = 0;
       parent.focus();
+      const command_clicked=this.command_clicked(evt)
+
       const clicked=get_parent_by_class(evt.target,'label_row')?.parentElement
       if (clicked==null)
         return
       //this.selected=clicked.id
-      if (clicked.classList.contains('tree_folder'))
+      if (!command_clicked&&clicked.classList.contains('tree_folder')) //if clicked command than don  change collpased status because dual action is annoing
         clicked.classList.toggle('collapsed')
       remove_class(parent,'selected')
       void this.set_selected(clicked)
@@ -201,6 +245,7 @@ export class TreeControl<T>{
     parent.addEventListener('keydown',(evt)=>{
       if (!(evt.target instanceof HTMLElement))
         return
+      evt.preventDefault(); // stops default browser action
       console.log(evt.key)
       const selected=parent.querySelector('.selected')
       if (!(selected instanceof HTMLElement))

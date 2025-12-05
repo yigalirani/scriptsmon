@@ -112,10 +112,18 @@ function convert(root:FolderRunner):TreeNode{
   const {script}=root
   return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:'file-dark'}
 }
+function post_message(msg:WebviewMessage){
+  vscode.postMessage(msg)
+}
+
 const provider:TreeDataProvider<FolderRunner>={
   convert,
-  command(item:FolderRunner,command:string){
-     alert(command)
+  command(id:string,command_name:string){
+     post_message({
+      command: "command_clicked",
+      id,
+      command_name
+     })
   }
 }
 function start(){

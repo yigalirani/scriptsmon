@@ -17,10 +17,15 @@ export interface RunnerReport{
    base_uri:string
 }
 export interface SetSelected{
-   command: "set_selected";
+   command: "set_selected"
    selected:string
 }
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected
+export interface CommandClicked{
+   command: "command_clicked"
+   id:string
+   command_name:string
+}
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
@@ -105,6 +110,19 @@ function getWebviewContent(context: vscode.ExtensionContext, webview: vscode.Web
   
   return html;
 }
+function find_runner(root:Folder,id:string){
+  function f(folder:Folder):Runner|undefined{
+    const ans=folder.runners.find(x=>x.id=id)
+    if (ans!=null)
+      return ans
+    for (const subfolder of folder.folders){
+      const ans=f(subfolder)
+      if (ans!=null)
+        return ans
+    }
+  }
+  return f(root)
+}
 function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscode.WebviewPanel {
   let counter=0
 
@@ -136,6 +154,13 @@ function createWebviewPanel(context: vscode.ExtensionContext,root:Folder): vscod
         case 'get_report':
           send_report(root)
           break
+        case 'command_clicked':{
+          send_report(root)
+          const runner=find_runner(root,message.id)
+          if (runner)
+            void runner.start('user')
+          break          
+        }
         case 'buttonClick':
           counter++
           vscode.window.showInformationMessage(`Received: ${message.text ?? ''}`);

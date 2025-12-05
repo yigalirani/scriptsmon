@@ -406,6 +406,19 @@ function getWebviewContent(context, webview) {
   html = html.replaceAll("./", base);
   return html;
 }
+function find_runner(root, id) {
+  function f(folder) {
+    const ans = folder.runners.find((x) => x.id = id);
+    if (ans != null)
+      return ans;
+    for (const subfolder of folder.folders) {
+      const ans2 = f(subfolder);
+      if (ans2 != null)
+        return ans2;
+    }
+  }
+  return f(root);
+}
 function createWebviewPanel(context, root) {
   let counter = 0;
   const panel = vscode.window.createWebviewPanel(
@@ -434,6 +447,13 @@ function createWebviewPanel(context, root) {
         case "get_report":
           send_report(root);
           break;
+        case "command_clicked": {
+          send_report(root);
+          const runner = find_runner(root, message.id);
+          if (runner)
+            void runner.start("user");
+          break;
+        }
         case "buttonClick":
           counter++;
           vscode.window.showInformationMessage(`Received: ${message.text ?? ""}`);
