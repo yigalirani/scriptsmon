@@ -7028,11 +7028,14 @@ function create_terminal_element(parent, id) {
   const template = document.createElement("template");
   template.innerHTML = `
 <div class="term_panel" id="${id}" style="display: none;">
-  <table class=stats>
-    <tr><td></td></tr>
-  </table>
   <div class=term>
   </div>
+  <div class=stats_container>
+    <table class=stats>
+      <tr><td></td></tr>
+    </table>
+  </div> 
+
 </div>
   `.trim();
   const element = template.content.firstElementChild;
@@ -7105,7 +7108,7 @@ var provider = {
 };
 function start() {
   console.log("start");
-  const terminals = new Terminals(document.body);
+  const terminals = new Terminals(query_selector(document.body, ".terms_container"));
   let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
   function on_selected_changed(id) {
@@ -7126,7 +7129,6 @@ function start() {
         break;
       }
       case "set_selected":
-        update_child_html(document.body, "#selected", message.selected);
         on_selected_changed(message.selected);
         break;
       case "updateContent":

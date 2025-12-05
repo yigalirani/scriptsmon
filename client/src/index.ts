@@ -14,11 +14,14 @@ function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   const template = document.createElement("template")
   template.innerHTML = `
 <div class="term_panel" id="${id}" style="display: none;">
-  <table class=stats>
-    <tr><td></td></tr>
-  </table>
   <div class=term>
   </div>
+  <div class=stats_container>
+    <table class=stats>
+      <tr><td></td></tr>
+    </table>
+  </div> 
+
 </div>
   `.trim();
   const element = template.content.firstElementChild as HTMLElement;
@@ -117,7 +120,7 @@ const provider:TreeDataProvider<FolderRunner>={
 }
 function start(){
   console.log('start')
-  const terminals=new Terminals(document.body)
+  const terminals=new Terminals(query_selector(document.body,'.terms_container'))
   let base_uri=''
 
 
@@ -161,7 +164,7 @@ function start(){
             break
           }
           case 'set_selected':
-            update_child_html(document.body,'#selected', message.selected)
+            //update_child_html(document.body,'#selected', message.selected)
             on_selected_changed(message.selected)
             break
           case 'updateContent':

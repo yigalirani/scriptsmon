@@ -8,6 +8,7 @@ html,body {
     display: flex;
     flex-direction: row;
        overflow: hidden;
+    width: 100%;
 }
 
 
@@ -24,8 +25,11 @@ h1 {
 .container {
     margin: 0 auto;
     display: flex;
-    flex-direction: row
-   
+    flex-direction: row;
+    width:300px;
+}
+.terms_container{
+  flex:1;
 }
 .controlpanel{
   padding: 30px;
@@ -58,12 +62,22 @@ button:hover {
   display: flex;
   flex-direction: row;
      overflow: hidden;
+  flex: 1;
+  height: 100%;
      
 }
-.stats{
+.stats_container{
+  overflow: scroll;
   width:300px;
+
+ }
+.stats{
   border-collapse: collapse;
   align-self: flex-start;
+}
+.term{
+  flex:1;
+  background-color: rgb(29, 55, 64);
 }
 .stats td{
   border: 2px solid inherit;
@@ -85,6 +99,7 @@ button:hover {
 }
 .label_row{
     padding: 4px;
+    white-space: nowrap;
 }
 .label_row:hover{
   background-color: var(--vscode-list-hoverBackground);
@@ -134,4 +149,8 @@ button:hover {
   font-size: 12px;
   pointer-events: none;
 
+}
+#the_tree{
+  overflow: scroll;
+  
 }
