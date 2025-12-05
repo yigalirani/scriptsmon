@@ -100,6 +100,7 @@ button:hover {
 .label_row{
     padding: 4px;
     white-space: nowrap;
+    display: flex;
 }
 .label_row:hover{
   background-color: var(--vscode-list-hoverBackground);
@@ -136,21 +137,34 @@ button:hover {
   color: var(--vscode-list-activeSelectionForeground);
 }
 .tree_folder.collapsed>.label_row>.shifter>::before {
-  content: "▷";            /* Collapsed icon (triangle) */
+  content: url('icons/chevron-right.svg');
   position: absolute;
-  left: -15px;
+  left: -20px;
   font-size: 12px;
   pointer-events: none;
+  filter: invert(1);
 }
 .tree_folder:not(.collapsed)>.label_row>.shifter::before {
-  content: "▽";            /* Collapsed icon (triangle) */
+  content: url('icons/chevron-down.svg');
   position: absolute;
-  left: -15px;
+  left: -20px;
   font-size: 12px;
   pointer-events: none;
+  filter: invert(1);
 
 }
 #the_tree{
   overflow: scroll;
-  
+  resize: horizontal;
+}
+.commands_icons{
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+}
+.command_icon:hover{
+  background-color:green ;
+}
+.command_icon > img {
+  filter: invert(1);
 }

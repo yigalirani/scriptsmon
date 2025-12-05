@@ -110,7 +110,7 @@ function convert(root:FolderRunner):TreeNode{
     return {children,type:'folder',id,label:name,commands:[],icon:'folder-dark'}
   }
   const {script}=root
-  return {type:'item',id,label:name,commands:[],children:[],description:script,icon:'file-dark'}
+  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:'file-dark'}
 }
 const provider:TreeDataProvider<FolderRunner>={
   convert,

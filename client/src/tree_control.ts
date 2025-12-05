@@ -43,7 +43,7 @@ import isEqual from "lodash.isequal";
 function divs(vals:s2t<string|undefined>){
   const ans=[]
   for (const [k,v] of Object.entries(vals))
-    if (v!=null)
+    if (v!=null&&v!=='')
       ans.push(`<div class="${k}">${v}</div>`)
   return ans.join('')
 }
@@ -158,10 +158,11 @@ export class TreeControl<T>{
   last_converted:TreeNode=make_empty_tree_folder()
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
-    const {type,id,description,label,icon='undefined'}=node
+    const {type,id,description,label,icon='undefined',commands}=node
     const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
+    const  commands_icons=commands.map(cmd=>`<div class=command_icon><img  src="${this.base_uri}/icons/${cmd}.svg"/></div>`).join('')
     return create_element(`
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
@@ -169,6 +170,7 @@ export class TreeControl<T>{
         <img class=icon src="${this.base_uri}/icons/${icon}.svg"/>
         ${divs({label,description})}
       </div>
+      ${divs({commands_icons})}
     </div>
     ${children}
   </div>`,parent)

@@ -20,6 +20,8 @@ export declare class TreeControl<T> {
     last_root: T | undefined;
     last_converted: TreeNode;
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
+    on_selected_changed: (a: string) => MaybePromise<void>;
+    set_selected(el: HTMLElement): Promise<void>;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
     create_node(parent: HTMLElement, node: TreeNode, depth: number): void;
     render(root: T, base_uri: string): void;

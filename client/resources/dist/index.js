@@ -6815,7 +6815,7 @@ function create_element(html, parent) {
 function divs(vals) {
   const ans = [];
   for (const [k, v] of Object.entries(vals))
-    if (v != null)
+    if (v != null && v !== "")
       ans.push(`<div class="${k}">${v}</div>`);
   return ans.join("");
 }
@@ -6973,10 +6973,11 @@ var TreeControl = class {
   last_converted = make_empty_tree_folder();
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
-    const { type, id, description, label, icon = "undefined" } = node;
+    const { type, id, description, label, icon = "undefined", commands } = node;
     const template = document.createElement("template");
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
+    const commands_icons = commands.map((cmd) => `<div class=command_icon><img  src="${this.base_uri}/icons/${cmd}.svg"/></div>`).join("");
     return create_element(`
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
@@ -6984,6 +6985,7 @@ var TreeControl = class {
         <img class=icon src="${this.base_uri}/icons/${icon}.svg"/>
         ${divs({ label, description })}
       </div>
+      ${divs({ commands_icons })}
     </div>
     ${children}
   </div>`, parent);
@@ -7098,7 +7100,7 @@ function convert(root) {
     return { children, type: "folder", id, label: name, commands: [], icon: "folder-dark" };
   }
   const { script } = root;
-  return { type: "item", id, label: name, commands: [], children: [], description: script, icon: "file-dark" };
+  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: "file-dark" };
 }
 var provider = {
   convert,
