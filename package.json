@@ -84,12 +84,13 @@
             ]
         },
         "views": {
-            "explorer": [
+            "panel": [
                 {
-                    "id": "Scriptsmon.tree",
-                    "name": "Scriptsmon"
+                    "type":"webview",
+                    "id": "Scriptsmon.webview",
+                    "name": "Scriptsmon web view"
                 }
-            ]
+            ]            
         }
     },
     "engines": {

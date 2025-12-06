@@ -1,7 +1,3 @@
-// src/extension.ts
-import * as path2 from "node:path";
-import * as fs from "node:fs";
-
 // src/monitor.ts
 import * as path from "node:path";
 import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
@@ -110,8 +106,8 @@ function extract_base(folder) {
     }
     runners.push(runner_base);
   }
-  const folders = folder.folders.map(extract_base);
-  return { id: full_pathname, ...folder, folders, runners };
+  const folders2 = folder.folders.map(extract_base);
+  return { id: full_pathname, ...folder, folders: folders2, runners };
 }
 function is_valid_watch(a) {
   if (a == null)
@@ -306,27 +302,27 @@ async function read_package_json(full_pathnames) {
     const scripts = parse_scripts(pkgJson);
     const runners = scriptsmon_to_runners(pkgPath, scriptsmon, scripts);
     const { workspaces } = pkgJson;
-    const folders2 = [];
+    const folders3 = [];
     if (is_string_array(workspaces))
-      for (const workspace2 of workspaces) {
-        const ret = await f(path.join(full_pathname, workspace2), workspace2);
+      for (const workspace of workspaces) {
+        const ret = await f(path.join(full_pathname, workspace), workspace);
         if (ret != null)
-          folders2.push(ret);
+          folders3.push(ret);
       }
-    const ans = { runners, folders: folders2, name, full_pathname, scriptsmon, type: "folder" };
+    const ans = { runners, folders: folders3, name, full_pathname, scriptsmon, type: "folder" };
     return ans;
   }
-  const folders = [];
+  const folders2 = [];
   for (const pathname of full_pathnames) {
     const full_pathname = path.resolve(pathname);
     const ret = await f(full_pathname, path.basename(full_pathname));
     if (ret != null)
-      folders.push(ret);
+      folders2.push(ret);
   }
   const root = {
     name: "root",
     full_pathname: "",
-    folders,
+    folders: folders2,
     runners: [],
     scriptsmon: {},
     type: "folder"
@@ -337,74 +333,50 @@ async function read_package_json(full_pathnames) {
 
 // src/extension.ts
 import * as vscode from "vscode";
-function post_message(view, msg) {
-  view.postMessage(msg);
-}
-var IconPaths = class {
-  constructor(context, changed) {
-    this.context = context;
-    this.changed = changed;
-    this.calc_paths();
-    vscode.window.onDidChangeActiveColorTheme(() => {
-      this.calc_paths();
-      this.changed.fire(void 0);
-    });
-  }
-  folderIconPath;
-  fileIconPath;
-  calc_paths() {
-    const isDark = vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark || vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.HighContrast;
-    const themeSuffix = isDark ? "dark" : "light";
-    this.folderIconPath = vscode.Uri.joinPath(this.context.extensionUri, "client", "resources", "icons", `folder-${themeSuffix}.svg`);
-    this.fileIconPath = vscode.Uri.joinPath(this.context.extensionUri, "client", "resources", "icons", `file-${themeSuffix}.svg`);
-  }
-};
-var MonitorProvider = class {
-  root;
-  paths;
-  changed = new vscode.EventEmitter();
-  onDidChangeTreeData = this.changed.event;
-  constructor(root, context) {
-    this.root = root;
-    this.paths = new IconPaths(context, this.changed);
-  }
-  getTreeItem(element) {
-    const ans = { label: element.name };
-    if (element.type === "folder")
-      return {
-        ...ans,
-        collapsibleState: 2,
-        iconPath: this.paths.folderIconPath,
-        description: element.full_pathname
-      };
-    return {
-      ...ans,
-      collapsibleState: 0,
-      iconPath: this.paths.fileIconPath,
-      description: element.script,
-      contextValue: "runner"
-    };
-  }
-  getChildren(element) {
-    if (!this.root) {
-      vscode.window.showInformationMessage("No Monitor in empty workspace");
-      return Promise.resolve([]);
-    }
-    if (element == null)
-      return Promise.resolve(this.root.folders);
-    if (element.type === "runner")
-      return Promise.resolve([]);
-    return Promise.resolve([...element.folders, ...element.runners]);
-  }
-};
+
+// src/vscode_utils.ts
+import * as path2 from "node:path";
+import * as fs from "node:fs";
+import {
+  Uri,
+  window as window2
+} from "vscode";
 function getWebviewContent(context, webview) {
   const htmlPath = path2.join(context.extensionPath, "client", "resources", "index.html");
   let html = fs.readFileSync(htmlPath, "utf-8");
   const base = webview.asWebviewUri(
-    vscode.Uri.joinPath(context.extensionUri, "client", "resources")
+    Uri.joinPath(context.extensionUri, "client", "resources")
   ).toString() + "/";
   html = html.replaceAll("./", base);
   return html;
+}
+function define_webview({ context, id, html, f }) {
+  console.log("define_webview");
+  const provider = {
+    resolveWebviewView(webviewView, webview_context) {
+      console.log("resolveWebviewView");
+      webviewView.webview.options = {
+        enableScripts: true,
+        localResourceRoots: [
+          Uri.file(path2.join(context.extensionPath, "client/resources"))
+        ]
+      };
+      webviewView.webview.html = getWebviewContent(context, webviewView.webview);
+      if (f)
+        void f(webviewView, context);
+    }
+  };
+  const reg = window2.registerWebviewViewProvider(
+    id,
+    provider
+  );
+  const ans = context.subscriptions.push(reg);
+  console.log(ans);
+}
+
+// src/extension.ts
+function post_message(view, msg) {
+  view.postMessage(msg);
 }
 function find_runner(root, id) {
   function f(folder) {
@@ -419,34 +391,22 @@ function find_runner(root, id) {
   }
   return f(root);
 }
-function createWebviewPanel(context, root) {
-  let counter = 0;
-  const panel = vscode.window.createWebviewPanel(
-    "scriptsmonWebview",
-    "Scriptsmon Webview",
-    vscode.ViewColumn.One,
-    {
-      enableScripts: true,
-      retainContextWhenHidden: true
-    }
-  );
+var folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
+var the_loop = async function(view, context) {
+  const root = await read_package_json(folders);
   function send_report(root2) {
-    post_message(panel.webview, {
+    post_message(view.webview, {
       command: "RunnerReport",
       root: extract_base(root2),
-      base_uri: panel.webview.asWebviewUri(context.extensionUri).toString()
+      base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
     });
   }
-  panel.webview.html = getWebviewContent(context, panel.webview);
   setInterval(() => {
     send_report(root);
   }, 100);
-  panel.webview.onDidReceiveMessage(
+  view.webview.onDidReceiveMessage(
     (message) => {
       switch (message.command) {
-        case "get_report":
-          send_report(root);
-          break;
         case "command_clicked": {
           send_report(root);
           const runner = find_runner(root, message.id);
@@ -454,82 +414,23 @@ function createWebviewPanel(context, root) {
             void runner.start("user");
           break;
         }
-        case "buttonClick":
-          counter++;
-          vscode.window.showInformationMessage(`Received: ${message.text ?? ""}`);
-          post_message(panel.webview, {
-            command: "updateContent",
-            text: `Extension received: ${message.text ?? ""},extension counter=${counter}`
-          });
-          break;
       }
     },
     void 0,
     context.subscriptions
   );
-  return panel;
-}
-async function activate(context) {
+};
+function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event, null, 2));
   });
-  const { workspaceFolders: _workspaceFolders } = vscode.workspace;
-  const folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
-  const root = await read_package_json(folders);
-  const treeView = vscode.window.createTreeView("Scriptsmon.tree", {
-    treeDataProvider: new MonitorProvider(root, context)
-  });
-  context.subscriptions.push(treeView);
-  const webview_panel = createWebviewPanel(context, root);
-  context.subscriptions.push(webview_panel);
-  const focusDisposable = treeView.onDidChangeSelection((event) => {
-    const selected = event.selection?.[0];
-    if (!selected || selected.type !== "runner")
-      return;
-    post_message(webview_panel.webview, { command: "set_selected", selected: selected.id });
-    const terminalName = `${selected.full_pathname} ${selected.name}`;
-    const terminal = vscode.window.terminals.find((t) => t.name === terminalName);
-    if (terminal)
-      terminal.show();
-  });
-  context.subscriptions.push(focusDisposable);
-  const disposable = vscode.commands.registerCommand("Scriptsmon.start", () => {
-    outputChannel.append("start");
-  });
-  context.subscriptions.push(disposable);
-  const playDisposable = vscode.commands.registerCommand("Scriptsmon.runner.play", async (runner) => {
-    if (!runner || runner.type !== "runner") {
-      vscode.window.showErrorMessage("Invalid runner");
-      return;
-    }
-    await runner.start("user");
-  });
-  context.subscriptions.push(playDisposable);
-  const debugDisposable = vscode.commands.registerCommand("Scriptsmon.runner.debug", (runner) => {
-    if (!runner || runner.type !== "runner") {
-      vscode.window.showErrorMessage("Invalid runner");
-      return;
-    }
-    const terminalName = `${runner.full_pathname} ${runner.name} (debug)`;
-    let terminal = vscode.window.terminals.find((t) => t.name === terminalName);
-    if (!terminal) {
-      terminal = vscode.window.createTerminal({
-        name: terminalName,
-        cwd: runner.full_pathname
-      });
-    }
-    terminal.show();
-    terminal.sendText(`npm run ${runner.name}`);
-    outputChannel.appendLine(`Debugging script: ${runner.name} in ${runner.full_pathname} (terminal: ${terminalName})`);
-  });
-  context.subscriptions.push(debugDisposable);
 }
 function deactivate() {
 }
 export {
-  MonitorProvider,
   activate,
   deactivate,
   runner_base_keys
