@@ -41,7 +41,7 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
 }
 function find_runner(root:Folder,id:string){
   function f(folder:Folder):Runner|undefined{
-    const ans=folder.runners.find(x=>x.id=id)
+    const ans=folder.runners.find(x=>x.id===id)
     if (ans!=null)
       return ans
     for (const subfolder of folder.folders){
@@ -71,7 +71,7 @@ const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionCont
     (message: WebviewMessage) => {
       switch (message.command) {
         case 'command_clicked':{
-          send_report(root)
+          ///send_report(root)
           const runner=find_runner(root,message.id)
           if (runner)
             void runner.start('user')

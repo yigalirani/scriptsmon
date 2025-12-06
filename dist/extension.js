@@ -380,7 +380,7 @@ function post_message(view, msg) {
 }
 function find_runner(root, id) {
   function f(folder) {
-    const ans = folder.runners.find((x) => x.id = id);
+    const ans = folder.runners.find((x) => x.id === id);
     if (ans != null)
       return ans;
     for (const subfolder of folder.folders) {
@@ -408,7 +408,6 @@ var the_loop = async function(view, context) {
     (message) => {
       switch (message.command) {
         case "command_clicked": {
-          send_report(root);
           const runner = find_runner(root, message.id);
           if (runner)
             void runner.start("user");
