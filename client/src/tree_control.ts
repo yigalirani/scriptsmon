@@ -48,7 +48,9 @@ function divs(vals:s2t<string|undefined>){
   return ans.join('')
 }
 
-function get_parent_by_class(el:HTMLElement,className:string){
+function get_parent_by_class(el:Element,className:string){
+  if (!(el instanceof HTMLElement))
+    return
   let ans:HTMLElement|null=el
   while(ans!=null){
     if (ans!=null&&ans.classList.contains(className))
@@ -132,7 +134,7 @@ function get_last_visible(selected:HTMLElement){
 function element_for_up_arrow(selected:HTMLElement){
   const ans=get_prev_selected(selected)
   if (ans==null)
-    return get_parent_by_class(selected,'tree_folder')
+    return get_parent_by_class(selected.parentElement,'tree_folder')
   return get_last_visible(ans)
 }
 function element_for_down_arrow(selected:HTMLElement){
