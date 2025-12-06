@@ -9,6 +9,7 @@ html,body {
     flex-direction: row;
        overflow: hidden;
     width: 100%;
+    background-color: black;
 }
 
 

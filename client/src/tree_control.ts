@@ -48,7 +48,7 @@ function divs(vals:s2t<string|undefined>){
   return ans.join('')
 }
 
-function get_parent_by_class(el:Element,className:string){
+function get_parent_by_class(el:Element|null,className:string){
   if (!(el instanceof HTMLElement))
     return
   let ans:HTMLElement|null=el

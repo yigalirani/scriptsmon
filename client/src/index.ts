@@ -3,10 +3,11 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage,RunnerBase,FolderBase,FolderRunner} from '../../src/extension.js'
+import {WebviewMessage,RunnerBase,FolderBase,FolderRunner,State} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal } from '@xterm/xterm';
 import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_control.js';
+import { Folder } from '../../src/monitor.js';
 function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
   if (ans!=null)
@@ -100,6 +101,33 @@ function get_terminals(folder:FolderBase,terminals:Terminals){
     terminals.get_terminal(runner).update(runner)
   folder.folders.forEach(x=>get_terminals(x,terminals)) //i dont like carring the terminals like this
 }
+function index_folder(root:FolderBase){
+  const ans:s2t<RunnerBase>={}
+  function f(folder:FolderBase){
+    for (const runner of folder.runners){
+      ans[runner.id]=runner
+    }
+    folder.folders.map(f)
+  }
+  f(root)
+  return ans
+}
+function calc_changed_ids(root:FolderBase,old_root:FolderBase|undefined){
+  const ans=new Set<string>()
+  if (old_root==null)
+    return ans
+  const old_index=index_folder(old_root)
+  function f(folder:FolderBase){
+    folder.folders.map(f)
+    for (const runner of folder.runners){
+      const old_version=old_index[runner.id]?.version
+      if (runner.version!==old_version)
+        ans.add(runner.id)
+    }
+  }  
+  f(root)
+  return ans
+}
 function convert(root:FolderRunner):TreeNode{
   const {type,name,id}=root
 
@@ -125,6 +153,19 @@ const provider:TreeDataProvider<FolderRunner>={
       command_name
      })
   }
+}
+function reset_animation(ids:Set<string>){
+  function collect_elements(parent: HTMLElement, ids: Set<string>): HTMLElement[] {
+    // Select all elements under parent that have an id
+    const allWithId = parent.querySelectorAll<HTMLElement>('[id]');
+    for (const el of allWithId)
+      if (ids.has(el.id)){
+        //query_selector(el,'.icon') instanceof ImageEl
+      }
+    // Filter only the ones whose id is in the set
+    return Array.from(allWithId).filter(el => ids.has(el.id));
+}
+  //firs
 }
 function start(){
   console.log('start')
@@ -159,6 +200,7 @@ function start(){
   });  */
 
   // Listen for messages from the extension
+  let old_root:FolderBase|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
@@ -166,6 +208,9 @@ function start(){
             get_terminals(message.root,terminals)
             base_uri=message.base_uri
             tree.render(message.root,base_uri)
+            const changed_ids=calc_changed_ids(message.root,old_root)
+            reset_animation(changed_ids)
+            old_root=message.root
             //const json=JSON.stringify(message.runners,null,2)
             //void navigator.clipboard.writeText(json);
             //append(json)

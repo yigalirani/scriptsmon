@@ -7131,14 +7131,19 @@ function get_terminals(folder, terminals) {
 }
 function convert(root) {
   const { type, name, id } = root;
-  if (root.type === "folder") {
+  if (type === "folder") {
     const folders = root.folders.map(convert);
     const items = root.runners.map(convert);
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [], icon: "folder-dark" };
   }
-  const { script } = root;
-  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: "file-dark" };
+  const { script, state } = root;
+  const icon = (function() {
+    if (["running", "done"].includes(state))
+      return state;
+    return "file-dark";
+  })();
+  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon };
 }
 function post_message(msg) {
   vscode.postMessage(msg);
