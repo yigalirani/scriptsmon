@@ -51,9 +51,9 @@ function divs(vals:s2t<string|undefined>){
 function get_parent_by_class(el:HTMLElement,className:string){
   let ans:HTMLElement|null=el
   while(ans!=null){
-    ans=ans.parentElement as HTMLElement
     if (ans!=null&&ans.classList.contains(className))
       return ans    
+    ans=ans.parentElement as HTMLElement
   }
   return null
 }

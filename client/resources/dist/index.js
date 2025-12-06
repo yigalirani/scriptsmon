@@ -6822,9 +6822,9 @@ function divs(vals) {
 function get_parent_by_class(el, className) {
   let ans = el;
   while (ans != null) {
-    ans = ans.parentElement;
     if (ans != null && ans.classList.contains(className))
       return ans;
+    ans = ans.parentElement;
   }
   return null;
 }
