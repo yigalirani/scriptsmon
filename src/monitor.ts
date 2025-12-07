@@ -25,7 +25,7 @@ export type Scriptsmon=  Record<string,Watcher|string[]>&
   $watch?:string[]
   autorun?:string[]
 }
-type State="ready"|"done"|"crashed"|"running"|"failed"|"stopped"
+export type State="ready"|"done"|"crashed"|"running"|"failed"|"stopped"
 function is_ready_to_start(state:State){
   return state!=="running"
 }
@@ -51,6 +51,7 @@ export interface RunnerBase extends Watcher{//adds some runtime
   output          : string[]
   id              : string//unique aacross runners
   output_time?    : number
+  version         : number 
 
 }
 export const runner_base_keys:(keyof RunnerBase)[]=[
@@ -70,7 +71,8 @@ export const runner_base_keys:(keyof RunnerBase)[]=[
   "last_reason",
   "last_err",
   "output",
-  "id"
+  "id",
+  "version"
 ]
 
 export interface Runner extends RunnerBase{
@@ -180,7 +182,11 @@ function normalize_watch(a:string[]|undefined){
     return []
   return a
 }
+function set_state(runner:Runner,state:State){
+  runner.state=state
+  runner.version++
 
+}
 function run_runner({ //this is not async function on purpuse
   runner,
   reason
@@ -190,7 +196,7 @@ function run_runner({ //this is not async function on purpuse
 }) {
   void new Promise((resolve, _reject) => { 
     const {script,full_pathname}=runner
-    runner.state='running'
+    set_state(runner,'running')
     // Spawn a shell with the script as command
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
@@ -206,7 +212,6 @@ function run_runner({ //this is not async function on purpuse
       return
     // Set state to running immediately (spawn happens synchronously)
     runner.start_time=Date.now()
-    runner.state='running'
     runner.reason=reason
     
     // Listen to data events (both stdout and stderr come through onData)
@@ -219,7 +224,8 @@ function run_runner({ //this is not async function on purpuse
     const exitDisposable = child.onExit(({ exitCode }) => {
       dataDisposable.dispose();
       exitDisposable.dispose();
-      runner.state=(exitCode===0?'done':'crashed') //todo: should think of aborted
+      const new_state=(exitCode===0?'done':'crashed') //todo: should think of aborted
+      set_state(runner,new_state)
       runner.last_end_time=Date.now()
       runner.last_start_time=runner.start_time
       runner.start_time=undefined
@@ -234,7 +240,7 @@ async function stop(runner: Runner): Promise<void> {
   while(true){
     if (is_ready_to_start(runner.state)) {
       if (was_stopped)
-        runner.state='stopped'
+        set_state(runner,'stopped')
       return Promise.resolve()
     }
     if (!was_stopped){
@@ -293,7 +299,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         last_reason:'',
         last_err:undefined,
         id,
-        output:[]
+        output:[],
+        version:0
       }
       ans.start=make_start(ans)
       return ans

@@ -8,6 +8,9 @@ await build({
   format: "esm",
   sourcemap: true,
   minify: false,
+    loader: {
+    '.html': 'text',
+  },
 }).then(() => {
   console.log("Build complete");
 });

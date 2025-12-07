@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,FolderRunner,type Runner,type Folder,type RunnerBase,runner_base_keys,extract_base,FolderBase} from './monitor.js'
+import {read_package_json,FolderRunner,type Runner,type Folder,type RunnerBase,runner_base_keys,extract_base,FolderBase, type State} from './monitor.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
 import {type WebviewFunc,getWebviewContent,define_webview} from './vscode_utils.js'
@@ -13,7 +13,7 @@ import {
   WebviewViewResolveContext,
   window
 }from 'vscode';
-export {type RunnerBase,runner_base_keys,FolderBase,FolderRunner}
+export {type RunnerBase,runner_base_keys,FolderBase,FolderRunner,State}
 type MonitorNode=Runner|Folder
 
 

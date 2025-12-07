@@ -8,7 +8,9 @@ import {s2t} from '@yigal/base_types'
 import { Terminal } from '@xterm/xterm';
 import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_control.js';
 import { Folder } from '../../src/monitor.js';
-function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
+import ICONS_HTML from '../resources/icons.html'
+
+function create_terminal_element(parent: Element,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
   if (ans!=null)
     return ans as HTMLElement //todo check that it is HTMLElement
@@ -60,13 +62,14 @@ class TerminalPanel{
   term:Terminal
   last_runner:RunnerBase|undefined=undefined
   constructor(
-    public parent:HTMLElement,
+    public parent:Element,
     id:string//used just for the id
   ){
     this.el=create_terminal_element(parent,id)
     this.term=new Terminal()
     const term_container=query_selector(this.el,'.term')
-    this.term.open(term_container);
+    if (term_container instanceof HTMLElement)
+      this.term.open(term_container);
   }
   update(new_runner:RunnerBase){
     //const term=query_selector(this.el,'.term')
@@ -82,7 +85,7 @@ class TerminalPanel{
 class Terminals{
   terminals:s2t<TerminalPanel>={}
   constructor(
-    public parent:HTMLElement
+    public parent:Element
   ){
   }
   get_terminal(runner:RunnerBase){
@@ -96,10 +99,13 @@ declare function acquireVsCodeApi(): VSCodeApi;
 
 const vscode = acquireVsCodeApi();
 
-function get_terminals(folder:FolderBase,terminals:Terminals){
-  for (const runner of folder.runners)
-    terminals.get_terminal(runner).update(runner)
-  folder.folders.forEach(x=>get_terminals(x,terminals)) //i dont like carring the terminals like this
+function get_terminals(folder,terminals:Terminals){
+  function f(folder:FolderBase){
+    for (const runner of folder.runners)
+      terminals.get_terminal(runner).update(runner)
+    folder.folders.forEach(f) //i dont like carring the terminals like this
+  }
+  f(folder)
 }
 function index_folder(root:FolderBase){
   const ans:s2t<RunnerBase>={}
@@ -152,7 +158,8 @@ const provider:TreeDataProvider<FolderRunner>={
       id,
       command_name
      })
-  }
+  },
+  icons_html:ICONS_HTML
 }
 function reset_animation(ids:Set<string>){
   function collect_elements(parent: HTMLElement, ids: Set<string>): HTMLElement[] {
@@ -167,13 +174,12 @@ function reset_animation(ids:Set<string>){
 }
   //firs
 }
+
 function start(){
   console.log('start')
   const terminals=new Terminals(query_selector(document.body,'.terms_container'))
   let base_uri=''
-
-
-  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider)
+  const tree=new TreeControl(query_selector(document.body,'#the_tree') as HTMLElement,provider)
   function on_selected_changed(id:string){
     for (const panel of document.querySelectorAll('.term_panel')){
       if (!(panel instanceof HTMLElement))

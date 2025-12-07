@@ -1,5 +1,6 @@
+import { s2s } from '@yigal/base_types';
 type MaybePromise<T> = T | Promise<T>;
-export declare function query_selector(el: HTMLElement, selector: string): HTMLElement;
+export declare function query_selector(el: Element, selector: string): Element;
 export interface TreeNode {
     type: 'item' | 'folder';
     label: string;
@@ -12,11 +13,13 @@ export interface TreeNode {
 export interface TreeDataProvider<T> {
     convert: (root: T) => TreeNode;
     command: (id: string, command: string) => MaybePromise<void>;
+    icons_html: string;
 }
 export declare class TreeControl<T> {
     parent: HTMLElement;
     provider: TreeDataProvider<T>;
     base_uri: string;
+    icons: s2s;
     last_root: T | undefined;
     last_converted: TreeNode;
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;

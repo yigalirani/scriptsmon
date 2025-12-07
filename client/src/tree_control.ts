@@ -1,8 +1,9 @@
-import { s2t} from '@yigal/base_types'
+import { s2t,s2s} from '@yigal/base_types'
+import { promises as fs } from 'fs';
 type MaybePromise<T>=T|Promise<T>
-export function query_selector(el:HTMLElement,selector:string){
+export function query_selector(el:Element,selector:string){
     const ans=el.querySelector(selector);
-    if (ans==null ||  !(ans instanceof HTMLElement))
+    if (!(ans instanceof Element))
       throw new Error('selector not found or not html element')  
     return ans
 }
@@ -25,9 +26,36 @@ function make_empty_tree_folder():TreeNode{
     commands:[]  
   }
 }
+function parseIcons(html: string): Record<string, string> {
+  const result: Record<string, string> = {};
+  
+  // Parse the HTML string into a Document
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  // Select all divs with class "icon"
+  const icons = doc.querySelectorAll<HTMLDivElement>('.icon');
+  
+  icons.forEach(icon => {
+    const nameEl = icon.querySelector<HTMLDivElement>('.name');
+    const contentEl = icon.querySelector<HTMLDivElement>('.content');
+    
+    if (nameEl && contentEl) {
+      const name = nameEl.textContent?.trim();
+      const content = contentEl.innerHTML.trim();
+      
+      if (name) {
+        result[name] = content;
+      }
+    }
+  });
+
+  return result;
+}
 export interface TreeDataProvider<T>{
   convert: (root:T)=>TreeNode
   command:(id:string,command:string)=>MaybePromise<void>
+  icons_html:string
 }
 
 function create_element(html:string,parent?:HTMLElement){
@@ -49,9 +77,9 @@ function divs(vals:s2t<string|undefined>){
 }
 
 function get_parent_by_class(el:Element|null,className:string){
-  if (!(el instanceof HTMLElement))
-    return
-  let ans:HTMLElement|null=el
+  if (el==null)
+    return null
+  let ans:Element|null=el
   while(ans!=null){
     if (ans!=null&&ans.classList.contains(className))
       return ans    
@@ -150,7 +178,7 @@ function element_for_down_arrow(selected:HTMLElement){
   let cur=selected
   while(true){
     const parent=get_parent_by_class(cur,'tree_folder')
-    if (parent==null)
+    if (!(parent instanceof HTMLElement))
       return null
     const ans=get_next_selected(parent)
     if (ans!=null)
@@ -175,23 +203,29 @@ function getBaseName(path: string): string {
   const lastDot = fileName.lastIndexOf(".");
   return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
 }
+function is_html_element(el:Node|null){
+    return el instanceof HTMLElement||el instanceof SVGElement
+  }
 export class TreeControl<T>{
   public base_uri=''
+  icons:s2s
   //selected:string|boolean=false
   last_root:T|undefined
   last_converted:TreeNode=make_empty_tree_folder()
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
+    const {icons}=this
     const {type,id,description,label,icon='undefined',commands}=node
     const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
-    const  commands_icons=commands.map(cmd=>`<div class=command_icon><img  src="${this.base_uri}/icons/${cmd}.svg"/></div>`).join('')
+    const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
+
     return create_element(`
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
       <div class=shifter style='margin-left:${margin}px'>
-        <img class=icon src="${this.base_uri}/icons/${icon}.svg"/>
+        ${icons[icon]}
         ${divs({label,description})}
       </div>
       ${divs({commands_icons})}
@@ -210,11 +244,9 @@ export class TreeControl<T>{
     const command_icon=get_parent_by_class(evt.target as HTMLElement,'command_icon')
     if (command_icon==null)
       return false
-    const img=query_selector(command_icon,'img')
-    const src = img.getAttribute('src');
-    if (src==null)
+    const command=command_icon.id
+    if (command==null)
       return false
-    const command=getBaseName(src)
     const item=get_parent_by_classes(evt.target as HTMLElement,['tree_item','tree_folder'])
     if (item==null)
       return false
@@ -223,13 +255,14 @@ export class TreeControl<T>{
     return true
     
   }
-  
+
   constructor(
     public parent:HTMLElement,
     public provider:TreeDataProvider<T>
   ){
+    this.icons=parseIcons(this.provider.icons_html)
     parent.addEventListener('click',(evt)=>{
-      if (!(evt.target instanceof HTMLElement))
+      if (!(evt.target instanceof Element))
         return
       parent.tabIndex = 0;
       parent.focus();
@@ -255,7 +288,7 @@ export class TreeControl<T>{
       switch(evt.key){
         case 'ArrowUp':{
           const prev=element_for_up_arrow(selected)
-          if (prev==null)
+          if (! (prev instanceof HTMLElement))
             return
           remove_class(parent,'selected')   
           void this.set_selected(prev)         

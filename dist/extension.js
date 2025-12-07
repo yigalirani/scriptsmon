@@ -93,7 +93,8 @@ var runner_base_keys = [
   "last_reason",
   "last_err",
   "output",
-  "id"
+  "id",
+  "version"
 ];
 function extract_base(folder) {
   const { full_pathname } = folder;
@@ -174,6 +175,10 @@ function normalize_watch(a) {
     return [];
   return a;
 }
+function set_state(runner, state) {
+  runner.state = state;
+  runner.version++;
+}
 function run_runner({
   //this is not async function on purpuse
   runner,
@@ -181,7 +186,7 @@ function run_runner({
 }) {
   void new Promise((resolve2, _reject) => {
     const { script, full_pathname } = runner;
-    runner.state = "running";
+    set_state(runner, "running");
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
@@ -194,7 +199,6 @@ function run_runner({
     if (child === null)
       return;
     runner.start_time = Date.now();
-    runner.state = "running";
     runner.reason = reason;
     const dataDisposable = child.onData((data) => {
       runner.output.push(data);
@@ -203,7 +207,8 @@ function run_runner({
     const exitDisposable = child.onExit(({ exitCode }) => {
       dataDisposable.dispose();
       exitDisposable.dispose();
-      runner.state = exitCode === 0 ? "done" : "crashed";
+      const new_state = exitCode === 0 ? "done" : "crashed";
+      set_state(runner, new_state);
       runner.last_end_time = Date.now();
       runner.last_start_time = runner.start_time;
       runner.start_time = void 0;
@@ -218,7 +223,7 @@ async function stop(runner) {
   while (true) {
     if (is_ready_to_start(runner.state)) {
       if (was_stopped)
-        runner.state = "stopped";
+        set_state(runner, "stopped");
       return Promise.resolve();
     }
     if (!was_stopped) {
@@ -275,7 +280,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         last_reason: "",
         last_err: void 0,
         id,
-        output: []
+        output: [],
+        version: 0
       };
       ans2.start = make_start(ans2);
       return ans2;

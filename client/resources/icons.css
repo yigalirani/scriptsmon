@@ -1,0 +1,20 @@
+html{
+  background-color: rgb(33, 31, 29);
+  color:white;
+}
+.icon{
+  display: inline-flex;
+  flex-direction: row;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid brown;
+
+}
+.name{
+  margin-left: 10px;
+}
+svg{
+  width: 64px;
+  height: 64px;
+
+}

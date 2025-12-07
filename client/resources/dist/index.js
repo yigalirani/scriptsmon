@@ -6791,7 +6791,7 @@ var import_xterm = __toESM(require_xterm(), 1);
 var import_lodash = __toESM(require_lodash(), 1);
 function query_selector(el, selector) {
   const ans = el.querySelector(selector);
-  if (ans == null || !(ans instanceof HTMLElement))
+  if (!(ans instanceof Element))
     throw new Error("selector not found or not html element");
   return ans;
 }
@@ -6803,6 +6803,24 @@ function make_empty_tree_folder() {
     id: "roottreenode",
     commands: []
   };
+}
+function parseIcons(html) {
+  const result = {};
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const icons = doc.querySelectorAll(".icon");
+  icons.forEach((icon) => {
+    const nameEl = icon.querySelector(".name");
+    const contentEl = icon.querySelector(".content");
+    if (nameEl && contentEl) {
+      const name = nameEl.textContent?.trim();
+      const content = contentEl.innerHTML.trim();
+      if (name) {
+        result[name] = content;
+      }
+    }
+  });
+  return result;
 }
 function create_element(html, parent) {
   const template = document.createElement("template");
@@ -6820,8 +6838,8 @@ function divs(vals) {
   return ans.join("");
 }
 function get_parent_by_class(el, className) {
-  if (!(el instanceof HTMLElement))
-    return;
+  if (el == null)
+    return null;
   let ans = el;
   while (ans != null) {
     if (ans != null && ans.classList.contains(className))
@@ -6914,7 +6932,7 @@ function element_for_down_arrow(selected) {
   let cur = selected;
   while (true) {
     const parent = get_parent_by_class(cur, "tree_folder");
-    if (parent == null)
+    if (!(parent instanceof HTMLElement))
       return null;
     const ans2 = get_next_selected(parent);
     if (ans2 != null)
@@ -6926,17 +6944,13 @@ function element_for_down_arrow(selected) {
 function remove_class(el, className) {
   el.querySelectorAll(".selected").forEach((x) => x.classList.remove(className));
 }
-function getBaseName(path) {
-  const fileName = path.split(/[/\\]/).pop() || "";
-  const lastDot = fileName.lastIndexOf(".");
-  return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
-}
 var TreeControl = class {
   constructor(parent, provider2) {
     this.parent = parent;
     this.provider = provider2;
+    this.icons = parseIcons(this.provider.icons_html);
     parent.addEventListener("click", (evt) => {
-      if (!(evt.target instanceof HTMLElement))
+      if (!(evt.target instanceof Element))
         return;
       parent.tabIndex = 0;
       parent.focus();
@@ -6960,7 +6974,7 @@ var TreeControl = class {
       switch (evt.key) {
         case "ArrowUp": {
           const prev = element_for_up_arrow(selected);
-          if (prev == null)
+          if (!(prev instanceof HTMLElement))
             return;
           remove_class(parent, "selected");
           void this.set_selected(prev);
@@ -6988,21 +7002,23 @@ var TreeControl = class {
     });
   }
   base_uri = "";
+  icons;
   //selected:string|boolean=false
   last_root;
   last_converted = make_empty_tree_folder();
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
+    const { icons } = this;
     const { type, id, description, label, icon = "undefined", commands } = node;
     const template = document.createElement("template");
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
-    const commands_icons = commands.map((cmd) => `<div class=command_icon><img  src="${this.base_uri}/icons/${cmd}.svg"/></div>`).join("");
+    const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
     return create_element(`
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
       <div class=shifter style='margin-left:${margin}px'>
-        <img class=icon src="${this.base_uri}/icons/${icon}.svg"/>
+        ${icons[icon]}
         ${divs({ label, description })}
       </div>
       ${divs({ commands_icons })}
@@ -7021,11 +7037,9 @@ var TreeControl = class {
     const command_icon = get_parent_by_class(evt.target, "command_icon");
     if (command_icon == null)
       return false;
-    const img = query_selector(command_icon, "img");
-    const src = img.getAttribute("src");
-    if (src == null)
+    const command = command_icon.id;
+    if (command == null)
       return false;
-    const command = getBaseName(src);
     const item = get_parent_by_classes(evt.target, ["tree_item", "tree_folder"]);
     if (item == null)
       return false;
@@ -7059,6 +7073,9 @@ var TreeControl = class {
     this.last_converted = converted;
   }
 };
+
+// resources/icons.html
+var icons_default = '\n<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <title>Scriptsmon icons</title>\n    <link rel="stylesheet" href="./icons.css">\n</head>\n<body>\n<button id=animatebutton>animate</button>\n\n<div class="icon">\n  <div class="content"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M3.14645 5.64645C3.34171 5.45118 3.65829 5.45118 3.85355 5.64645L8 9.79289L12.1464 5.64645C12.3417 5.45118 12.6583 5.45118 12.8536 5.64645C13.0488 5.84171 13.0488 6.15829 12.8536 6.35355L8.35355 10.8536C8.15829 11.0488 7.84171 11.0488 7.64645 10.8536L3.14645 6.35355C2.95118 6.15829 2.95118 5.84171 3.14645 5.64645Z"/></svg></div>\n  <div class="name">chevron-down</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M5.64645 3.14645C5.45118 3.34171 5.45118 3.65829 5.64645 3.85355L9.79289 8L5.64645 12.1464C5.45118 12.3417 5.45118 12.6583 5.64645 12.8536C5.84171 13.0488 6.15829 13.0488 6.35355 12.8536L10.8536 8.35355C11.0488 8.15829 11.0488 7.84171 10.8536 7.64645L6.35355 3.14645C6.15829 2.95118 5.84171 2.95118 5.64645 3.14645Z"/></svg></div>\n  <div class="name">chevron-right</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M21.75 12H19.5V9C19.5 8.445 19.347 7.9245 19.083 7.4775L20.7795 5.781C21.072 5.4885 21.072 5.013 20.7795 4.7205C20.487 4.428 20.0115 4.428 19.719 4.7205L18.0225 6.417C17.5755 6.153 17.055 6 16.5 6C16.5 3.519 14.481 1.5 12 1.5C9.519 1.5 7.5 3.519 7.5 6C6.945 6 6.4245 6.153 5.9775 6.417L4.281 4.7205C3.9885 4.428 3.513 4.428 3.2205 4.7205C2.928 5.013 2.928 5.4885 3.2205 5.781L4.917 7.4775C4.653 7.9245 4.5 8.445 4.5 9V12H2.25C1.836 12 1.5 12.336 1.5 12.75C1.5 13.164 1.836 13.5 2.25 13.5H4.5C4.5 15.2985 5.136 16.95 6.195 18.2445L3.594 20.8455C3.3015 21.138 3.3015 21.6135 3.594 21.906C3.741 22.053 3.933 22.125 4.125 22.125C4.317 22.125 4.509 22.0515 4.656 21.906L7.257 19.305C8.55 20.364 10.203 21 12.0015 21C13.8 21 15.4515 20.364 16.746 19.305L19.347 21.906C19.494 22.053 19.686 22.125 19.878 22.125C20.07 22.125 20.262 22.0515 20.409 21.906C20.7015 21.6135 20.7015 21.138 20.409 20.8455L17.808 18.2445C18.867 16.9515 19.503 15.2985 19.503 13.5H21.753C22.167 13.5 22.503 13.164 22.503 12.75C22.503 12.336 22.167 12 21.753 12H21.75ZM12 3C13.6545 3 15 4.3455 15 6H9C9 4.3455 10.3455 3 12 3ZM18 13.5C18 16.809 15.309 19.5 12 19.5C8.691 19.5 6 16.809 6 13.5V9C6 8.172 6.672 7.5 7.5 7.5H16.5C17.328 7.5 18 8.172 18 9V13.5ZM14.781 11.031L13.062 12.75L14.781 14.469C15.0735 14.7615 15.0735 15.237 14.781 15.5295C14.634 15.6765 14.442 15.7485 14.25 15.7485C14.058 15.7485 13.866 15.675 13.719 15.5295L12 13.8105L10.281 15.5295C10.134 15.6765 9.942 15.7485 9.75 15.7485C9.558 15.7485 9.366 15.675 9.219 15.5295C8.9265 15.237 8.9265 14.7615 9.219 14.469L10.938 12.75L9.219 11.031C8.9265 10.7385 8.9265 10.263 9.219 9.9705C9.5115 9.678 9.987 9.678 10.2795 9.9705L11.9985 11.6895L13.7175 9.9705C14.01 9.678 14.4855 9.678 14.778 9.9705C15.0705 10.263 15.0705 10.7385 14.778 11.031H14.781Z"/></svg></div>\n  <div class="name">debug</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg  width="16" height="16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">\r\n  <!-- Circle background -->\r\n  <circle cx="50" cy="50" r="45" stroke="#4CAF50" stroke-width="10" fill="none"/>\r\n\r\n  <!-- Checkmark -->\r\n  <path d="M30 50 L45 65 L70 35" stroke="#4CAF50" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round">\r\n    <animate \r\n      attributeName="stroke-dasharray"\r\n      from="0,100"\r\n      to="100,0"\r\n      dur="2s"\r\n      repeatCount="1"\r\n    />\r\n  </path>\r\n</svg>\r\n</div>\n  <div class="name">done</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">\n  <style>\n    @keyframes iconAnimation {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n    path {\n      animation: iconAnimation 2s ease-out;\n    }\n  </style>\n  <path fill="#4EC9B0" d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"/>\n</svg>\n\n</div>\n  <div class="name">file-dark</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">\n  <style>\n    @keyframes iconAnimation {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n    path {\n      animation: iconAnimation 2s ease-out;\n    }\n  </style>\n  <path fill="#007ACC" d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"/>\n</svg>\n\n</div>\n  <div class="name">file-light</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">\n  <style>\n    @keyframes iconAnimation {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n    path {\n      animation: iconAnimation 2s ease-out;\n    }\n  </style>\n  <path fill="currentColor" d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"/>\n</svg>\n</div>\n  <div class="name">file</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">\n  <style>\n    @keyframes iconAnimation {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n    path {\n      animation: iconAnimation 2s ease-out;\n    }\n  </style>\n  <path fill="#4EC9B0" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z"/>\n</svg>\n\n</div>\n  <div class="name">folder-dark</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">\n  <style>\n    @keyframes iconAnimation {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n    path {\n      animation: iconAnimation 2s ease-out;\n    }\n  </style>\n  <path fill="#007ACC" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z"/>\n</svg>\n\n</div>\n  <div class="name">folder-light</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">\n  <style>\n    @keyframes iconAnimation {\n      0% {\n        opacity: 0;\n        transform: scale(0.8);\n      }\n      100% {\n        opacity: 1;\n        transform: scale(1);\n      }\n    }\n    path {\n      animation: iconAnimation 2s ease-out;\n    }\n  </style>\n  <path fill="currentColor" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z"/>\n</svg>\n</div>\n  <div class="name">folder</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M4.74514 3.06414C4.41183 2.87665 4 3.11751 4 3.49993V12.5002C4 12.8826 4.41182 13.1235 4.74512 12.936L12.7454 8.43601C13.0852 8.24486 13.0852 7.75559 12.7454 7.56443L4.74514 3.06414ZM3 3.49993C3 2.35268 4.2355 1.63011 5.23541 2.19257L13.2357 6.69286C14.2551 7.26633 14.2551 8.73415 13.2356 9.30759L5.23537 13.8076C4.23546 14.37 3 13.6474 3 12.5002V3.49993Z"/></svg></div>\n  <div class="name">play</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 100 200" width="16" height="16">\n    <rect fill = "#FF9D22" stroke = "#FF9D22" stroke-width = "21" width = "30" height = "30" x = "25" y = "50">\n        <animate attributeName = "y" calcMode = "spline" dur = "2" values = "50;120;50;" keySplines = ".5 0 .5 1;.5 0 .5 1" repeatCount = "indefinite" begin = "-.4"></animate>\n    </rect>\n    <rect fill = "#FF9D22" stroke = "#FF9D22" stroke-width = "21" width = "30" height = "30" x = "85" y = "50">\n        <animate attributeName = "y" calcMode = "spline" dur = "2" values = "50;120;50;" keySplines = ".5 0 .5 1;.5 0 .5 1" repeatCount = "indefinite" begin = "-.2"></animate>\n    </rect>\n    <rect fill = "#FF9D22" stroke = "#FF9D22" stroke-width = "21" width = "30" height = "30" x = "145" y = "50">\n        <animate attributeName = "y" calcMode = "spline" dur = "2" values = "50;120;50;" keySplines = ".5 0 .5 1;.5 0 .5 1" repeatCount = "indefinite" begin = "0"></animate>\n    </rect>\n</svg>\n</div>\n  <div class="name">running</div>\n</div>\n\n<div class="icon">\n  <div class="content"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">\r\n  <circle cx="8" cy="8" r="6.5" stroke="white" stroke-width="1"/>\r\n  <path d="M8 4.25c1.19 0 2.1.77 2.1 1.86 0 .86-.47 1.32-1.05 1.8-.52.42-.78.69-.78 1.27v.22"\r\n        stroke="var(--icon-color)" stroke-width="1" stroke-linecap="round"/>\r\n  <circle cx="8" cy="11.4" r="0.75" fill="white"/>\r\n</svg>\r\n</div>\n  <div class="name">undefined</div>\n</div>\n</body>\n<script src="./icons.js"></script>\n';
 
 // src/index.ts
 function create_terminal_element(parent, id) {
@@ -7098,7 +7115,8 @@ var TerminalPanel = class {
     this.el = create_terminal_element(parent, id);
     this.term = new import_xterm.Terminal();
     const term_container = query_selector(this.el, ".term");
-    this.term.open(term_container);
+    if (term_container instanceof HTMLElement)
+      this.term.open(term_container);
   }
   el;
   term;
@@ -7125,25 +7143,50 @@ var Terminals = class {
 };
 var vscode = acquireVsCodeApi();
 function get_terminals(folder, terminals) {
-  for (const runner of folder.runners)
-    terminals.get_terminal(runner).update(runner);
-  folder.folders.forEach((x) => get_terminals(x, terminals));
+  function f(folder2) {
+    for (const runner of folder2.runners)
+      terminals.get_terminal(runner).update(runner);
+    folder2.folders.forEach(f);
+  }
+  f(folder);
+}
+function index_folder(root) {
+  const ans = {};
+  function f(folder) {
+    for (const runner of folder.runners) {
+      ans[runner.id] = runner;
+    }
+    folder.folders.map(f);
+  }
+  f(root);
+  return ans;
+}
+function calc_changed_ids(root, old_root) {
+  const ans = /* @__PURE__ */ new Set();
+  if (old_root == null)
+    return ans;
+  const old_index = index_folder(old_root);
+  function f(folder) {
+    folder.folders.map(f);
+    for (const runner of folder.runners) {
+      const old_version = old_index[runner.id]?.version;
+      if (runner.version !== old_version)
+        ans.add(runner.id);
+    }
+  }
+  f(root);
+  return ans;
 }
 function convert(root) {
   const { type, name, id } = root;
-  if (type === "folder") {
+  if (root.type === "folder") {
     const folders = root.folders.map(convert);
     const items = root.runners.map(convert);
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [], icon: "folder-dark" };
   }
-  const { script, state } = root;
-  const icon = (function() {
-    if (["running", "done"].includes(state))
-      return state;
-    return "file-dark";
-  })();
-  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon };
+  const { script } = root;
+  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: "file-dark" };
 }
 function post_message(msg) {
   vscode.postMessage(msg);
@@ -7156,8 +7199,18 @@ var provider = {
       id,
       command_name
     });
-  }
+  },
+  icons_html: icons_default
 };
+function reset_animation(ids) {
+  function collect_elements(parent, ids2) {
+    const allWithId = parent.querySelectorAll("[id]");
+    for (const el of allWithId)
+      if (ids2.has(el.id)) {
+      }
+    return Array.from(allWithId).filter((el) => ids2.has(el.id));
+  }
+}
 function start() {
   console.log("start");
   const terminals = new Terminals(query_selector(document.body, ".terms_container"));
@@ -7171,6 +7224,7 @@ function start() {
     }
   }
   tree.on_selected_changed = on_selected_changed;
+  let old_root;
   window.addEventListener("message", (event) => {
     const message = event.data;
     switch (message.command) {
@@ -7178,6 +7232,9 @@ function start() {
         get_terminals(message.root, terminals);
         base_uri = message.base_uri;
         tree.render(message.root, base_uri);
+        const changed_ids = calc_changed_ids(message.root, old_root);
+        reset_animation(changed_ids);
+        old_root = message.root;
         break;
       }
       case "set_selected":
