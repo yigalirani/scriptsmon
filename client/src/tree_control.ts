@@ -208,6 +208,10 @@ function getBaseName(path: string): string {
 function is_html_element(el:Node|null){
     return el instanceof HTMLElement||el instanceof SVGElement
   }
+ function begin_element(node:SVGAnimateElement){
+  node.beginElement()
+  console.log('node.beginElement()')
+ }
 export class TreeControl<T>{
   public base_uri=''
   icons:s2s
@@ -237,7 +241,8 @@ export class TreeControl<T>{
   </div>`,parent)
     if (start_animation){
       const animate=ans.querySelectorAll<SVGAnimateElement>('animateTransform')
-      animate.forEach(x=>x.beginElement())
+      console.log('animate.length',animate.length)
+      animate.forEach(begin_element)
     }
     return ans
   }

@@ -140,7 +140,7 @@ function convert(root:FolderRunner,old_root:FolderRunner|undefined):TreeNode{
     throw new Error("convret got wront type")
   const changed_ids=calc_changed_ids(root,old_root)
   function f(node:FolderBase):TreeNode{
-    const {name,id}=root
+    const {name,id}=node
     const folders=node.folders.map(f)
     const items:TreeNode[]=node.runners.map(runner=>{
       const {script,state,id,name}=runner
