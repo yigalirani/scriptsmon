@@ -134,17 +134,24 @@ function calc_changed_ids(root:FolderBase,old_root:FolderBase|undefined){
   f(root)
   return ans
 }
-function convert(root:FolderRunner):TreeNode{
+function convert(root:FolderRunner,old_root:FolderRunner|undefined):TreeNode{
   const {type,name,id}=root
-
-  if (root.type==='folder'){
-    const folders=root.folders.map(convert)
-    const items=root.runners.map(convert)
+  if (root.type==="runner"||old_root?.type==="runner")
+    throw new Error("convret got wront type")
+  const changed_ids=calc_changed_ids(root,old_root)
+  function f(node:FolderBase):TreeNode{
+    const folders=node.folders.map(f)
+    const items:TreeNode[]=node.runners.map(runner=>{
+      const {script,state,id}=runner
+      const start_animation=changed_ids.has(id)
+      const ans:TreeNode= {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,start_animation}        
+      return ans
+    })
     const children=[...folders,...items]
-    return {children,type:'folder',id,label:name,commands:[],icon:'folder-dark'}
+    const ans:TreeNode={children,type:'folder',id,label:name,commands:[],icon:'folder-dark',start_animation:false}
+    return ans
   }
-  const {script}=root
-  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:'file-dark'}
+  return f(root)
 }
 function post_message(msg:WebviewMessage){
   vscode.postMessage(msg)
@@ -206,7 +213,7 @@ function start(){
   });  */
 
   // Listen for messages from the extension
-  let old_root:FolderBase|undefined
+  //let old_root:FolderBase|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
@@ -214,14 +221,6 @@ function start(){
             get_terminals(message.root,terminals)
             base_uri=message.base_uri
             tree.render(message.root,base_uri)
-            const changed_ids=calc_changed_ids(message.root,old_root)
-            if (changed_ids.size>0)
-              console.log({changed_ids})
-            reset_animation(changed_ids)
-            old_root=message.root
-            //const json=JSON.stringify(message.runners,null,2)
-            //void navigator.clipboard.writeText(json);
-            //append(json)
             break
           }
           case 'set_selected':

@@ -9,9 +9,10 @@ export interface TreeNode {
     description?: string;
     commands: string[];
     children: TreeNode[];
+    start_animation: boolean;
 }
 export interface TreeDataProvider<T> {
-    convert: (root: T) => TreeNode;
+    convert: (root: T, old_root: T | undefined) => TreeNode;
     command: (id: string, command: string) => MaybePromise<void>;
     icons_html: string;
 }

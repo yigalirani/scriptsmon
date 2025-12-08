@@ -6,7 +6,8 @@ void run({
     'bin',
     'package.json',
     'eslint.config.mjs',
-    'tsconfig.json'
+    'tsconfig.json',
+    'client/src'
   ]
 })
 

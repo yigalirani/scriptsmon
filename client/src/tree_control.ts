@@ -15,6 +15,7 @@ export interface TreeNode{
   description?: string
   commands:string[]
   children: TreeNode[]
+  start_animation:boolean
 }
 
 function make_empty_tree_folder():TreeNode{
@@ -23,7 +24,8 @@ function make_empty_tree_folder():TreeNode{
     children:[],
     label:'',
     id:'roottreenode',
-    commands:[]  
+    commands:[],
+    start_animation:false
   }
 }
 function parseIcons(html: string): Record<string, string> {
@@ -53,7 +55,7 @@ function parseIcons(html: string): Record<string, string> {
   return result;
 }
 export interface TreeDataProvider<T>{
-  convert: (root:T)=>TreeNode
+  convert: (root:T,old_root:T|undefined)=>TreeNode
   command:(id:string,command:string)=>MaybePromise<void>
   icons_html:string
 }
@@ -211,17 +213,18 @@ export class TreeControl<T>{
   icons:s2s
   //selected:string|boolean=false
   last_root:T|undefined
+
   last_converted:TreeNode=make_empty_tree_folder()
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon='undefined',commands}=node
+    const {type,id,description,label,icon='undefined',commands,start_animation}=node
     const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
 
-    return create_element(`
+    const ans= create_element(`
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
       <div class=shifter style='margin-left:${margin}px'>
@@ -232,6 +235,11 @@ export class TreeControl<T>{
     </div>
     ${children}
   </div>`,parent)
+    if (start_animation){
+      const animate=ans.querySelectorAll<SVGAnimateElement>('animate')
+      animate.forEach(x=>x.beginElement())
+    }
+    return ans
   }
   on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
   async set_selected(el:HTMLElement){
@@ -336,7 +344,7 @@ export class TreeControl<T>{
   render(root:T,base_uri:string){
     /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
     this.base_uri=base_uri+'/client/resources'
-    const converted=this.provider.convert(root)
+    const converted=this.provider.convert(root,this.last_root)
     const is_equal=isEqual(converted,this.last_converted)
     this.last_root=root
     if (is_equal)
