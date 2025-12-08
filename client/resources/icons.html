@@ -42,14 +42,20 @@
 
   <!-- Checkmark -->
   <path d="M30 50 L45 65 L70 35" stroke="#4CAF50" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <animate 
-      attributeName="stroke-dasharray"
-      from="0,100"
-      to="100,0"
+
+<animateTransform 
+      attributeName="transform" 
+      attributeType="XML" 
+      type="scale"
+      from="5" 
+      to="1"
       dur="2s"
-      repeatCount="1",
-      begin="indefinite" 
-    />
+      begin="0s"
+      fill="freeze"
+      calcMode="spline"
+      keySplines="0.42 0 0.58 1" />
+
+
   </path>
 </svg>
 

@@ -135,14 +135,15 @@ function calc_changed_ids(root:FolderBase,old_root:FolderBase|undefined){
   return ans
 }
 function convert(root:FolderRunner,old_root:FolderRunner|undefined):TreeNode{
-  const {type,name,id}=root
+  
   if (root.type==="runner"||old_root?.type==="runner")
     throw new Error("convret got wront type")
   const changed_ids=calc_changed_ids(root,old_root)
   function f(node:FolderBase):TreeNode{
+    const {name,id}=root
     const folders=node.folders.map(f)
     const items:TreeNode[]=node.runners.map(runner=>{
-      const {script,state,id}=runner
+      const {script,state,id,name}=runner
       const start_animation=changed_ids.has(id)
       const ans:TreeNode= {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,start_animation}        
       return ans

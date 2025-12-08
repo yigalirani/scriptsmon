@@ -236,7 +236,7 @@ export class TreeControl<T>{
     ${children}
   </div>`,parent)
     if (start_animation){
-      const animate=ans.querySelectorAll<SVGAnimateElement>('animate')
+      const animate=ans.querySelectorAll<SVGAnimateElement>('animateTransform')
       animate.forEach(x=>x.beginElement())
     }
     return ans
