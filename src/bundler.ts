@@ -37,9 +37,8 @@ export async function directoryToHtml(dirPath: string,outfile: string) {
 
 
     const pageHtml = `
-<div class="icon">
-  <div class="content">${content}</div>
-  <div class="name">${fileName.split('.')[0]}</div>
+<div class="icon">${fileName.split('.')[0]}
+  ${content}
 </div>`;
     pages.push(pageHtml);
   }

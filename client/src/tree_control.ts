@@ -37,12 +37,12 @@ function parseIcons(html: string): Record<string, string> {
   const icons = doc.querySelectorAll<HTMLDivElement>('.icon');
   
   icons.forEach(icon => {
-    const nameEl = icon.querySelector<HTMLDivElement>('.name');
-    const contentEl = icon.querySelector<HTMLDivElement>('.content');
+    const nameEl = icon.childNodes[0]
+    const contentEl = icon.querySelector<SVGElement>('svg');
     
     if (nameEl && contentEl) {
       const name = nameEl.textContent?.trim();
-      const content = contentEl.innerHTML.trim();
+      const content = contentEl.outerHTML
       
       if (name) {
         result[name] = content;

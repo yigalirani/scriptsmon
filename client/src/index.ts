@@ -99,7 +99,7 @@ declare function acquireVsCodeApi(): VSCodeApi;
 
 const vscode = acquireVsCodeApi();
 
-function get_terminals(folder,terminals:Terminals){
+function get_terminals(folder:FolderBase,terminals:Terminals){
   function f(folder:FolderBase){
     for (const runner of folder.runners)
       terminals.get_terminal(runner).update(runner)
@@ -215,6 +215,8 @@ function start(){
             base_uri=message.base_uri
             tree.render(message.root,base_uri)
             const changed_ids=calc_changed_ids(message.root,old_root)
+            if (changed_ids.size>0)
+              console.log({changed_ids})
             reset_animation(changed_ids)
             old_root=message.root
             //const json=JSON.stringify(message.runners,null,2)
