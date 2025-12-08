@@ -420,11 +420,17 @@ export class TreeControl<T>{
       }
       const new_svg=this.icons[change.new_index[id].icon]
       existing_svg.outerHTML=new_svg
+      console.log(`${id}: new svg`)
     }
     const combined=new Set([...change.icons, ...change.versions]);
     for (const id of combined){
+      const svg=this.parent.querySelectorAll<SVGSVGElement>(`#${id} svg`)      
+      svg.forEach(x=>x.setCurrentTime(0))
       const animate=this.parent.querySelectorAll<SVGAnimateElement>(`#${id} animateTransform`)
-      animate.forEach(x=>x.beginElement())
+      console.log(`${id}: new beginElement.count=${animate.length}`)
+      animate.forEach(x=>{
+        x.beginElement()
+      })
     }
 
   }

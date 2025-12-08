@@ -192,7 +192,7 @@ function start(){
             break
           }
           case 'set_selected':
-            //update_child_html(document.body,'#selected', message.selected)
+            //upda(document.body,'#selected', message.selected)
             on_selected_changed(message.selected)
             break
           case 'updateContent':
@@ -200,5 +200,6 @@ function start(){
             break;
       }
   });
+  
 }
 start()
