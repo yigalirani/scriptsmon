@@ -9,6 +9,26 @@
 <body>
 <button id=animatebutton>animate</button>
 <button id=animatebutton_the_done>animatebutton_the_done</button>
+<div class="icon">runingman
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128">
+  <title>Stylized Runner</title>
+  <g transform="matrix(0.96592583,0.25881905,-0.25881905,0.96592583,10,-10)"> <circle cx="32" cy="12" r="8" fill="#FFCC99"/>
+    
+    <path d="M20,22 l24,0 l-4,20 l-16,0 z" fill="#3498db"/>
+    
+    <g fill="#2c3e50">
+        <path d="M36,42 L48,50 L44,62 L38,56 Z" />
+        <path d="M28,42 L14,48 L10,38 L22,36 Z" />
+    </g>
+
+    <g fill="#FFCC99" stroke="#FFCC99" stroke-width="4" stroke-linecap="round">
+        <path d="M44,24 L56,30 L60,18" fill="none" />
+        <path d="M20,24 L8,30 L4,42" fill="none"/>
+    </g>
+  </g>
+</svg>
+
+</div>
 
 <div class="icon">ready
 <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -38,28 +58,31 @@
 </div>
 
 <div class="icon" id="the_done">the done
-  <svg  width="16" height="16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<svg width="16" height="16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <!-- Circle background -->
   <circle cx="50" cy="50" r="45" stroke="#4CAF50" stroke-width="10" fill="none"/>
 
   <!-- Checkmark -->
-  <path d="M30 50 L45 65 L70 35" stroke="#4CAF50" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M30 50 L45 65 L70 35" 
+        stroke="#4CAF50" 
+        stroke-width="10" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        transform-origin="50% 50%" 
+        transform-box="view-box">
 
-<animateTransform 
-      attributeName="transform" 
-      attributeType="XML" 
+    <animateTransform
+      attributeName="transform"
       type="scale"
-      from="2" 
+      from="5"
       to="1"
       dur="2s"
-      begin="0s"
       fill="freeze"
-      calcMode="spline"
-      keySplines="0.42 0 0.58 1" />
-
-
+    />
   </path>
 </svg>
+
 
 </div>
 
