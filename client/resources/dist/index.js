@@ -6191,16 +6191,16 @@ function calc_summary(node) {
 function calc_changed(root, old_root) {
   const versions = /* @__PURE__ */ new Set();
   const icons = /* @__PURE__ */ new Set();
-  const big = false;
+  const big = true;
   const new_index = index_folder(root);
   const ans = { versions, icons, big, new_index };
   if (old_root == null)
     return ans;
   const old_index = index_folder(old_root);
   if (calc_summary(root) !== calc_summary(old_root)) {
-    ans.big = true;
     return ans;
   }
+  ans.big = false;
   function f(node) {
     const { id, children, icon_version } = node;
     const old_node = old_index[id];
@@ -6399,8 +6399,8 @@ var TreeControl = class {
   render(root, base_uri) {
     this.base_uri = base_uri + "/client/resources";
     const converted = this.provider.convert(root);
-    this.last_converted = converted;
     const change = calc_changed(converted, this.last_converted);
+    this.last_converted = converted;
     if (change.big) {
       this.parent.innerHTML = "";
       this.create_node(this.parent, converted, 0);
@@ -6417,7 +6417,7 @@ var TreeControl = class {
     }
     const combined = /* @__PURE__ */ new Set([...change.icons, ...change.versions]);
     for (const id of combined) {
-      const animate = this.parent.querySelectorAll("animateTransform");
+      const animate = this.parent.querySelectorAll(`#${id} animateTransform`);
       animate.forEach((x) => x.beginElement());
     }
   }

@@ -160,16 +160,16 @@ function calc_summary(node:TreeNode):string{
 function calc_changed(root:TreeNode,old_root:TreeNode|undefined){
   const versions=new Set<string>()
   const icons=new Set<string>()
-  const big=false // a change that requires drawing the tree from scratch. rarely happens, obnly whewn user update theus project.json
+  const big=true // a change that requires drawing the tree from scratch. rarely happens, obnly whewn user update theus project.json
   const new_index=index_folder(root)
   const ans={versions,icons,big,new_index}
   if (old_root==null)
     return ans
   const old_index=index_folder(old_root)
   if (calc_summary(root)!==calc_summary(old_root)){
-    ans.big=true
     return ans
   }
+  ans.big=false
   function f(node:TreeNode){
     const {id,children,icon_version}=node                                                                                                                                                                                                                                                                   
     const old_node=old_index[id]
@@ -405,8 +405,8 @@ export class TreeControl<T>{
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
     //this.last_root=root
-    this.last_converted=converted
     const change=calc_changed(converted,this.last_converted)
+    this.last_converted=converted
     if (change.big){
       this.parent.innerHTML = '';
       this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation
@@ -423,7 +423,7 @@ export class TreeControl<T>{
     }
     const combined=new Set([...change.icons, ...change.versions]);
     for (const id of combined){
-      const animate=this.parent.querySelectorAll<SVGAnimateElement>('animateTransform')
+      const animate=this.parent.querySelectorAll<SVGAnimateElement>(`#${id} animateTransform`)
       animate.forEach(x=>x.beginElement())
     }
 
