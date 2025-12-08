@@ -1,4 +1,4 @@
-import { s2t,s2s} from '@yigal/base_types'
+import { s2t,s2s,pk} from '@yigal/base_types'
 import { promises as fs } from 'fs';
 type MaybePromise<T>=T|Promise<T>
 export function query_selector(el:Element,selector:string){
@@ -8,14 +8,14 @@ export function query_selector(el:Element,selector:string){
     return ans
 }
 export interface TreeNode{
-  type:'item'|'folder'
-  label:string,
-  id: string;
-  icon?: string
-  description?: string
-  commands:string[]
-  children: TreeNode[]
-  start_animation:boolean
+  type            : 'item'|'folder' //is this needed?
+  label           : string,
+  id              : string;
+  icon            : string
+  description    ?: string
+  commands        : string[]
+  children        : TreeNode[]
+  icon_version     : number
 }
 
 function make_empty_tree_folder():TreeNode{
@@ -25,7 +25,8 @@ function make_empty_tree_folder():TreeNode{
     label:'',
     id:'roottreenode',
     commands:[],
-    start_animation:false
+    icon_version:0,
+    icon:'root_icon'
   }
 }
 function parseIcons(html: string): Record<string, string> {
@@ -55,7 +56,7 @@ function parseIcons(html: string): Record<string, string> {
   return result;
 }
 export interface TreeDataProvider<T>{
-  convert: (root:T,old_root:T|undefined)=>TreeNode
+  convert: (root:T)=>TreeNode
   command:(id:string,command:string)=>MaybePromise<void>
   icons_html:string
 }
@@ -126,7 +127,63 @@ function get_next_selected(selected:HTMLElement){
   }
   return null
 }
+function index_folder(root:TreeNode){
+  const ans:s2t<TreeNode>={}
+  function f(node:TreeNode){
+    ans[node.id]=node
+    node.children.forEach(f)
+  }
+  f(root)
+  return ans
+}
+function have_same_keys(obj_a: object, obj_b: object): boolean {
+  const keysA = new Set(Object.keys(obj_a));
+  const keysB = new Set(Object.keys(obj_b));
 
+  if (keysA.size !== keysB.size) return false;
+
+  for (const key of keysA) {
+    if (!keysB.has(key)) return false;
+  }
+
+  return true;
+}
+function calc_summary(node:TreeNode):string{
+  const ignore=['icon_version','icon']
+  function replacer(k:string,v:unknown){
+    if (ignore.includes(k))
+      return ''
+    return v
+  }
+  return JSON.stringify(node,replacer,2)//⚠ Error (TS2769)
+}
+function calc_changed(root:TreeNode,old_root:TreeNode|undefined){
+  const versions=new Set<string>()
+  const icons=new Set<string>()
+  const big=false // a change that requires drawing the tree from scratch. rarely happens, obnly whewn user update theus project.json
+  const new_index=index_folder(root)
+  const ans={versions,icons,big,new_index}
+  if (old_root==null)
+    return ans
+  const old_index=index_folder(old_root)
+  if (calc_summary(root)!==calc_summary(old_root)){
+    ans.big=true
+    return ans
+  }
+  function f(node:TreeNode){
+    const {id,children,icon_version}=node                                                                                                                                                                                                                                                                   
+    const old_node=old_index[id]
+    if (old_node==null)
+      throw new Error('old node not found')
+    if (node.icon!==old_node.icon)
+      icons.add(id)
+    if (node.icon_version!==old_node.icon_version)
+      versions.add(id)
+    children.map(f)
+  }
+  f(root)
+  return ans
+}
 function get_children(selected:HTMLElement){
   if (selected.classList.contains('collapsed'))
     return null
@@ -216,13 +273,13 @@ export class TreeControl<T>{
   public base_uri=''
   icons:s2s
   //selected:string|boolean=false
-  last_root:T|undefined
+  //last_root:T|undefined
 
-  last_converted:TreeNode=make_empty_tree_folder()
+  last_converted:TreeNode|undefined
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon='undefined',commands,start_animation}=node
+    const {type,id,description,label,icon='undefined',commands}=node
     const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
@@ -238,12 +295,7 @@ export class TreeControl<T>{
       ${divs({commands_icons})}
     </div>
     ${children}
-  </div>`,parent)
-    if (start_animation){
-      const animate=ans.querySelectorAll<SVGAnimateElement>('animateTransform')
-      console.log('animate.length',animate.length)
-      animate.forEach(begin_element)
-    }
+  </div>`,parent) 
     return ans
   }
   on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
@@ -346,18 +398,34 @@ export class TreeControl<T>{
     }
     
   }
+
   render(root:T,base_uri:string){
     /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
     this.base_uri=base_uri+'/client/resources'
-    const converted=this.provider.convert(root,this.last_root)
-    const is_equal=isEqual(converted,this.last_converted)
-    this.last_root=root
-    if (is_equal)
-      return
-    this.parent.innerHTML = '';
-    this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation
+    const converted=this.provider.convert(root)
+    //const is_equal=isEqual(converted,this.last_converted)
+    //this.last_root=root
     this.last_converted=converted
+    const change=calc_changed(converted,this.last_converted)
+    if (change.big){
+      this.parent.innerHTML = '';
+      this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation
+      return
+    }
+    for (const id of change.icons){
+      const existing_svg=this.parent.querySelector<SVGElement>(`#${id} svg`)
+      if (existing_svg==null){
+        console.warn(`cant find old svg for ${id}`)
+        continue
+      }
+      const new_svg=this.icons[change.new_index[id].icon]
+      existing_svg.outerHTML=new_svg
+    }
+    const combined=new Set([...change.icons, ...change.versions]);
+    for (const id of combined){
+      const animate=this.parent.querySelectorAll<SVGAnimateElement>('animateTransform')
+      animate.forEach(x=>x.beginElement())
+    }
 
   }
-
 }

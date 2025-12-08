@@ -5,14 +5,14 @@ export interface TreeNode {
     type: 'item' | 'folder';
     label: string;
     id: string;
-    icon?: string;
+    icon: string;
     description?: string;
     commands: string[];
     children: TreeNode[];
-    start_animation: boolean;
+    icon_version: number;
 }
 export interface TreeDataProvider<T> {
-    convert: (root: T, old_root: T | undefined) => TreeNode;
+    convert: (root: T) => TreeNode;
     command: (id: string, command: string) => MaybePromise<void>;
     icons_html: string;
 }
@@ -21,8 +21,7 @@ export declare class TreeControl<T> {
     provider: TreeDataProvider<T>;
     base_uri: string;
     icons: s2s;
-    last_root: T | undefined;
-    last_converted: TreeNode;
+    last_converted: TreeNode | undefined;
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
     on_selected_changed: (a: string) => MaybePromise<void>;
     set_selected(el: HTMLElement): Promise<void>;

@@ -107,52 +107,19 @@ function get_terminals(folder:FolderBase,terminals:Terminals){
   }
   f(folder)
 }
-function index_folder(root:FolderBase){
-  const ans:s2t<RunnerBase>={}
-  function f(folder:FolderBase){
-    for (const runner of folder.runners){
-      ans[runner.id]=runner
-    }
-    folder.folders.map(f)
-  }
-  f(root)
-  return ans
-}
-function calc_changed_ids(root:FolderBase,old_root:FolderBase|undefined){
-  const ans=new Set<string>()
-  if (old_root==null)
-    return ans
-  const old_index=index_folder(old_root)
-  function f(folder:FolderBase){
-    folder.folders.map(f)
-    for (const runner of folder.runners){
-      const old_version=old_index[runner.id]?.version
-      if (runner.version!==old_version)
-        ans.add(runner.id)
-    }
-  }  
-  f(root)
-  return ans
-}
-function convert(root:FolderRunner,old_root:FolderRunner|undefined):TreeNode{
-  
-  if (root.type==="runner"||old_root?.type==="runner")
-    throw new Error("convret got wront type")
-  const changed_ids=calc_changed_ids(root,old_root)
-  function f(node:FolderBase):TreeNode{
-    const {name,id}=node
-    const folders=node.folders.map(f)
-    const items:TreeNode[]=node.runners.map(runner=>{
-      const {script,state,id,name}=runner
-      const start_animation=changed_ids.has(id)
-      const ans:TreeNode= {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,start_animation}        
-      return ans
-    })
+
+
+function convert(root:FolderRunner):TreeNode{
+  const {type,name,id}=root
+
+  if (root.type==='folder'){
+    const folders=root.folders.map(convert)
+    const items=root.runners.map(convert)
     const children=[...folders,...items]
-    const ans:TreeNode={children,type:'folder',id,label:name,commands:[],icon:'folder-dark',start_animation:false}
-    return ans
+    return {children,type:'folder',id,label:name,commands:[],icon:'folder-dark',icon_version:0}
   }
-  return f(root)
+  const {script,state,version}=root
+  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version}
 }
 function post_message(msg:WebviewMessage){
   vscode.postMessage(msg)
