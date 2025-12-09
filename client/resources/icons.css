@@ -18,3 +18,26 @@ svg{
   height: 128px;
 
 }
+.running{
+  animation: running_animation 2s linear infinite;
+}
+@keyframes running_animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.done .check  {
+  animation: done_animation 2s forwards ease;
+}
+@keyframes done_animation {
+  from { 
+    transform: scale(3) rotate(0deg)
+  }
+  to { 
+    transform: scale(1) rotate(360deg)
+  }
+}
