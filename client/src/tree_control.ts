@@ -52,7 +52,8 @@ function parseIcons(html: string): Record<string, string> {
       }
     }
   });
-
+  const iconnames=Object.keys(result)
+  console.log({iconnames})
   return result;
 }
 export interface TreeDataProvider<T>{

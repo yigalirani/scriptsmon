@@ -8,11 +8,11 @@
     "main": "dist/extension.js",
     "types": "types/src/extension.d.ts",
     "scripts": {
-        "test": "node ./dist/test.js",
+        "test": "no de ./dist/test.js",
         "build": "node ./bin/run_build.ts",
         "tsc": "npx tsc",
         "eslint": "npx eslint . --color ",
-        "ls": "ls -la  --color=always",
+        "ls": "l s -la  --color=always",
         "vscode:prepublish": "npm run compile"
     },
     "workspaces": [

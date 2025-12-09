@@ -219,10 +219,11 @@ function run_runner({
       runner.output.push(data);
       runner.output_time = Date.now();
     });
-    const exitDisposable = child.onExit(({ exitCode }) => {
+    const exitDisposable = child.onExit(({ exitCode, signal }) => {
       dataDisposable.dispose();
       exitDisposable.dispose();
-      const new_state = exitCode === 0 ? "done" : "crashed";
+      console.log({ exitCode, signal });
+      const new_state = exitCode === 0 ? "done" : "error";
       set_state(runner, new_state);
       runner.last_end_time = Date.now();
       runner.last_start_time = runner.start_time;

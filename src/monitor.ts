@@ -25,7 +25,7 @@ export type Scriptsmon=  Record<string,Watcher|string[]>&
   $watch?:string[]
   autorun?:string[]
 }
-export type State="ready"|"done"|"crashed"|"running"|"failed"|"stopped"
+export type State="ready"|"done"|"error"|"running"|"stopped"
 function is_ready_to_start(state:State){
   return state!=="running"
 }
@@ -221,10 +221,11 @@ function run_runner({ //this is not async function on purpuse
     });
     
     // Listen to exit events
-    const exitDisposable = child.onExit(({ exitCode }) => {
+    const exitDisposable = child.onExit(({ exitCode,signal }) => {
       dataDisposable.dispose();
       exitDisposable.dispose();
-      const new_state=(exitCode===0?'done':'crashed') //todo: should think of aborted
+      console.log({ exitCode,signal })
+      const new_state=(exitCode===0?'done':'error') //todo: should think of aborted
       set_state(runner,new_state)
       runner.last_end_time=Date.now()
       runner.last_start_time=runner.start_time
@@ -232,7 +233,7 @@ function run_runner({ //this is not async function on purpuse
       runner.last_reason=runner.reason
       resolve(null);
     });
-  });
+  }); 
 }
 async function stop(runner: Runner): Promise<void> {
   const { state } = runner;

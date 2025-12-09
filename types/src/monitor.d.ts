@@ -8,7 +8,7 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     $watch?: string[];
     autorun?: string[];
 };
-export type State = "ready" | "done" | "crashed" | "running" | "failed" | "stopped";
+export type State = "ready" | "done" | "error" | "running" | "stopped";
 export interface RunnerBase extends Watcher {
     type: 'runner';
     name: string;

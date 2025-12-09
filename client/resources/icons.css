@@ -10,9 +10,7 @@ html{
   border: 1px solid brown;
 
 }
-.name{
-  margin-left: 10px;
-}
+
 svg{
   width: 128px;
   height: 128px;
@@ -36,6 +34,19 @@ svg{
 @keyframes done_animation {
   from { 
     transform: scale(3) rotate(0deg)
+  }
+  to { 
+    transform: scale(1) rotate(360deg)
+  }
+}
+
+.error .check  {
+  transform-origin: 8px 8px; /* center of the X */  
+  animation: error_animation 2s forwards ease;
+}
+@keyframes error_animation {
+  from { 
+    transform: scale(3) rotate(180deg)
   }
   to { 
     transform: scale(1) rotate(360deg)
