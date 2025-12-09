@@ -109,6 +109,7 @@ button:hover {
 
 }
 .label{
+  margin-left:4px;
   
 
 }
@@ -170,7 +171,11 @@ button:hover {
   filter: invert(1);
 }
 svg{
+  width: 20px;
+  height: 20px;
+  will-change: transform;
+}
+.commands_icons  svg{
   width: 16px;
   height: 16px;
-  will-change: transform;
 }
