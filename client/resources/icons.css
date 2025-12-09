@@ -46,9 +46,9 @@ svg{
 }
 @keyframes error_animation {
   from { 
-    transform: scale(3) rotate(180deg)
+    transform:  rotate(0deg)
   }
   to { 
-    transform: scale(1) rotate(360deg)
+    transform: scale(1) rotate(180deg)
   }
 }
