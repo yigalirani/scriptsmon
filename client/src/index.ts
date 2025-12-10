@@ -73,7 +73,7 @@ class TerminalPanel{
   }
   update(new_runner:RunnerBase){
     //const term=query_selector(this.el,'.term')
-    for (const line of new_runner.output)
+    for (const line of new_runner.runs.at(-1)!.output)
       this.term.write(line)
     if (this.last_runner!=null&&JSON.stringify(this.last_runner)===JSON.stringify(new_runner))
       return

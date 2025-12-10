@@ -1,6 +1,6 @@
 import * as path from "node:path";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-
+import {State} from './data.js'
 import {
   is_object,
   s2t,
@@ -15,44 +15,16 @@ import {
   sleep,
   pk
 } from "@yigal/base_types";
-interface Watcher{
-  watch?:string[]
-  filter?:string
-  pre?:string
-}
+
+
 export type Scriptsmon=  Record<string,Watcher|string[]>&
 {
   $watch?:string[]
   autorun?:string[]
 }
-export type State="ready"|"done"|"error"|"running"|"stopped"
+
 function is_ready_to_start(state:State){
   return state!=="running"
-}
-type StrType='stderr'|'stdout'
-/*export interface Mystring{
-  type:StrType 
-  data:string
-}*/
-export interface RunnerBase extends Watcher{//adds some runtime
-  type           : 'runner'
-  name           : string
-  full_pathname  : string            //where the package.json is   
-  script         : string            //coming from the scripts section of package.json
-  autorun        : boolean
-  state          : State
-  last_start_time: number|undefined
-  last_end_time  : number|undefined
-  
-  start_time      : number|undefined
-  reason          : string
-  last_reason     : string
-  last_err        : Error|undefined
-  output          : string[]
-  id              : string//unique aacross runners
-  output_time?    : number
-  version         : number 
-
 }
 export const runner_base_keys:(keyof RunnerBase)[]=[
   "watch",
@@ -75,30 +47,15 @@ export const runner_base_keys:(keyof RunnerBase)[]=[
   "version"
 ]
 
-export interface Runner extends RunnerBase{
+export interface Runner{
   //abort_controller: AbortController
+  Runner          :
   child           : IPty|undefined
   start           : (reason:string)=>Promise<void>    
 }
 
-export interface Folder{
-  type:'folder'
-  name:string 
-  full_pathname: string //where the package.json is 
-  folders:Array<Folder>
-  runners:Array<Runner>
-  scriptsmon:Scriptsmon
-}
-export interface FolderBase{
-  type:'folder'
-  name:string 
-  id:string
-  full_pathname: string //where the package.json is 
-  folders:Array<FolderBase>
-  runners:Array<RunnerBase>
-  scriptsmon:Scriptsmon
-}
-export type FolderRunner=RunnerBase|FolderBase
+
+export type FolderRunner=Runner|Folder
 export function extract_base(folder:Folder):FolderBase{
   const {full_pathname}=folder
   const runners=[]
