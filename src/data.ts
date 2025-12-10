@@ -12,7 +12,7 @@ export interface Run{
   reason      : string
   output      : string[]////growing
   Err         : Error|undefined //initialy is undefined then maybe changes to error and stop changing
-  state        : State
+  exist_code  : number|undefined
 }
 export interface Runner {
   type           : 'runner'
@@ -23,6 +23,9 @@ export interface Runner {
   autorun        : boolean
   id             : string
   runs           : Run[] //growing
+  state          : State
+  version        : number
+
 }
 
 export interface Folder{
