@@ -1,13 +1,12 @@
-import { FolderRunner, type RunnerBase, runner_base_keys, FolderBase, type State } from './monitor.js';
+import { type Folder } from './data.js';
 import * as vscode from 'vscode';
-export { type RunnerBase, runner_base_keys, FolderBase, FolderRunner, State };
 export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";
     text?: string;
 }
 export interface RunnerReport {
     command: "RunnerReport";
-    root: FolderBase;
+    root: Folder;
     base_uri: string;
 }
 export interface SetSelected {

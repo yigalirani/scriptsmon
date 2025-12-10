@@ -86,11 +86,11 @@
         "views": {
             "panel": [
                 {
-                    "type":"webview",
+                    "type": "webview",
                     "id": "Scriptsmon.webview",
                     "name": "Scriptsmon web view"
                 }
-            ]            
+            ]
         }
     },
     "engines": {
@@ -98,6 +98,7 @@
     },
     "devDependencies": {
         "@eslint/js": "9.39.1",
+        "@types/lodash.clonedeep": "^4.5.9",
         "@types/node": "24.10.0",
         "@types/vscode": "^1.105.0",
         "esbuild": "0.25.12",
@@ -108,6 +109,7 @@
     "dependencies": {
         "@homebridge/node-pty-prebuilt-multiarch": "^0.13.1",
         "@yigal/base_types": "^1.5.0",
-        "@yigal/watch_runner": "^2.0.0"
+        "@yigal/watch_runner": "^2.0.0",
+        "lodash.clonedeep": "^4.5.0"
     }
 }

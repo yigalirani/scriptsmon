@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,FolderRunner,type Runner,type Folder,type RunnerBase,runner_base_keys,extract_base,FolderBase, type State} from './monitor.js'
+import {read_package_json,extract_base,run_runner,make_runner_ctrl} from './monitor.js'
+import {FolderRunner,type Runner,type Folder, type State} from './data.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
 import {type WebviewFunc,getWebviewContent,define_webview} from './vscode_utils.js'
@@ -13,17 +14,13 @@ import {
   WebviewViewResolveContext,
   window
 }from 'vscode';
-export {type RunnerBase,runner_base_keys,FolderBase,FolderRunner,State}
-type MonitorNode=Runner|Folder
-
-
 export interface WebviewMessageSimple {
   command: "buttonClick"|"updateContent"|"get_report";
   text?: string;
 }
 export interface RunnerReport{
    command: "RunnerReport";
-   root:FolderBase
+   root:Folder,
    base_uri:string
 }
 export interface SetSelected{
@@ -56,6 +53,7 @@ const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
 const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionContext){
   const root=await  read_package_json(folders)
+  const runner_ctrl=make_runner_ctrl()
   function send_report(root:Folder){
     post_message(view.webview,{
       command:'RunnerReport',
@@ -73,8 +71,9 @@ const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionCont
         case 'command_clicked':{
           ///send_report(root)
           const runner=find_runner(root,message.id)
-          if (runner)
-            void runner.start('user')
+          if (runner==null)
+            throw new Error(`runner not found:${message.id}`) //or maybe just ignore it?
+          run_runner({runner,runner_ctrl,reason:'user'})
           break          
         }
       }

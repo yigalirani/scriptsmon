@@ -1,39 +1,45 @@
-interface Watcher{
+export interface Watcher{
   watch?:string[]
   filter?:string
   pre?:string
 }
-
+export type Scriptsmon=  Record<string,Watcher|string[]>&
+{
+  $watch?:string[]
+  autorun?:string[]
+}
 export type State="ready"|"done"|"error"|"running"|"stopped"
 
 export interface Run{
-  start_time  : number
-  end_time    : number|undefined //initialy is undefined then changes to number and stops changing
-  reason      : string
-  output      : string[]////growing
-  Err         : Error|undefined //initialy is undefined then maybe changes to error and stop changing
-  exist_code  : number|undefined
+  start_time: number
+  end_time  : number|undefined  //initialy is undefined then changes to number and stops changing
+  reason    : string
+  output    : string[]          ////growing
+  Err       : Error|undefined   //initialy is undefined then maybe changes to error and stop changing
+  exist_code: number|undefined
+  stopped   : undefined|true
 }
 export interface Runner {
-  type           : 'runner'
-  watcher        : Watcher
-  name           : string
-  full_pathname  : string            
-  script         : string            
-  autorun        : boolean
-  id             : string
-  runs           : Run[] //growing
-  state          : State
-  version        : number
-
+  type         : 'runner'
+  name         : string
+  full_pathname: string
+  id           : string
+  watcher      : Watcher
+  script       : string
+  autorun      : boolean
+  runs         : Run[]     //growing
+  state        : State
+  version      : number
 }
+
 
 export interface Folder{
-  type:'folder'
-  name:string 
-  full_pathname: string //where the package.json is 
-  folders:Array<Folder>
-  runners:Array<Runner>
-  //scriptsmon:Scriptsmon
+  type         : 'folder'
+  name         : string
+  full_pathname: string         //where the package.json is 
+  id           : string
+  folders      : Array<Folder>
+  runners      : Array<Runner>
+  scriptsmon   : Scriptsmon
 }
-const root:Folder //replicate this
+export type FolderRunner=Runner|Folder

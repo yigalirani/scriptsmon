@@ -6421,6 +6421,7 @@ var TreeControl = class {
     const combined = /* @__PURE__ */ new Set([...change.icons, ...change.versions]);
     for (const id of combined) {
       const svg = this.parent.querySelector(`#${id} svg`);
+      console.log(`starting #${id} svg`);
       svg.querySelectorAll("*").forEach((el) => {
         if (getComputedStyle(el).animationName !== "none") {
           el.style.animationPlayState = "running";
@@ -6479,7 +6480,7 @@ var TerminalPanel = class {
   term;
   last_runner = void 0;
   update(new_runner) {
-    for (const line of new_runner.output)
+    for (const line of new_runner.runs.at(-1).output)
       this.term.write(line);
     if (this.last_runner != null && JSON.stringify(this.last_runner) === JSON.stringify(new_runner))
       return;

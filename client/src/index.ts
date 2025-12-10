@@ -3,11 +3,11 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage,RunnerBase,FolderBase,FolderRunner,State} from '../../src/extension.js'
+import {WebviewMessage} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal } from '@xterm/xterm';
 import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_control.js';
-import { Folder } from '../../src/monitor.js';
+import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 
 function create_terminal_element(parent: Element,id:string): HTMLElement {
@@ -45,7 +45,7 @@ function update_child_html(el: HTMLElement, selector: string, html: string) {
   el.insertAdjacentHTML('beforeend', `${txt}\n`);
   el.scrollTop = el.scrollHeight;
 }*/
-function calc_stats_html(new_runner:RunnerBase){
+function calc_stats_html(new_runner:Runner){
   return Object.entries(new_runner).filter(([k,v])=>k!=='output').map(([k,v])=>`<tr>
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
@@ -60,7 +60,7 @@ function calc_stats_html(new_runner:RunnerBase){
 class TerminalPanel{
   el:HTMLElement
   term:Terminal
-  last_runner:RunnerBase|undefined=undefined
+  last_runner:Runner|undefined=undefined
   constructor(
     public parent:Element,
     id:string//used just for the id
@@ -71,7 +71,7 @@ class TerminalPanel{
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
   }
-  update(new_runner:RunnerBase){
+  update(new_runner:Runner){
     //const term=query_selector(this.el,'.term')
     for (const line of new_runner.runs.at(-1)!.output)
       this.term.write(line)
@@ -88,7 +88,7 @@ class Terminals{
     public parent:Element
   ){
   }
-  get_terminal(runner:RunnerBase){
+  get_terminal(runner:Runner){
     const ans=this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner.id)
     return ans
   }
@@ -99,8 +99,8 @@ declare function acquireVsCodeApi(): VSCodeApi;
 
 const vscode = acquireVsCodeApi();
 
-function get_terminals(folder:FolderBase,terminals:Terminals){
-  function f(folder:FolderBase){
+function get_terminals(folder:Folder,terminals:Terminals){
+  function f(folder:Folder){
     for (const runner of folder.runners)
       terminals.get_terminal(runner).update(runner)
     folder.folders.forEach(f) //i dont like carring the terminals like this
@@ -181,7 +181,7 @@ function start(){
   });  */
 
   // Listen for messages from the extension
-  //let old_root:FolderBase|undefined
+  //let old_root:Folder|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {

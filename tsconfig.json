@@ -9,11 +9,11 @@
     "esModuleInterop": true,           // smoother interop with CommonJS modules
     "skipLibCheck": true,              // speed up compilation
     "sourceMap": false,                  // (optional) generate .map files for debugging
-    "allowJs": false,
+    "allowJs": true,
     "allowImportingTsExtensions":false,
     "moduleResolution":"nodenext",
     "emitDeclarationOnly":true
   },
-  "include": ["**/src/**/*","bin/**/*","eslint.config.mjs","main/build.ts", "client/build.ts","**/src/**/*","client/resources/icons.js"],             // include all .ts files in src/
+  "include": ["**/src/**/*","bin/**/*","eslint.config.mjs","main/build.ts", "client/build.ts","**/src/**/*","./client/resources/icons.js"],             // include all .ts files in src/
   "exclude": ["node_modules", "dist","types/**/*"]  // avoid compiling output & deps
 }

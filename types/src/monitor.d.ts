@@ -1,47 +1,17 @@
 import { IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-interface Watcher {
-    watch?: string[];
-    filter?: string;
-    pre?: string;
+import { Runner, Folder } from './data.js';
+export declare function extract_base(folder: Folder): Folder;
+interface RunnerCtrl {
+    ipty: Record<string, IPty>;
 }
-export type Scriptsmon = Record<string, Watcher | string[]> & {
-    $watch?: string[];
-    autorun?: string[];
+export declare function make_runner_ctrl(): {
+    ipty: {};
 };
-export type State = "ready" | "done" | "error" | "running" | "stopped";
-export interface RunnerBase extends Watcher {
-    type: 'runner';
-    name: string;
-    full_pathname: string;
-    script: string;
-    autorun: boolean;
-    state: State;
-    last_start_time: number | undefined;
-    last_end_time: number | undefined;
-    start_time: number | undefined;
+export declare function run_runner({ //this is not async function on purpuse
+runner, reason, runner_ctrl }: {
+    runner: Runner;
     reason: string;
-    last_reason: string;
-    last_err: Error | undefined;
-    output: string[];
-    id: string;
-    output_time?: number;
-    version: number;
-}
-export declare const runner_base_keys: (keyof RunnerBase)[];
-export interface Runner extends RunnerBase {
-    child: IPty | undefined;
-    start: (reason: string) => Promise<void>;
-}
-export interface Folder {
-    type: 'folder';
-    name: string;
-    id: string;
-    full_pathname: string;
-    folders: Array<Folder>;
-    runners: Array<Runner>;
-    scriptsmon: Scriptsmon;
-}
-export type FolderRunner = RunnerBase | FolderBase;
-export declare function extract_base(folder: Folder): FolderBase;
+    runner_ctrl: RunnerCtrl;
+}): void;
 export declare function read_package_json(full_pathnames: string[]): Promise<Folder>;
 export {};

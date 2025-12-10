@@ -1,4 +1,4 @@
-import type {Scriptsmon} from './monitor.js'
+import type {Scriptsmon} from './data.js'
 export const a:Scriptsmon={
     "$watch": ["src","package.json","./bin/run_build.ts"],
     "test"  : {"watch":["./dist/test.ts"]},

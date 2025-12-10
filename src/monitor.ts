@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {State} from './data.js'
+import {Run,State,Runner,Folder,Scriptsmon,Watcher} from './data.js'
+import  cloneDeep  from 'lodash.clonedeep'
 import {
   is_object,
   s2t,
@@ -17,58 +18,34 @@ import {
 } from "@yigal/base_types";
 
 
-export type Scriptsmon=  Record<string,Watcher|string[]>&
-{
-  $watch?:string[]
-  autorun?:string[]
-}
+
 
 function is_ready_to_start(state:State){
   return state!=="running"
 }
-export const runner_base_keys:(keyof RunnerBase)[]=[
-  "watch",
-  "filter",
-  "pre",
-  "type",          
-  "name",
-  "full_pathname",
-  "script",
-  "autorun",      
-  "state",     
-  "last_start_time",
-  "last_end_time",
-  "start_time",
-  "reason",  
-  "last_reason",
-  "last_err",
-  "output",
-  "id",
-  "version"
-]
 
-export interface Runner{
-  //abort_controller: AbortController
-  Runner          :
-  child           : IPty|undefined
-  start           : (reason:string)=>Promise<void>    
+
+function keep_only_last<T>(arr: T[]): void {
+  if (arr.length > 1) {
+    arr.splice(0, arr.length - 1);
+  }
 }
-
-
-export type FolderRunner=Runner|Folder
-export function extract_base(folder:Folder):FolderBase{
+export function extract_base(folder:Folder):Folder{
   const {full_pathname}=folder
   const runners=[]
   for (const runner of folder.runners){
-    const runner_base:RunnerBase=pk(runner,...runner_base_keys)
-    if (runner.output.length!==0){
-      console.log(`runner ${runner.name} ${JSON.stringify(runner.output)}`)
-      runner.output=[]
+    const copy=cloneDeep(runner)
+    runners.push(copy)
+    for (const run of runner.runs){
+      if (run.output.length!==0){
+        console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`)
+        run.output=[]
+      }
     }    
-    runners.push(runner_base)
+    keep_only_last(runner.runs)
   }
   const folders=folder.folders.map(extract_base)
-  return {id:full_pathname,...folder,folders,runners}
+  return {...folder,folders,runners}
 }
 function is_valid_watch(a:unknown){
   if (a==null)
@@ -144,12 +121,21 @@ function set_state(runner:Runner,state:State){
   runner.version++
 
 }
-function run_runner({ //this is not async function on purpuse
+interface RunnerCtrl{
+  ipty:Record<string,IPty> 
+}
+export function make_runner_ctrl(){
+  const ipty={}
+  return {ipty}
+}
+export function run_runner({ //this is not async function on purpuse
   runner,
-  reason
+  reason,
+  runner_ctrl
 }: {
   runner: Runner;
   reason:string
+  runner_ctrl:RunnerCtrl
 }) {
   void new Promise((resolve, _reject) => { 
     const {script,full_pathname}=runner
@@ -167,14 +153,23 @@ function run_runner({ //this is not async function on purpuse
     });
     if (child===null)
       return
+    runner_ctrl.ipty[runner.id]=child//overrides that last on
     // Set state to running immediately (spawn happens synchronously)
-    runner.start_time=Date.now()
-    runner.reason=reason
+    const run:Run={
+      start_time: Date.now(),
+      end_time  : undefined,  //initialy is undefined then changes to number and stops changing
+      reason,
+      output    : [],
+      Err       : undefined,   //initialy is undefined then maybe changes to error and stop changing
+      exist_code: undefined,
+      stopped   : undefined
+    }
+    runner.runs.push(run)
     
     // Listen to data events (both stdout and stderr come through onData)
     const dataDisposable = child.onData((data: string) => {
-      runner.output.push(data)
-      runner.output_time=Date.now()
+      run.output.push(data)
+      //run.output_time=Date.now()
     });
     
     // Listen to exit events
@@ -184,15 +179,17 @@ function run_runner({ //this is not async function on purpuse
       console.log({ exitCode,signal })
       const new_state=(exitCode===0?'done':'error') //todo: should think of aborted
       set_state(runner,new_state)
-      runner.last_end_time=Date.now()
-      runner.last_start_time=runner.start_time
-      runner.start_time=undefined
-      runner.last_reason=runner.reason
+      run.end_time=Date.now()
       resolve(null);
     });
   }); 
 }
-async function stop(runner: Runner): Promise<void> {
+async function stop({
+  runner_ctrl,runner
+}:{
+  runner_ctrl:RunnerCtrl,
+  runner: Runner
+}): Promise<void> {
   const { state } = runner;
   let was_stopped=false
   while(true){
@@ -204,19 +201,12 @@ async function stop(runner: Runner): Promise<void> {
     if (!was_stopped){
       was_stopped=true
       console.log(`stopping runner ${runner.name}...`)
-      runner.child?.kill()
+      runner_ctrl.ipty[runner.id].kill()
     }
     await sleep(10)
   }
 }
-function make_start(runner:Runner){
-  return  async function(reason:string){
-    await stop(runner)
-    run_runner({runner,reason})
 
-  }
-  
-}
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
   const autorun=normalize_watch(watchers.autorun)
@@ -241,26 +231,20 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
       const id=`${full_pathname} ${name}`.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
       const ans:Runner= {
         type:'runner',
-        ...watcher, //i like this
         name,
         script,
         full_pathname,
-        watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)],
+        watcher:{
+          watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)]
+        },
         autorun:autorun.includes(name),
         state:'ready',
-        child:undefined,
-        start_time:0,
-        last_end_time:undefined,
-        last_start_time:undefined,
-        start:(reason:string)=>Promise.resolve(),
-        reason:'',
-        last_reason:'',
-        last_err:undefined,
         id,
-        output:[],
-        version:0
+        version:0,
+        runs:[]
+        
       }
-      ans.start=make_start(ans)
+
       return ans
     }()
     ans.push(runner)
@@ -298,7 +282,7 @@ export async function read_package_json(
         }
 
     
-    const ans:Folder= {runners,folders,name,full_pathname,scriptsmon,type:'folder'}
+    const ans:Folder= {runners,folders,name,full_pathname,scriptsmon,type:'folder',id:full_pathname}
     return ans
   }
   const folders=[]
@@ -310,6 +294,7 @@ export async function read_package_json(
   }
   const root:Folder={
     name:'root',
+    id:'root',
     full_pathname: '',
     folders,
     runners:[],
