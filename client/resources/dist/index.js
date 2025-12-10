@@ -6420,12 +6420,12 @@ var TreeControl = class {
     }
     const combined = /* @__PURE__ */ new Set([...change.icons, ...change.versions]);
     for (const id of combined) {
-      const svg = this.parent.querySelectorAll(`#${id} svg`);
-      svg.forEach((x) => x.setCurrentTime(0));
-      const animate = this.parent.querySelectorAll(`#${id} animateTransform`);
-      console.log(`${id}: new beginElement.count=${animate.length}`);
-      animate.forEach((x) => {
-        x.beginElement();
+      const svg = this.parent.querySelector(`#${id} svg`);
+      svg.querySelectorAll("*").forEach((el) => {
+        if (getComputedStyle(el).animationName !== "none") {
+          el.style.animationPlayState = "running";
+          console.log(el);
+        }
       });
     }
   }

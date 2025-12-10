@@ -425,13 +425,20 @@ export class TreeControl<T>{
     }
     const combined=new Set([...change.icons, ...change.versions]);
     for (const id of combined){
-      const svg=this.parent.querySelectorAll<SVGSVGElement>(`#${id} svg`)      
-      svg.forEach(x=>x.setCurrentTime(0))
+      const svg=this.parent.querySelector<SVGSVGElement>(`#${id} svg`)  
+      console.log(`starting #${id} svg`)
+      svg!.querySelectorAll<SVGAElement>('*').forEach(el => {
+        if (getComputedStyle(el).animationName !== 'none') {
+          el.style.animationPlayState = "running";
+          console.log(el);
+        }
+      }); 
+      /*svg.forEach(x=>x.setCurrentTime(0))
       const animate=this.parent.querySelectorAll<SVGAnimateElement>(`#${id} animateTransform`)
       console.log(`${id}: new beginElement.count=${animate.length}`)
       animate.forEach(x=>{
         x.beginElement()
-      })
+      })*/
     }
 
   }

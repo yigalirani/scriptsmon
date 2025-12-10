@@ -18,6 +18,8 @@ svg{
 }
 .running{
   animation: running_animation 2s linear infinite;
+  animation-play-state: paused;
+
 }
 @keyframes running_animation {
   from {
@@ -30,6 +32,7 @@ svg{
 
 .done .check  {
   animation: done_animation 2s forwards ease;
+  animation-play-state: paused;
 }
 @keyframes done_animation {
   from { 
@@ -43,6 +46,7 @@ svg{
 .error .check  {
   transform-origin: 8px 8px; /* center of the X */  
   animation: error_animation 2s forwards ease;
+  animation-play-state: paused;
 }
 @keyframes error_animation {
   from { 
