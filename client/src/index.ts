@@ -152,7 +152,7 @@ function convert(root:FolderRunner):TreeNode{
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert)
     const children=[...folders,...items]
-    return {children,type:'folder',id,label:name,commands:[],icon:'folder-dark',icon_version:0}
+    return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0}
   }
   const {script}=root
   const {version,state}=calc_runner_status(root)

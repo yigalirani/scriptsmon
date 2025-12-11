@@ -12,6 +12,7 @@ html{
   color: white;
   border-radius: 20px;
   margin-right: 4px;
+  padding: 3px;
 }
 .icon svg{
   fill: white;
@@ -24,7 +25,7 @@ svg{
 
 }
 .running{
-  animation: running_animation 2s linear infinite;
+  animation: running_animation 1s linear infinite;
   transform-origin: center;
 }
 @keyframes running_animation {

@@ -224,11 +224,20 @@ button:hover {
   border-radius: 3px;
   margin-right: 4px;
   margin: 0px;
-  padding: 0px;  
+  padding: 3px;  
 }  
 
 .icon svg{
   width: 16px;
   height: 16px;
 
+}
+.icon.background_done{
+  background-color: green;
+}
+.icon.background_running{
+  background-color: blue;
+}
+.icon.background_error{
+  background-color: red;
 }

@@ -295,7 +295,7 @@ export class TreeControl<T>{
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
       <div class=shifter style='margin-left:${margin}px'>
-        <div class=icon>${icons[icon]}</div>
+        <div class=icon "background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}
       </div>
       ${divs({commands_icons})}
@@ -424,9 +424,11 @@ export class TreeControl<T>{
         console.warn(`cant find old svg for ${id}`)
         continue
       }
-      const new_svg=this.icons[change.new_index[id].icon]
+      const icon=change.new_index[id].icon
+      const new_svg=this.icons[icon]
       existing_svg.outerHTML=new_svg
       console.log(`${id}: new svg`)
+      this.parent.querySelector<HTMLElement>(`#${id} .icon`)!.className=`icon background_${icon}`
     }
     const combined=new Set([...change.icons, ...change.versions]);
     for (const id of combined){
