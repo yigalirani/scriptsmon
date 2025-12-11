@@ -17,7 +17,13 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
   const template = document.createElement("template")
   template.innerHTML = `
 <div class="term_panel" id="${id}" style="display: none;">
-  <div class=term>
+  <div class="term_wrapper">
+    <div class="term_title_bar">
+      <span class="term_title_status"></span>
+      <span class="term_title_name"></span>
+    </div>
+    <div class=term>
+    </div>
   </div>
   <div class=stats_container>
     <table class=stats>
@@ -72,8 +78,19 @@ class TerminalPanel{
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
+    // Initialize title bar with default values
+    const nameEl = query_selector(this.el, '.term_title_name')
+    nameEl.textContent = id
   }
   update(new_runner:Runner){
+    // Update title bar with runner status (always update, even if no runs)
+    const status = this.get_runner_status(new_runner)
+    const statusEl = query_selector(this.el, '.term_title_status')
+    statusEl.textContent = status.text
+    statusEl.className = `term_title_status status_${status.state}`
+    const nameEl = query_selector(this.el, '.term_title_name')
+    nameEl.textContent = new_runner.name
+    
     const last_run=new_runner.runs.at(-1)
     if (last_run==null)
       return
@@ -91,6 +108,17 @@ class TerminalPanel{
       update_child_html(this.el,'.stats>tbody',stats)
     this.last_stats=stats
 //    this.last_runner=new_runner//should we at all hold on to it
+  }
+  
+  private get_runner_status(runner: Runner): {state: string, text: string} {
+    if (runner.runs.length === 0)
+      return {state: 'ready', text: 'Ready'}
+    const last_run = runner.runs.at(-1)!
+    if (last_run.end_time == null)
+      return {state: 'running', text: 'Running'}
+    if (last_run.exit_code === 0)
+      return {state: 'done', text: 'Done'}
+    return {state: 'error', text: 'Error'}
   }
 }
 class Terminals{
