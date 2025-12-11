@@ -18,8 +18,7 @@ svg{
 }
 .running{
   animation: running_animation 2s linear infinite;
-  animation-play-state: paused;
-
+  transform-origin: center;
 }
 @keyframes running_animation {
   from {

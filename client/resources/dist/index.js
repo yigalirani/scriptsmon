@@ -6448,15 +6448,14 @@ function create_terminal_element(parent, id) {
       <span class="term_title_status"></span>
       <span class="term_title_name"></span>
     </div>
-    <div class=term>
+  <div class=term>
     </div>
   </div>
   <div class=stats_container>
     <table class=stats>
       <tr><td></td></tr>
     </table>
-  </div> 
-
+  </div>
 </div>
   `.trim();
   const element = template.content.firstElementChild;
@@ -6472,6 +6471,17 @@ function calc_stats_html(new_runner) {
   return Object.entries(new_runner).filter(([k, v]) => k !== "output").map(([k, v]) => `<tr>
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join("\n");
+}
+function calc_runner_status(runner) {
+  const { runs } = runner;
+  if (runs.length === 0)
+    return { version: 0, state: "ready" };
+  const { end_time, run_id: version, exit_code } = runs.at(-1);
+  if (end_time == null)
+    return { version, state: "running" };
+  if (exit_code === 0)
+    return { version, state: "done" };
+  return { version, state: "error" };
 }
 var TerminalPanel = class {
   constructor(parent, id) {
@@ -6490,12 +6500,10 @@ var TerminalPanel = class {
   //last_runner:Runner|undefined=undefined
   last_stats;
   update(new_runner) {
-    const status = this.get_runner_status(new_runner);
+    const { state } = calc_runner_status(new_runner);
     const statusEl = query_selector(this.el, ".term_title_status");
-    statusEl.textContent = status.text;
-    statusEl.className = `term_title_status status_${status.state}`;
-    const nameEl = query_selector(this.el, ".term_title_name");
-    nameEl.textContent = new_runner.name;
+    statusEl.textContent = state;
+    statusEl.className = `term_title_status status_${state}`;
     const last_run = new_runner.runs.at(-1);
     if (last_run == null)
       return;
@@ -6509,16 +6517,6 @@ var TerminalPanel = class {
     if (stats !== this.last_stats)
       update_child_html(this.el, ".stats>tbody", stats);
     this.last_stats = stats;
-  }
-  get_runner_status(runner) {
-    if (runner.runs.length === 0)
-      return { state: "ready", text: "Ready" };
-    const last_run = runner.runs.at(-1);
-    if (last_run.end_time == null)
-      return { state: "running", text: "Running" };
-    if (last_run.exit_code === 0)
-      return { state: "done", text: "Done" };
-    return { state: "error", text: "Error" };
   }
 };
 var Terminals = class {
@@ -6548,17 +6546,8 @@ function convert(root) {
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [], icon: "folder-dark", icon_version: 0 };
   }
-  const { script, runs } = root;
-  const { version, state } = (function() {
-    if (runs.length === 0)
-      return { version: 0, state: "ready" };
-    const { end_time, run_id: version2, exit_code } = runs.at(-1);
-    if (end_time == null)
-      return { version: version2, state: "running" };
-    if (exit_code === 0)
-      return { version: version2, state: "done" };
-    return { version: version2, state: "error" };
-  })();
+  const { script } = root;
+  const { version, state } = calc_runner_status(root);
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version };
 }
 function post_message(msg) {

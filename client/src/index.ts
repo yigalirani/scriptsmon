@@ -17,7 +17,13 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
   const template = document.createElement("template")
   template.innerHTML = `
 <div class="term_panel" id="${id}" style="display: none;">
+  <div class="term_wrapper">
+    <div class="term_title_bar">
+      <span class="term_title_status"></span>
+      <span class="term_title_name"></span>
+    </div>
   <div class=term>
+    </div>
   </div>
   <div class=stats_container>
     <table class=stats>
@@ -57,6 +63,17 @@ function calc_stats_html(new_runner:Runner){
     return ''
   return convert_line(output)
 }*/
+function calc_runner_status(runner:Runner){
+  const {runs}=runner
+  if (runs.length===0)
+    return{version:0,state:'ready'}
+  const {end_time,run_id:version,exit_code}=runs.at(-1)!
+  if (end_time==null)
+    return {version,state:'running'}
+  if (exit_code===0)
+    return {version,state:'done'}
+  return {version,state:'error'}
+}
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
@@ -73,9 +90,15 @@ class TerminalPanel{
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
     // Initialize title bar with default values
+    const nameEl = query_selector(this.el, '.term_title_name')
+    nameEl.textContent = id
   }
   update(new_runner:Runner){
     // Update title bar with runner status (always update, even if no runs)
+    const {state} = calc_runner_status(new_runner)
+    const statusEl = query_selector(this.el, '.term_title_status')
+    statusEl.textContent = state
+    statusEl.className = `term_title_status status_${state}`
     
     const last_run=new_runner.runs.at(-1)
     if (last_run==null)
@@ -122,7 +145,6 @@ function get_terminals(folder:Folder,terminals:Terminals){
   f(folder)
 }
 
-
 function convert(root:FolderRunner):TreeNode{
   const {type,name,id}=root
 
@@ -132,17 +154,8 @@ function convert(root:FolderRunner):TreeNode{
     const children=[...folders,...items]
     return {children,type:'folder',id,label:name,commands:[],icon:'folder-dark',icon_version:0}
   }
-  const {script,runs}=root
-  const {version,state}=function(){
-    if (runs.length===0)
-      return{version:0,state:'ready'}
-    const {end_time,run_id:version,exit_code}=runs.at(-1)!
-    if (end_time==null)
-      return {version,state:'running'}
-    if (exit_code===0)
-      return {version,state:'done'}
-    return {version,state:'error'}
-  }()
+  const {script}=root
+  const {version,state}=calc_runner_status(root)
   return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version}
 }
 function post_message(msg:WebviewMessage){
