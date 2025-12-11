@@ -6476,17 +6476,25 @@ var TerminalPanel = class {
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
   }
+  last_run_id;
   el;
   term;
-  last_runner = void 0;
+  //last_runner:Runner|undefined=undefined
+  last_stats;
   update(new_runner) {
-    for (const line of new_runner.runs.at(-1).output)
-      this.term.write(line);
-    if (this.last_runner != null && JSON.stringify(this.last_runner) === JSON.stringify(new_runner))
+    const last_run = new_runner.runs.at(-1);
+    if (last_run == null)
       return;
+    const { run_id } = last_run;
+    if (run_id !== this.last_run_id)
+      this.term.clear();
+    this.last_run_id = last_run.run_id;
+    for (const line of last_run.output)
+      this.term.write(line);
     const stats = calc_stats_html(new_runner);
-    update_child_html(this.el, ".stats>tbody", stats);
-    this.last_runner = new_runner;
+    if (stats !== this.last_stats)
+      update_child_html(this.el, ".stats>tbody", stats);
+    this.last_stats = stats;
   }
 };
 var Terminals = class {
@@ -6516,7 +6524,17 @@ function convert(root) {
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [], icon: "folder-dark", icon_version: 0 };
   }
-  const { script, state, version } = root;
+  const { script, runs } = root;
+  const { version, state } = (function() {
+    if (runs.length === 0)
+      return { version: 0, state: "ready" };
+    const { end_time, run_id: version2, exit_code } = runs.at(-1);
+    if (end_time == null)
+      return { version: version2, state: "running" };
+    if (exit_code === 0)
+      return { version: version2, state: "done" };
+    return { version: version2, state: "error" };
+  })();
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version };
 }
 function post_message(msg) {

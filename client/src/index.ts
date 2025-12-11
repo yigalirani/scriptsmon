@@ -58,9 +58,11 @@ function calc_stats_html(new_runner:Runner){
   return convert_line(output)
 }*/
 class TerminalPanel{
+  last_run_id:number|undefined
   el:HTMLElement
   term:Terminal
-  last_runner:Runner|undefined=undefined
+  //last_runner:Runner|undefined=undefined
+  last_stats:string|undefined
   constructor(
     public parent:Element,
     id:string//used just for the id
@@ -72,14 +74,23 @@ class TerminalPanel{
       this.term.open(term_container);
   }
   update(new_runner:Runner){
-    //const term=query_selector(this.el,'.term')
-    for (const line of new_runner.runs.at(-1)!.output)
-      this.term.write(line)
-    if (this.last_runner!=null&&JSON.stringify(this.last_runner)===JSON.stringify(new_runner))
+    const last_run=new_runner.runs.at(-1)
+    if (last_run==null)
       return
+    const {run_id}=last_run
+    if (run_id!==this.last_run_id)
+      this.term.clear()
+    this.last_run_id=last_run.run_id
+    //const term=query_selector(this.el,'.term')
+    for (const line of last_run.output)
+      this.term.write(line)
+    //if (this.last_runner!=null&&JSON.stringify(this.last_runner)===JSON.stringify(new_runner))
+    //  return
     const stats=calc_stats_html(new_runner)
-    update_child_html(this.el,'.stats>tbody',stats)
-    this.last_runner=new_runner//should we at all hold on to it
+    if (stats!==this.last_stats)
+      update_child_html(this.el,'.stats>tbody',stats)
+    this.last_stats=stats
+//    this.last_runner=new_runner//should we at all hold on to it
   }
 }
 class Terminals{
@@ -118,7 +129,17 @@ function convert(root:FolderRunner):TreeNode{
     const children=[...folders,...items]
     return {children,type:'folder',id,label:name,commands:[],icon:'folder-dark',icon_version:0}
   }
-  const {script,state,version}=root
+  const {script,runs}=root
+  const {version,state}=function(){
+    if (runs.length===0)
+      return{version:0,state:'ready'}
+    const {end_time,run_id:version,exit_code}=runs.at(-1)!
+    if (end_time==null)
+      return {version,state:'running'}
+    if (exit_code===0)
+      return {version,state:'done'}
+    return {version,state:'error'}
+  }()
   return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version}
 }
 function post_message(msg:WebviewMessage){

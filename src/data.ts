@@ -16,8 +16,9 @@ export interface Run{
   reason    : string
   output    : string[]          ////growing
   Err       : Error|undefined   //initialy is undefined then maybe changes to error and stop changing
-  exist_code: number|undefined
+  exit_code : number|undefined
   stopped   : undefined|true
+  run_id    : number
 }
 export interface Runner {
   type         : 'runner'
@@ -28,8 +29,8 @@ export interface Runner {
   script       : string
   autorun      : boolean
   runs         : Run[]     //growing
-  state        : State
-  version      : number
+  /*state        : State
+  version      : number*/
 }
 
 

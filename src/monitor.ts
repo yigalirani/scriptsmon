@@ -20,8 +20,10 @@ import {
 
 
 
-function is_ready_to_start(state:State){
-  return state!=="running"
+function is_ready_to_start(runner:Runner){
+  if (runner.runs.length===0)
+    return true
+  return runner.runs.at(-1)?.end_time!=null;
 }
 
 
@@ -116,11 +118,11 @@ function normalize_watch(a:string[]|undefined){
     return []
   return a
 }
-function set_state(runner:Runner,state:State){
+/*function set_state(runner:Runner,state:State){
   runner.state=state
   runner.version++
 
-}
+}*/
 interface RunnerCtrl{
   ipty:Record<string,IPty> 
 }
@@ -138,8 +140,8 @@ export function run_runner({ //this is not async function on purpuse
   runner_ctrl:RunnerCtrl
 }) {
   void new Promise((resolve, _reject) => { 
-    const {script,full_pathname}=runner
-    set_state(runner,'running')
+    const {script,full_pathname,runs}=runner
+    //(runner,'running')
     // Spawn a shell with the script as command
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
@@ -155,14 +157,20 @@ export function run_runner({ //this is not async function on purpuse
       return
     runner_ctrl.ipty[runner.id]=child//overrides that last on
     // Set state to running immediately (spawn happens synchronously)
+    const run_id=function(){
+      if (runs.length===0)
+        return 0
+      return runs.at(-1)!.run_id+1
+    }()    
     const run:Run={
       start_time: Date.now(),
-      end_time  : undefined,  //initialy is undefined then changes to number and stops changing
+      end_time  : undefined,    //initialy is undefined then changes to number and stops changing
       reason,
-      output    : [],
-      Err       : undefined,   //initialy is undefined then maybe changes to error and stop changing
-      exist_code: undefined,
-      stopped   : undefined
+      output   : [],
+      Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
+      exit_code: undefined,
+      stopped  : undefined,
+      run_id
     }
     runner.runs.push(run)
     
@@ -178,8 +186,11 @@ export function run_runner({ //this is not async function on purpuse
       exitDisposable.dispose();
       console.log({ exitCode,signal })
       const new_state=(exitCode===0?'done':'error') //todo: should think of aborted
-      set_state(runner,new_state)
+      //set_state(runner,new_state)
       run.end_time=Date.now()
+      run.exit_code=exitCode
+      if (signal!=null)
+        run.stopped=true
       resolve(null);
     });
   }); 
@@ -190,18 +201,18 @@ async function stop({
   runner_ctrl:RunnerCtrl,
   runner: Runner
 }): Promise<void> {
-  const { state } = runner;
+  //const { state } = runner;
   let was_stopped=false
   while(true){
-    if (is_ready_to_start(runner.state)) {
-      if (was_stopped)
-        set_state(runner,'stopped')
+    if (is_ready_to_start(runner)) {
+      /*if (was_stopped)
+        set_state(runner,'stopped')*/
       return Promise.resolve()
     }
     if (!was_stopped){
       was_stopped=true
       console.log(`stopping runner ${runner.name}...`)
-      runner_ctrl.ipty[runner.id].kill()
+      runner_ctrl.ipty[runner.id].kill() // what if more than one kill function call is needed
     }
     await sleep(10)
   }
@@ -238,9 +249,9 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
           watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)]
         },
         autorun:autorun.includes(name),
-        state:'ready',
+        //state:'ready',
         id,
-        version:0,
+        //version:0,
         runs:[]
         
       }

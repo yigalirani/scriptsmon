@@ -797,10 +797,6 @@ function normalize_watch(a) {
     return [];
   return a;
 }
-function set_state(runner, state) {
-  runner.state = state;
-  runner.version++;
-}
 function make_runner_ctrl() {
   const ipty = {};
   return { ipty };
@@ -812,8 +808,7 @@ function run_runner({
   runner_ctrl
 }) {
   void new Promise((resolve2, _reject) => {
-    const { script, full_pathname } = runner;
-    set_state(runner, "running");
+    const { script, full_pathname, runs } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
     const child = spawn(shell, shellArgs, {
@@ -826,6 +821,11 @@ function run_runner({
     if (child === null)
       return;
     runner_ctrl.ipty[runner.id] = child;
+    const run_id = (function() {
+      if (runs.length === 0)
+        return 0;
+      return runs.at(-1).run_id + 1;
+    })();
     const run = {
       start_time: Date.now(),
       end_time: void 0,
@@ -834,8 +834,9 @@ function run_runner({
       output: [],
       Err: void 0,
       //initialy is undefined then maybe changes to error and stop changing
-      exist_code: void 0,
-      stopped: void 0
+      exit_code: void 0,
+      stopped: void 0,
+      run_id
     };
     runner.runs.push(run);
     const dataDisposable = child.onData((data) => {
@@ -846,8 +847,10 @@ function run_runner({
       exitDisposable.dispose();
       console.log({ exitCode, signal });
       const new_state = exitCode === 0 ? "done" : "error";
-      set_state(runner, new_state);
       run.end_time = Date.now();
+      run.exit_code = exitCode;
+      if (signal != null)
+        run.stopped = true;
       resolve2(null);
     });
   });
@@ -882,9 +885,9 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
           watch: [...normalize_watch($watch), ...normalize_watch(watcher.watch)]
         },
         autorun: autorun.includes(name),
-        state: "ready",
+        //state:'ready',
         id,
-        version: 0,
+        //version:0,
         runs: []
       };
       return ans2;

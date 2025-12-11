@@ -14,8 +14,9 @@ export interface Run {
     reason: string;
     output: string[];
     Err: Error | undefined;
-    exist_code: number | undefined;
+    exit_code: number | undefined;
     stopped: undefined | true;
+    run_id: number;
 }
 export interface Runner {
     type: 'runner';
@@ -26,8 +27,6 @@ export interface Runner {
     script: string;
     autorun: boolean;
     runs: Run[];
-    state: State;
-    version: number;
 }
 export interface Folder {
     type: 'folder';
