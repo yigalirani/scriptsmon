@@ -7,9 +7,16 @@ html{
   flex-direction: row;
   padding: 10px;
   margin: 10px;
-  border: 1px solid brown;
-
+  background-color: rgb(51 51 51);
+  border: 1px solid #474747;  
+  color: white;
+  border-radius: 20px;
+  margin-right: 4px;
 }
+.icon svg{
+  fill: white;
+}
+
 
 svg{
   width: 128px;
@@ -54,4 +61,7 @@ svg{
   to { 
     transform: scale(1) rotate(180deg)
   }
+}
+.ready_background{
+  background-color: gray;
 }

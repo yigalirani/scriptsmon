@@ -62,7 +62,7 @@ button:hover {
 .term_panel{
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+     overflow: hidden;
   flex: 1;
   height: 100%;
      
@@ -173,12 +173,7 @@ button:hover {
   padding-left: 10px;
   color:var(--vscode-descriptionForeground);
 }
-.icon{
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-}
+
 .tree_folder.collapsed > .children {
   display: none;
 }
@@ -218,12 +213,22 @@ button:hover {
 .command_icon > img {
   filter: invert(1);
 }
-svg{
-  width: 20px;
-  height: 20px;
-  will-change: transform;
-}
+
 .commands_icons  svg{
   width: 16px;
   height: 16px;
+}
+
+.icon{
+  border-radius: 2px;
+  border-radius: 3px;
+  margin-right: 4px;
+  margin: 0px;
+  padding: 0px;  
+}  
+
+.icon svg{
+  width: 16px;
+  height: 16px;
+
 }

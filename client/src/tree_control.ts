@@ -29,6 +29,11 @@ function make_empty_tree_folder():TreeNode{
     icon:'root_icon'
   }
 }
+
+function wrap_icon(content:string,name:string){
+
+  return `<div class="icon ${name}_background">${content}</div>`
+}
 function parseIcons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
   
@@ -48,7 +53,7 @@ function parseIcons(html: string): Record<string, string> {
       const content = contentEl.outerHTML
       
       if (name) {
-        result[name] = content;
+        result[name] = content
       }
     }
   });
@@ -290,7 +295,7 @@ export class TreeControl<T>{
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
       <div class=shifter style='margin-left:${margin}px'>
-        ${icons[icon]}
+        <div class=icon>${icons[icon]}</div>
         ${divs({label,description})}
       </div>
       ${divs({commands_icons})}
