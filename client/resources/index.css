@@ -62,58 +62,10 @@ button:hover {
 .term_panel{
   display: flex;
   flex-direction: row;
-     overflow: hidden;
+  overflow: hidden;
   flex: 1;
   height: 100%;
      
-}
-.term_wrapper{
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-.term_title_bar{
-  display: flex;
-  align-items: center;
-  padding: 4px 8px;
-  background-color: var(--vscode-titleBar-activeBackground, #2d2d30);
-  color: var(--vscode-titleBar-activeForeground, #cccccc);
-  border-bottom: 1px solid var(--vscode-panel-border, #3e3e42);
-  font-size: 12px;
-  min-height: 24px;
-  gap: 8px;
-}
-.term_title_status{
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-weight: 500;
-  font-size: 11px;
-}
-.term_title_status.status_ready{
-  background-color: var(--vscode-button-secondaryBackground, #3c3c3c);
-  color: var(--vscode-button-secondaryForeground, #cccccc);
-}
-.term_title_status.status_running{
-  background-color: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #ffffff);
-  animation: pulse 2s ease-in-out infinite;
-}
-.term_title_status.status_done{
-  background-color: #4caf50;
-  color: #ffffff;
-}
-.term_title_status.status_error{
-  background-color: #f44336;
-  color: #ffffff;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-.term_title_name{
-  flex: 1;
-  font-weight: 500;
 }
 .stats_container{
   overflow: scroll;
