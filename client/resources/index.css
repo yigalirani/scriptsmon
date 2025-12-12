@@ -150,6 +150,8 @@ button:hover {
     padding: 4px;
     white-space: nowrap;
     display: flex;
+    width: 1000px;
+    align-items: center;
 }
 .label_row:hover{
   background-color: var(--vscode-list-hoverBackground);
@@ -204,8 +206,13 @@ button:hover {
 }
 .commands_icons{
   margin-left: auto;
-  display: flex;
+  display: none;
   flex-direction: row;
+  position: sticky;
+  right: 10px;
+}
+.label_row:hover .commands_icons{
+  display: flex;
 }
 .command_icon:hover{
   background-color:green ;
