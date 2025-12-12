@@ -295,7 +295,7 @@ export class TreeControl<T>{
   <div class="tree_${type}" id="${id}" >
     <div class=label_row>
       <div class=shifter style='margin-left:${margin}px'>
-        <div class=icon "background_${icon}">${icons[icon]}</div>
+        <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}
       </div>
       ${divs({commands_icons})}

@@ -74,6 +74,12 @@ function calc_runner_status(runner:Runner){
     return {version,state:'done'}
   return {version,state:'error'}
 }
+
+  // 2. Register a decoration using that marker
+
+  // 3. (Optional) use onRender to get an element
+    // el is an HTMLElement when rendered
+    // but you *don’t need* to style here if you set colors above
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
@@ -86,6 +92,9 @@ class TerminalPanel{
   ){
     this.el=create_terminal_element(parent,id)
     this.term=new Terminal()
+
+
+
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);

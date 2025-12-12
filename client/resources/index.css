@@ -227,6 +227,7 @@ button:hover {
 }
 
 .icon{
+  background-color: transparent;
   border-radius: 2px;
   border-radius: 3px;
   margin-right: 4px;
@@ -247,4 +248,7 @@ button:hover {
 }
 .background_error{
   background-color: red;
+}
+.icon.background_ready,.icon.background_folder{
+  border: 0px solid #474747;  
 }
