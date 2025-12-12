@@ -98,7 +98,7 @@ class TerminalPanel{
     const {state} = calc_runner_status(new_runner)
     const statusEl = query_selector(this.el, '.term_title_status')
     statusEl.textContent = state
-    statusEl.className = `term_title_status status_${state}`
+    statusEl.className = `term_title_status background_${state}`
     
     const last_run=new_runner.runs.at(-1)
     if (last_run==null)
