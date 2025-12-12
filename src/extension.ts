@@ -73,7 +73,7 @@ const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionCont
           const runner=find_runner(root,message.id)
           if (runner==null)
             throw new Error(`runner not found:${message.id}`) //or maybe just ignore it?
-          run_runner({runner,runner_ctrl,reason:'user'})
+          void run_runner({runner,runner_ctrl,reason:'user'})
           break          
         }
       }

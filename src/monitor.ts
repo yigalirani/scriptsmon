@@ -130,7 +130,31 @@ export function make_runner_ctrl(){
   const ipty={}
   return {ipty}
 }
-export function run_runner({ //this is not async function on purpuse
+async function stop({
+  runner_ctrl,runner
+}:{
+  runner_ctrl:RunnerCtrl,
+  runner: Runner
+}): Promise<void> {
+  //const { state } = runner;
+  let was_stopped=false
+  while(true){
+    if (is_ready_to_start(runner)) {
+      /*if (was_stopped)
+        set_state(runner,'stopped')*/
+      return Promise.resolve()
+    }
+    if (!was_stopped){
+      was_stopped=true
+      console.log(`stopping runner ${runner.name}...`)
+      runner_ctrl.ipty[runner.id].kill() // what if more than one kill function call is needed
+    }
+    await sleep(10)
+  }
+}
+
+
+ export async function run_runner({ //this is not async function on purpuse
   runner,
   reason,
   runner_ctrl
@@ -139,6 +163,7 @@ export function run_runner({ //this is not async function on purpuse
   reason:string
   runner_ctrl:RunnerCtrl
 }) {
+  await stop({runner_ctrl,runner})
   void new Promise((resolve, _reject) => { 
     const {script,full_pathname,runs}=runner
     //(runner,'running')
@@ -195,29 +220,6 @@ export function run_runner({ //this is not async function on purpuse
     });
   }); 
 }
-async function stop({
-  runner_ctrl,runner
-}:{
-  runner_ctrl:RunnerCtrl,
-  runner: Runner
-}): Promise<void> {
-  //const { state } = runner;
-  let was_stopped=false
-  while(true){
-    if (is_ready_to_start(runner)) {
-      /*if (was_stopped)
-        set_state(runner,'stopped')*/
-      return Promise.resolve()
-    }
-    if (!was_stopped){
-      was_stopped=true
-      console.log(`stopping runner ${runner.name}...`)
-      runner_ctrl.ipty[runner.id].kill() // what if more than one kill function call is needed
-    }
-    await sleep(10)
-  }
-}
-
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
   const autorun=normalize_watch(watchers.autorun)

@@ -12,6 +12,6 @@ runner, reason, runner_ctrl }: {
     runner: Runner;
     reason: string;
     runner_ctrl: RunnerCtrl;
-}): void;
+}): Promise<void>;
 export declare function read_package_json(full_pathnames: string[]): Promise<Folder>;
 export {};

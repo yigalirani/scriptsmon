@@ -708,8 +708,18 @@ function is_string_array(a) {
       return false;
   return true;
 }
+async function sleep(ms) {
+  return await new Promise((resolve2) => {
+    setTimeout(() => resolve2(void 0), ms);
+  });
+}
 
 // src/monitor.ts
+function is_ready_to_start(runner) {
+  if (runner.runs.length === 0)
+    return true;
+  return runner.runs.at(-1)?.end_time != null;
+}
 function keep_only_last(arr) {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -801,12 +811,30 @@ function make_runner_ctrl() {
   const ipty = {};
   return { ipty };
 }
-function run_runner({
+async function stop({
+  runner_ctrl,
+  runner
+}) {
+  let was_stopped = false;
+  while (true) {
+    if (is_ready_to_start(runner)) {
+      return Promise.resolve();
+    }
+    if (!was_stopped) {
+      was_stopped = true;
+      console.log(`stopping runner ${runner.name}...`);
+      runner_ctrl.ipty[runner.id].kill();
+    }
+    await sleep(10);
+  }
+}
+async function run_runner({
   //this is not async function on purpuse
   runner,
   reason,
   runner_ctrl
 }) {
+  await stop({ runner_ctrl, runner });
   void new Promise((resolve2, _reject) => {
     const { script, full_pathname, runs } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
@@ -1025,7 +1053,7 @@ var the_loop = async function(view, context) {
           const runner = find_runner(root, message.id);
           if (runner == null)
             throw new Error(`runner not found:${message.id}`);
-          run_runner({ runner, runner_ctrl, reason: "user" });
+          void run_runner({ runner, runner_ctrl, reason: "user" });
           break;
         }
       }
