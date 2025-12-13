@@ -10,6 +10,28 @@ import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_con
 import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 
+
+function formatElapsedTime(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const milliseconds = ms % 1000;
+
+  const seconds = totalSeconds % 60;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+
+  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60);
+
+  const pad2 = (n: number) => n.toString().padStart(2, '0');
+  const pad3 = (n: number) => n.toString().padStart(3, '0');
+
+  const time =
+    hours > 0
+      ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`
+      : `${pad2(minutes)}:${pad2(seconds)}`;
+
+  return `${time}.${pad3(milliseconds)}`;
+}
+
 function create_terminal_element(parent: Element,id:string): HTMLElement {
   const ans=parent.querySelector(`#${id}`)
   if (ans!=null)
@@ -22,6 +44,7 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
       <span class="term_title_dir"></span>
       <span class="term_title_script"></span>
       <span class="term_title_status"></span>
+      <span class="term_title_duration"></span>
     </div>
   <div class=term>
     </div>
@@ -104,14 +127,28 @@ class TerminalPanel{
     query_selector(this.el, '.term_title_script').textContent=runner.script
     query_selector(this.el, '.term_title_status').textContent='ready'
   }
+  
   update(new_runner:Runner){
     // Update title bar with runner status (always update, even if no runs)
+    const {runs}=new_runner
     const {state} = calc_runner_status(new_runner)
-    const statusEl = query_selector(this.el, '.term_title_status')
+    const last_run=runs.at(-1)
+    if (last_run!=null){
+      const {start_time,end_time}=last_run
+      const effective_end_time=function(){
+        if (end_time==null){
+          const ans=Date.now()
+          return ans
+        }
+        return end_time
+      }()
+      query_selector(this.el, '.term_title_duration').textContent=formatElapsedTime(effective_end_time-start_time)
+    }
+      const statusEl = query_selector(this.el, '.term_title_status')
     statusEl.textContent = state
     statusEl.className = `term_title_status background_${state}`
     
-    const last_run=new_runner.runs.at(-1)
+
     if (last_run==null)
       return
     const {run_id}=last_run

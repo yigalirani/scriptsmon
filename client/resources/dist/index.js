@@ -6551,6 +6551,18 @@ var icons_default = `<!DOCTYPE html>
 <script src="./icons.js"></script>`;
 
 // src/index.ts
+function formatElapsedTime(ms) {
+  const totalSeconds = Math.floor(ms / 1e3);
+  const milliseconds = ms % 1e3;
+  const seconds = totalSeconds % 60;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60);
+  const pad2 = (n) => n.toString().padStart(2, "0");
+  const pad3 = (n) => n.toString().padStart(3, "0");
+  const time = hours > 0 ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}` : `${pad2(minutes)}:${pad2(seconds)}`;
+  return `${time}.${pad3(milliseconds)}`;
+}
 function create_terminal_element(parent, id) {
   const ans = parent.querySelector(`#${id}`);
   if (ans != null)
@@ -6563,6 +6575,7 @@ function create_terminal_element(parent, id) {
       <span class="term_title_dir"></span>
       <span class="term_title_script"></span>
       <span class="term_title_status"></span>
+      <span class="term_title_duration"></span>
     </div>
   <div class=term>
     </div>
@@ -6617,11 +6630,23 @@ var TerminalPanel = class {
   //last_runner:Runner|undefined=undefined
   last_stats;
   update(new_runner) {
+    const { runs } = new_runner;
     const { state } = calc_runner_status(new_runner);
+    const last_run = runs.at(-1);
+    if (last_run != null) {
+      const { start_time, end_time } = last_run;
+      const effective_end_time = (function() {
+        if (end_time == null) {
+          const ans = Date.now();
+          return ans;
+        }
+        return end_time;
+      })();
+      query_selector(this.el, ".term_title_duration").textContent = formatElapsedTime(effective_end_time - start_time);
+    }
     const statusEl = query_selector(this.el, ".term_title_status");
     statusEl.textContent = state;
     statusEl.className = `term_title_status background_${state}`;
-    const last_run = new_runner.runs.at(-1);
     if (last_run == null)
       return;
     const { run_id } = last_run;
