@@ -245,7 +245,12 @@ button:hover {
   background-color: green;
 }
 .background_running{
+  /*background-color: blue;*/
+  border: 0px solid #474747;  
+}
+.term_title_status.background_running{
   background-color: blue;
+  border: 0px solid #474747;  
 }
 .background_error{
   background-color: red;
