@@ -6479,7 +6479,7 @@ var icons_default = `<!DOCTYPE html>
   </div>
 
 
-  <div class="icon">running
+  <div class="icon">oldrunning
     <svg class=running width="64px" height="64px" viewBox="10 10 45.00 45.00" xmlns="http://www.w3.org/2000/svg"
       stroke-width="3">
       <path stroke="currentColor" fill="none"
@@ -6487,6 +6487,11 @@ var icons_default = `<!DOCTYPE html>
     </svg>
   </div>
 
+   <div class="icon">running
+<svg class=running xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 100 100" preserveAspectRatio = "xMidYMid" width = "233" height = "233" fill="none" xmlns:xlink = "http://www.w3.org/1999/xlink">
+    <circle stroke-dasharray = "164.93361431346415 56.97787143782138" r = "35" stroke-width = "10" stroke = "currentColor" fill = "none" cy = "50" cx = "50"></circle>
+</svg>
+</div>
 
 
   <div class="icon">chevron-down
