@@ -6560,8 +6560,9 @@ function create_terminal_element(parent, id) {
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_wrapper">
     <div class="term_title_bar">
+      <span class="term_title_dir"></span>
+      <span class="term_title_script"></span>
       <span class="term_title_status"></span>
-      <span class="term_title_name"></span>
     </div>
   <div class=term>
     </div>
@@ -6599,15 +6600,16 @@ function calc_runner_status(runner) {
   return { version, state: "error" };
 }
 var TerminalPanel = class {
-  constructor(parent, id) {
+  constructor(parent, runner) {
     this.parent = parent;
-    this.el = create_terminal_element(parent, id);
+    this.el = create_terminal_element(parent, runner.id);
     this.term = new import_xterm.Terminal();
     const term_container = query_selector(this.el, ".term");
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
-    const nameEl = query_selector(this.el, ".term_title_name");
-    nameEl.textContent = id;
+    query_selector(this.el, ".term_title_dir").textContent = runner.full_pathname;
+    query_selector(this.el, ".term_title_script").textContent = runner.script;
+    query_selector(this.el, ".term_title_status").textContent = "ready";
   }
   last_run_id;
   el;
@@ -6640,7 +6642,7 @@ var Terminals = class {
   }
   terminals = {};
   get_terminal(runner) {
-    const ans = this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner.id);
+    const ans = this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner);
     return ans;
   }
 };

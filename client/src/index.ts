@@ -19,8 +19,9 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_wrapper">
     <div class="term_title_bar">
+      <span class="term_title_dir"></span>
+      <span class="term_title_script"></span>
       <span class="term_title_status"></span>
-      <span class="term_title_name"></span>
     </div>
   <div class=term>
     </div>
@@ -88,9 +89,9 @@ class TerminalPanel{
   last_stats:string|undefined
   constructor(
     public parent:Element,
-    id:string//used just for the id
+    runner:Runner
   ){
-    this.el=create_terminal_element(parent,id)
+    this.el=create_terminal_element(parent,runner.id)
     this.term=new Terminal()
 
 
@@ -98,9 +99,10 @@ class TerminalPanel{
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
-    // Initialize title bar with default values
-    const nameEl = query_selector(this.el, '.term_title_name')
-    nameEl.textContent = id
+    // Initialize title bar with full filename plus script
+    query_selector(this.el, '.term_title_dir').textContent=runner.full_pathname
+    query_selector(this.el, '.term_title_script').textContent=runner.script
+    query_selector(this.el, '.term_title_status').textContent='ready'
   }
   update(new_runner:Runner){
     // Update title bar with runner status (always update, even if no runs)
@@ -135,7 +137,7 @@ class Terminals{
   ){
   }
   get_terminal(runner:Runner){
-    const ans=this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner.id)
+    const ans=this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner)
     return ans
   }
 }

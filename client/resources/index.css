@@ -112,7 +112,6 @@ button:hover {
   50% { opacity: 0.7; }
 }*/
 .term_title_name{
-  flex: 1;
   font-weight: 500;
 }
 .stats_container{
@@ -251,4 +250,8 @@ button:hover {
 }
 .icon.background_ready,.icon.background_folder{
   border: 0px solid #474747;  
+}
+.term_title_script{
+  background-color: black;
+  padding: 3px;
 }
