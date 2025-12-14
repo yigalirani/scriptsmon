@@ -41,10 +41,11 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_wrapper">
     <div class="term_title_bar">
-      <span class="term_title_dir"></span>
-      <span class="term_title_script"></span>
-      <span class="term_title_status"></span>
-      <span class="term_title_duration"></span>
+      <span class="term_title_dir"><div class=title>cwd</div><div class=value></div></span>
+      <span class="term_title_watch"><div class=title>watch</div><div class=value></div></span>
+      <span class="term_title_script"><div class=title>command</div><div class=value></div></span>
+      <span class="term_title_status"><div class=title></div><div class=value></div></span>
+      <span class="term_title_duration"><div class=title>duration</div><div class=value></div></span>
     </div>
   <div class=term>
     </div>
@@ -123,9 +124,11 @@ class TerminalPanel{
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
     // Initialize title bar with full filename plus script
-    query_selector(this.el, '.term_title_dir').textContent=runner.full_pathname
-    query_selector(this.el, '.term_title_script').textContent=runner.script
-    query_selector(this.el, '.term_title_status').textContent='ready'
+    query_selector(this.el, '.term_title_dir .value').textContent=runner.full_pathname
+    query_selector(this.el, '.term_title_script .value').textContent=runner.script
+    query_selector(this.el, '.term_title_watch .value').textContent=runner.watcher.watch?.join(',')||''
+    query_selector(this.el, '.term_title_status .value').textContent='ready'
+    
   }
   
   update(new_runner:Runner){
@@ -142,9 +145,9 @@ class TerminalPanel{
         }
         return end_time
       }()
-      query_selector(this.el, '.term_title_duration').textContent=formatElapsedTime(effective_end_time-start_time)
+      query_selector(this.el, '.term_title_duration .value').textContent=formatElapsedTime(effective_end_time-start_time)
     }
-      const statusEl = query_selector(this.el, '.term_title_status')
+      const statusEl = query_selector(this.el, '.term_title_status .value')
     statusEl.textContent = state
     statusEl.className = `term_title_status background_${state}`
     

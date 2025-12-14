@@ -81,7 +81,6 @@ button:hover {
   color: var(--vscode-titleBar-activeForeground, #cccccc);
   border-bottom: 1px solid var(--vscode-panel-border, #3e3e42);
   font-size: 12px;
-  min-height: 24px;
   gap: 8px;
 }
 .term_title_status{
