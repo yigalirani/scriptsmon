@@ -6648,7 +6648,7 @@ var TerminalPanel = class {
     }
     const statusEl = query_selector(this.el, ".term_title_status .value");
     statusEl.textContent = state;
-    statusEl.className = `term_title_status background_${state}`;
+    statusEl.className = `value background_${state}`;
     if (last_run == null)
       return;
     const { run_id } = last_run;
