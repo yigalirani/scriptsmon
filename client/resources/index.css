@@ -31,6 +31,7 @@ h1 {
 }
 .terms_container{
   flex:1;
+  overflow: hidden;
 }
 .controlpanel{
   padding: 30px;
@@ -146,6 +147,7 @@ span.term_title_watch{
 .stats_container{
   overflow: scroll;
   width:300px;
+  display: none;
 
  }
 .stats{
@@ -155,6 +157,7 @@ span.term_title_watch{
 .term{
   flex:1;
   background-color: rgb(29, 55, 64);
+  overflow: auto;
 }
 .stats td{
   border: 2px solid inherit;

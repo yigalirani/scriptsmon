@@ -5,12 +5,66 @@ interface VSCodeApi {
 }
 import {WebviewMessage} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
-import { Terminal } from '@xterm/xterm';
+import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
 import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_control.js';
 import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
+declare function acquireVsCodeApi(): VSCodeApi;
+const vscode = acquireVsCodeApi();
 
+export interface FileLocation {
+  file: string;
+  row: number;
+  col: number;
+}
+function post_message(msg:WebviewMessage){
+  vscode.postMessage(msg)
+}
+function addFileLocationLinkDetection(
+  terminal: Terminal,
+  full_pathname:string
+): void {
+  const pattern = /([^\s:]+):(\d+):(\d+)/g;
 
+  const provider: ILinkProvider = {
+    provideLinks(y, callback) {
+      const line = terminal.buffer.active.getLine(y - 1);
+      if (!line) {
+        callback([]);
+        return;
+      }
+
+      const text = line.translateToString(true);
+      const links: ILink[] = [];
+
+      let match: RegExpExecArray | null;
+      while ((match = pattern.exec(text)) !== null) {
+        const [full, file, row, col] = match;
+
+        links.push({
+          range: {
+            start: { x: match.index + 1, y },
+            end: { x: match.index + full.length, y }
+          },
+          activate: () => {
+            post_message({
+              command: "command_link_clicked",
+              file,
+              full_pathname,
+              row: Number(row),
+              col: Number(col)
+            });
+          },
+          text: full
+        });
+      }
+
+      callback(links);
+    }
+  };
+
+  terminal.registerLinkProvider(provider);
+}
 function formatElapsedTime(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   const milliseconds = ms % 1000;
@@ -115,14 +169,17 @@ class TerminalPanel{
   term:Terminal
   //last_runner:Runner|undefined=undefined
   last_stats:string|undefined
+  onLink =(location: FileLocation)=>{
+    console.log(location)
+
+  }
   constructor(
     public parent:Element,
     runner:Runner
   ){
     this.el=create_terminal_element(parent,runner.id)
-    this.term=new Terminal()
-
-
+    this.term=new Terminal({cols:200})
+    addFileLocationLinkDetection(this.term,runner.full_pathname)
 
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement)
@@ -187,9 +244,7 @@ class Terminals{
 }
 
 
-declare function acquireVsCodeApi(): VSCodeApi;
 
-const vscode = acquireVsCodeApi();
 
 function get_terminals(folder:Folder,terminals:Terminals){
   function f(folder:Folder){
@@ -213,9 +268,7 @@ function convert(root:FolderRunner):TreeNode{
   const {version,state}=calc_runner_status(root)
   return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version}
 }
-function post_message(msg:WebviewMessage){
-  vscode.postMessage(msg)
-}
+
 
 const provider:TreeDataProvider<FolderRunner>={
   convert,

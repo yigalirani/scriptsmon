@@ -646,6 +646,9 @@ var require_lodash = __commonJS({
   }
 });
 
+// src/extension.ts
+import * as path3 from "node:path";
+
 // src/monitor.ts
 var import_lodash = __toESM(require_lodash(), 1);
 import * as path from "node:path";
@@ -672,13 +675,13 @@ async function get_node() {
   if (typeof window !== "undefined") {
     throw new Error("getFileContents() requires Node.js");
   }
-  const path3 = await import("node:path");
+  const path4 = await import("node:path");
   const fs2 = await import("node:fs/promises");
-  return { fs: fs2, path: path3 };
+  return { fs: fs2, path: path4 };
 }
 async function mkdir_write_file(filePath, data) {
-  const { path: path3, fs: fs2 } = await get_node();
-  const directory = path3.dirname(filePath);
+  const { path: path4, fs: fs2 } = await get_node();
+  const directory = path4.dirname(filePath);
   try {
     await fs2.mkdir(directory, { recursive: true });
     await fs2.writeFile(filePath, data);
@@ -944,8 +947,8 @@ async function read_package_json(full_pathnames) {
     const { workspaces } = pkgJson;
     const folders3 = [];
     if (is_string_array(workspaces))
-      for (const workspace of workspaces) {
-        const ret = await f(path.join(full_pathname, workspace), workspace);
+      for (const workspace2 of workspaces) {
+        const ret = await f(path.join(full_pathname, workspace2), workspace2);
         if (ret != null)
           folders3.push(ret);
       }
@@ -1016,6 +1019,28 @@ function define_webview({ context, id, html, f }) {
 }
 
 // src/extension.ts
+async function open_file(pos) {
+  try {
+    const file = path3.join(pos.full_pathname, pos.file);
+    const document = await vscode.workspace.openTextDocument(file);
+    const editor = await vscode.window.showTextDocument(document, {
+      preview: false
+    });
+    const position = new vscode.Position(
+      Math.max(0, pos.row - 1),
+      Math.max(0, pos.col - 1)
+    );
+    editor.selection = new vscode.Selection(position, position);
+    editor.revealRange(
+      new vscode.Range(position, position),
+      vscode.TextEditorRevealType.InCenter
+    );
+  } catch (err) {
+    vscode.window.showErrorMessage(
+      `Failed to open file: ${pos.file}`
+    );
+  }
+}
 function post_message(view, msg) {
   view.postMessage(msg);
 }
@@ -1036,10 +1061,11 @@ var folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
 var the_loop = async function(view, context) {
   const root = await read_package_json(folders);
   const runner_ctrl = make_runner_ctrl();
-  function send_report(root2) {
+  function send_report(root_folder) {
+    const root2 = extract_base(root_folder);
     post_message(view.webview, {
       command: "RunnerReport",
-      root: extract_base(root2),
+      root: root2,
       base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
     });
   }
@@ -1049,6 +1075,10 @@ var the_loop = async function(view, context) {
   view.webview.onDidReceiveMessage(
     (message) => {
       switch (message.command) {
+        case "command_link_clicked": {
+          void open_file(message);
+          break;
+        }
         case "command_clicked": {
           const runner = find_runner(root, message.id);
           if (runner == null)
@@ -1074,6 +1104,7 @@ function deactivate() {
 }
 export {
   activate,
-  deactivate
+  deactivate,
+  open_file
 };
 //# sourceMappingURL=extension.js.map

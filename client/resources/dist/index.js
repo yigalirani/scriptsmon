@@ -6551,6 +6551,46 @@ var icons_default = `<!DOCTYPE html>
 <script src="./icons.js"></script>`;
 
 // src/index.ts
+var vscode = acquireVsCodeApi();
+function post_message(msg) {
+  vscode.postMessage(msg);
+}
+function addFileLocationLinkDetection(terminal, full_pathname) {
+  const pattern = /([^\s:]+):(\d+):(\d+)/g;
+  const provider2 = {
+    provideLinks(y, callback) {
+      const line = terminal.buffer.active.getLine(y - 1);
+      if (!line) {
+        callback([]);
+        return;
+      }
+      const text = line.translateToString(true);
+      const links = [];
+      let match;
+      while ((match = pattern.exec(text)) !== null) {
+        const [full, file, row, col] = match;
+        links.push({
+          range: {
+            start: { x: match.index + 1, y },
+            end: { x: match.index + full.length, y }
+          },
+          activate: () => {
+            post_message({
+              command: "command_link_clicked",
+              file,
+              full_pathname,
+              row: Number(row),
+              col: Number(col)
+            });
+          },
+          text: full
+        });
+      }
+      callback(links);
+    }
+  };
+  terminal.registerLinkProvider(provider2);
+}
 function formatElapsedTime(ms) {
   const totalSeconds = Math.floor(ms / 1e3);
   const milliseconds = ms % 1e3;
@@ -6573,13 +6613,13 @@ function create_terminal_element(parent, id) {
   <div class="term_wrapper">
     <div class="term_title_bar">
       <div class ="row_title_bar">
-        <span class="term_title_dir"><div class=title>cwd</div><div class=value></div></span>
-        <span class="term_title_watch"><div class=title>watch</div><div class=value></div></span>
+        <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
+        <div class="term_title_watch"><div class=title>watch</div><div class=value></div></div>
       </div>
       <div class ="row_title_bar">
-        <span class="term_title_script"><div class=title>run</div><div class=value></div></span>
-        <span class="term_title_status"><div class=title></div><div class=value></div></span>
-        <span class="term_title_duration"><div class=title></div><div class=value></div></span>
+        <div class="term_title_script"><div class=title>run</div><div class=value></div></div>
+        <div class="term_title_status"><div class=title></div><div class=value></div></div>
+        <div class="term_title_duration"><div class=title></div><div class=value></div></div>
       </div>
     </div>
   <div class=term>
@@ -6621,7 +6661,8 @@ var TerminalPanel = class {
   constructor(parent, runner) {
     this.parent = parent;
     this.el = create_terminal_element(parent, runner.id);
-    this.term = new import_xterm.Terminal();
+    this.term = new import_xterm.Terminal({ cols: 200 });
+    addFileLocationLinkDetection(this.term, runner.full_pathname);
     const term_container = query_selector(this.el, ".term");
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
@@ -6635,6 +6676,9 @@ var TerminalPanel = class {
   term;
   //last_runner:Runner|undefined=undefined
   last_stats;
+  onLink = (location) => {
+    console.log(location);
+  };
   update(new_runner) {
     const { runs } = new_runner;
     const { state } = calc_runner_status(new_runner);
@@ -6677,7 +6721,6 @@ var Terminals = class {
     return ans;
   }
 };
-var vscode = acquireVsCodeApi();
 function get_terminals(folder, terminals) {
   function f(folder2) {
     for (const runner of folder2.runners)
@@ -6697,9 +6740,6 @@ function convert(root) {
   const { script } = root;
   const { version, state } = calc_runner_status(root);
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version };
-}
-function post_message(msg) {
-  vscode.postMessage(msg);
 }
 var provider = {
   convert,

@@ -12,7 +12,7 @@
         "build": "node ./bin/run_build.ts",
         "tsc": "npx tsc",
         "eslint": "npx eslint . --color ",
-        "ls": "l s -la  --color=always",
+        "ls": "ls -la  --color=always",
         "vscode:prepublish": "npm run compile"
     },
     "workspaces": [

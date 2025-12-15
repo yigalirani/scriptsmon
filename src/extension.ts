@@ -32,7 +32,40 @@ export interface CommandClicked{
    id:string
    command_name:string
 }
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked
+export interface CommandLineClicked{
+   command: "command_link_clicked"
+   full_pathname:string,
+   file:string
+   row:number
+   col:number
+}
+export async function open_file(pos: CommandLineClicked): Promise<void> {
+    try {
+        //const uri = vscode.Uri.file(pos.file);
+        const file=path.join(pos.full_pathname,pos.file)
+        const document = await vscode.workspace.openTextDocument(file);
+        const editor = await vscode.window.showTextDocument(document, {
+            preview: false
+        });
+
+        // VS Code positions arpae 0-based
+        const position = new vscode.Position(
+            Math.max(0, pos.row - 1),
+            Math.max(0, pos.col - 1)
+        );
+
+        editor.selection = new vscode.Selection(position, position);
+        editor.revealRange(
+            new vscode.Range(position, position),
+            vscode.TextEditorRevealType.InCenter
+        );
+    } catch (err) {
+        vscode.window.showErrorMessage(
+            `Failed to open file: ${pos.file}`
+        );
+    }
+}
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandLineClicked
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
@@ -54,10 +87,11 @@ const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionContext){
   const root=await  read_package_json(folders)
   const runner_ctrl=make_runner_ctrl()
-  function send_report(root:Folder){
+  function send_report(root_folder:Folder){
+    const root=extract_base(root_folder)
     post_message(view.webview,{
       command:'RunnerReport',
-      root:extract_base(root),
+      root,
       base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
     })
   }
@@ -68,6 +102,11 @@ const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionCont
   view.webview.onDidReceiveMessage(
     (message: WebviewMessage) => {
       switch (message.command) {
+      case "command_link_clicked":{
+          void open_file(message)
+          //const {file,row,col}=message
+          break 
+        }
         case 'command_clicked':{
           ///send_report(root)
           const runner=find_runner(root,message.id)
@@ -84,7 +123,7 @@ const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionCont
 }
 
 
-export  function activate(context: vscode.ExtensionContext) {
+export  function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  
