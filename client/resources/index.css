@@ -75,23 +75,51 @@ button:hover {
 }
 .term_title_bar{
   display: flex;
-  align-items: center;
+  align-items: left;
   padding: 4px 8px;
   background-color: var(--vscode-titleBar-activeBackground, #2d2d30);
   color: var(--vscode-titleBar-activeForeground, #cccccc);
   border-bottom: 1px solid var(--vscode-panel-border, #3e3e42);
   font-size: 12px;
   gap: 8px;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
-.term_title_status{
-  padding: 3px;
+.term_title_bar  div{
+  display: flex;
+}
+.term_title_bar  span{
+  display: flex;
+}
+.term_title_bar .title{
+  margin-right: 10px;
+  font-weight: bold;
+}
+.term_title_bar .value{
+  margin-right: 10px;
+}
+.term_title_dir .value,
+.term_title_watch .value,
+.term_title_script  .value{
+  background-color: black;
+}
+.term_title_status.value{
+  padding: 30px;
   border-radius: 3px;
   font-weight: 500;
   font-size: 11px;
   min-width: 60px;
   text-align: center;
 }
-/*.term_title_status.status_ready{
+.row_title_bar{
+  display: flex;
+  flex-direction: row;
+}
+
+span.term_title_watch{
+  flex-basis: 100%;
+}
+.term_title_status.status_ready{
   background-color: var(--vscode-button-secondaryBackground, #3c3c3c);
   color: var(--vscode-button-secondaryForeground, #cccccc);
 }
@@ -244,10 +272,10 @@ button:hover {
   background-color: green;
 }
 .background_running{
-  /*background-color: blue;*/
+  background-color: purple;
   border: 0px solid #474747;  
 }
-.term_title_status.background_running{
+.value.background_ready{
   background-color: blue;
   border: 0px solid #474747;  
 }
@@ -256,8 +284,4 @@ button:hover {
 }
 .icon.background_ready,.icon.background_folder{
   border: 0px solid #474747;  
-}
-.term_title_script{
-  background-color: black;
-  padding: 3px;
 }

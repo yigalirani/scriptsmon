@@ -6572,11 +6572,15 @@ function create_terminal_element(parent, id) {
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_wrapper">
     <div class="term_title_bar">
-      <span class="term_title_dir"><div class=title>cwd</div><div class=value></div></span>
-      <span class="term_title_watch"><div class=title>watch</div><div class=value></div></span>
-      <span class="term_title_script"><div class=title>command</div><div class=value></div></span>
-      <span class="term_title_status"><div class=title></div><div class=value></div></span>
-      <span class="term_title_duration"><div class=title>duration</div><div class=value></div></span>
+      <div class ="row_title_bar">
+        <span class="term_title_dir"><div class=title>cwd</div><div class=value></div></span>
+        <span class="term_title_watch"><div class=title>watch</div><div class=value></div></span>
+      </div>
+      <div class ="row_title_bar">
+        <span class="term_title_script"><div class=title>run</div><div class=value></div></span>
+        <span class="term_title_status"><div class=title></div><div class=value></div></span>
+        <span class="term_title_duration"><div class=title></div><div class=value></div></span>
+      </div>
     </div>
   <div class=term>
     </div>
