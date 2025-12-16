@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
+import * as fsSync from "node:fs";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import {Run,State,Runner,Folder,Scriptsmon,Watcher} from './data.js'
 import  cloneDeep  from 'lodash.clonedeep'
@@ -148,7 +149,8 @@ async function stop({
     if (!was_stopped){
       was_stopped=true
       console.log(`stopping runner ${runner.name}...`)
-      runner_ctrl.ipty[runner.id].kill() // what if more than one kill function call is needed
+      const {id}=runner
+      runner_ctrl.ipty[id]?.kill() // what if more than one kill function call is needed
     }
     await sleep(10)
   }
@@ -220,6 +222,20 @@ async function stop({
     });
   }); 
 }
+function calc_effective_watch($watch:string[],watcher?:Watcher|string[]){
+  const watcher_array=function(){
+    if (watcher==null)
+      return undefined
+    if (Array.isArray(watcher))
+      return watcher
+    return watcher.watch
+  }()
+  if (watcher_array==null)
+    return $watch
+  if (!watcher_array.includes('$watch'))
+    return watcher_array
+  return [...watcher_array.filter(x=>x!=='$watch'),...$watch]
+}
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
   const watched=normalize_watch(watchers.watched)
@@ -227,13 +243,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   for (const [name,script] of Object.entries(scripts)){
     if (is_non_watcher(name))
       continue
-    const watcher:Watcher=function(){
-      const v=watchers[name]
-      if (v==null||is_string_array(v)){
-        return {watch:normalize_watch(v)}
-      }
-      return v
-    }()
+    const the_watcher=watchers[name]
     //const script=scripts[name]
     if (script==null){
       console.warn(`missing script ${name}`)
@@ -242,14 +252,14 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
     const runner=function(){
       const full_pathname=path.dirname(pkgPath)
       const id=`${full_pathname} ${name}`.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
+      const effective_watch=calc_effective_watch($watch,the_watcher)
       const ans:Runner= {
         type:'runner',
         name,
         script,
         full_pathname,
-        watcher:{
-          watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)]
-        },
+        the_watcher,
+        effective_watch,
         watched:watched.includes(name),
         //state:'ready',
         id,
@@ -359,5 +369,11 @@ export class Monitor{
     return extract_base(this.get_root())
   }
   start_watching(){
+    /*collect all invidyalk watch dirs
+    for each set  up node watch
+    upon change, collect all the runners that depends on the change
+    for each, all run_runner*/
+        
+    
   }
 }

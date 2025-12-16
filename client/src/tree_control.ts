@@ -426,8 +426,19 @@ export class TreeControl<T>{
         console.warn(`cant find old svg for ${id}`)
         continue
       }
-      const icon=change.new_index[id].icon
+      if (id==null){
+        console.warn('id is null')
+        continue
+      }
+      const new_index=change.new_index[id]
+      if (new_index==null)
+        continue
+      const icon=new_index.icon
       const new_svg=this.icons[icon]
+      if (new_svg==null){
+        console.warn('new_svg is null')
+        continue
+      }
       existing_svg.outerHTML=new_svg
       console.log(`${id}: new svg`)
       this.parent.querySelector<HTMLElement>(`#${id} .icon`)!.className=`icon background_${icon}`

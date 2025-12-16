@@ -40,7 +40,8 @@ function addFileLocationLinkDetection(
       let match: RegExpExecArray | null;
       while ((match = pattern.exec(text)) !== null) {
         const [full, file, row, col] = match;
-
+        if (file==null)
+          continue
         links.push({
           range: {
             start: { x: match.index + 1, y },
@@ -187,7 +188,7 @@ class TerminalPanel{
     // Initialize title bar with full filename plus script
     query_selector(this.el, '.term_title_dir .value').textContent=runner.full_pathname
     query_selector(this.el, '.term_title_script .value').textContent=runner.script
-    query_selector(this.el, '.term_title_watch .value').textContent=runner.watcher.watch?.join(',')||''
+    query_selector(this.el, '.term_title_watch .value').textContent=runner.effective_watch?.join(',')||''
     query_selector(this.el, '.term_title_status .value').textContent='ready'
     
   }

@@ -23,10 +23,11 @@ export interface Runner {
     name: string;
     full_pathname: string;
     id: string;
-    watcher: Watcher;
+    the_watcher?: Watcher | string[];
     script: string;
     runs: Run[];
     watched: boolean;
+    effective_watch: string[];
 }
 export interface Folder {
     type: 'folder';

@@ -879,7 +879,8 @@ async function stop({
     if (!was_stopped) {
       was_stopped = true;
       console.log(`stopping runner ${runner.name}...`);
-      runner_ctrl.ipty[runner.id].kill();
+      const { id } = runner;
+      runner_ctrl.ipty[id]?.kill();
     }
     await sleep(10);
   }
@@ -939,6 +940,20 @@ async function run_runner({
     });
   });
 }
+function calc_effective_watch($watch, watcher) {
+  const watcher_array = (function() {
+    if (watcher == null)
+      return void 0;
+    if (Array.isArray(watcher))
+      return watcher;
+    return watcher.watch;
+  })();
+  if (watcher_array == null)
+    return $watch;
+  if (!watcher_array.includes("$watch"))
+    return watcher_array;
+  return [...watcher_array.filter((x) => x !== "$watch"), ...$watch];
+}
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   const $watch = normalize_watch(watchers.$watch);
   const watched = normalize_watch(watchers.watched);
@@ -946,13 +961,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   for (const [name, script] of Object.entries(scripts)) {
     if (is_non_watcher(name))
       continue;
-    const watcher = (function() {
-      const v = watchers[name];
-      if (v == null || is_string_array(v)) {
-        return { watch: normalize_watch(v) };
-      }
-      return v;
-    })();
+    const the_watcher = watchers[name];
     if (script == null) {
       console.warn(`missing script ${name}`);
       continue;
@@ -960,14 +969,14 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
     const runner = (function() {
       const full_pathname = path.dirname(pkgPath);
       const id = `${full_pathname} ${name}`.replaceAll(/\\|:/g, "-").replaceAll(" ", "--");
+      const effective_watch = calc_effective_watch($watch, the_watcher);
       const ans2 = {
         type: "runner",
         name,
         script,
         full_pathname,
-        watcher: {
-          watch: [...normalize_watch($watch), ...normalize_watch(watcher.watch)]
-        },
+        the_watcher,
+        effective_watch,
         watched: watched.includes(name),
         //state:'ready',
         id,

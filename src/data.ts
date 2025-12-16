@@ -21,16 +21,17 @@ export interface Run{
   run_id    : number
 }
 export interface Runner {
-  type         : 'runner'
-  name         : string
-  full_pathname: string
-  id           : string
-  watcher      : Watcher
-  script       : string
-  runs         : Run[]     //growing
-  watched      : boolean
-  /*state        : State
-  version      : number*/
+  type           : 'runner'
+  name           : string
+  full_pathname  : string
+  id             : string
+  the_watcher?    : Watcher|string[]
+  script         : string
+  runs           : Run[]     //growing
+  watched        : boolean
+  effective_watch: string[]
+    /*state        : State
+  version: number*/
 }
 
 
