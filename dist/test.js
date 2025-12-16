@@ -785,7 +785,7 @@ function is_valid_watcher(a) {
   return true;
 }
 function is_non_watcher(k) {
-  return ["autorun", "$watch"].includes(k);
+  return ["watched", "$watch"].includes(k);
 }
 function is_config2(a) {
   if (!is_object(a))
@@ -833,7 +833,7 @@ function normalize_watch(a) {
 }
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   const $watch = normalize_watch(watchers.$watch);
-  const autorun = normalize_watch(watchers.autorun);
+  const watched = normalize_watch(watchers.watched);
   const ans = [];
   for (const [name, script] of Object.entries(scripts)) {
     if (is_non_watcher(name))
@@ -860,12 +860,11 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         watcher: {
           watch: [...normalize_watch($watch), ...normalize_watch(watcher.watch)]
         },
-        autorun: autorun.includes(name),
+        watched: watched.includes(name),
         //state:'ready',
         id,
         //version:0,
-        runs: [],
-        watched: false
+        runs: []
       };
       return ans2;
     })();

@@ -263,9 +263,9 @@ function convert(root:FolderRunner):TreeNode{
     const children=[...folders,...items]
     return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
   }
-  const {script}=root
+  const {script,watched}=root
   const {version,state}=calc_runner_status(root)
-  const className=(name==='build'?'watched':undefined)
+  const className=(watched?'watched':undefined)
   return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
 }
 

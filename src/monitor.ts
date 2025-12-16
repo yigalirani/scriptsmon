@@ -70,7 +70,7 @@ function is_valid_watcher(a:unknown){
   return true
 }
 function is_non_watcher(k:string){
-  return  (['autorun','$watch'].includes(k))
+  return  (['watched','$watch'].includes(k))
 }
 function is_config2(a:unknown){
   if (!is_object(a))
@@ -223,7 +223,7 @@ async function stop({
 }
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
-  const autorun=normalize_watch(watchers.autorun)
+  const watched=normalize_watch(watchers.watched)
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
     if (is_non_watcher(name))
@@ -251,13 +251,11 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         watcher:{
           watch:[...normalize_watch($watch),...normalize_watch(watcher.watch)]
         },
-        autorun:autorun.includes(name),
+        watched:watched.includes(name),
         //state:'ready',
         id,
         //version:0,
-        runs:[],
-        watched:false
-        
+        runs:[]
       }
 
       return ans

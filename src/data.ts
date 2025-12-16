@@ -6,7 +6,7 @@ export interface Watcher{
 export type Scriptsmon=  Record<string,Watcher|string[]>&
 {
   $watch?:string[]
-  autorun?:string[]
+  watched?:string[]
 }
 export type State="ready"|"done"|"error"|"running"|"stopped"
 
@@ -27,7 +27,6 @@ export interface Runner {
   id           : string
   watcher      : Watcher
   script       : string
-  autorun      : boolean
   runs         : Run[]     //growing
   watched      : boolean
   /*state        : State

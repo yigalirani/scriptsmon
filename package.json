@@ -40,7 +40,7 @@
             "filter": "npx @yigal/eslint_filter",
             "pre": "set TIMING=1"
         },
-        "autorun": [
+        "watched": [
             "test",
             "build",
             "tsc",

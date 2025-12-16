@@ -6458,12 +6458,6 @@ var icons_default = `<!DOCTYPE html>
     </svg>
   </div>
 
-  <div class="icon" id="watched">watched
-    <svg width="800px" height="800px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="3"  fill="purple" />
-
-</svg>    
-  </div>
   <div class="icon" id="the_done">done
     <svg class=done width="16" height="16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="10" fill="transparent" />
@@ -6744,9 +6738,9 @@ function convert(root) {
     const children = [...folders, ...items];
     return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0, className: void 0 };
   }
-  const { script } = root;
+  const { script, watched } = root;
   const { version, state } = calc_runner_status(root);
-  const className = name === "build" ? "watched" : void 0;
+  const className = watched ? "watched" : void 0;
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version, className };
 }
 var provider = {
