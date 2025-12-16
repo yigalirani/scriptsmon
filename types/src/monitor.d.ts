@@ -10,4 +10,5 @@ export declare class Monitor {
     get_root(): Folder;
     run_runner(runner_id: string, reason: string): void;
     extract_base(): Folder;
+    start_watching(): void;
 }

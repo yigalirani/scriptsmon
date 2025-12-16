@@ -1011,6 +1011,8 @@ var Monitor = class {
   extract_base() {
     return extract_base(this.get_root());
   }
+  start_watching() {
+  }
 };
 
 // src/extension.ts
@@ -1122,11 +1124,12 @@ function make_loop_func(monitor) {
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   const monitor = new Monitor(folders);
-  const root = await monitor.read_package_json();
+  await monitor.read_package_json();
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
   register_command(context, "Scriptsmon.startWatching", () => {
+    monitor.start_watching();
     outputChannel.append("start watching");
   });
   vscode.tasks.onDidEndTaskProcess((event) => {

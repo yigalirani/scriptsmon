@@ -1064,6 +1064,8 @@ var Monitor = class {
   extract_base() {
     return extract_base(this.get_root());
   }
+  start_watching() {
+  }
 };
 
 // src/test.ts
