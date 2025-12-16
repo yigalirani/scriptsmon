@@ -26,7 +26,7 @@ export function getWebviewContent(context:ExtensionContext, webview:Webview): st
   
   return html;
 }
-export type WebviewFunc=(webview:WebviewView,context:ExtensionContext)=>Promise<void>
+export type WebviewFunc=(webview:WebviewView,context:ExtensionContext)=>Promise<void>|void
 
 export function define_webview({context,id,html,f}:{
   context: ExtensionContext,

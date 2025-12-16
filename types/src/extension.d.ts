@@ -27,5 +27,5 @@ export interface CommandLineClicked {
 }
 export declare function open_file(pos: CommandLineClicked): Promise<void>;
 export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandLineClicked;
-export declare function activate(context: vscode.ExtensionContext): void;
+export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;

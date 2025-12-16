@@ -1058,42 +1058,46 @@ function find_runner(root, id) {
   return f(root);
 }
 var folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
-var the_loop = async function(view, context) {
-  const root = await read_package_json(folders);
-  const runner_ctrl = make_runner_ctrl();
-  function send_report(root_folder) {
-    const root2 = extract_base(root_folder);
-    post_message(view.webview, {
-      command: "RunnerReport",
-      root: root2,
-      base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
-    });
-  }
-  setInterval(() => {
-    send_report(root);
-  }, 100);
-  view.webview.onDidReceiveMessage(
-    (message) => {
-      switch (message.command) {
-        case "command_link_clicked": {
-          void open_file(message);
-          break;
+function make_loop_func(root) {
+  const ans = (view, context) => {
+    const runner_ctrl = make_runner_ctrl();
+    function send_report(root_folder) {
+      const root2 = extract_base(root_folder);
+      post_message(view.webview, {
+        command: "RunnerReport",
+        root: root2,
+        base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
+      });
+    }
+    setInterval(() => {
+      send_report(root);
+    }, 100);
+    view.webview.onDidReceiveMessage(
+      (message) => {
+        switch (message.command) {
+          case "command_link_clicked": {
+            void open_file(message);
+            break;
+          }
+          case "command_clicked": {
+            const runner = find_runner(root, message.id);
+            if (runner == null)
+              throw new Error(`runner not found:${message.id}`);
+            void run_runner({ runner, runner_ctrl, reason: "user" });
+            break;
+          }
         }
-        case "command_clicked": {
-          const runner = find_runner(root, message.id);
-          if (runner == null)
-            throw new Error(`runner not found:${message.id}`);
-          void run_runner({ runner, runner_ctrl, reason: "user" });
-          break;
-        }
-      }
-    },
-    void 0,
-    context.subscriptions
-  );
-};
-function activate(context) {
+      },
+      void 0,
+      context.subscriptions
+    );
+  };
+  return ans;
+}
+async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  const root = await read_package_json(folders);
+  const the_loop = make_loop_func(root);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
   vscode.tasks.onDidEndTaskProcess((event) => {

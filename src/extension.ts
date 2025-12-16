@@ -84,47 +84,51 @@ function find_runner(root:Folder,id:string){
 }
 const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
-const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionContext){
-  const root=await  read_package_json(folders)
-  const runner_ctrl=make_runner_ctrl()
-  function send_report(root_folder:Folder){
-    const root=extract_base(root_folder)
-    post_message(view.webview,{
-      command:'RunnerReport',
-      root,
-      base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
-    })
+function make_loop_func(root:Folder){
+  const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
+    const runner_ctrl=make_runner_ctrl()
+    function send_report(root_folder:Folder){
+      const root=extract_base(root_folder)
+      post_message(view.webview,{
+        command:'RunnerReport',
+        root,
+        base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
+      })
+    }
+    setInterval(() => {
+      send_report(root)
+    }, 100);
+    // Handle messages from the webview
+    view.webview.onDidReceiveMessage(
+      (message: WebviewMessage) => {
+        switch (message.command) {
+        case "command_link_clicked":{
+            void open_file(message)
+            //const {file,row,col}=message
+            break 
+          }
+          case 'command_clicked':{
+            ///send_report(root)
+            const runner=find_runner(root,message.id)
+            if (runner==null)
+              throw new Error(`runner not found:${message.id}`) //or maybe just ignore it?
+            void run_runner({runner,runner_ctrl,reason:'user'})
+            break          
+          }
+        }
+      },
+      undefined,
+      context.subscriptions
+    );
   }
-  setInterval(() => {
-    send_report(root)
-  }, 100);
-  // Handle messages from the webview
-  view.webview.onDidReceiveMessage(
-    (message: WebviewMessage) => {
-      switch (message.command) {
-      case "command_link_clicked":{
-          void open_file(message)
-          //const {file,row,col}=message
-          break 
-        }
-        case 'command_clicked':{
-          ///send_report(root)
-          const runner=find_runner(root,message.id)
-          if (runner==null)
-            throw new Error(`runner not found:${message.id}`) //or maybe just ignore it?
-          void run_runner({runner,runner_ctrl,reason:'user'})
-          break          
-        }
-      }
-    },
-    undefined,
-    context.subscriptions
-  );
+  return ans
 }
 
 
-export  function activate(context: vscode.ExtensionContext) {
+export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  const root=await  read_package_json(folders)
+  const the_loop=make_loop_func(root)
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  
   vscode.tasks.onDidEndTaskProcess((event) => {
