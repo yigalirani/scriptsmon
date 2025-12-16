@@ -96,7 +96,7 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
   <div class="term_wrapper">
     <div class="term_title_bar">
       <div class ="row_title_bar">
-        <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
+      <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
         <div class="term_title_watch"><div class=title>watch</div><div class=value></div></div>
       </div>
       <div class ="row_title_bar">
@@ -254,7 +254,6 @@ function get_terminals(folder:Folder,terminals:Terminals){
   }
   f(folder)
 }
-
 function convert(root:FolderRunner):TreeNode{
   const {type,name,id}=root
 
@@ -262,11 +261,12 @@ function convert(root:FolderRunner):TreeNode{
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert)
     const children=[...folders,...items]
-    return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0}
+    return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
   }
   const {script}=root
   const {version,state}=calc_runner_status(root)
-  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version}
+  const className=(name==='build'?'watched':undefined)
+  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
 }
 
 

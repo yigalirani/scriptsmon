@@ -123,7 +123,7 @@ const the_loop:WebviewFunc=async function(view:WebviewView,context:ExtensionCont
 }
 
 
-export  function activate(context) {
+export  function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  

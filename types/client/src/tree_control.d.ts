@@ -6,6 +6,7 @@ export interface TreeNode {
     label: string;
     id: string;
     icon: string;
+    className: string | undefined;
     description?: string;
     commands: string[];
     children: TreeNode[];

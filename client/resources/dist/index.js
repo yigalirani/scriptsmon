@@ -6345,15 +6345,16 @@ var TreeControl = class {
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
     const { icons } = this;
-    const { type, id, description, label, icon = "undefined", commands } = node;
+    const { type, id, description, label, icon = "undefined", commands, className } = node;
     const template = document.createElement("template");
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
+    const cls = className == null ? "" : `class=${className}`;
     const ans = create_element(`
-  <div class="tree_${type}" id="${id}" >
-    <div class=label_row>
-      <div class=shifter style='margin-left:${margin}px'>
+  <div ${cls} class="tree_${type}" id="${id}" >
+    <div  class=label_row>
+      <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({ label, description })}
       </div>
@@ -6388,7 +6389,7 @@ var TreeControl = class {
     const children_el = (() => {
       if (depth === 0)
         return create_element("<div class=children></div>", parent);
-      const new_parent = this.create_node_element(node, depth * 20, parent);
+      const new_parent = this.create_node_element(node, 16 + depth * 20, parent);
       return new_parent.querySelector(".children");
     })();
     if (children_el == null) {
@@ -6457,6 +6458,12 @@ var icons_default = `<!DOCTYPE html>
     </svg>
   </div>
 
+  <div class="icon" id="watched">watched
+    <svg width="800px" height="800px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="3"  fill="purple" />
+
+</svg>    
+  </div>
   <div class="icon" id="the_done">done
     <svg class=done width="16" height="16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="10" fill="transparent" />
@@ -6613,7 +6620,7 @@ function create_terminal_element(parent, id) {
   <div class="term_wrapper">
     <div class="term_title_bar">
       <div class ="row_title_bar">
-        <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
+      <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
         <div class="term_title_watch"><div class=title>watch</div><div class=value></div></div>
       </div>
       <div class ="row_title_bar">
@@ -6735,11 +6742,12 @@ function convert(root) {
     const folders = root.folders.map(convert);
     const items = root.runners.map(convert);
     const children = [...folders, ...items];
-    return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0 };
+    return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0, className: void 0 };
   }
   const { script } = root;
   const { version, state } = calc_runner_status(root);
-  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version };
+  const className = name === "build" ? "watched" : void 0;
+  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version, className };
 }
 var provider = {
   convert,

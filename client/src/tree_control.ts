@@ -12,6 +12,7 @@ export interface TreeNode{
   label           : string,
   id              : string;
   icon            : string
+  className       : string|undefined
   description    ?: string
   commands        : string[]
   children        : TreeNode[]
@@ -26,7 +27,8 @@ function make_empty_tree_folder():TreeNode{
     id:'roottreenode',
     commands:[],
     icon_version:0,
-    icon:'root_icon'
+    icon:'root_icon',
+    className:'test'
   }
 }
 
@@ -285,16 +287,16 @@ export class TreeControl<T>{
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon='undefined',commands}=node
+    const {type,id,description,label,icon='undefined',commands,className}=node
     const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
-
+    const cls=(className==null?'':`class=${className}`)
     const ans= create_element(`
-  <div class="tree_${type}" id="${id}" >
-    <div class=label_row>
-      <div class=shifter style='margin-left:${margin}px'>
+  <div ${cls} class="tree_${type}" id="${id}" >
+    <div  class=label_row>
+      <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}
       </div>
@@ -392,7 +394,7 @@ export class TreeControl<T>{
     const children_el=(()=>{
       if (depth===0)
         return create_element('<div class=children></div>',parent)
-      const new_parent=this.create_node_element(node,depth*20,parent)
+      const new_parent=this.create_node_element(node,16+depth*20,parent)
       return new_parent.querySelector('.children') //return value might be null for item node  
     })()
     if (children_el==null){

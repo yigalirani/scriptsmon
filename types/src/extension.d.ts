@@ -1,4 +1,5 @@
 import { type Folder } from './data.js';
+import * as vscode from 'vscode';
 export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";
     text?: string;
@@ -26,5 +27,5 @@ export interface CommandLineClicked {
 }
 export declare function open_file(pos: CommandLineClicked): Promise<void>;
 export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandLineClicked;
-export declare function activate(context: any): void;
+export declare function activate(context: vscode.ExtensionContext): void;
 export declare function deactivate(): void;

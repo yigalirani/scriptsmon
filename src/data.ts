@@ -29,6 +29,7 @@ export interface Runner {
   script       : string
   autorun      : boolean
   runs         : Run[]     //growing
+  watched      : boolean
   /*state        : State
   version      : number*/
 }

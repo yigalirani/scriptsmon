@@ -104,6 +104,11 @@ button:hover {
 .term_title_script  .value{
   background-color: black;
 }
+.term_title_dir .value:hover,
+  .term_title_script  .value:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}
 .term_title_status.value{
   padding: 30px;
   border-radius: 3px;
@@ -287,4 +292,14 @@ span.term_title_watch{
 }
 .icon.background_ready,.icon.background_folder{
   border: 0px solid #474747;  
+}
+.watched .label_row::before {
+  content: url('icons/watched.svg');
+  position: absolute;
+  left: +20px;
+  font-size: 12px;
+  pointer-events: none;
+}
+.watched .label_row {
+
 }

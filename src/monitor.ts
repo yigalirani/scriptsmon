@@ -1,4 +1,5 @@
 import * as path from "node:path";
+import * as fs from "node:fs/promises";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import {Run,State,Runner,Folder,Scriptsmon,Watcher} from './data.js'
 import  cloneDeep  from 'lodash.clonedeep'
@@ -254,7 +255,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
         //state:'ready',
         id,
         //version:0,
-        runs:[]
+        runs:[],
+        watched:false
         
       }
 

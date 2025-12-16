@@ -864,7 +864,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         //state:'ready',
         id,
         //version:0,
-        runs: []
+        runs: [],
+        watched: false
       };
       return ans2;
     })();

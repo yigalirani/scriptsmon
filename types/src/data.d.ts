@@ -27,6 +27,7 @@ export interface Runner {
     script: string;
     autorun: boolean;
     runs: Run[];
+    watched: boolean;
 }
 export interface Folder {
     type: 'folder';
