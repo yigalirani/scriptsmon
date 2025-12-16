@@ -7,7 +7,8 @@ import {
   Uri,
   WebviewViewProvider,
   WebviewViewResolveContext,
-  window
+  window,
+  commands
 }from 'vscode';
 
 export function getWebviewContent(context:ExtensionContext, webview:Webview): string {
@@ -55,4 +56,8 @@ export function define_webview({context,id,html,f}:{
     )
   const ans=context.subscriptions.push(reg)
   console.log(ans)
+}
+
+export function register_command(context: ExtensionContext,command:string,commandHandler:()=>void){
+  context.subscriptions.push(commands.registerCommand(command, commandHandler));
 }

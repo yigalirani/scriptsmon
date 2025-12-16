@@ -983,7 +983,8 @@ import * as path2 from "node:path";
 import * as fs from "node:fs";
 import {
   Uri,
-  window as window2
+  window as window2,
+  commands
 } from "vscode";
 function getWebviewContent(context, webview) {
   const htmlPath = path2.join(context.extensionPath, "client", "resources", "index.html");
@@ -1016,6 +1017,9 @@ function define_webview({ context, id, html, f }) {
   );
   const ans = context.subscriptions.push(reg);
   console.log(ans);
+}
+function register_command(context, command, commandHandler) {
+  context.subscriptions.push(commands.registerCommand(command, commandHandler));
 }
 
 // src/extension.ts
@@ -1100,6 +1104,9 @@ async function activate(context) {
   const the_loop = make_loop_func(root);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
+  register_command(context, "Scriptsmon.startWatching", () => {
+    outputChannel.append("start watching");
+  });
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event, null, 2));
   });

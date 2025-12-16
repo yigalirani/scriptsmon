@@ -7,3 +7,4 @@ export declare function define_webview({ context, id, html, f }: {
     html: string;
     f?: WebviewFunc;
 }): void;
+export declare function register_command(context: ExtensionContext, command: string, commandHandler: () => void): void;

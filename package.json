@@ -67,6 +67,10 @@
             {
                 "command": "Scriptsmon.webview.open",
                 "title": "Open Webview"
+            },
+            {
+                "command": "Scriptsmon.startWatching",
+                "title": "Start Watching"
             }
         ],
         "menus": {

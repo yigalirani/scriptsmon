@@ -4,7 +4,7 @@ import {read_package_json,extract_base,run_runner,make_runner_ctrl} from './moni
 import {FolderRunner,type Runner,type Folder, type State} from './data.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
-import {type WebviewFunc,getWebviewContent,define_webview} from './vscode_utils.js'
+import {type WebviewFunc,getWebviewContent,define_webview,register_command} from './vscode_utils.js'
 import {
   WebviewView,
   Webview,
@@ -131,11 +131,13 @@ export  async function activate(context: vscode.ExtensionContext) {
   const the_loop=make_loop_func(root)
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  
+  register_command(context,'Scriptsmon.startWatching',()=>{
+    outputChannel.append('start watching')
+  })
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event,null,2))
   })
-  //const {workspaceFolders: _workspaceFolders}= vscode.workspace
-  //const folders=(workspaceFolders||[]).map(x=>x.uri.fsPath)
+
 }
 
 // this method is called when your extension is deactivated
