@@ -1,17 +1,13 @@
-import { IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import { Runner, Folder } from './data.js';
-export declare function extract_base(folder: Folder): Folder;
-interface RunnerCtrl {
-    ipty: Record<string, IPty>;
+import { Folder } from './data.js';
+export declare class Monitor {
+    full_pathnames: string[];
+    runner_ctrl: {
+        ipty: {};
+    };
+    root?: Folder;
+    constructor(full_pathnames: string[]);
+    read_package_json(): Promise<void>;
+    get_root(): Folder;
+    run_runner(runner_id: string, reason: string): void;
+    extract_base(): Folder;
 }
-export declare function make_runner_ctrl(): {
-    ipty: {};
-};
-export declare function run_runner({ //this is not async function on purpuse
-runner, reason, runner_ctrl }: {
-    runner: Runner;
-    reason: string;
-    runner_ctrl: RunnerCtrl;
-}): Promise<void>;
-export declare function read_package_json(full_pathnames: string[]): Promise<Folder>;
-export {};

@@ -1,18 +1,13 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import {read_package_json,extract_base,run_runner,make_runner_ctrl} from './monitor.js'
+import {Monitor} from './monitor.js'
 import {FolderRunner,type Runner,type Folder, type State} from './data.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
 import {type WebviewFunc,getWebviewContent,define_webview,register_command} from './vscode_utils.js'
 import {
   WebviewView,
-  Webview,
   ExtensionContext,
-  Uri,
-  WebviewViewProvider,
-  WebviewViewResolveContext,
-  window
 }from 'vscode';
 export interface WebviewMessageSimple {
   command: "buttonClick"|"updateContent"|"get_report";
@@ -69,26 +64,13 @@ export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|Command
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
-function find_runner(root:Folder,id:string){
-  function f(folder:Folder):Runner|undefined{
-    const ans=folder.runners.find(x=>x.id===id)
-    if (ans!=null)
-      return ans
-    for (const subfolder of folder.folders){
-      const ans=f(subfolder)
-      if (ans!=null)
-        return ans
-    }
-  }
-  return f(root)
-}
+
 const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
-function make_loop_func(root:Folder){
+function make_loop_func(monitor:Monitor){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
-    const runner_ctrl=make_runner_ctrl()
     function send_report(root_folder:Folder){
-      const root=extract_base(root_folder)
+      const root=monitor.extract_base()
       post_message(view.webview,{
         command:'RunnerReport',
         root,
@@ -96,7 +78,7 @@ function make_loop_func(root:Folder){
       })
     }
     setInterval(() => {
-      send_report(root)
+      send_report(monitor.get_root())
     }, 100);
     // Handle messages from the webview
     view.webview.onDidReceiveMessage(
@@ -108,11 +90,7 @@ function make_loop_func(root:Folder){
             break 
           }
           case 'command_clicked':{
-            ///send_report(root)
-            const runner=find_runner(root,message.id)
-            if (runner==null)
-              throw new Error(`runner not found:${message.id}`) //or maybe just ignore it?
-            void run_runner({runner,runner_ctrl,reason:'user'})
+            monitor.run_runner(message.id,'user')
             break          
           }
         }
@@ -127,8 +105,9 @@ function make_loop_func(root:Folder){
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  const root=await  read_package_json(folders)
-  const the_loop=make_loop_func(root)
+  const monitor=new Monitor(folders)
+  const root=await monitor.read_package_json()
+  const the_loop=make_loop_func(monitor)
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  
   register_command(context,'Scriptsmon.startWatching',()=>{

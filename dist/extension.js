@@ -974,6 +974,44 @@ async function read_package_json(full_pathnames) {
   await mkdir_write_file("c:\\yigal\\generated\\packages.json", JSON.stringify(root, null, 2));
   return root;
 }
+function find_runner(root, id) {
+  function f(folder) {
+    const ans = folder.runners.find((x) => x.id === id);
+    if (ans != null)
+      return ans;
+    for (const subfolder of folder.folders) {
+      const ans2 = f(subfolder);
+      if (ans2 != null)
+        return ans2;
+    }
+  }
+  return f(root);
+}
+var Monitor = class {
+  constructor(full_pathnames) {
+    this.full_pathnames = full_pathnames;
+  }
+  runner_ctrl = make_runner_ctrl();
+  root;
+  async read_package_json() {
+    this.root = await read_package_json(this.full_pathnames);
+  }
+  get_root() {
+    if (this.root == null)
+      throw new Error("Monitor not initialied succsfuly");
+    return this.root;
+  }
+  run_runner(runner_id, reason) {
+    const { runner_ctrl } = this;
+    const runner = find_runner(this.get_root(), runner_id);
+    if (runner == null)
+      throw new Error(`runnwe is not found:${runner_id}`);
+    void run_runner({ runner, reason, runner_ctrl });
+  }
+  extract_base() {
+    return extract_base(this.get_root());
+  }
+};
 
 // src/extension.ts
 import * as vscode from "vscode";
@@ -1048,33 +1086,19 @@ async function open_file(pos) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-function find_runner(root, id) {
-  function f(folder) {
-    const ans = folder.runners.find((x) => x.id === id);
-    if (ans != null)
-      return ans;
-    for (const subfolder of folder.folders) {
-      const ans2 = f(subfolder);
-      if (ans2 != null)
-        return ans2;
-    }
-  }
-  return f(root);
-}
 var folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
-function make_loop_func(root) {
+function make_loop_func(monitor) {
   const ans = (view, context) => {
-    const runner_ctrl = make_runner_ctrl();
     function send_report(root_folder) {
-      const root2 = extract_base(root_folder);
+      const root = monitor.extract_base();
       post_message(view.webview, {
         command: "RunnerReport",
-        root: root2,
+        root,
         base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
       });
     }
     setInterval(() => {
-      send_report(root);
+      send_report(monitor.get_root());
     }, 100);
     view.webview.onDidReceiveMessage(
       (message) => {
@@ -1084,10 +1108,7 @@ function make_loop_func(root) {
             break;
           }
           case "command_clicked": {
-            const runner = find_runner(root, message.id);
-            if (runner == null)
-              throw new Error(`runner not found:${message.id}`);
-            void run_runner({ runner, runner_ctrl, reason: "user" });
+            monitor.run_runner(message.id, "user");
             break;
           }
         }
@@ -1100,8 +1121,9 @@ function make_loop_func(root) {
 }
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  const root = await read_package_json(folders);
-  const the_loop = make_loop_func(root);
+  const monitor = new Monitor(folders);
+  const root = await monitor.read_package_json();
+  const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");
   register_command(context, "Scriptsmon.startWatching", () => {

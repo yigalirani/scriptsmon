@@ -764,8 +764,40 @@ function is_string_array(a) {
       return false;
   return true;
 }
+async function sleep(ms) {
+  return await new Promise((resolve2) => {
+    setTimeout(() => resolve2(void 0), ms);
+  });
+}
 
 // src/monitor.ts
+function is_ready_to_start(runner) {
+  if (runner.runs.length === 0)
+    return true;
+  return runner.runs.at(-1)?.end_time != null;
+}
+function keep_only_last(arr) {
+  if (arr.length > 1) {
+    arr.splice(0, arr.length - 1);
+  }
+}
+function extract_base(folder) {
+  const { full_pathname } = folder;
+  const runners = [];
+  for (const runner of folder.runners) {
+    const copy = (0, import_lodash.default)(runner);
+    runners.push(copy);
+    for (const run of runner.runs) {
+      if (run.output.length !== 0) {
+        console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`);
+        run.output = [];
+      }
+    }
+    keep_only_last(runner.runs);
+  }
+  const folders = folder.folders.map(extract_base);
+  return { ...folder, folders, runners };
+}
 function is_valid_watch(a) {
   if (a == null)
     return true;
@@ -830,6 +862,82 @@ function normalize_watch(a) {
   if (a == null)
     return [];
   return a;
+}
+function make_runner_ctrl() {
+  const ipty = {};
+  return { ipty };
+}
+async function stop({
+  runner_ctrl,
+  runner
+}) {
+  let was_stopped = false;
+  while (true) {
+    if (is_ready_to_start(runner)) {
+      return Promise.resolve();
+    }
+    if (!was_stopped) {
+      was_stopped = true;
+      console.log(`stopping runner ${runner.name}...`);
+      runner_ctrl.ipty[runner.id].kill();
+    }
+    await sleep(10);
+  }
+}
+async function run_runner({
+  //this is not async function on purpuse
+  runner,
+  reason,
+  runner_ctrl
+}) {
+  await stop({ runner_ctrl, runner });
+  void new Promise((resolve2, _reject) => {
+    const { script, full_pathname, runs } = runner;
+    const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
+    const shellArgs = process.platform === "win32" ? ["/c", script] : ["-c", script];
+    const child = spawn(shell, shellArgs, {
+      // name: 'xterm-color',
+      cols: 200,
+      useConpty: false,
+      cwd: full_pathname,
+      env: { ...process.env, FORCE_COLOR: "3" }
+    });
+    if (child === null)
+      return;
+    runner_ctrl.ipty[runner.id] = child;
+    const run_id = (function() {
+      if (runs.length === 0)
+        return 0;
+      return runs.at(-1).run_id + 1;
+    })();
+    const run = {
+      start_time: Date.now(),
+      end_time: void 0,
+      //initialy is undefined then changes to number and stops changing
+      reason,
+      output: [],
+      Err: void 0,
+      //initialy is undefined then maybe changes to error and stop changing
+      exit_code: void 0,
+      stopped: void 0,
+      run_id
+    };
+    runner.runs.push(run);
+    const dataDisposable = child.onData((data) => {
+      run.output.push(data);
+    });
+    const exitDisposable = child.onExit(({ exitCode, signal }) => {
+      dataDisposable.dispose();
+      exitDisposable.dispose();
+      console.log({ exitCode, signal });
+      const new_state = exitCode === 0 ? "done" : "error";
+      run.end_time = Date.now();
+      run.exit_code = exitCode;
+      if (signal != null)
+        run.stopped = true;
+      resolve2(null);
+    });
+  });
 }
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   const $watch = normalize_watch(watchers.$watch);
@@ -919,11 +1027,50 @@ async function read_package_json(full_pathnames) {
   await mkdir_write_file("c:\\yigal\\generated\\packages.json", JSON.stringify(root, null, 2));
   return root;
 }
+function find_runner(root, id) {
+  function f(folder) {
+    const ans = folder.runners.find((x) => x.id === id);
+    if (ans != null)
+      return ans;
+    for (const subfolder of folder.folders) {
+      const ans2 = f(subfolder);
+      if (ans2 != null)
+        return ans2;
+    }
+  }
+  return f(root);
+}
+var Monitor = class {
+  constructor(full_pathnames) {
+    this.full_pathnames = full_pathnames;
+  }
+  runner_ctrl = make_runner_ctrl();
+  root;
+  async read_package_json() {
+    this.root = await read_package_json(this.full_pathnames);
+  }
+  get_root() {
+    if (this.root == null)
+      throw new Error("Monitor not initialied succsfuly");
+    return this.root;
+  }
+  run_runner(runner_id, reason) {
+    const { runner_ctrl } = this;
+    const runner = find_runner(this.get_root(), runner_id);
+    if (runner == null)
+      throw new Error(`runnwe is not found:${runner_id}`);
+    void run_runner({ runner, reason, runner_ctrl });
+  }
+  extract_base() {
+    return extract_base(this.get_root());
+  }
+};
 
 // src/test.ts
 async function get_package_json_length() {
-  const ans = await read_package_json([".", "..\\million_try3"]);
-  return Object.keys(ans).length;
+  const monitor = new Monitor([".", "..\\million_try3"]);
+  await monitor.read_package_json();
+  return Object.keys(monitor.root).length;
 }
 if (import.meta.main) {
   void run_tests({

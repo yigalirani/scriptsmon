@@ -33,7 +33,7 @@ function keep_only_last<T>(arr: T[]): void {
     arr.splice(0, arr.length - 1);
   }
 }
-export function extract_base(folder:Folder):Folder{
+function extract_base(folder:Folder):Folder{
   const {full_pathname}=folder
   const runners=[]
   for (const runner of folder.runners){
@@ -127,7 +127,7 @@ function normalize_watch(a:string[]|undefined){
 interface RunnerCtrl{
   ipty:Record<string,IPty> 
 }
-export function make_runner_ctrl(){
+function make_runner_ctrl(){
   const ipty={}
   return {ipty}
 }
@@ -154,8 +154,7 @@ async function stop({
   }
 }
 
-
- export async function run_runner({ //this is not async function on purpuse
+ async function run_runner({ //this is not async function on purpuse
   runner,
   reason,
   runner_ctrl
@@ -264,7 +263,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   }
   return ans
 }
-export async function read_package_json(
+ async function read_package_json(
   full_pathnames: string[]
 ) {
 
@@ -320,4 +319,43 @@ export async function read_package_json(
   //await mkdir_write_file('generated/extra.json',JSON.stringify(extra,null,2))
   await mkdir_write_file('c:\\yigal\\generated\\packages.json',JSON.stringify(root,null,2))
   return root
+}
+function find_runner(root:Folder,id:string){
+  function f(folder:Folder):Runner|undefined{
+    const ans=folder.runners.find(x=>x.id===id)
+    if (ans!=null)
+      return ans
+    for (const subfolder of folder.folders){
+      const ans=f(subfolder)
+      if (ans!=null)
+        return ans
+    }
+  }
+  return f(root)
+}
+export class Monitor{
+  runner_ctrl=make_runner_ctrl()
+  root?:Folder
+  constructor(
+    public full_pathnames:string[]
+  ){
+  }
+  async read_package_json(){
+    this.root= await read_package_json(this.full_pathnames)
+  }
+  get_root(){
+    if (this.root==null)
+      throw new Error("Monitor not initialied succsfuly")
+    return this.root    
+  }
+  run_runner(runner_id:string,reason:string){
+    const {runner_ctrl}=this
+    const runner=find_runner(this.get_root(),runner_id)
+    if (runner==null)
+      throw new Error(`runnwe is not found:${runner_id}`)
+    void run_runner({runner,reason,runner_ctrl})
+  }
+  extract_base():Folder{
+    return extract_base(this.get_root())
+  }
 }
