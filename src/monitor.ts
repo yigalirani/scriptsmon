@@ -327,7 +327,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   //const common_prefix=getCommonPrefix(keys)
   //const extra={keys,common_prefix}
   //await mkdir_write_file('generated/extra.json',JSON.stringify(extra,null,2))
-  await mkdir_write_file('c:\\yigal\\generated\\packages.json',JSON.stringify(root,null,2))
+
   return root
 }
 function find_runner(root:Folder,id:string){
@@ -343,18 +343,43 @@ function find_runner(root:Folder,id:string){
   }
   return f(root)
 }
+function collect_watch_dirs(root:Folder){
+  const ans=new Set<string>
+  function f(node:Folder){
+    for (const runner of node.runners)
+      if (runner.watched)
+        runner.effective_watch.forEach(x=>ans.add(path.join(runner.full_pathname,x)))
+    node.folders.forEach(f)
+  }
+  f(root)
+  return ans
+}
+function set_replacer(_k:string,v:unknown){
+  if (v instanceof Set)
+    return [...v] as unknown
+  /*if (kdd=='init')
+    return format_ast(v)*/
+  return v
+}
+export function to_json(x:unknown){
+  const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
+  return ans
+}
 export class Monitor{
   runner_ctrl=make_runner_ctrl()
   root?:Folder
+  watched_dirs=new Set<string>()
   constructor(
     public full_pathnames:string[]
   ){
   }
   async read_package_json(){
     this.root= await read_package_json(this.full_pathnames)
+    this.watched_dirs=collect_watch_dirs(this.root)
+    await mkdir_write_file('c:\\yigal\\generated\\packages.json',to_json(this))
   }
   get_root(){
-    if (this.root==null)
+    if (this.root==null) 
       throw new Error("Monitor not initialied succsfuly")
     return this.root    
   }
@@ -373,7 +398,7 @@ export class Monitor{
     for each set  up node watch
     upon change, collect all the runners that depends on the change
     for each, all run_runner*/
-        
-    
+
+
   }
 }

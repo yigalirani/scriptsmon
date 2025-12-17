@@ -980,7 +980,6 @@ async function read_package_json(full_pathnames) {
     scriptsmon: {},
     type: "folder"
   };
-  await mkdir_write_file("c:\\yigal\\generated\\packages.json", JSON.stringify(root, null, 2));
   return root;
 }
 function find_runner(root, id) {
@@ -996,14 +995,37 @@ function find_runner(root, id) {
   }
   return f(root);
 }
+function collect_watch_dirs(root) {
+  const ans = /* @__PURE__ */ new Set();
+  function f(node) {
+    for (const runner of node.runners)
+      if (runner.watched)
+        runner.effective_watch.forEach((x) => ans.add(path.join(runner.full_pathname, x)));
+    node.folders.forEach(f);
+  }
+  f(root);
+  return ans;
+}
+function set_replacer(_k, v) {
+  if (v instanceof Set)
+    return [...v];
+  return v;
+}
+function to_json(x) {
+  const ans = JSON.stringify(x, set_replacer, 2).replace(/\\n/g, "\n");
+  return ans;
+}
 var Monitor = class {
   constructor(full_pathnames) {
     this.full_pathnames = full_pathnames;
   }
   runner_ctrl = make_runner_ctrl();
   root;
+  watched_dirs = /* @__PURE__ */ new Set();
   async read_package_json() {
     this.root = await read_package_json(this.full_pathnames);
+    this.watched_dirs = collect_watch_dirs(this.root);
+    await mkdir_write_file("c:\\yigal\\generated\\packages.json", to_json(this));
   }
   get_root() {
     if (this.root == null)
