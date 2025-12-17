@@ -345,6 +345,18 @@ function find_runner(root:Folder,id:string){
   }
   return f(root)
 }
+function find_runners(root:Folder,filter:(x:Runner)=>boolean){
+  const ans:Runner[]=[]
+  function f(node:Folder){
+    node.folders.forEach(f)
+    for (const runner of node.runners){
+      if (filter(runner))
+        ans.push(runner)
+    }
+  }
+  f(root)
+  return ans
+}
 function collect_watch_dirs(root:Folder){
   const ans=new Set<string>
   function f(node:Folder){
@@ -376,7 +388,7 @@ function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
         console.log(`changed: *${watched_dir}/${changed_file} `)
 
       }) 
-    }catch(ex){
+}catch(ex){
       console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
     }
   }
@@ -404,6 +416,7 @@ export class Monitor{
   root?:Folder
   watched_dirs=new Set<string>()
   changed_dirs=new Set<string>()
+  watched_runners:Runner[]=[]
   constructor(
     public full_pathnames:string[]
   ){
@@ -411,7 +424,9 @@ export class Monitor{
   async read_package_json(){
     this.root= await read_package_json(this.full_pathnames)
     this.watched_dirs=collect_watch_dirs(this.root)
+    this.watched_runners=find_runners(this.root,(x)=>x.watched)
     await mkdir_write_file('c:\\yigal\\generated\\packages.json',to_json(this))
+    
   }
   get_root(){
     if (this.root==null) 
@@ -433,8 +448,9 @@ export class Monitor{
     for each set  up node watch
     upon change, collect all the runners that depends on the change
     for each, all run_runner*/
+
     watch_to_set(this.watched_dirs,this.changed_dirs)
-    setInterval(()=>{
+    setInterval(()=>{ 
       if (this.changed_dirs.size===0)
         return
       const runners=get_runners_by_changed_dirs(this.root!,this.changed_dirs)
@@ -443,5 +459,7 @@ export class Monitor{
       }
       this.changed_dirs.clear()
     },100)
+    for (const runner of this.watched_runners)
+      this.run_runner(runner.id,"start")
   }
 }

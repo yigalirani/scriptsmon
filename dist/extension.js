@@ -997,6 +997,18 @@ function find_runner(root, id) {
   }
   return f(root);
 }
+function find_runners(root, filter) {
+  const ans = [];
+  function f(node) {
+    node.folders.forEach(f);
+    for (const runner of node.runners) {
+      if (filter(runner))
+        ans.push(runner);
+    }
+  }
+  f(root);
+  return ans;
+}
 function collect_watch_dirs(root) {
   const ans = /* @__PURE__ */ new Set();
   function f(node) {
@@ -1052,9 +1064,11 @@ var Monitor = class {
   root;
   watched_dirs = /* @__PURE__ */ new Set();
   changed_dirs = /* @__PURE__ */ new Set();
+  watched_runners = [];
   async read_package_json() {
     this.root = await read_package_json(this.full_pathnames);
     this.watched_dirs = collect_watch_dirs(this.root);
+    this.watched_runners = find_runners(this.root, (x) => x.watched);
     await mkdir_write_file("c:\\yigal\\generated\\packages.json", to_json(this));
   }
   get_root() {
@@ -1083,6 +1097,8 @@ var Monitor = class {
       }
       this.changed_dirs.clear();
     }, 100);
+    for (const runner of this.watched_runners)
+      this.run_runner(runner.id, "start");
   }
 };
 

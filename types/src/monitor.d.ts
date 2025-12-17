@@ -1,4 +1,4 @@
-import { Folder } from './data.js';
+import { Runner, Folder } from './data.js';
 export declare function to_json(x: unknown): string;
 export declare class Monitor {
     full_pathnames: string[];
@@ -8,6 +8,7 @@ export declare class Monitor {
     root?: Folder;
     watched_dirs: Set<string>;
     changed_dirs: Set<string>;
+    watched_runners: Runner[];
     constructor(full_pathnames: string[]);
     read_package_json(): Promise<void>;
     get_root(): Folder;
