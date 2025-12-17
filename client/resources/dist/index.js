@@ -6089,8 +6089,8 @@ var import_xterm = __toESM(require_xterm(), 1);
 // src/tree_control.ts
 function query_selector(el, selector) {
   const ans = el.querySelector(selector);
-  if (!(ans instanceof Element))
-    throw new Error("selector not found or not html element");
+  if (ans == null)
+    throw new Error("selector not found or not expected type");
   return ans;
 }
 function parseIcons(html) {
@@ -6617,11 +6617,10 @@ function formatElapsedTime(ms) {
   return `${time}.${pad3(milliseconds)}`;
 }
 function create_terminal_element(parent, id) {
-  const ans = parent.querySelector(`#${id}`);
-  if (ans != null)
-    return ans;
-  const template = document.createElement("template");
-  template.innerHTML = `
+  const ret = parent.querySelector(`#${id}`);
+  if (ret != null)
+    return ret;
+  const ans = create_element(`
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_wrapper">
     <div class="term_title_bar">
@@ -6644,10 +6643,8 @@ function create_terminal_element(parent, id) {
     </table>
   </div>
 </div>
-  `.trim();
-  const element = template.content.firstElementChild;
-  parent.appendChild(element);
-  return element;
+  `, parent);
+  return ans;
 }
 function update_child_html(el, selector, html) {
   const child = query_selector(el, selector);

@@ -1,10 +1,10 @@
 import { s2t,s2s,pk} from '@yigal/base_types'
 import { promises as fs } from 'fs';
 type MaybePromise<T>=T|Promise<T>
-export function query_selector(el:Element,selector:string){
-    const ans=el.querySelector(selector);
-    if (!(ans instanceof Element))
-      throw new Error('selector not found or not html element')  
+export function query_selector<T extends Element=Element>(el:Element,selector:string){
+    const ans=el.querySelector<T>(selector);
+    if (ans==null)
+      throw new Error('selector not found or not expected type')  
     return ans
 }
 export interface TreeNode{

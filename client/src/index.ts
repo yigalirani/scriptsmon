@@ -87,12 +87,11 @@ function formatElapsedTime(ms: number): string {
   return `${time}.${pad3(milliseconds)}`;
 }
 
-function create_terminal_element(parent: Element,id:string): HTMLElement {
-  const ans=parent.querySelector(`#${id}`)
-  if (ans!=null)
-    return ans as HTMLElement //todo check that it is HTMLElement
-  const template = document.createElement("template")
-  template.innerHTML = `
+function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
+  const ret=parent.querySelector<HTMLElement>(`#${id}`)
+  if (ret!=null)
+    return ret //todo check that it is HTMLElement
+  const ans=create_element(  `
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_wrapper">
     <div class="term_title_bar">
@@ -115,10 +114,8 @@ function create_terminal_element(parent: Element,id:string): HTMLElement {
     </table>
   </div>
 </div>
-  `.trim();
-  const element = template.content.firstElementChild as HTMLElement;
-  parent.appendChild(element);
-  return element;
+  `,parent)
+  return ans;
 }
 
 function update_child_html(el: HTMLElement, selector: string, html: string) {
@@ -175,7 +172,7 @@ class TerminalPanel{
 
   }
   constructor(
-    public parent:Element,
+    public parent:HTMLElement,
     runner:Runner
   ){
     this.el=create_terminal_element(parent,runner.id)
@@ -237,7 +234,7 @@ class TerminalPanel{
 class Terminals{
   terminals:s2t<TerminalPanel>={}
   constructor(
-    public parent:Element
+    public parent:HTMLElement
   ){
   }
   get_terminal(runner:Runner){
@@ -300,9 +297,9 @@ function reset_animation(ids:Set<string>){
 
 function start(){
   console.log('start')
-  const terminals=new Terminals(query_selector(document.body,'.terms_container'))
+  const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
   let base_uri=''
-  const tree=new TreeControl(query_selector(document.body,'#the_tree') as HTMLElement,provider)
+  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider) //no error, whay
   function on_selected_changed(id:string){
     for (const panel of document.querySelectorAll('.term_panel')){
       if (!(panel instanceof HTMLElement))
