@@ -6277,7 +6277,7 @@ function element_for_down_arrow(selected) {
     return ans;
   let cur = selected;
   while (true) {
-    const parent = get_parent_by_class(cur, "tree_folder");
+    const parent = get_parent_by_class(cur.parentElement, "tree_folder");
     if (!(parent instanceof HTMLElement))
       return null;
     const ans2 = get_next_selected(parent);
