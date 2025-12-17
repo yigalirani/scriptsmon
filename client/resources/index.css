@@ -303,3 +303,7 @@ span.term_title_watch{
 .watched .label_row {
 
 }
+.rel:hover{
+  background-color: yellow;
+  color: black;
+}

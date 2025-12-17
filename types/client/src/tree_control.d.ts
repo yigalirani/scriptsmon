@@ -17,6 +17,7 @@ export interface TreeDataProvider<T> {
     command: (id: string, command: string) => MaybePromise<void>;
     icons_html: string;
 }
+export declare function create_element(html: string, parent?: HTMLElement): HTMLElement;
 export declare class TreeControl<T> {
     parent: HTMLElement;
     provider: TreeDataProvider<T>;

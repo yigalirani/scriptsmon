@@ -69,7 +69,7 @@ export interface TreeDataProvider<T>{
   icons_html:string
 }
 
-function create_element(html:string,parent?:HTMLElement){
+export function create_element(html:string,parent?:HTMLElement){
   const template = document.createElement("template")
   template.innerHTML = html.trim()
   const ans = template.content.firstElementChild as HTMLElement;

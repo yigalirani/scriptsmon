@@ -2,7 +2,7 @@ import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import * as fsSync from "node:fs";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {Run,State,Runner,Folder,Scriptsmon,Watcher} from './data.js'
+import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename} from './data.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import {
   is_object,
@@ -236,6 +236,7 @@ function calc_effective_watch($watch:string[],watcher?:Watcher|string[]){
     return watcher_array
   return [...watcher_array.filter(x=>x!=='$watch'),...$watch]
 }
+
 function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
   const $watch=normalize_watch(watchers.$watch)
   const watched=normalize_watch(watchers.watched)
@@ -252,7 +253,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
     const runner=function(){
       const full_pathname=path.dirname(pkgPath)
       const id=`${full_pathname} ${name}`.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
-      const effective_watch=calc_effective_watch($watch,the_watcher)
+      const effective_watch_rel=calc_effective_watch($watch,the_watcher)
+      const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel)}))
       const ans:Runner= {
         type:'runner',
         name,
@@ -348,7 +350,7 @@ function collect_watch_dirs(root:Folder){
   function f(node:Folder){
     for (const runner of node.runners)
       if (runner.watched)
-        runner.effective_watch.forEach(x=>ans.add(path.join(runner.full_pathname,x)))
+        runner.effective_watch.forEach(x=>ans.add(x.full))
     node.folders.forEach(f)
   }
   f(root)
@@ -365,10 +367,43 @@ export function to_json(x:unknown){
   const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
   return ans
 }
+function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
+  for (const watched_dir of watched_dirs){
+    try{
+      console.log(`watching ${watched_dir}`)
+      fsSync.watch(watched_dir,{},(eventType, changed_file) => {
+        changed_dirs.add(watched_dir)
+        console.log(`changed: *${watched_dir}/${changed_file} `)
+
+      }) 
+    }catch(ex){
+      console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
+    }
+  }
+}
+interface RunnerWithReason{
+  runner:Runner
+  reason:string
+}
+function get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
+  const ans:RunnerWithReason[]=[]
+  function f(node:Folder){
+    const {folders,runners,full_pathname}=node
+    folders.forEach(f);
+    for (const runner of runners){
+      for (const {full} of runner.effective_watch)
+        if (changed_dirs.has(full))
+          ans.push({runner,reason:full})
+    }
+  }
+  f(root)
+  return Object.values(ans)
+}
 export class Monitor{
   runner_ctrl=make_runner_ctrl()
   root?:Folder
   watched_dirs=new Set<string>()
+  changed_dirs=new Set<string>()
   constructor(
     public full_pathnames:string[]
   ){
@@ -398,7 +433,15 @@ export class Monitor{
     for each set  up node watch
     upon change, collect all the runners that depends on the change
     for each, all run_runner*/
-
-
+    watch_to_set(this.watched_dirs,this.changed_dirs)
+    setInterval(()=>{
+      if (this.changed_dirs.size===0)
+        return
+      const runners=get_runners_by_changed_dirs(this.root!,this.changed_dirs)
+      for (const {runner,reason} of runners){
+        this.run_runner(runner.id,reason)
+      }
+      this.changed_dirs.clear()
+    },100)
   }
 }

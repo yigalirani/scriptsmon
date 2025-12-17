@@ -6415,8 +6415,19 @@ var TreeControl = class {
         console.warn(`cant find old svg for ${id}`);
         continue;
       }
-      const icon = change.new_index[id].icon;
+      if (id == null) {
+        console.warn("id is null");
+        continue;
+      }
+      const new_index = change.new_index[id];
+      if (new_index == null)
+        continue;
+      const icon = new_index.icon;
       const new_svg = this.icons[icon];
+      if (new_svg == null) {
+        console.warn("new_svg is null");
+        continue;
+      }
       existing_svg.outerHTML = new_svg;
       console.log(`${id}: new svg`);
       this.parent.querySelector(`#${id} .icon`).className = `icon background_${icon}`;
@@ -6570,6 +6581,8 @@ function addFileLocationLinkDetection(terminal, full_pathname) {
       let match;
       while ((match = pattern.exec(text)) !== null) {
         const [full, file, row, col] = match;
+        if (file == null)
+          continue;
         links.push({
           range: {
             start: { x: match.index + 1, y },
@@ -6669,7 +6682,9 @@ var TerminalPanel = class {
       this.term.open(term_container);
     query_selector(this.el, ".term_title_dir .value").textContent = runner.full_pathname;
     query_selector(this.el, ".term_title_script .value").textContent = runner.script;
-    query_selector(this.el, ".term_title_watch .value").textContent = runner.watcher.watch?.join(",") || "";
+    const el = query_selector(this.el, ".term_title_watch .value");
+    for (const { rel, full } of runner.effective_watch)
+      create_element(`<div title='${full}'class=rel>${rel}</div>`, el);
     query_selector(this.el, ".term_title_status .value").textContent = "ready";
   }
   last_run_id;

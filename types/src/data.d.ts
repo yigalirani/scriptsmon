@@ -18,6 +18,10 @@ export interface Run {
     stopped: undefined | true;
     run_id: number;
 }
+export interface Filename {
+    rel: string;
+    full: string;
+}
 export interface Runner {
     type: 'runner';
     name: string;
@@ -27,7 +31,7 @@ export interface Runner {
     script: string;
     runs: Run[];
     watched: boolean;
-    effective_watch: string[];
+    effective_watch: Filename[];
 }
 export interface Folder {
     type: 'folder';

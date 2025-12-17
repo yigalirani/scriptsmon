@@ -7,6 +7,7 @@ export declare class Monitor {
     };
     root?: Folder;
     watched_dirs: Set<string>;
+    changed_dirs: Set<string>;
     constructor(full_pathnames: string[]);
     read_package_json(): Promise<void>;
     get_root(): Folder;

@@ -6,7 +6,7 @@ interface VSCodeApi {
 import {WebviewMessage} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
-import { query_selector,TreeControl,TreeDataProvider,TreeNode } from './tree_control.js';
+import { query_selector,TreeControl,TreeDataProvider,TreeNode,create_element } from './tree_control.js';
 import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
@@ -188,7 +188,9 @@ class TerminalPanel{
     // Initialize title bar with full filename plus script
     query_selector(this.el, '.term_title_dir .value').textContent=runner.full_pathname
     query_selector(this.el, '.term_title_script .value').textContent=runner.script
-    query_selector(this.el, '.term_title_watch .value').textContent=runner.effective_watch?.join(',')||''
+    const el=query_selector(this.el, '.term_title_watch .value')
+    for (const {rel,full} of runner.effective_watch)
+      create_element(`<div title='${full}'class=rel>${rel}</div>`,el as HTMLElement)
     query_selector(this.el, '.term_title_status .value').textContent='ready'
     
   }

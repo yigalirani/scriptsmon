@@ -649,6 +649,7 @@ var require_lodash = __commonJS({
 // src/monitor.ts
 var import_lodash = __toESM(require_lodash(), 1);
 import * as path from "node:path";
+import * as fsSync from "node:fs";
 import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
 
 // node_modules/@yigal/base_types/src/index.ts
@@ -969,7 +970,8 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
     const runner = (function() {
       const full_pathname = path.dirname(pkgPath);
       const id = `${full_pathname} ${name}`.replaceAll(/\\|:/g, "-").replaceAll(" ", "--");
-      const effective_watch = calc_effective_watch($watch, the_watcher);
+      const effective_watch_rel = calc_effective_watch($watch, the_watcher);
+      const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel) }));
       const ans2 = {
         type: "runner",
         name,
@@ -1053,7 +1055,7 @@ function collect_watch_dirs(root) {
   function f(node) {
     for (const runner of node.runners)
       if (runner.watched)
-        runner.effective_watch.forEach((x) => ans.add(path.join(runner.full_pathname, x)));
+        runner.effective_watch.forEach((x) => ans.add(x.full));
     node.folders.forEach(f);
   }
   f(root);
@@ -1068,6 +1070,33 @@ function to_json(x) {
   const ans = JSON.stringify(x, set_replacer, 2).replace(/\\n/g, "\n");
   return ans;
 }
+function watch_to_set(watched_dirs, changed_dirs) {
+  for (const watched_dir of watched_dirs) {
+    try {
+      console.log(`watching ${watched_dir}`);
+      fsSync.watch(watched_dir, {}, (eventType, changed_file) => {
+        changed_dirs.add(watched_dir);
+        console.log(`changed: *${watched_dir}/${changed_file} `);
+      });
+    } catch (ex) {
+      console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`);
+    }
+  }
+}
+function get_runners_by_changed_dirs(root, changed_dirs) {
+  const ans = [];
+  function f(node) {
+    const { folders, runners, full_pathname } = node;
+    folders.forEach(f);
+    for (const runner of runners) {
+      for (const { full } of runner.effective_watch)
+        if (changed_dirs.has(full))
+          ans.push({ runner, reason: full });
+    }
+  }
+  f(root);
+  return Object.values(ans);
+}
 var Monitor = class {
   constructor(full_pathnames) {
     this.full_pathnames = full_pathnames;
@@ -1075,6 +1104,7 @@ var Monitor = class {
   runner_ctrl = make_runner_ctrl();
   root;
   watched_dirs = /* @__PURE__ */ new Set();
+  changed_dirs = /* @__PURE__ */ new Set();
   async read_package_json() {
     this.root = await read_package_json(this.full_pathnames);
     this.watched_dirs = collect_watch_dirs(this.root);
@@ -1096,6 +1126,16 @@ var Monitor = class {
     return extract_base(this.get_root());
   }
   start_watching() {
+    watch_to_set(this.watched_dirs, this.changed_dirs);
+    setInterval(() => {
+      if (this.changed_dirs.size === 0)
+        return;
+      const runners = get_runners_by_changed_dirs(this.root, this.changed_dirs);
+      for (const { runner, reason } of runners) {
+        this.run_runner(runner.id, reason);
+      }
+      this.changed_dirs.clear();
+    }, 100);
   }
 };
 
