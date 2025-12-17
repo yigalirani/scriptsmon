@@ -2,7 +2,6 @@ import { s2t,s2s,pk} from '@yigal/base_types'
 import {get_parent_by_class,create_element,divs,get_parent_by_classes,remove_class} from './dom_utils.js'
 import { promises as fs } from 'fs';
 type MaybePromise<T>=T|Promise<T>
-
 export interface TreeNode{
   type            : 'item'|'folder' //is this needed?
   label           : string,
@@ -14,7 +13,6 @@ export interface TreeNode{
   children        : TreeNode[]
   icon_version     : number
 }
-
 function make_empty_tree_folder():TreeNode{
   return{
     type:'folder',
@@ -27,29 +25,22 @@ function make_empty_tree_folder():TreeNode{
     className:'test'
   }
 }
-
 function wrap_icon(content:string,name:string){
-
   return `<div class="icon ${name}_background">${content}</div>`
 }
 function parseIcons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
-  
   // Parse the HTML string into a Document
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
-  
   // Select all divs with class "icon"
   const icons = doc.querySelectorAll<HTMLDivElement>('.icon');
-  
   icons.forEach(icon => {
     const nameEl = icon.childNodes[0]
     const contentEl = icon.querySelector<SVGElement>('svg');
-    
     if (nameEl && contentEl) {
       const name = nameEl.textContent?.trim();
       const content = contentEl.outerHTML
-      
       if (name) {
         result[name] = content
       }
@@ -64,9 +55,6 @@ export interface TreeDataProvider<T>{
   command:(id:string,command:string)=>MaybePromise<void>
   icons_html:string
 }
-
-
-
 import isEqual from "lodash.isequal";
 function get_prev_selected(selected:HTMLElement){
   if (selected==null)
@@ -102,13 +90,10 @@ function index_folder(root:TreeNode){
 function have_same_keys(obj_a: object, obj_b: object): boolean {
   const keysA = new Set(Object.keys(obj_a));
   const keysB = new Set(Object.keys(obj_b));
-
   if (keysA.size !== keysB.size) return false;
-
   for (const key of keysA) {
     if (!keysB.has(key)) return false;
   }
-
   return true;
 }
 function calc_summary(node:TreeNode):string{
@@ -179,7 +164,6 @@ function get_last_visible(selected:HTMLElement){
   if (last_child==null)
     return selected
   return get_last_visible(last_child)
-    
 }
 function element_for_up_arrow(selected:HTMLElement){
   const ans=get_prev_selected(selected)
@@ -212,13 +196,9 @@ function element_for_down_arrow(selected:HTMLElement){
   //if (ans==null)
   //  return get_parent_by_class(selected,'tree_folder')
 }
-
-
-
 function getBaseName(path: string): string {
   // Extract last path segment
   const fileName = path.split(/[/\\]/).pop() || "";
-
   // Remove extension (last dot and everything after)
   const lastDot = fileName.lastIndexOf(".");
   return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
@@ -235,7 +215,6 @@ export class TreeControl<T>{
   icons:s2s
   //selected:string|boolean=false
   //last_root:T|undefined
-
   last_converted:TreeNode|undefined
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
@@ -245,7 +224,6 @@ export class TreeControl<T>{
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
-
     const ans= create_element(`
   <div  class="tree_${type} ${className||""}" id="${id}" >
     <div  class=label_row>
@@ -279,9 +257,7 @@ export class TreeControl<T>{
     const id=item.id
     void this.provider.command(id,command)
     return true
-    
   }
-
   constructor(
     public parent:HTMLElement,
     public provider:TreeDataProvider<T>
@@ -293,7 +269,6 @@ export class TreeControl<T>{
       parent.tabIndex = 0;
       parent.focus();
       const command_clicked=this.command_clicked(evt)
-
       const clicked=get_parent_by_class(evt.target,'label_row')?.parentElement
       if (clicked==null)
         return
@@ -339,10 +314,8 @@ export class TreeControl<T>{
           selected.classList.toggle('collapsed')
           break
       }
-
     })    
   }
-
   create_node(parent:HTMLElement,node:TreeNode,depth:number){ //todo: compare to last by id to add change animation?
     const children_el=(()=>{
       if (depth===0)
@@ -353,13 +326,10 @@ export class TreeControl<T>{
     if (children_el==null){
       return
     }
-
     for (const x of node.children){
       this.create_node(children_el as HTMLElement,x,depth+1)
     }
-    
   }
-
   render(root:T,base_uri:string){
     /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
     this.base_uri=base_uri+'/client/resources'
@@ -413,6 +383,5 @@ export class TreeControl<T>{
         x.beginElement()
       })*/
     }
-
   }
 }

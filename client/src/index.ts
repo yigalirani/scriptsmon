@@ -124,28 +124,12 @@ function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
   return ans;
 }
 
-
-/*function append(txt:string,el:HTMLElement|null=null){
-  if (el==null||txt==='')
-    el=document.getElementById('terminal')
-  if (el==null)
-    return
-  el.insertAdjacentHTML('beforeend', `${txt}\n`);
-  el.scrollTop = el.scrollHeight;
-}*/
 function calc_stats_html(new_runner:Runner){
   return Object.entries(new_runner).filter(([k,v])=>k!=='output').map(([k,v])=>`<tr>
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
 
-
-/*function calc_new_lines(new_runner:RunnerBase){
-  const output=new_runner.output.join('')
-  if (output==='')
-    return ''
-  return convert_line(output)
-}*/
 function calc_runner_status(runner:Runner){
   const {runs}=runner
   if (runs.length===0)
@@ -158,11 +142,6 @@ function calc_runner_status(runner:Runner){
   return {version,state:'error'}
 }
 
-  // 2. Register a decoration using that marker
-
-  // 3. (Optional) use onRender to get an element
-    // el is an HTMLElement when rendered
-    // but you *don’t need* to style here if you set colors above
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
@@ -221,16 +200,13 @@ class TerminalPanel{
     if (run_id!==this.last_run_id)
       this.term.clear()
     this.last_run_id=last_run.run_id
-    //const term=query_selector(this.el,'.term')
+
     for (const line of last_run.output)
       this.term.write(line)
-    //if (this.last_runner!=null&&JSON.stringify(this.last_runner)===JSON.stringify(new_runner))
-    //  return
     const stats=calc_stats_html(new_runner)
     if (stats!==this.last_stats)
       update_child_html(this.el,'.stats>tbody',stats)
     this.last_stats=stats
-//    this.last_runner=new_runner//should we at all hold on to it
   }
 }
 class Terminals{
@@ -283,19 +259,7 @@ const provider:TreeDataProvider<FolderRunner>={
   },
   icons_html:ICONS_HTML
 }
-function reset_animation(ids:Set<string>){
-  function collect_elements(parent: HTMLElement, ids: Set<string>): HTMLElement[] {
-    // Select all elements under parent that have an id
-    const allWithId = parent.querySelectorAll<HTMLElement>('[id]');
-    for (const el of allWithId)
-      if (ids.has(el.id)){
-        //query_selector(el,'.icon') instanceof ImageEl
-      }
-    // Filter only the ones whose id is in the set
-    return Array.from(allWithId).filter(el => ids.has(el.id));
-}
-  //firs
-}
+
 
 function start(){
   console.log('start')
@@ -311,24 +275,7 @@ function start(){
   }
   tree.on_selected_changed=on_selected_changed
 
-  /*sendButton.addEventListener('click', () => {
-    //append('buttonClick clicked');
-    vscode.postMessage({
-          command: 'buttonClick',
-          text: 'Hello from webview!'
-      });
-  });*/
-  /*document.getElementById('getReport')!.addEventListener('click', () => {
-    //append('getReport clicked')
-    const message:WebviewMessage={
-          command: 'get_report',
-          text: 'Hello from webview!'
-      }
-    vscode.postMessage(message);
-  });  */
 
-  // Listen for messages from the extension
-  //let old_root:Folder|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
