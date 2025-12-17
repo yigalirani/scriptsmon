@@ -6,7 +6,8 @@ interface VSCodeApi {
 import {WebviewMessage} from '../../src/extension.js'
 import {s2t} from '@yigal/base_types'
 import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
-import { query_selector,TreeControl,TreeDataProvider,TreeNode,create_element } from './tree_control.js';
+import {query_selector,create_element,get_parent_by_class,update_child_html} from './dom_utils.js'
+import {TreeControl,TreeDataProvider,TreeNode, } from './tree_control.js';
 import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
@@ -114,15 +115,16 @@ function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
     </table>
   </div>
 </div>
+
   `,parent)
+  ans.addEventListener('click',event=>{
+    const {target}=event
+    //const parent=get_parent_by_class(target,'term_title_script')
+  })
   return ans;
 }
 
-function update_child_html(el: HTMLElement, selector: string, html: string) {
-  const child = query_selector(el,selector)
-  if (child.innerHTML === html) return; // skip if same
-  child.innerHTML = html;
-}
+
 /*function append(txt:string,el:HTMLElement|null=null){
   if (el==null||txt==='')
     el=document.getElementById('terminal')

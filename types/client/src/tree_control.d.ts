@@ -1,6 +1,5 @@
 import { s2s } from '@yigal/base_types';
 type MaybePromise<T> = T | Promise<T>;
-export declare function query_selector<T extends Element = Element>(el: Element, selector: string): T;
 export interface TreeNode {
     type: 'item' | 'folder';
     label: string;
@@ -17,7 +16,6 @@ export interface TreeDataProvider<T> {
     command: (id: string, command: string) => MaybePromise<void>;
     icons_html: string;
 }
-export declare function create_element(html: string, parent?: HTMLElement): HTMLElement;
 export declare class TreeControl<T> {
     parent: HTMLElement;
     provider: TreeDataProvider<T>;

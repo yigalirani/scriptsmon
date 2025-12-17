@@ -6086,32 +6086,12 @@ WARNING: This link could potentially be dangerous`)) {
 // src/index.ts
 var import_xterm = __toESM(require_xterm(), 1);
 
-// src/tree_control.ts
+// src/dom_utils.ts
 function query_selector(el, selector) {
   const ans = el.querySelector(selector);
   if (ans == null)
     throw new Error("selector not found or not expected type");
   return ans;
-}
-function parseIcons(html) {
-  const result = {};
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const icons = doc.querySelectorAll(".icon");
-  icons.forEach((icon) => {
-    const nameEl = icon.childNodes[0];
-    const contentEl = icon.querySelector("svg");
-    if (nameEl && contentEl) {
-      const name = nameEl.textContent?.trim();
-      const content = contentEl.outerHTML;
-      if (name) {
-        result[name] = content;
-      }
-    }
-  });
-  const iconnames = Object.keys(result);
-  console.log({ iconnames });
-  return result;
 }
 function create_element(html, parent) {
   const template = document.createElement("template");
@@ -6149,6 +6129,31 @@ function get_parent_by_classes(el, className) {
     }
   }
   return null;
+}
+function remove_class(el, className) {
+  el.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
+}
+
+// src/tree_control.ts
+function parseIcons(html) {
+  const result = {};
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const icons = doc.querySelectorAll(".icon");
+  icons.forEach((icon) => {
+    const nameEl = icon.childNodes[0];
+    const contentEl = icon.querySelector("svg");
+    if (nameEl && contentEl) {
+      const name = nameEl.textContent?.trim();
+      const content = contentEl.outerHTML;
+      if (name) {
+        result[name] = content;
+      }
+    }
+  });
+  const iconnames = Object.keys(result);
+  console.log({ iconnames });
+  return result;
 }
 function get_prev_selected(selected) {
   if (selected == null)
@@ -6276,9 +6281,6 @@ function element_for_down_arrow(selected) {
     cur = parent;
   }
   return get_next_selected(selected);
-}
-function remove_class(el, className) {
-  el.querySelectorAll(".selected").forEach((x) => x.classList.remove(className));
 }
 var TreeControl = class {
   constructor(parent, provider2) {
@@ -6643,7 +6645,11 @@ function create_terminal_element(parent, id) {
     </table>
   </div>
 </div>
+
   `, parent);
+  ans.addEventListener("click", (event) => {
+    const { target } = event;
+  });
   return ans;
 }
 function update_child_html(el, selector, html) {
