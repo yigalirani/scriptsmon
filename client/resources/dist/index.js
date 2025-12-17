@@ -6133,6 +6133,11 @@ function get_parent_by_classes(el, className) {
 function remove_class(el, className) {
   el.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
 }
+function update_child_html(el, selector, html) {
+  const child = query_selector(el, selector);
+  if (child.innerHTML === html) return;
+  child.innerHTML = html;
+}
 
 // src/tree_control.ts
 function parseIcons(html) {
@@ -6618,7 +6623,8 @@ function formatElapsedTime(ms) {
   const time = hours > 0 ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}` : `${pad2(minutes)}:${pad2(seconds)}`;
   return `${time}.${pad3(milliseconds)}`;
 }
-function create_terminal_element(parent, id) {
+function create_terminal_element(parent, runner) {
+  const { id, full_pathname } = runner;
   const ret = parent.querySelector(`#${id}`);
   if (ret != null)
     return ret;
@@ -6645,17 +6651,23 @@ function create_terminal_element(parent, id) {
     </table>
   </div>
 </div>
-
   `, parent);
   ans.addEventListener("click", (event) => {
     const { target } = event;
+    if (!(target instanceof Element))
+      return;
+    const parent2 = get_parent_by_class(target, "term_title_dir");
+    if (parent2 == null)
+      return;
+    post_message({
+      command: "command_link_clicked",
+      full_pathname,
+      file: "package.json",
+      row: 0,
+      col: 0
+    });
   });
   return ans;
-}
-function update_child_html(el, selector, html) {
-  const child = query_selector(el, selector);
-  if (child.innerHTML === html) return;
-  child.innerHTML = html;
 }
 function calc_stats_html(new_runner) {
   return Object.entries(new_runner).filter(([k, v]) => k !== "output").map(([k, v]) => `<tr>
@@ -6676,7 +6688,7 @@ function calc_runner_status(runner) {
 var TerminalPanel = class {
   constructor(parent, runner) {
     this.parent = parent;
-    this.el = create_terminal_element(parent, runner.id);
+    this.el = create_terminal_element(parent, runner);
     this.term = new import_xterm.Terminal({ cols: 200 });
     addFileLocationLinkDetection(this.term, runner.full_pathname);
     const term_container = query_selector(this.el, ".term");

@@ -12,7 +12,6 @@ import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
-
 export interface FileLocation {
   file: string;
   row: number;
@@ -26,7 +25,6 @@ function addFileLocationLinkDetection(
   full_pathname:string
 ): void {
   const pattern = /([^\s:]+):(\d+):(\d+)/g;
-
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1);
@@ -34,10 +32,8 @@ function addFileLocationLinkDetection(
         callback([]);
         return;
       }
-
       const text = line.translateToString(true);
       const links: ILink[] = [];
-
       let match: RegExpExecArray | null;
       while ((match = pattern.exec(text)) !== null) {
         const [full, file, row, col] = match;
@@ -60,35 +56,28 @@ function addFileLocationLinkDetection(
           text: full
         });
       }
-
       callback(links);
     }
   };
-
   terminal.registerLinkProvider(provider);
 }
 function formatElapsedTime(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   const milliseconds = ms % 1000;
-
   const seconds = totalSeconds % 60;
   const totalMinutes = Math.floor(totalSeconds / 60);
-
   const minutes = totalMinutes % 60;
   const hours = Math.floor(totalMinutes / 60);
-
   const pad2 = (n: number) => n.toString().padStart(2, '0');
   const pad3 = (n: number) => n.toString().padStart(3, '0');
-
   const time =
     hours > 0
       ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`
       : `${pad2(minutes)}:${pad2(seconds)}`;
-
   return `${time}.${pad3(milliseconds)}`;
 }
-
-function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
+function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
+  const {id,full_pathname}=runner
   const ret=parent.querySelector<HTMLElement>(`#${id}`)
   if (ret!=null)
     return ret //todo check that it is HTMLElement
@@ -115,21 +104,30 @@ function create_terminal_element(parent: HTMLElement,id:string): HTMLElement {
     </table>
   </div>
 </div>
-
   `,parent)
   ans.addEventListener('click',event=>{
     const {target}=event
-    //const parent=get_parent_by_class(target,'term_title_script')
+    if (!(target instanceof Element))
+      return
+    const parent=get_parent_by_class(target,'term_title_dir')
+    if (parent==null)
+      return
+    post_message({
+      command: "command_link_clicked",
+      full_pathname,
+      file:'package.json',
+      row:0,
+      col:0
+    })
+   
   })
   return ans;
 }
-
 function calc_stats_html(new_runner:Runner){
   return Object.entries(new_runner).filter(([k,v])=>k!=='output').map(([k,v])=>`<tr>
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
-
 function calc_runner_status(runner:Runner){
   const {runs}=runner
   if (runs.length===0)
@@ -141,7 +139,6 @@ function calc_runner_status(runner:Runner){
     return {version,state:'done'}
   return {version,state:'error'}
 }
-
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
@@ -150,16 +147,14 @@ class TerminalPanel{
   last_stats:string|undefined
   onLink =(location: FileLocation)=>{
     console.log(location)
-
   }
   constructor(
     public parent:HTMLElement,
     runner:Runner
   ){
-    this.el=create_terminal_element(parent,runner.id)
+    this.el=create_terminal_element(parent,runner)
     this.term=new Terminal({cols:200})
     addFileLocationLinkDetection(this.term,runner.full_pathname)
-
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
@@ -170,9 +165,7 @@ class TerminalPanel{
     for (const {rel,full} of runner.effective_watch)
       create_element(`<div title='${full}'class=rel>${rel}</div>`,el as HTMLElement)
     query_selector(this.el, '.term_title_status .value').textContent='ready'
-    
   }
-  
   update(new_runner:Runner){
     // Update title bar with runner status (always update, even if no runs)
     const {runs}=new_runner
@@ -192,15 +185,12 @@ class TerminalPanel{
       const statusEl = query_selector(this.el, '.term_title_status .value')
     statusEl.textContent = state
     statusEl.className = `value background_${state}`
-    
-
     if (last_run==null)
       return
     const {run_id}=last_run
     if (run_id!==this.last_run_id)
       this.term.clear()
     this.last_run_id=last_run.run_id
-
     for (const line of last_run.output)
       this.term.write(line)
     const stats=calc_stats_html(new_runner)
@@ -220,10 +210,6 @@ class Terminals{
     return ans
   }
 }
-
-
-
-
 function get_terminals(folder:Folder,terminals:Terminals){
   function f(folder:Folder){
     for (const runner of folder.runners)
@@ -234,7 +220,6 @@ function get_terminals(folder:Folder,terminals:Terminals){
 }
 function convert(root:FolderRunner):TreeNode{
   const {type,name,id}=root
-
   if (root.type==='folder'){
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert)
@@ -246,8 +231,6 @@ function convert(root:FolderRunner):TreeNode{
   const className=(watched?'watched':undefined)
   return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
 }
-
-
 const provider:TreeDataProvider<FolderRunner>={
   convert,
   command(id:string,command_name:string){
@@ -259,8 +242,6 @@ const provider:TreeDataProvider<FolderRunner>={
   },
   icons_html:ICONS_HTML
 }
-
-
 function start(){
   console.log('start')
   const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
@@ -274,8 +255,6 @@ function start(){
     }
   }
   tree.on_selected_changed=on_selected_changed
-
-
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
@@ -294,6 +273,5 @@ function start(){
             break;
       }
   });
-  
 }
 start()
