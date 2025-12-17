@@ -65,7 +65,8 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
 
-const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
+const folders=["c:\\yigal\\scriptsmon"]
+//const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
 function make_loop_func(monitor:Monitor){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{

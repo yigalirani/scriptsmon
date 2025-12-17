@@ -8,7 +8,7 @@
     "main": "dist/extension.js",
     "types": "types/src/extension.d.ts",
     "scripts": {
-        "test": "no de ./dist/test.js",
+        "test": "node ./dist/test.js",
         "build": "node ./bin/run_build.ts",
         "tsc": "npx tsc",
         "eslint": "npx eslint . --color ",

@@ -1048,9 +1048,11 @@ function get_runners_by_changed_dirs(root, changed_dirs) {
     const { folders: folders2, runners, full_pathname } = node;
     folders2.forEach(f);
     for (const runner of runners) {
-      for (const { full } of runner.effective_watch)
-        if (changed_dirs.has(full))
-          ans.push({ runner, reason: full });
+      if (runner.watched) {
+        for (const { full } of runner.effective_watch)
+          if (changed_dirs.has(full))
+            ans.push({ runner, reason: full });
+      }
     }
   }
   f(root);
@@ -1175,7 +1177,7 @@ async function open_file(pos) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-var folders = ["c:\\yigal\\scriptsmon", "c:\\yigal\\million_try3"];
+var folders = ["c:\\yigal\\scriptsmon"];
 function make_loop_func(monitor) {
   const ans = (view, context) => {
     function send_report(root_folder) {

@@ -1101,9 +1101,11 @@ function get_runners_by_changed_dirs(root, changed_dirs) {
     const { folders, runners, full_pathname } = node;
     folders.forEach(f);
     for (const runner of runners) {
-      for (const { full } of runner.effective_watch)
-        if (changed_dirs.has(full))
-          ans.push({ runner, reason: full });
+      if (runner.watched) {
+        for (const { full } of runner.effective_watch)
+          if (changed_dirs.has(full))
+            ans.push({ runner, reason: full });
+      }
     }
   }
   f(root);

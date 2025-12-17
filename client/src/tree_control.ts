@@ -292,9 +292,9 @@ export class TreeControl<T>{
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
-    const cls=(className==null?'':`class=${className}`)
+
     const ans= create_element(`
-  <div ${cls} class="tree_${type}" id="${id}" >
+  <div  class="tree_${type} ${className||""}" id="${id}" >
     <div  class=label_row>
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
