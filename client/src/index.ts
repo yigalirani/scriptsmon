@@ -4,11 +4,12 @@ interface VSCodeApi {
   setState(state: unknown): void;
 }
 import {WebviewMessage} from '../../src/extension.js'
-import {s2t} from '@yigal/base_types'
+import {s2t,pk} from '@yigal/base_types'
 import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html} from './dom_utils.js'
 import {TreeControl,TreeDataProvider,TreeNode, } from './tree_control.js';
 import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
+import {find_runner} from '../../src/monitor.js'
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
@@ -218,29 +219,42 @@ function get_terminals(folder:Folder,terminals:Terminals){
   }
   f(folder)
 }
+
 function convert(root:FolderRunner):TreeNode{
-  const {type,name,id}=root
-  if (root.type==='folder'){
+    const {type,name,id}=root
+    if (root.type==='folder'){
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert)
-    const children=[...folders,...items]
-    return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
+      const children=[...folders,...items]
+      return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
+    }
+    const {script,watched}=root
+    const {version,state}=calc_runner_status(root)
+    const className=(watched?'watched':undefined)
+    return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script.str,icon:state,icon_version:version,className}
   }
-  const {script,watched}=root
-  const {version,state}=calc_runner_status(root)
-  const className=(watched?'watched':undefined)
-  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script.str,icon:state,icon_version:version,className}
-}
-const provider:TreeDataProvider<FolderRunner>={
+const provider:TreeDataProvider<Folder>={
   convert,
-  command(id:string,command_name:string){
+  command(root,id,command_name,){
      post_message({
       command: "command_clicked",
       id,
       command_name
      })
   },
-  icons_html:ICONS_HTML
+  icons_html:ICONS_HTML,
+  selected(root,id){
+    const runner=find_runner(root,id)
+    if (runner==null)
+      return
+    post_message({
+      command: "command_link_clicked2",
+      full_pathname:runner.full_pathname,
+      file:'package.json',
+      start:runner.script.start,
+      end:runner.script.end    
+    })
+  }
 }
 function start(){
   console.log('start')

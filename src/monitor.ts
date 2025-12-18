@@ -399,7 +399,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
 
   return root
 }
-function find_runner(root:Folder,id:string){
+export function find_runner(root:Folder,id:string){
   function f(folder:Folder):Runner|undefined{
     const ans=folder.runners.find(x=>x.id===id)
     if (ans!=null)

@@ -52,7 +52,8 @@ function parseIcons(html: string): Record<string, string> {
 }
 export interface TreeDataProvider<T>{
   convert: (root:T)=>TreeNode
-  command:(id:string,command:string)=>MaybePromise<void>
+  command:(root:T,id:string,command:string)=>MaybePromise<void>
+  selected:(root:T,id:string)=>MaybePromise<void>
   icons_html:string
 }
 import isEqual from "lodash.isequal";
@@ -213,6 +214,7 @@ function is_html_element(el:Node|null){
 export class TreeControl<T>{
   public base_uri=''
   icons:s2s
+  root:T|undefined
   //selected:string|boolean=false
   //last_root:T|undefined
   last_converted:TreeNode|undefined
@@ -252,10 +254,10 @@ export class TreeControl<T>{
     if (command==null)
       return false
     const item=get_parent_by_classes(evt.target as HTMLElement,['tree_item','tree_folder'])
-    if (item==null)
+    if (item==null||this.root==null)
       return false
     const id=item.id
-    void this.provider.command(id,command)
+    void this.provider.command(this.root,id,command)
     return true
   }
   constructor(
@@ -335,7 +337,7 @@ export class TreeControl<T>{
     this.base_uri=base_uri+'/client/resources'
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
-    //this.last_root=root
+    this.root=root
     const change=calc_changed(converted,this.last_converted)
     this.last_converted=converted
     if (change.big){

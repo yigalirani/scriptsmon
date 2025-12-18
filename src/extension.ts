@@ -34,6 +34,13 @@ export interface CommandLineClicked{
    row:number
    col:number
 }
+export interface CommandLineClicked2{
+   command: "command_link_clicked2"
+   full_pathname:string,
+   file:string
+   start:number
+   end:number
+}
 export async function open_file(pos: CommandLineClicked): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
@@ -60,7 +67,26 @@ export async function open_file(pos: CommandLineClicked): Promise<void> {
         );
     }
 }
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandLineClicked
+export async function open_file2(pos: CommandLineClicked2): Promise<void> {
+    try {
+        //const uri = vscode.Uri.file(pos.file);
+        const file=path.join(pos.full_pathname,pos.file)
+        const document = await vscode.workspace.openTextDocument(file);
+        const editor = await vscode.window.showTextDocument(document, {
+            preview: false
+        });
+        const selection = new vscode.Selection(document.positionAt(pos.start),document.positionAt(pos.end))
+        editor.selection = selection
+        editor.revealRange(selection,
+            vscode.TextEditorRevealType.InCenter
+        );
+    } catch (err) {
+        vscode.window.showErrorMessage(
+            `Failed to open file: ${pos.file}`
+        );
+    }
+}
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandLineClicked|CommandLineClicked2
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
@@ -90,6 +116,11 @@ function make_loop_func(monitor:Monitor){
             //const {file,row,col}=message
             break 
           }
+        case "command_link_clicked2":{
+            void open_file2(message)
+            //const {file,row,col}=message
+            break 
+          }          
           case 'command_clicked':{
             monitor.run_runner(message.id,'user')
             break          

@@ -6831,6 +6831,25 @@ async function open_file(pos) {
     );
   }
 }
+async function open_file2(pos) {
+  try {
+    const file = path3.join(pos.full_pathname, pos.file);
+    const document = await vscode.workspace.openTextDocument(file);
+    const editor = await vscode.window.showTextDocument(document, {
+      preview: false
+    });
+    const selection = new vscode.Selection(document.positionAt(pos.start), document.positionAt(pos.end));
+    editor.selection = selection;
+    editor.revealRange(
+      selection,
+      vscode.TextEditorRevealType.InCenter
+    );
+  } catch (err) {
+    vscode.window.showErrorMessage(
+      `Failed to open file: ${pos.file}`
+    );
+  }
+}
 function post_message(view, msg) {
   view.postMessage(msg);
 }
@@ -6853,6 +6872,10 @@ function make_loop_func(monitor) {
         switch (message.command) {
           case "command_link_clicked": {
             void open_file(message);
+            break;
+          }
+          case "command_link_clicked2": {
+            void open_file2(message);
             break;
           }
           case "command_clicked": {
@@ -6887,6 +6910,7 @@ function deactivate() {
 export {
   activate,
   deactivate,
-  open_file
+  open_file,
+  open_file2
 };
 //# sourceMappingURL=extension.js.map
