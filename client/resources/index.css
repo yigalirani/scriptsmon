@@ -103,6 +103,7 @@ button:hover {
 .term_title_watch .value,
 .term_title_script  .value{
   background-color: black;
+  gap:10px;
 }
 .term_title_dir .value:hover,
   .term_title_script  .value:hover{
