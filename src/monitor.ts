@@ -1,11 +1,11 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-import * as fsSync from "node:fs";
+//simport * as fsSync from "node:fs";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename,LocationString,find_runner} from './data.js'
 import * as acorn from "acorn"
 import {Program} from "acorn"
-
+import chokidar from 'chokidar';
 
 import  cloneDeep  from 'lodash.clonedeep'
 import {
@@ -427,7 +427,7 @@ function set_replacer(_k:string,v:unknown){
     return [...v] as unknown
   /*if (kdd=='init')
     return format_ast(v)*/
-  return v
+  return v 
 }
 export function to_json(x:unknown){
   const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
@@ -437,7 +437,8 @@ function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
   for (const watched_dir of watched_dirs){
     try{
       console.log(`watching ${watched_dir}`)
-      fsSync.watch(watched_dir,{},(eventType, changed_file) => {
+      chokidar.watch(watched_dir).on('change', (changed_file) =>{
+      //fsSync.watch(watched_dir,{},(eventType, changed_file) => {
         changed_dirs.add(watched_dir)
         console.log(`changed: *${watched_dir}/${changed_file} `)
 

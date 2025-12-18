@@ -25,7 +25,7 @@
             "./bin/run_build.ts"
         ],
         "test": [
-            "./dist/test.ts"
+            "./dist/test.js"
         ],
         "tsc": [
             "$watch",
@@ -115,6 +115,7 @@
         "@yigal/base_types": "^1.5.0",
         "@yigal/watch_runner": "^2.0.0",
         "acorn": "^8.15.0",
+        "chokidar": "^5.0.0",
         "lodash.clonedeep": "^4.5.0"
     }
 }
