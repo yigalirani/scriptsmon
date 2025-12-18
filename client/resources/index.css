@@ -307,3 +307,11 @@ span.term_title_watch{
   background-color: yellow;
   color: black;
 }
+.term_title_duration {
+  font-family: monospace;
+}
+
+.term_title_duration .ms {
+  color: #888;        /* subtle gray */
+  font-size: 0.9em;   /* optional */
+}

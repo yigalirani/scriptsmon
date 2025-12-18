@@ -76,7 +76,7 @@ function formatElapsedTime(ms: number): string {
     hours > 0
       ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`
       : `${pad2(minutes)}:${pad2(seconds)}`;
-  return `${time}.${pad3(milliseconds)}`;
+  return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
   const {id,full_pathname}=runner
@@ -147,6 +147,7 @@ class TerminalPanel{
   term:Terminal
   //last_runner:Runner|undefined=undefined
   last_stats:string|undefined
+  last_time:string|undefined
   onLink =(location: FileLocation)=>{
     console.log(location)
   }
@@ -182,7 +183,10 @@ class TerminalPanel{
         }
         return end_time
       }()
-      query_selector(this.el, '.term_title_duration .value').textContent=formatElapsedTime(effective_end_time-start_time)
+      const new_time=formatElapsedTime(effective_end_time-start_time)
+      if (new_time!==this.last_time)
+        query_selector(this.el, '.term_title_duration .value').innerHTML=new_time
+      this.last_time=new_time
     }
       const statusEl = query_selector(this.el, '.term_title_status .value')
     statusEl.textContent = state
@@ -253,13 +257,14 @@ const provider:TreeDataProvider<Folder>={
         continue
       panel.style.display=(panel.id===id)?'flex':'none'
     }    
-    post_message({
-      command: "command_link_clicked2",
-      full_pathname:runner.full_pathname,
-      file:'package.json',
-      start:runner.script.start,
-      end:runner.script.end    
-    })
+    if (ctrl.pressed)
+      post_message({
+        command: "command_link_clicked2",
+        full_pathname:runner.full_pathname,
+        file:'package.json',
+        start:runner.script.start,
+        end:runner.script.end    
+      })
   }
 }
 function start(){

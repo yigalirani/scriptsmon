@@ -6655,7 +6655,7 @@ function formatElapsedTime(ms) {
   const pad2 = (n) => n.toString().padStart(2, "0");
   const pad3 = (n) => n.toString().padStart(3, "0");
   const time = hours > 0 ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}` : `${pad2(minutes)}:${pad2(seconds)}`;
-  return `${time}.${pad3(milliseconds)}`;
+  return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent, runner) {
   const { id, full_pathname } = runner;
@@ -6740,6 +6740,7 @@ var TerminalPanel = class {
   term;
   //last_runner:Runner|undefined=undefined
   last_stats;
+  last_time;
   onLink = (location) => {
     console.log(location);
   };
@@ -6756,7 +6757,10 @@ var TerminalPanel = class {
         }
         return end_time;
       })();
-      query_selector(this.el, ".term_title_duration .value").textContent = formatElapsedTime(effective_end_time - start_time);
+      const new_time = formatElapsedTime(effective_end_time - start_time);
+      if (new_time !== this.last_time)
+        query_selector(this.el, ".term_title_duration .value").innerHTML = new_time;
+      this.last_time = new_time;
     }
     const statusEl = query_selector(this.el, ".term_title_status .value");
     statusEl.textContent = state;
@@ -6825,13 +6829,14 @@ var provider = {
         continue;
       panel.style.display = panel.id === id ? "flex" : "none";
     }
-    post_message({
-      command: "command_link_clicked2",
-      full_pathname: runner.full_pathname,
-      file: "package.json",
-      start: runner.script.start,
-      end: runner.script.end
-    });
+    if (ctrl.pressed)
+      post_message({
+        command: "command_link_clicked2",
+        full_pathname: runner.full_pathname,
+        file: "package.json",
+        start: runner.script.start,
+        end: runner.script.end
+      });
   }
 };
 function start() {
