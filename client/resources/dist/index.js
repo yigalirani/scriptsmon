@@ -6695,7 +6695,7 @@ var TerminalPanel = class {
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
     query_selector(this.el, ".term_title_dir .value").textContent = runner.full_pathname;
-    query_selector(this.el, ".term_title_script .value").textContent = runner.script;
+    query_selector(this.el, ".term_title_script .value").textContent = runner.script.str;
     const el = query_selector(this.el, ".term_title_watch .value");
     for (const { rel, full } of runner.effective_watch)
       create_element(`<div title='${full}'class=rel>${rel}</div>`, el);
@@ -6770,7 +6770,7 @@ function convert(root) {
   const { script, watched } = root;
   const { version, state } = calc_runner_status(root);
   const className = watched ? "watched" : void 0;
-  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version, className };
+  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script.str, icon: state, icon_version: version, className };
 }
 var provider = {
   convert,

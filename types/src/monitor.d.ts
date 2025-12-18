@@ -1,4 +1,7 @@
-import { Runner, Folder } from './data.js';
+import { Runner, Folder, LocationString } from './data.js';
+import * as acorn from "acorn";
+import { s2t } from "@yigal/base_types";
+export declare function parse_scripts2(ast: acorn.Expression, full_pathname: string): s2t<LocationString>;
 export declare function to_json(x: unknown): string;
 export declare class Monitor {
     full_pathnames: string[];

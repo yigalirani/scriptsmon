@@ -160,7 +160,7 @@ class TerminalPanel{
       this.term.open(term_container);
     // Initialize title bar with full filename plus script
     query_selector(this.el, '.term_title_dir .value').textContent=runner.full_pathname
-    query_selector(this.el, '.term_title_script .value').textContent=runner.script
+    query_selector(this.el, '.term_title_script .value').textContent=runner.script.str
     const el=query_selector(this.el, '.term_title_watch .value')
     for (const {rel,full} of runner.effective_watch)
       create_element(`<div title='${full}'class=rel>${rel}</div>`,el as HTMLElement)
@@ -214,7 +214,7 @@ function get_terminals(folder:Folder,terminals:Terminals){
   function f(folder:Folder){
     for (const runner of folder.runners)
       terminals.get_terminal(runner).update(runner)
-    folder.folders.forEach(f) //i dont like carring the terminals like this
+    folder.folders.forEach(f) 
   }
   f(folder)
 }
@@ -229,7 +229,7 @@ function convert(root:FolderRunner):TreeNode{
   const {script,watched}=root
   const {version,state}=calc_runner_status(root)
   const className=(watched?'watched':undefined)
-  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
+  return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script.str,icon:state,icon_version:version,className}
 }
 const provider:TreeDataProvider<FolderRunner>={
   convert,

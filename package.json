@@ -114,6 +114,7 @@
         "@homebridge/node-pty-prebuilt-multiarch": "^0.13.1",
         "@yigal/base_types": "^1.5.0",
         "@yigal/watch_runner": "^2.0.0",
+        "acorn": "^8.15.0",
         "lodash.clonedeep": "^4.5.0"
     }
 }

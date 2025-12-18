@@ -2,7 +2,11 @@ import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import * as fsSync from "node:fs";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename} from './data.js'
+import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename,LocationString} from './data.js'
+import * as acorn from "acorn"
+import {Program} from "acorn"
+
+
 import  cloneDeep  from 'lodash.clonedeep'
 import {
   is_object,
@@ -115,6 +119,61 @@ function parse_scripts(pkgJson:s2u):s2s{
     return {}  
   return scripts as s2s
 }
+function is_literal(ast:acorn.Expression,literal:string){
+  if (ast.type==='Literal' && ast.value===literal)
+    return true
+}
+
+function find_prop(ast:acorn.Expression,name:string){
+  if (ast.type!=='ObjectExpression')
+    return undefined
+  console.log(ast)
+  for (const prop of ast.properties)
+    if (prop.type==='Property' && is_literal(prop.key,name))
+      return prop.value
+  return 
+}
+ class AstException extends Error {
+  constructor(
+    public message: string,
+    public  ast: acorn.Node
+  ){
+    super(message);
+    this.name = "AstException";
+  }
+}
+
+function read_prop(ast:acorn.Property|acorn.SpreadElement){
+    if (
+      ast.type!=="Property" || 
+      ast.key.type!=='Literal' || 
+      ast.value.type!=='Literal' || 
+      typeof ast.key.value !=='string' ||
+      typeof ast.value.value !=='string'
+    )
+      throw  new AstException('expecting "name"="value"',ast)
+    return {key:ast.key.value,str:ast.value.value,...pk(ast,'start','end')}
+  }
+  
+
+export function parse_scripts2(
+  ast: acorn.Expression,
+  full_pathname:string
+): s2t<LocationString> { 
+  const ans:s2t<LocationString>={}
+  const scripts=find_prop(ast,'scripts')
+  if (scripts==null)
+    return ans
+  if (scripts.type!=='ObjectExpression')
+    return ans
+  //console.log(ast)
+  for (const propast of scripts.properties){
+    const {start,end,key,str}=read_prop(propast)
+    ans[key]={str,start,end,full_pathname}
+  }
+  return ans
+}
+
 function normalize_watch(a:string[]|undefined){
   if (a==null)
     return []
@@ -171,7 +230,7 @@ async function stop({
     //(runner,'running')
     // Spawn a shell with the script as command
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
-    const shellArgs = process.platform === 'win32' ? ['/c', script] : ['-c', script];
+    const shellArgs = process.platform === 'win32' ? ['/c', script.str] : ['-c', script.str];
     const child = spawn(shell, shellArgs,  {
      // name: 'xterm-color',
       cols:200,
@@ -237,7 +296,7 @@ function calc_effective_watch($watch:string[],watcher?:Watcher|string[]){
   return [...watcher_array.filter(x=>x!=='$watch'),...$watch]
 }
 
-function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
+function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<LocationString>){
   const $watch=normalize_watch(watchers.$watch)
   const watched=normalize_watch(watchers.watched)
   const ans=[]
@@ -290,11 +349,19 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2s){
     }    
     //const pkgJson = await 
     const pkgJson=await read_json_object(pkgPath,'package.json')
-    if (pkgJson==null)
+    const source=await fs.readFile(pkgPath,'utf-8')
+
+    if (pkgJson==null||source==null)
       return null
+    const ast = acorn.parseExpressionAt(source, 0, {
+      ecmaVersion: "latest",
+    });
+ 
+    
     console.warn(`${green}${pkgPath}${reset}`)
     const scriptsmon=parse_config(pkgPath,pkgJson)
-    const scripts=parse_scripts(pkgJson)
+    //const scripts=parse_scripts2(ast)
+    const scripts=parse_scripts2(ast,pkgPath)
     const runners=scriptsmon_to_runners(pkgPath,scriptsmon,scripts)
     const {workspaces} = pkgJson
     const folders=[]
