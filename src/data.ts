@@ -56,3 +56,16 @@ export interface Folder{
   scriptsmon   : Scriptsmon
 }
 export type FolderRunner=Runner|Folder
+export function find_runner(root:Folder,id:string){
+  function f(folder:Folder):Runner|undefined{
+    const ans=folder.runners.find(x=>x.id===id)
+    if (ans!=null)
+      return ans
+    for (const subfolder of folder.folders){
+      const ans=f(subfolder)
+      if (ans!=null)
+        return ans
+    }
+  }
+  return f(root)
+}

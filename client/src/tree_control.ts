@@ -239,10 +239,11 @@ export class TreeControl<T>{
   </div>`,parent) 
     return ans
   }
-  on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
+  //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
   async set_selected(el:HTMLElement){
     el.classList.add('selected')
-    await this.on_selected_changed(el.id)
+    await this.provider.selected(this.root!,el.id)
+    //await this.on_selected_changed(el.id)
   }
   command_clicked(evt:Event){
     if (evt.target==null)

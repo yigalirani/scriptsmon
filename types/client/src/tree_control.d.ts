@@ -25,7 +25,6 @@ export declare class TreeControl<T> {
     root: T | undefined;
     last_converted: TreeNode | undefined;
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
-    on_selected_changed: (a: string) => MaybePromise<void>;
     set_selected(el: HTMLElement): Promise<void>;
     command_clicked(evt: Event): boolean;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);

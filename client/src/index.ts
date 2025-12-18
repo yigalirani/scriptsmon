@@ -8,8 +8,7 @@ import {s2t,pk} from '@yigal/base_types'
 import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html} from './dom_utils.js'
 import {TreeControl,TreeDataProvider,TreeNode, } from './tree_control.js';
-import { Folder,Runner,FolderRunner,State } from '../../src/data.js';
-import {find_runner} from '../../src/monitor.js'
+import { Folder,Runner,FolderRunner,State,find_runner} from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
@@ -247,6 +246,11 @@ const provider:TreeDataProvider<Folder>={
     const runner=find_runner(root,id)
     if (runner==null)
       return
+    for (const panel of document.querySelectorAll('.term_panel')){
+      if (!(panel instanceof HTMLElement))
+        continue
+      panel.style.display=(panel.id===id)?'flex':'none'
+    }    
     post_message({
       command: "command_link_clicked2",
       full_pathname:runner.full_pathname,
@@ -261,18 +265,12 @@ function start(){
   const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
   let base_uri=''
   const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider) //no error, whay
-  function on_selected_changed(id:string){
-    for (const panel of document.querySelectorAll('.term_panel')){
-      if (!(panel instanceof HTMLElement))
-        continue
-      panel.style.display=(panel.id===id)?'flex':'none'
-    }
-  }
-  tree.on_selected_changed=on_selected_changed
+  let root:Folder|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
           case 'RunnerReport':{
+            root=message.root
             get_terminals(message.root,terminals)
             base_uri=message.base_uri
             tree.render(message.root,base_uri)
@@ -280,7 +278,7 @@ function start(){
           }
           case 'set_selected':
             //upda(document.body,'#selected', message.selected)
-            on_selected_changed(message.selected)
+            void provider.selected(root!,message.selected)
             break
           case 'updateContent':
             //append(message.text||'<no message>')

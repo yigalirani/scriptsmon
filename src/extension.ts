@@ -73,7 +73,8 @@ export async function open_file2(pos: CommandLineClicked2): Promise<void> {
         const file=path.join(pos.full_pathname,pos.file)
         const document = await vscode.workspace.openTextDocument(file);
         const editor = await vscode.window.showTextDocument(document, {
-            preview: false
+            preview: false,
+            preserveFocus:true
         });
         const selection = new vscode.Selection(document.positionAt(pos.start),document.positionAt(pos.end))
         editor.selection = selection

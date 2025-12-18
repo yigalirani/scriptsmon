@@ -6346,6 +6346,7 @@ var TreeControl = class {
   }
   base_uri = "";
   icons;
+  root;
   //selected:string|boolean=false
   //last_root:T|undefined
   last_converted;
@@ -6370,10 +6371,10 @@ var TreeControl = class {
   </div>`, parent);
     return ans;
   }
-  on_selected_changed = (a) => void 0;
+  //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
   async set_selected(el) {
     el.classList.add("selected");
-    await this.on_selected_changed(el.id);
+    await this.provider.selected(this.root, el.id);
   }
   command_clicked(evt) {
     if (evt.target == null)
@@ -6385,10 +6386,10 @@ var TreeControl = class {
     if (command == null)
       return false;
     const item = get_parent_by_classes(evt.target, ["tree_item", "tree_folder"]);
-    if (item == null)
+    if (item == null || this.root == null)
       return false;
     const id = item.id;
-    void this.provider.command(id, command);
+    void this.provider.command(this.root, id, command);
     return true;
   }
   create_node(parent, node, depth) {
@@ -6408,6 +6409,7 @@ var TreeControl = class {
   render(root, base_uri) {
     this.base_uri = base_uri + "/client/resources";
     const converted = this.provider.convert(root);
+    this.root = root;
     const change = calc_changed(converted, this.last_converted);
     this.last_converted = converted;
     if (change.big) {
@@ -6451,6 +6453,21 @@ var TreeControl = class {
     }
   }
 };
+
+// ../src/data.ts
+function find_runner(root, id) {
+  function f(folder) {
+    const ans = folder.runners.find((x) => x.id === id);
+    if (ans != null)
+      return ans;
+    for (const subfolder of folder.folders) {
+      const ans2 = f(subfolder);
+      if (ans2 != null)
+        return ans2;
+    }
+  }
+  return f(root);
+}
 
 // resources/icons.html
 var icons_default = `<!DOCTYPE html>
@@ -6774,39 +6791,50 @@ function convert(root) {
 }
 var provider = {
   convert,
-  command(id, command_name) {
+  command(root, id, command_name) {
     post_message({
       command: "command_clicked",
       id,
       command_name
     });
   },
-  icons_html: icons_default
+  icons_html: icons_default,
+  selected(root, id) {
+    const runner = find_runner(root, id);
+    if (runner == null)
+      return;
+    for (const panel of document.querySelectorAll(".term_panel")) {
+      if (!(panel instanceof HTMLElement))
+        continue;
+      panel.style.display = panel.id === id ? "flex" : "none";
+    }
+    post_message({
+      command: "command_link_clicked2",
+      full_pathname: runner.full_pathname,
+      file: "package.json",
+      start: runner.script.start,
+      end: runner.script.end
+    });
+  }
 };
 function start() {
   console.log("start");
   const terminals = new Terminals(query_selector(document.body, ".terms_container"));
   let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
-  function on_selected_changed(id) {
-    for (const panel of document.querySelectorAll(".term_panel")) {
-      if (!(panel instanceof HTMLElement))
-        continue;
-      panel.style.display = panel.id === id ? "flex" : "none";
-    }
-  }
-  tree.on_selected_changed = on_selected_changed;
+  let root;
   window.addEventListener("message", (event) => {
     const message = event.data;
     switch (message.command) {
       case "RunnerReport": {
+        root = message.root;
         get_terminals(message.root, terminals);
         base_uri = message.base_uri;
         tree.render(message.root, base_uri);
         break;
       }
       case "set_selected":
-        on_selected_changed(message.selected);
+        void provider.selected(root, message.selected);
         break;
       case "updateContent":
         break;

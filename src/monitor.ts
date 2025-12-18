@@ -2,7 +2,7 @@ import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import * as fsSync from "node:fs";
 import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename,LocationString} from './data.js'
+import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename,LocationString,find_runner} from './data.js'
 import * as acorn from "acorn"
 import {Program} from "acorn"
 
@@ -398,19 +398,6 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
   //await mkdir_write_file('generated/extra.json',JSON.stringify(extra,null,2))
 
   return root
-}
-export function find_runner(root:Folder,id:string){
-  function f(folder:Folder):Runner|undefined{
-    const ans=folder.runners.find(x=>x.id===id)
-    if (ans!=null)
-      return ans
-    for (const subfolder of folder.folders){
-      const ans=f(subfolder)
-      if (ans!=null)
-        return ans
-    }
-  }
-  return f(root)
 }
 function find_runners(root:Folder,filter:(x:Runner)=>boolean){
   const ans:Runner[]=[]
