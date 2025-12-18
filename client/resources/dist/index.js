@@ -6138,6 +6138,21 @@ function update_child_html(el, selector, html) {
   if (child.innerHTML === html) return;
   child.innerHTML = html;
 }
+var CtrlTracker = class {
+  pressed = false;
+  constructor() {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Control") {
+        this.pressed = true;
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "Control") {
+        this.pressed = false;
+      }
+    });
+  }
+};
 
 // src/tree_control.ts
 function parseIcons(html) {
@@ -6590,6 +6605,7 @@ var vscode = acquireVsCodeApi();
 function post_message(msg) {
   vscode.postMessage(msg);
 }
+var ctrl = new CtrlTracker();
 function addFileLocationLinkDetection(terminal, full_pathname) {
   const pattern = /([^\s:]+):(\d+):(\d+)/g;
   const provider2 = {
@@ -6612,13 +6628,14 @@ function addFileLocationLinkDetection(terminal, full_pathname) {
             end: { x: match.index + full.length, y }
           },
           activate: () => {
-            post_message({
-              command: "command_link_clicked",
-              file,
-              full_pathname,
-              row: Number(row),
-              col: Number(col)
-            });
+            if (ctrl.pressed)
+              post_message({
+                command: "command_link_clicked",
+                file,
+                full_pathname,
+                row: Number(row),
+                col: Number(col)
+              });
           },
           text: full
         });
@@ -6674,7 +6691,7 @@ function create_terminal_element(parent, runner) {
     if (!(target instanceof Element))
       return;
     const parent2 = get_parent_by_class(target, "term_title_dir");
-    if (parent2 == null)
+    if (parent2 == null || !event.ctrlKey)
       return;
     post_message({
       command: "command_link_clicked",

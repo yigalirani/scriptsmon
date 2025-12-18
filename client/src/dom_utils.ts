@@ -69,3 +69,19 @@ export function reset_animation(ids:Set<string>){ //not in use
 }
   //firs
 }
+export class CtrlTracker{
+  pressed = false;
+  constructor(){
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Control") {
+        this.pressed = true;
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "Control") {
+        this.pressed = false;
+      }
+    });    
+  }
+}

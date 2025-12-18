@@ -6,8 +6,8 @@ interface VSCodeApi {
 import {WebviewMessage} from '../../src/extension.js'
 import {s2t,pk} from '@yigal/base_types'
 import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
-import {query_selector,create_element,get_parent_by_class,update_child_html} from './dom_utils.js'
-import {TreeControl,TreeDataProvider,TreeNode, } from './tree_control.js';
+import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker} from './dom_utils.js'
+import {TreeControl,TreeDataProvider,TreeNode} from './tree_control.js';
 import { Folder,Runner,FolderRunner,State,find_runner} from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
@@ -20,6 +20,7 @@ export interface FileLocation {
 function post_message(msg:WebviewMessage){
   vscode.postMessage(msg)
 }
+const ctrl=new CtrlTracker()
 function addFileLocationLinkDetection(
   terminal: Terminal,
   full_pathname:string
@@ -45,13 +46,14 @@ function addFileLocationLinkDetection(
             end: { x: match.index + full.length, y }
           },
           activate: () => {
-            post_message({
-              command: "command_link_clicked",
-              file,
-              full_pathname,
-              row: Number(row),
-              col: Number(col)
-            });
+            if (ctrl.pressed)
+              post_message({
+                command: "command_link_clicked",
+                file,
+                full_pathname,
+                row: Number(row),
+                col: Number(col)
+              });
           },
           text: full
         });
@@ -110,7 +112,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
     if (!(target instanceof Element))
       return
     const parent=get_parent_by_class(target,'term_title_dir')
-    if (parent==null)
+    if (parent==null||!event.ctrlKey)
       return
     post_message({
       command: "command_link_clicked",
