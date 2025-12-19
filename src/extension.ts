@@ -138,8 +138,8 @@ function make_loop_func(monitor:Monitor){
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  //const folders:string[] = (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
-  const folders:string[] =["c:\\yigal\\million_try3"]
+  const folders:string[] = (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
+  //const folders:string[] =["c:\\yigal\\million_try3"]
   if (folders==null)
     return  
   const monitor=new Monitor(folders)

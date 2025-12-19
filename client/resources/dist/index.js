@@ -6607,7 +6607,7 @@ function post_message(msg) {
 }
 var ctrl = new CtrlTracker();
 function addFileLocationLinkDetection(terminal, full_pathname) {
-  const pattern = /([^\s:]+):(\d+):(\d+)/g;
+  const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
   const provider2 = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1);

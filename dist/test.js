@@ -8293,9 +8293,9 @@ async function run_runner({
 }) {
   await stop({ runner_ctrl, runner });
   await new Promise((resolve4, _reject) => {
-    const { script, full_pathname, runs } = runner;
+    const { script, full_pathname, runs, name } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
-    const shellArgs = process.platform === "win32" ? ["/c", script.str] : ["-c", script.str];
+    const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
     const child = spawn(shell, shellArgs, {
       // name: 'xterm-color',
       cols: 200,
@@ -8419,7 +8419,7 @@ async function read_package_json(full_pathnames) {
         if (ret != null)
           folders2.push(ret);
       }
-    const ans = { runners, folders: folders2, name, full_pathname, scriptsmon, type: "folder", id: full_pathname };
+    const ans = { runners, folders: folders2, name, full_pathname, type: "folder", id: full_pathname };
     return ans;
   }
   const folders = [];
@@ -8435,7 +8435,6 @@ async function read_package_json(full_pathnames) {
     full_pathname: "",
     folders,
     runners: [],
-    scriptsmon: {},
     type: "folder"
   };
   return root;

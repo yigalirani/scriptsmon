@@ -226,12 +226,12 @@ async function stop({
 }) {
   await stop({runner_ctrl,runner})
   await new Promise((resolve, _reject) => { 
-    const {script,full_pathname,runs}=runner
+    const {script,full_pathname,runs,name}=runner
     //(runner,'running')
     // Spawn a shell with the script as command
     //const split_args=script.str.split(' ').filter(Boolean)
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
-    const shellArgs = process.platform === 'win32' ? ['/c', script.str] : ['-c', script.str];
+    const shellArgs = process.platform === 'win32' ? ['/c', 'npm run',name] : ['-c', 'npm run',name];
     //const shellArgs = process.platform === 'win32' ? ['/c', ...split_args] : ['-c', ...split_args];
     const child = spawn(shell, shellArgs,  {
      // name: 'xterm-color',
@@ -375,7 +375,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
         }
 
     
-    const ans:Folder= {runners,folders,name,full_pathname,scriptsmon,type:'folder',id:full_pathname}
+    const ans:Folder= {runners,folders,name,full_pathname,type:'folder',id:full_pathname}
     return ans
   }
   const folders=[]
@@ -391,7 +391,6 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
     full_pathname: '',
     folders,
     runners:[],
-    scriptsmon:{},
     type:'folder'
   }
   //const keys=Object.keys(ans)

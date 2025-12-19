@@ -53,7 +53,7 @@ export interface Folder{
   id           : string
   folders      : Array<Folder>
   runners      : Array<Runner>
-  scriptsmon   : Scriptsmon
+  //scriptsmon   : Scriptsmon
 }
 export type FolderRunner=Runner|Folder
 export function find_runner(root:Folder,id:string){

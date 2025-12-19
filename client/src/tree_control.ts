@@ -1,6 +1,6 @@
 import { s2t,s2s,pk} from '@yigal/base_types'
 import {get_parent_by_class,create_element,divs,get_parent_by_classes,remove_class} from './dom_utils.js'
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
 type MaybePromise<T>=T|Promise<T>
 export interface TreeNode{
   type            : 'item'|'folder' //is this needed?

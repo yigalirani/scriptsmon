@@ -25,7 +25,7 @@ function addFileLocationLinkDetection(
   terminal: Terminal,
   full_pathname:string
 ): void {
-  const pattern = /([^\s:]+):(\d+):(\d+)/g;
+  const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1);

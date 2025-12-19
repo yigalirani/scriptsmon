@@ -46,7 +46,6 @@ export interface Folder {
     id: string;
     folders: Array<Folder>;
     runners: Array<Runner>;
-    scriptsmon: Scriptsmon;
 }
 export type FolderRunner = Runner | Folder;
 export declare function find_runner(root: Folder, id: string): Runner | undefined;
