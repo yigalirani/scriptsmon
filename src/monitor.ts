@@ -225,12 +225,14 @@ async function stop({
   runner_ctrl:RunnerCtrl
 }) {
   await stop({runner_ctrl,runner})
-  void new Promise((resolve, _reject) => { 
+  await new Promise((resolve, _reject) => { 
     const {script,full_pathname,runs}=runner
     //(runner,'running')
     // Spawn a shell with the script as command
+    //const split_args=script.str.split(' ').filter(Boolean)
     const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
     const shellArgs = process.platform === 'win32' ? ['/c', script.str] : ['-c', script.str];
+    //const shellArgs = process.platform === 'win32' ? ['/c', ...split_args] : ['-c', ...split_args];
     const child = spawn(shell, shellArgs,  {
      // name: 'xterm-color',
       cols:200,
@@ -489,12 +491,12 @@ export class Monitor{
       throw new Error("Monitor not initialied succsfuly")
     return this.root    
   }
-  run_runner(runner_id:string,reason:string){
+  async run_runner(runner_id:string,reason:string){
     const {runner_ctrl}=this
     const runner=find_runner(this.get_root(),runner_id)
     if (runner==null)
       throw new Error(`runnwe is not found:${runner_id}`)
-    void run_runner({runner,reason,runner_ctrl})
+    await run_runner({runner,reason,runner_ctrl})
   }
   extract_base():Folder{
     return extract_base(this.get_root())
@@ -511,11 +513,11 @@ export class Monitor{
         return
       const runners=get_runners_by_changed_dirs(this.root!,this.changed_dirs)
       for (const {runner,reason} of runners){
-        this.run_runner(runner.id,reason)
+        void this.run_runner(runner.id,reason)
       }
       this.changed_dirs.clear()
     },100)
     for (const runner of this.watched_runners)
-      this.run_runner(runner.id,"start")
+      void this.run_runner(runner.id,"start")
   }
 }

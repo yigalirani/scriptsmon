@@ -8292,7 +8292,7 @@ async function run_runner({
   runner_ctrl
 }) {
   await stop({ runner_ctrl, runner });
-  void new Promise((resolve4, _reject) => {
+  await new Promise((resolve4, _reject) => {
     const { script, full_pathname, runs } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script.str] : ["-c", script.str];
@@ -8521,12 +8521,12 @@ var Monitor = class {
       throw new Error("Monitor not initialied succsfuly");
     return this.root;
   }
-  run_runner(runner_id, reason) {
+  async run_runner(runner_id, reason) {
     const { runner_ctrl } = this;
     const runner = find_runner(this.get_root(), runner_id);
     if (runner == null)
       throw new Error(`runnwe is not found:${runner_id}`);
-    void run_runner({ runner, reason, runner_ctrl });
+    await run_runner({ runner, reason, runner_ctrl });
   }
   extract_base() {
     return extract_base(this.get_root());
@@ -8538,12 +8538,12 @@ var Monitor = class {
         return;
       const runners = get_runners_by_changed_dirs(this.root, this.changed_dirs);
       for (const { runner, reason } of runners) {
-        this.run_runner(runner.id, reason);
+        void this.run_runner(runner.id, reason);
       }
       this.changed_dirs.clear();
     }, 100);
     for (const runner of this.watched_runners)
-      this.run_runner(runner.id, "start");
+      void this.run_runner(runner.id, "start");
   }
 };
 

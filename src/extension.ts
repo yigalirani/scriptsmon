@@ -92,7 +92,7 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
 
-const folders=["c:\\yigal\\scriptsmon"]
+//const folders=["c:\\yigal\\scriptsmon"]
 //const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
 function make_loop_func(monitor:Monitor){
@@ -123,7 +123,7 @@ function make_loop_func(monitor:Monitor){
             break 
           }          
           case 'command_clicked':{
-            monitor.run_runner(message.id,'user')
+            void monitor.run_runner(message.id,'user')
             break          
           }
         }
@@ -138,6 +138,10 @@ function make_loop_func(monitor:Monitor){
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  //const folders:string[] = (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
+  const folders:string[] =["c:\\yigal\\million_try3"]
+  if (folders==null)
+    return  
   const monitor=new Monitor(folders)
   await monitor.read_package_json()
   const the_loop=make_loop_func(monitor)

@@ -15,7 +15,7 @@ export declare class Monitor {
     constructor(full_pathnames: string[]);
     read_package_json(): Promise<void>;
     get_root(): Folder;
-    run_runner(runner_id: string, reason: string): void;
+    run_runner(runner_id: string, reason: string): Promise<void>;
     extract_base(): Folder;
     start_watching(): void;
 }

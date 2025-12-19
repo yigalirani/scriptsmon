@@ -6,11 +6,11 @@
     },
     "scriptsmon": {
         "$watch": [
-            "./converter/dist/index.js",
+            "build.ts",
             "src",
             "package.json"
         ],
-        "autorun": [
+        "watched": [
             "build"
         ]
     },

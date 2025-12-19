@@ -8111,8 +8111,8 @@ function extract_base(folder) {
     }
     keep_only_last(runner.runs);
   }
-  const folders2 = folder.folders.map(extract_base);
-  return { ...folder, folders: folders2, runners };
+  const folders = folder.folders.map(extract_base);
+  return { ...folder, folders, runners };
 }
 function is_valid_watch(a) {
   if (a == null)
@@ -8239,7 +8239,7 @@ async function run_runner({
   runner_ctrl
 }) {
   await stop({ runner_ctrl, runner });
-  void new Promise((resolve4, _reject) => {
+  await new Promise((resolve4, _reject) => {
     const { script, full_pathname, runs } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", script.str] : ["-c", script.str];
@@ -8359,28 +8359,28 @@ async function read_package_json(full_pathnames) {
     const scripts = parse_scripts2(ast, pkgPath);
     const runners = scriptsmon_to_runners(pkgPath, scriptsmon, scripts);
     const { workspaces } = pkgJson;
-    const folders3 = [];
+    const folders2 = [];
     if (is_string_array(workspaces))
       for (const workspace2 of workspaces) {
         const ret = await f(path.join(full_pathname, workspace2), workspace2);
         if (ret != null)
-          folders3.push(ret);
+          folders2.push(ret);
       }
-    const ans = { runners, folders: folders3, name, full_pathname, scriptsmon, type: "folder", id: full_pathname };
+    const ans = { runners, folders: folders2, name, full_pathname, scriptsmon, type: "folder", id: full_pathname };
     return ans;
   }
-  const folders2 = [];
+  const folders = [];
   for (const pathname of full_pathnames) {
     const full_pathname = path.resolve(pathname);
     const ret = await f(full_pathname, path.basename(full_pathname));
     if (ret != null)
-      folders2.push(ret);
+      folders.push(ret);
   }
   const root = {
     name: "root",
     id: "root",
     full_pathname: "",
-    folders: folders2,
+    folders,
     runners: [],
     scriptsmon: {},
     type: "folder"
@@ -8435,8 +8435,8 @@ function watch_to_set(watched_dirs, changed_dirs) {
 function get_runners_by_changed_dirs(root, changed_dirs) {
   const ans = [];
   function f(node) {
-    const { folders: folders2, runners, full_pathname } = node;
-    folders2.forEach(f);
+    const { folders, runners, full_pathname } = node;
+    folders.forEach(f);
     for (const runner of runners) {
       if (runner.watched) {
         for (const { full } of runner.effective_watch)
@@ -8468,12 +8468,12 @@ var Monitor = class {
       throw new Error("Monitor not initialied succsfuly");
     return this.root;
   }
-  run_runner(runner_id, reason) {
+  async run_runner(runner_id, reason) {
     const { runner_ctrl } = this;
     const runner = find_runner(this.get_root(), runner_id);
     if (runner == null)
       throw new Error(`runnwe is not found:${runner_id}`);
-    void run_runner({ runner, reason, runner_ctrl });
+    await run_runner({ runner, reason, runner_ctrl });
   }
   extract_base() {
     return extract_base(this.get_root());
@@ -8485,12 +8485,12 @@ var Monitor = class {
         return;
       const runners = get_runners_by_changed_dirs(this.root, this.changed_dirs);
       for (const { runner, reason } of runners) {
-        this.run_runner(runner.id, reason);
+        void this.run_runner(runner.id, reason);
       }
       this.changed_dirs.clear();
     }, 100);
     for (const runner of this.watched_runners)
-      this.run_runner(runner.id, "start");
+      void this.run_runner(runner.id, "start");
   }
 };
 
@@ -8587,7 +8587,6 @@ async function open_file2(pos) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-var folders = ["c:\\yigal\\scriptsmon"];
 function make_loop_func(monitor) {
   const ans = (view, context) => {
     function send_report(root_folder) {
@@ -8613,7 +8612,7 @@ function make_loop_func(monitor) {
             break;
           }
           case "command_clicked": {
-            monitor.run_runner(message.id, "user");
+            void monitor.run_runner(message.id, "user");
             break;
           }
         }
@@ -8626,6 +8625,9 @@ function make_loop_func(monitor) {
 }
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  const folders = ["c:\\yigal\\million_try3"];
+  if (folders == null)
+    return;
   const monitor = new Monitor(folders);
   await monitor.read_package_json();
   const the_loop = make_loop_func(monitor);

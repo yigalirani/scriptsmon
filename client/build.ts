@@ -1,6 +1,6 @@
 import { build } from "esbuild";
 
-await build({
+build({
   entryPoints: ["src/index.ts"],
   outfile: "resources/dist/index.js",
   bundle: true,
@@ -13,4 +13,7 @@ await build({
   },
 }).then(() => {
   console.log("Build complete");
+}).catch((err:unknown) => {
+  console.error(err);
+  process.exit(1);
 });

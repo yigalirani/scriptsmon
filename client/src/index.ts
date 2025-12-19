@@ -95,6 +95,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         <div class="term_title_script"><div class=title>run</div><div class=value></div></div>
         <div class="term_title_status"><div class=title></div><div class=value></div></div>
         <div class="term_title_duration"><div class=title></div><div class=value></div></div>
+        <div class="term_title_runid"><div class=title></div><div class=value></div></div>
       </div>
     </div>
   <div class=term>
@@ -203,6 +204,8 @@ class TerminalPanel{
     if (stats!==this.last_stats)
       update_child_html(this.el,'.stats>tbody',stats)
     this.last_stats=stats
+      update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
+    
   }
 }
 class Terminals{
