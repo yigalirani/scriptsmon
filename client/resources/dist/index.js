@@ -6618,7 +6618,10 @@ function addFileLocationLinkDetection(terminal, full_pathname) {
       const text = line.translateToString(true);
       const links = [];
       let match;
-      while ((match = pattern.exec(text)) !== null) {
+      while (true) {
+        match = pattern.exec(text);
+        if (match == null)
+          break;
         const [full, file, row, col] = match;
         if (file == null)
           continue;
@@ -6733,7 +6736,7 @@ var TerminalPanel = class {
     query_selector(this.el, ".term_title_script .value").textContent = runner.script.str;
     const el = query_selector(this.el, ".term_title_watch .value");
     for (const { rel, full } of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel}</div>`, el);
+      create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el);
     query_selector(this.el, ".term_title_status .value").textContent = "ready";
   }
   last_run_id;
@@ -6800,7 +6803,7 @@ function get_terminals(folder, terminals) {
   f(folder);
 }
 function convert(root) {
-  const { type, name, id } = root;
+  const { name, id } = root;
   if (root.type === "folder") {
     const folders = root.folders.map(convert);
     const items = root.runners.map(convert);

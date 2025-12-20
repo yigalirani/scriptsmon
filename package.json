@@ -22,37 +22,28 @@
         "client"
     ],
     "scriptsmon": {
-        "$watch": [
+      "autowatch":{
+        "$build": [
             "src",
             "package.json",
-            "./bin/run_build.ts",
-            "client/src"
+            "./bin/run_build.ts"
+        ],        
+        "$lint": [
+            "$build",
+            "client/src",
+            "tsconfig.json",
+            "eslint.config.mjs"
         ],
-        "test": [
-            "./dist/test.js"
-        ],
-        "tsc": [
-            "$watch",
-            "tsconfig.json"
-        ],
-        "eslint": {
-            "watch": [
-                "$watch",
-                "tsconfig.json",
-                "eslint.config.mjs"
-            ],
-            "filter": "npx @yigal/eslint_filter",
-            "pre": "set TIMING=1"
-        },
-        "watched": [
-          "test",
-          "build",
-          "tsc",
-          "eslint",
-          "biome",
-          "oxlint",
-          "oxlinttypeaware"
-        ]
+        "eslint":"$lint",
+        "test": "./dist/test.js",
+        "build":"$build",
+        "tsc": "$lint",
+        "oxlint,oxlinttypeaware": ["$lint",".oxlintrc.json"],
+        "biome":["$lint","biome.json"]
+      },
+      "watch":{
+        "ls":["."]
+      }
     },
     "keywords": [],
     "contributes": {

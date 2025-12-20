@@ -18,22 +18,21 @@ export interface Run {
     stopped: undefined | true;
     run_id: number;
 }
-export interface Filename {
-    rel: string;
-    full: string;
-}
 export interface LocationString {
     str: string;
     full_pathname: string;
     start: number;
     end: number;
 }
+export interface Filename {
+    rel: LocationString;
+    full: string;
+}
 export interface Runner {
     type: 'runner';
     name: string;
     full_pathname: string;
     id: string;
-    the_watcher?: Watcher | string[];
     script: LocationString;
     runs: Run[];
     watched: boolean;

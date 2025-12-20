@@ -1,19 +1,18 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 //simport * as fsSync from "node:fs";
-import { spawn, IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {Run,State,Runner,Folder,Scriptsmon,Watcher,Filename,LocationString,find_runner} from './data.js'
-import * as acorn from "acorn"
-import {Program} from "acorn"
+import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
+import {type Run,State,type Runner,type Folder,type Scriptsmon,type Watcher,type Filename,type LocationString,find_runner} from './data.js'
+import {parseExpressionAt, type Node,type Expression,ArrayExpression,type SpreadElement, type Property,Program} from "acorn"
 import chokidar from 'chokidar';
 
 import  cloneDeep  from 'lodash.clonedeep'
 import {
   is_object,
-  s2t,
+  type s2t,
   mkdir_write_file,
   read_json_object ,
-  s2u,
+  type s2u,
   reset,
   green,
   is_string_array,
@@ -39,7 +38,7 @@ function keep_only_last<T>(arr: T[]): void {
   }
 }
 function extract_base(folder:Folder):Folder{
-  const {full_pathname}=folder
+  //const {full_pathname}=folder
   const runners=[]
   for (const runner of folder.runners){
     const copy=cloneDeep(runner)
@@ -55,76 +54,14 @@ function extract_base(folder:Folder):Folder{
   const folders=folder.folders.map(extract_base)
   return {...folder,folders,runners}
 }
-function is_valid_watch(a:unknown){
-  if (a==null)
-    return true
-  return is_string_array(a)
-}
-function is_valid_watcher(a:unknown){
-  if (typeof a==='string' || is_string_array(a))
-      return true 
-  if (!is_object(a))
-    return "expecting object"
-  if (!is_valid_watch(a.watch)){
-    return 'watch: expecting  array of strings'
-  }
 
-  for (const k of Object.keys(a))
-    if (!['watch','env','filter','pre'].includes(k))
-      return `${k}:invalid key`
-  return true
-}
-function is_non_watcher(k:string){
-  return  (['watched','$watch'].includes(k))
-}
-function is_config2(a:unknown){
-  if (!is_object(a))
-    return false
-  const {$watch}=a
-  if (!is_valid_watch($watch)){
-    console.log('watch: must be string or array of string')
-    return false  
-  }
-  for (const [k,v] of Object.entries(a)){
-    if (is_non_watcher(k))
-      continue
-    const valid_watcher=is_valid_watcher(v)
-    if (valid_watcher!==true){
-      console.log(`${k}: invalid watcher:${valid_watcher}`)
-      return false
-    }
 
-  }
-  return true
-
-}
-function parse_config(filename:string,pkgJson:s2u|undefined):Scriptsmon{
-  if (pkgJson==null)
-    return{}
-  const {scriptsmon}=pkgJson
-  if (scriptsmon==null)
-    return {}
-  const ans=is_config2(scriptsmon);
-  if (ans)
-    return scriptsmon as Scriptsmon
-  console.warn(ans)
-  return {}  
-}
-function parse_scripts(pkgJson:s2u):s2s{
-
-  if (pkgJson==null)
-    return {}
-  const {scripts}=pkgJson
-  if (scripts==null)
-    return {}  
-  return scripts as s2s
-}
-function is_literal(ast:acorn.Expression,literal:string){
+function is_literal(ast:Expression,literal:string){
   if (ast.type==='Literal' && ast.value===literal)
     return true
 }
 
-function find_prop(ast:acorn.Expression,name:string){
+function find_prop(ast:Expression,name:string){
   if (ast.type!=='ObjectExpression')
     return undefined
   console.log(ast)
@@ -136,14 +73,14 @@ function find_prop(ast:acorn.Expression,name:string){
  class AstException extends Error {
   constructor(
     public message: string,
-    public  ast: acorn.Node
+    public  ast: Node|LocationString
   ){
     super(message);
     this.name = "AstException";
   }
 }
 
-function read_prop(ast:acorn.Property|acorn.SpreadElement){
+function read_prop(ast:Property|SpreadElement){
     if (
       ast.type!=="Property" || 
       ast.key.type!=='Literal' || 
@@ -153,11 +90,127 @@ function read_prop(ast:acorn.Property|acorn.SpreadElement){
     )
       throw  new AstException('expecting "name"="value"',ast)
     return {key:ast.key.value,str:ast.value.value,...pk(ast,'start','end')}
-  }
+}
+function read_prop_any(ast:Property|SpreadElement){
+  if (
+    ast.type!=="Property" || 
+    ast.key.type!=='Literal' || 
+    typeof ast.key.value !=='string'
+  )
+    throw  new AstException('expecting "name"=value',ast)
   
+  return {
+    key:ast.key.value,
+    value:ast.value
+  }
+}
+function get_array(ast:Expression,full_pathname:string):LocationString[]{
+  if (ast.type==="Literal" && typeof ast.value ==="string"){
+    const location={
+      str:ast.value,
+      full_pathname,
+      ...pk(ast,'start','end')
+    }
+    return [location]
+  }
+  const ans:LocationString[]=[]  
+  if (ast.type==="ArrayExpression"){
+    for (const elem of ast.elements){
+      if (elem==null)
+        throw new AstException('null supported here',ast)
+      if (elem.type==="SpreadElement")
+        throw new AstException('spread element not supported here',elem)
+      if (elem.type!=='Literal' || typeof elem.value!=='string')
+        throw new AstException('expecting string here',elem)
+      ans.push({
+        str:elem.value,
+        full_pathname,
+        ...pk(ast,'start','end')
+      })
+    }
+  }
+  return ans
+}
+
+function resolve_vars(vars:s2t<LocationString[]>,ast:Expression){
+    function resolve(a:LocationString|LocationString[]){
+      const visiting=new Set<string>
+      function f(a:LocationString|LocationString[]):LocationString[]{
+        if (Array.isArray(a)){
+          const ans:s2t<LocationString>={} //because we cant have a set of location
+          for (const x of a)
+            for (const t of f(x))
+              ans[t.str]=t
+          return Object.values(ans)
+        }
+        if (!a.str.startsWith('$'))
+          return [a]
+        if (visiting.has(a.str))
+          throw new AstException(`${a.str}:circular reference`,ast)
+        visiting.add(a.str)
+        const reference=vars[a.str]
+        if (reference==null)
+          throw new AstException(`${a.str} undefined`,a)
+        const ans2=f(reference)
+        visiting.delete(a.str)
+        return ans2
+      }
+      return f(a)
+    }
+    const ans:s2t<LocationString[]>={}    
+    for (const [k,v] of Object.entries(vars)){
+      const resolved=resolve(v)
+      ans[k]=resolved
+    }
+    return ans
+}
+interface Watchers{
+  watches:s2t<LocationString[]>,
+  autowatch_scripts:string[]  
+}
+export function parse_watchers(
+  ast: Expression,
+  full_pathname:string
+):Watchers { 
+  const scriptsmon=find_prop(ast,'scriptsmon')
+  if (scriptsmon==null){
+    return {
+      watches:{},
+      autowatch_scripts:[]
+    }
+  }
+  const autowatch=find_prop(scriptsmon,'autowatch')
+  const watch=find_prop(scriptsmon,'watch')
+  const vars:s2t<LocationString[]>={}
+  const scripts=new Set<string>
+  function collect_vars(ast:Expression|undefined){
+    if (ast==null)
+      return
+    if (ast.type!=='ObjectExpression')
+      return    
+    for (const propast of ast.properties){
+      const {key,value}=read_prop_any(propast)
+      const ar=get_array(value,full_pathname)
+      //if (key.startsWith('$')) //index all
+      if (vars[key]!==undefined)
+        throw new AstException(`duplicate value: ${key}`,propast)
+      for (const subk of key.split(',')){ //so multiple scripts can easily have the save watched
+        scripts.add(subk)
+        vars[subk]=ar
+      }
+    }
+  }
+  collect_vars(autowatch)
+  const autowatch_scripts=[...scripts]
+  collect_vars(watch)
+  return {
+    watches:resolve_vars(vars,ast),
+    autowatch_scripts
+  }
+}
 
 export function parse_scripts2(
-  ast: acorn.Expression,
+  ast: Expression,
   full_pathname:string
 ): s2t<LocationString> { 
   const ans:s2t<LocationString>={}
@@ -174,16 +227,7 @@ export function parse_scripts2(
   return ans
 }
 
-function normalize_watch(a:string[]|undefined){
-  if (a==null)
-    return []
-  return a
-}
-/*function set_state(runner:Runner,state:State){
-  runner.state=state
-  runner.version++
 
-}*/
 interface RunnerCtrl{
   ipty:Record<string,IPty> 
 }
@@ -226,7 +270,7 @@ async function stop({
 }) {
   await stop({runner_ctrl,runner})
   await new Promise((resolve, _reject) => { 
-    const {script,full_pathname,runs,name}=runner
+    const {full_pathname,runs,name}=runner
     //(runner,'running')
     // Spawn a shell with the script as command
     //const split_args=script.str.split(' ').filter(Boolean)
@@ -247,9 +291,9 @@ async function stop({
     // Set state to running immediately (spawn happens synchronously)
     const run_id=function(){
       if (runs.length===0)
-        return 0
+        return 0 
       return runs.at(-1)!.run_id+1
-    }()    
+    }()
     const run:Run={
       start_time: Date.now(),
       end_time  : undefined,    //initialy is undefined then changes to number and stops changing
@@ -273,7 +317,7 @@ async function stop({
       dataDisposable.dispose();
       exitDisposable.dispose();
       console.log({ exitCode,signal })
-      const new_state=(exitCode===0?'done':'error') //todo: should think of aborted
+      //const new_state=(exitCode===0?'done':'error') //todo: should think of aborted
       //set_state(runner,new_state)
       run.end_time=Date.now()
       run.exit_code=exitCode
@@ -283,29 +327,12 @@ async function stop({
     });
   }); 
 }
-function calc_effective_watch($watch:string[],watcher?:Watcher|string[]){
-  const watcher_array=function(){
-    if (watcher==null)
-      return undefined
-    if (Array.isArray(watcher))
-      return watcher
-    return watcher.watch
-  }()
-  if (watcher_array==null)
-    return $watch
-  if (!watcher_array.includes('$watch'))
-    return watcher_array
-  return [...watcher_array.filter(x=>x!=='$watch'),...$watch]
-}
 
-function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<LocationString>){
-  const $watch=normalize_watch(watchers.$watch)
-  const watched=normalize_watch(watchers.watched)
+
+function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<LocationString>){
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
-    if (is_non_watcher(name))
-      continue
-    const the_watcher=watchers[name]
+
     //const script=scripts[name]
     if (script==null){
       console.warn(`missing script ${name}`)
@@ -314,16 +341,16 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
     const runner=function(){
       const full_pathname=path.dirname(pkgPath)
       const id=`${full_pathname} ${name}`.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
-      const effective_watch_rel=calc_effective_watch($watch,the_watcher)
-      const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel)}))
+      const effective_watch_rel=watchers.watches[name]||[]
+      const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel.str)}))
+      const watched=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
         type:'runner',
         name,
         script,
         full_pathname,
-        the_watcher,
         effective_watch,
-        watched:watched.includes(name),
+        watched,
         //state:'ready',
         id,
         //version:0,
@@ -336,6 +363,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
   }
   return ans
 }
+
  async function read_package_json(
   full_pathnames: string[]
 ) {
@@ -355,18 +383,19 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Scriptsmon,scripts:s2t<Lo
 
     if (pkgJson==null||source==null)
       return null
-    const ast = acorn.parseExpressionAt(source, 0, {
+    const ast = parseExpressionAt(source, 0, {
       ecmaVersion: "latest",
     });
  
     
     console.warn(`${green}${pkgPath}${reset}`)
-    const scriptsmon=parse_config(pkgPath,pkgJson)
+
     //const scripts=parse_scripts2(ast)
     const scripts=parse_scripts2(ast,pkgPath)
-    const runners=scriptsmon_to_runners(pkgPath,scriptsmon,scripts)
+    const watchers=parse_watchers(ast,pkgPath)
+    const runners=scriptsmon_to_runners(pkgPath,watchers,scripts)
     const {workspaces} = pkgJson
-    const folders=[]
+    const folders=[] 
     if (is_string_array(workspaces))
       for (const workspace of workspaces){
           const ret=await f(path.join(full_pathname,workspace),workspace)
@@ -417,7 +446,8 @@ function collect_watch_dirs(root:Folder){
   function f(node:Folder){
     for (const runner of node.runners)
       if (runner.watched)
-        runner.effective_watch.forEach(x=>ans.add(x.full))
+        for (const x of runner.effective_watch)
+          ans.add(x.full)
     node.folders.forEach(f)
   }
   f(root)
@@ -456,7 +486,7 @@ interface RunnerWithReason{
 function get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
   const ans:RunnerWithReason[]=[]
   function f(node:Folder){
-    const {folders,runners,full_pathname}=node
+    const {folders,runners}=node
     folders.forEach(f);
     for (const runner of runners){
       if (runner.watched)

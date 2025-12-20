@@ -8098,7 +8098,6 @@ function keep_only_last(arr) {
   }
 }
 function extract_base(folder) {
-  const { full_pathname } = folder;
   const runners = [];
   for (const runner of folder.runners) {
     const copy = (0, import_lodash.default)(runner);
@@ -8113,58 +8112,6 @@ function extract_base(folder) {
   }
   const folders = folder.folders.map(extract_base);
   return { ...folder, folders, runners };
-}
-function is_valid_watch(a) {
-  if (a == null)
-    return true;
-  return is_string_array(a);
-}
-function is_valid_watcher(a) {
-  if (typeof a === "string" || is_string_array(a))
-    return true;
-  if (!is_object(a))
-    return "expecting object";
-  if (!is_valid_watch(a.watch)) {
-    return "watch: expecting  array of strings";
-  }
-  for (const k of Object.keys(a))
-    if (!["watch", "env", "filter", "pre"].includes(k))
-      return `${k}:invalid key`;
-  return true;
-}
-function is_non_watcher(k) {
-  return ["watched", "$watch"].includes(k);
-}
-function is_config2(a) {
-  if (!is_object(a))
-    return false;
-  const { $watch } = a;
-  if (!is_valid_watch($watch)) {
-    console.log("watch: must be string or array of string");
-    return false;
-  }
-  for (const [k, v] of Object.entries(a)) {
-    if (is_non_watcher(k))
-      continue;
-    const valid_watcher = is_valid_watcher(v);
-    if (valid_watcher !== true) {
-      console.log(`${k}: invalid watcher:${valid_watcher}`);
-      return false;
-    }
-  }
-  return true;
-}
-function parse_config(filename, pkgJson) {
-  if (pkgJson == null)
-    return {};
-  const { scriptsmon } = pkgJson;
-  if (scriptsmon == null)
-    return {};
-  const ans = is_config2(scriptsmon);
-  if (ans)
-    return scriptsmon;
-  console.warn(ans);
-  return {};
 }
 function is_literal(ast, literal2) {
   if (ast.type === "Literal" && ast.value === literal2)
@@ -8192,6 +8139,109 @@ function read_prop(ast) {
     throw new AstException('expecting "name"="value"', ast);
   return { key: ast.key.value, str: ast.value.value, ...pk(ast, "start", "end") };
 }
+function read_prop_any(ast) {
+  if (ast.type !== "Property" || ast.key.type !== "Literal" || typeof ast.key.value !== "string")
+    throw new AstException('expecting "name"=value', ast);
+  return {
+    key: ast.key.value,
+    value: ast.value
+  };
+}
+function get_array(ast, full_pathname) {
+  if (ast.type === "Literal" && typeof ast.value === "string") {
+    const location = {
+      str: ast.value,
+      full_pathname,
+      ...pk(ast, "start", "end")
+    };
+    return [location];
+  }
+  const ans = [];
+  if (ast.type === "ArrayExpression") {
+    for (const elem of ast.elements) {
+      if (elem == null)
+        throw new AstException("null supported here", ast);
+      if (elem.type === "SpreadElement")
+        throw new AstException("spread element not supported here", elem);
+      if (elem.type !== "Literal" || typeof elem.value !== "string")
+        throw new AstException("expecting string here", elem);
+      ans.push({
+        str: elem.value,
+        full_pathname,
+        ...pk(ast, "start", "end")
+      });
+    }
+  }
+  return ans;
+}
+function resolve_vars(vars, ast) {
+  function resolve4(a) {
+    const visiting = /* @__PURE__ */ new Set();
+    function f(a2) {
+      if (Array.isArray(a2)) {
+        const ans3 = {};
+        for (const x of a2)
+          for (const t of f(x))
+            ans3[t.str] = t;
+        return Object.values(ans3);
+      }
+      if (!a2.str.startsWith("$"))
+        return [a2];
+      if (visiting.has(a2.str))
+        throw new AstException(`${a2.str}:circular reference`, ast);
+      visiting.add(a2.str);
+      const reference = vars[a2.str];
+      if (reference == null)
+        throw new AstException(`${a2.str} undefined`, a2);
+      const ans2 = f(reference);
+      visiting.delete(a2.str);
+      return ans2;
+    }
+    return f(a);
+  }
+  const ans = {};
+  for (const [k, v] of Object.entries(vars)) {
+    const resolved = resolve4(v);
+    ans[k] = resolved;
+  }
+  return ans;
+}
+function parse_watchers(ast, full_pathname) {
+  const scriptsmon = find_prop(ast, "scriptsmon");
+  if (scriptsmon == null) {
+    return {
+      watches: {},
+      autowatch_scripts: []
+    };
+  }
+  const autowatch = find_prop(scriptsmon, "autowatch");
+  const watch2 = find_prop(scriptsmon, "watch");
+  const vars = {};
+  const scripts = /* @__PURE__ */ new Set();
+  function collect_vars(ast2) {
+    if (ast2 == null)
+      return;
+    if (ast2.type !== "ObjectExpression")
+      return;
+    for (const propast of ast2.properties) {
+      const { key, value } = read_prop_any(propast);
+      const ar = get_array(value, full_pathname);
+      if (vars[key] !== void 0)
+        throw new AstException(`duplicate value: ${key}`, propast);
+      for (const subk of key.split(",")) {
+        scripts.add(subk);
+        vars[subk] = ar;
+      }
+    }
+  }
+  collect_vars(autowatch);
+  const autowatch_scripts = [...scripts];
+  collect_vars(watch2);
+  return {
+    watches: resolve_vars(vars, ast),
+    autowatch_scripts
+  };
+}
 function parse_scripts2(ast, full_pathname) {
   const ans = {};
   const scripts = find_prop(ast, "scripts");
@@ -8204,11 +8254,6 @@ function parse_scripts2(ast, full_pathname) {
     ans[key] = { str, start, end, full_pathname };
   }
   return ans;
-}
-function normalize_watch(a) {
-  if (a == null)
-    return [];
-  return a;
 }
 function make_runner_ctrl() {
   const ipty = {};
@@ -8240,7 +8285,7 @@ async function run_runner({
 }) {
   await stop({ runner_ctrl, runner });
   await new Promise((resolve4, _reject) => {
-    const { script, full_pathname, runs, name } = runner;
+    const { full_pathname, runs, name } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
     const child = spawn(shell, shellArgs, {
@@ -8278,7 +8323,6 @@ async function run_runner({
       dataDisposable.dispose();
       exitDisposable.dispose();
       console.log({ exitCode, signal });
-      const new_state = exitCode === 0 ? "done" : "error";
       run.end_time = Date.now();
       run.exit_code = exitCode;
       if (signal != null)
@@ -8287,28 +8331,9 @@ async function run_runner({
     });
   });
 }
-function calc_effective_watch($watch, watcher) {
-  const watcher_array = (function() {
-    if (watcher == null)
-      return void 0;
-    if (Array.isArray(watcher))
-      return watcher;
-    return watcher.watch;
-  })();
-  if (watcher_array == null)
-    return $watch;
-  if (!watcher_array.includes("$watch"))
-    return watcher_array;
-  return [...watcher_array.filter((x) => x !== "$watch"), ...$watch];
-}
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
-  const $watch = normalize_watch(watchers.$watch);
-  const watched = normalize_watch(watchers.watched);
   const ans = [];
   for (const [name, script] of Object.entries(scripts)) {
-    if (is_non_watcher(name))
-      continue;
-    const the_watcher = watchers[name];
     if (script == null) {
       console.warn(`missing script ${name}`);
       continue;
@@ -8316,16 +8341,16 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
     const runner = (function() {
       const full_pathname = path.dirname(pkgPath);
       const id = `${full_pathname} ${name}`.replaceAll(/\\|:/g, "-").replaceAll(" ", "--");
-      const effective_watch_rel = calc_effective_watch($watch, the_watcher);
-      const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel) }));
+      const effective_watch_rel = watchers.watches[name] || [];
+      const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel.str) }));
+      const watched = watchers.autowatch_scripts.includes(name);
       const ans2 = {
         type: "runner",
         name,
         script,
         full_pathname,
-        the_watcher,
         effective_watch,
-        watched: watched.includes(name),
+        watched,
         //state:'ready',
         id,
         //version:0,
@@ -8355,9 +8380,9 @@ async function read_package_json(full_pathnames) {
       ecmaVersion: "latest"
     });
     console.warn(`${green}${pkgPath}${reset2}`);
-    const scriptsmon = parse_config(pkgPath, pkgJson);
     const scripts = parse_scripts2(ast, pkgPath);
-    const runners = scriptsmon_to_runners(pkgPath, scriptsmon, scripts);
+    const watchers = parse_watchers(ast, pkgPath);
+    const runners = scriptsmon_to_runners(pkgPath, watchers, scripts);
     const { workspaces } = pkgJson;
     const folders2 = [];
     if (is_string_array(workspaces))
@@ -8403,7 +8428,8 @@ function collect_watch_dirs(root) {
   function f(node) {
     for (const runner of node.runners)
       if (runner.watched)
-        runner.effective_watch.forEach((x) => ans.add(x.full));
+        for (const x of runner.effective_watch)
+          ans.add(x.full);
     node.folders.forEach(f);
   }
   f(root);
@@ -8434,7 +8460,7 @@ function watch_to_set(watched_dirs, changed_dirs) {
 function get_runners_by_changed_dirs(root, changed_dirs) {
   const ans = [];
   function f(node) {
-    const { folders, runners, full_pathname } = node;
+    const { folders, runners } = node;
     folders.forEach(f);
     for (const runner of runners) {
       if (runner.watched) {
@@ -8557,7 +8583,7 @@ async function open_file(pos) {
       new vscode.Range(position, position),
       vscode.TextEditorRevealType.InCenter
     );
-  } catch (err) {
+  } catch (_err) {
     vscode.window.showErrorMessage(
       `Failed to open file: ${pos.file}`
     );
@@ -8577,7 +8603,7 @@ async function open_file2(pos) {
       selection,
       vscode.TextEditorRevealType.InCenter
     );
-  } catch (err) {
+  } catch (_err) {
     vscode.window.showErrorMessage(
       `Failed to open file: ${pos.file}`
     );
@@ -8624,7 +8650,12 @@ function make_loop_func(monitor) {
 }
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  const folders = (vscode.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
+  const folders = (function() {
+    const ans = (vscode.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
+    if (ans.length === 0)
+      return ["c:\\yigal\\scriptsmon"];
+    return ans;
+  })();
   if (folders == null)
     return;
   const monitor = new Monitor(folders);

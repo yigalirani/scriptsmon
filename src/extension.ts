@@ -5,7 +5,7 @@ import {FolderRunner,type Runner,type Folder, type State} from './data.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
 import {type WebviewFunc,getWebviewContent,define_webview,register_command} from './vscode_utils.js'
-import {
+import type {
   WebviewView,
   ExtensionContext,
 }from 'vscode';
@@ -61,7 +61,7 @@ export async function open_file(pos: CommandLineClicked): Promise<void> {
             new vscode.Range(position, position),
             vscode.TextEditorRevealType.InCenter
         );
-    } catch (err) {
+    } catch (_err) {
         vscode.window.showErrorMessage(
             `Failed to open file: ${pos.file}`
         );
@@ -81,7 +81,7 @@ export async function open_file2(pos: CommandLineClicked2): Promise<void> {
         editor.revealRange(selection,
             vscode.TextEditorRevealType.InCenter
         );
-    } catch (err) {
+    } catch (_err) {
         vscode.window.showErrorMessage(
             `Failed to open file: ${pos.file}`
         );
@@ -138,9 +138,13 @@ function make_loop_func(monitor:Monitor){
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  const folders:string[] = (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
-  //const folders:string[] =["c:\\yigal\\million_try3"]
-  if (folders==null)
+  const folders=function(){
+    const ans= (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
+    if (ans.length===0)
+      return ["c:\\yigal\\scriptsmon"]
+    return ans
+  }()
+  if (folders==null) 
     return  
   const monitor=new Monitor(folders)
   await monitor.read_package_json()

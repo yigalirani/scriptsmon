@@ -3,12 +3,12 @@ interface VSCodeApi {
   getState(): unknown;
   setState(state: unknown): void;
 }
-import {WebviewMessage} from '../../src/extension.js'
-import {s2t,pk} from '@yigal/base_types'
-import { Terminal,ILink, ILinkProvider } from '@xterm/xterm';
+import type {WebviewMessage} from '../../src/extension.js'
+import {type s2t,pk} from '@yigal/base_types'
+import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker} from './dom_utils.js'
-import {TreeControl,TreeDataProvider,TreeNode} from './tree_control.js';
-import { Folder,Runner,FolderRunner,State,find_runner} from '../../src/data.js';
+import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
+import { type Folder,type Runner,type FolderRunner,State,find_runner} from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
@@ -36,7 +36,10 @@ function addFileLocationLinkDetection(
       const text = line.translateToString(true);
       const links: ILink[] = [];
       let match: RegExpExecArray | null;
-      while ((match = pattern.exec(text)) !== null) {
+      while (true) {
+        match = pattern.exec(text)
+        if (match==null)
+          break
         const [full, file, row, col] = match;
         if (file==null)
           continue
@@ -167,7 +170,7 @@ class TerminalPanel{
     query_selector(this.el, '.term_title_script .value').textContent=runner.script.str
     const el=query_selector(this.el, '.term_title_watch .value')
     for (const {rel,full} of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel}</div>`,el as HTMLElement)
+      create_element(`<div title='${full}'class=rel>${rel.str}</div>`,el as HTMLElement)
     query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
   update(new_runner:Runner){
@@ -229,7 +232,7 @@ function get_terminals(folder:Folder,terminals:Terminals){
 }
 
 function convert(root:FolderRunner):TreeNode{
-    const {type,name,id}=root
+    const {name,id}=root
     if (root.type==='folder'){
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert)
