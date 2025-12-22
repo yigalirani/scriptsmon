@@ -4,7 +4,15 @@ import {Monitor} from './monitor.js'
 import {FolderRunner,type Runner,type Folder, type State} from './data.js'
 import * as vscode from 'vscode';
 import {pk} from '@yigal/base_types'
-import {type WebviewFunc,getWebviewContent,define_webview,register_command} from './vscode_utils.js'
+import {
+  type WebviewFunc,
+  getWebviewContent,
+  define_webview,
+  register_command,
+  type CommandOpenFileRowCol,
+  type CommandOpenFileStartEnd,
+  open_file
+} from './vscode_utils.js'
 import type {
   WebviewView,
   ExtensionContext,
@@ -27,71 +35,7 @@ export interface CommandClicked{
    id:string
    command_name:string
 }
-export interface CommandOpenFileRowCol{
-   command: "command_open_file_rowcol"
-   full_pathname:string,
-   file?:string
-   row:number
-   col:number
-}
-export interface CommandOpenFileStartEnd{
-   command: "command_open_file_start_end"
-   full_pathname:string,
-   file?:string
-   start:number
-   end:number
-}
-function calc_filename(full_pathname:string,file?:string){
-  if (file==null)
-    return full_pathname
-  return path.join(full_pathname,file)
-}
-export async function open_file(pos: CommandOpenFileRowCol): Promise<void> {
-    try {
-        //const uri = vscode.Uri.file(pos.file);
-        const file=calc_filename(pos.full_pathname,pos.file)
-        const document = await vscode.workspace.openTextDocument(file);
-        const editor = await vscode.window.showTextDocument(document, {
-            preview: false
-        });
 
-        // VS Code positions arpae 0-based
-        const position = new vscode.Position(
-            Math.max(0, pos.row - 1),
-            Math.max(0, pos.col - 1)
-        );
-
-        editor.selection = new vscode.Selection(position, position);
-        editor.revealRange(
-            new vscode.Range(position, position),
-            vscode.TextEditorRevealType.InCenter
-        );
-    } catch (_err) {
-        vscode.window.showErrorMessage(
-            `Failed to open file: ${pos.file}`
-        );
-    }
-}
-export async function open_file2(pos: CommandOpenFileStartEnd): Promise<void> {
-    try {
-        //const uri = vscode.Uri.file(pos.file);
-        const file=calc_filename(pos.full_pathname,pos.file)
-        const document = await vscode.workspace.openTextDocument(file);
-        const editor = await vscode.window.showTextDocument(document, {
-            preview: false,
-            preserveFocus:true
-        });
-        const selection = new vscode.Selection(document.positionAt(pos.start),document.positionAt(pos.end))
-        editor.selection = selection
-        editor.revealRange(selection,
-            vscode.TextEditorRevealType.InCenter
-        );
-    } catch (_err) {
-        vscode.window.showErrorMessage(
-            `Failed to open file: ${pos.file}`
-        );
-    }
-}
 export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandOpenFileRowCol|CommandOpenFileStartEnd
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
@@ -123,7 +67,7 @@ function make_loop_func(monitor:Monitor){
             break 
           }
         case "command_open_file_start_end":{
-            void open_file2(message)
+            void open_file(message)
             //const {file,row,col}=message
             break 
           }          

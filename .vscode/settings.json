@@ -4,5 +4,6 @@
       "editor.background": "#000000", // Example: a dark gray background
       "sideBar.background": "#000000",
       "git.blame.editorDecorationForeground": "#332d2d"
-  }
+  },
+   "typescript.tsdk": "node_modules\\typescript\\lib",
 }
