@@ -8171,17 +8171,19 @@ function get_array(ast, full_pathname) {
   }
   return ans;
 }
+function make_unique(ar) {
+  const ans = {};
+  for (const a of ar)
+    for (const b of a)
+      ans[b.str] = b;
+  return Object.values(ans);
+}
 function resolve_vars(vars, ast) {
   function resolve4(a) {
     const visiting = /* @__PURE__ */ new Set();
     function f(a2) {
-      if (Array.isArray(a2)) {
-        const ans3 = {};
-        for (const x of a2)
-          for (const t of f(x))
-            ans3[t.str] = t;
-        return Object.values(ans3);
-      }
+      if (Array.isArray(a2))
+        return make_unique(a2.map(f));
       if (!a2.str.startsWith("$"))
         return [a2];
       if (visiting.has(a2.str))

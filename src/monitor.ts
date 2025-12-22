@@ -131,18 +131,20 @@ function get_array(ast:Expression,full_pathname:string):Lstr[]{
   }
   return ans
 }
+function make_unique(ar:Lstr[][]):Lstr[]{
+  const ans:s2t<Lstr>={}
+  for (const a of ar)
+    for (const b of a)
+      ans[b.str]=b
+  return Object.values(ans)
+}
+
 function resolve_vars(vars:s2t<Lstr[]>,ast:Expression){
     function resolve(a:Lstr|Lstr[]){
       const visiting=new Set<string>
       function f(a:Lstr|Lstr[]):Lstr[]{
-        if (Array.isArray(a)){
-          const ans:s2t<Lstr>={} //because we cant have a set of location
-          for (const x of a)
-            for (const t of f(x))
-              ans[t.str]=t
-          return Object.values(ans)
-        }
-
+        if (Array.isArray(a))
+          return make_unique(a.map(f))
         if (!a.str.startsWith('$'))
           return [a]
         if (visiting.has(a.str))
