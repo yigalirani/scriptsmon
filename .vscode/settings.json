@@ -6,4 +6,5 @@
       "git.blame.editorDecorationForeground": "#332d2d"
   },
    "typescript.tsdk": "node_modules\\typescript\\lib",
+   "editor.hover.delay": 500
 }

@@ -8539,7 +8539,7 @@ var Monitor = class {
     this.root = await read_package_json(this.full_pathnames);
     this.watched_dirs = collect_watch_dirs(this.root);
     this.watched_runners = find_runners(this.root, (x) => x.watched);
-    await mkdir_write_file("c:\\yigal\\generated\\packages.json", to_json(this));
+    await mkdir_write_file(".\\generated\\packages.json", to_json(this));
   }
   get_root() {
     if (this.root == null)

@@ -20,7 +20,7 @@ export interface Run{
   stopped   : undefined|true
   run_id    : number
 }
-export interface LocationString{
+export interface Lstr{
   str:string
   full_pathname:string
   start:number
@@ -28,7 +28,7 @@ export interface LocationString{
 }
 
 export interface Filename{
-  rel:LocationString
+  rel:Lstr
   full:string
 }
 export interface Runner {
@@ -36,7 +36,7 @@ export interface Runner {
   name           : string
   full_pathname  : string
   id             : string
-  script         : LocationString
+  script         : Lstr
   runs           : Run[]     //growing
   watched        : boolean
   effective_watch: Filename[]

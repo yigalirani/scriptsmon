@@ -1,12 +1,12 @@
-import { type Runner, type Folder, type LocationString } from './data.js';
+import { type Runner, type Folder, type Lstr } from './data.js';
 import { type Expression } from "acorn";
 import { type s2t } from "@yigal/base_types";
 interface Watchers {
-    watches: s2t<LocationString[]>;
+    watches: s2t<Lstr[]>;
     autowatch_scripts: string[];
 }
 export declare function parse_watchers(ast: Expression, full_pathname: string): Watchers;
-export declare function parse_scripts2(ast: Expression, full_pathname: string): s2t<LocationString>;
+export declare function parse_scripts2(ast: Expression, full_pathname: string): s2t<Lstr>;
 export declare function to_json(x: unknown): string;
 export declare class Monitor {
     full_pathnames: string[];

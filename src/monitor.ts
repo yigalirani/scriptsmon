@@ -2,7 +2,7 @@ import * as path from "node:path";
 import * as fs from "node:fs/promises";
 //simport * as fsSync from "node:fs";
 import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {type Run,State,type Runner,type Folder,type Scriptsmon,type Watcher,type Filename,type LocationString,find_runner} from './data.js'
+import {type Run,State,type Runner,type Folder,type Scriptsmon,type Watcher,type Filename,type Lstr,find_runner} from './data.js'
 import {parseExpressionAt, type Node,type Expression,ArrayExpression,type SpreadElement, type Property,Program} from "acorn"
 import chokidar from 'chokidar';
 
@@ -73,7 +73,7 @@ function find_prop(ast:Expression,name:string){
  class AstException extends Error {
   constructor(
     public message: string,
-    public  ast: Node|LocationString
+    public  ast: Node|Lstr
   ){
     super(message);
     this.name = "AstException";
@@ -104,7 +104,7 @@ function read_prop_any(ast:Property|SpreadElement){
     value:ast.value
   }
 }
-function get_array(ast:Expression,full_pathname:string):LocationString[]{
+function get_array(ast:Expression,full_pathname:string):Lstr[]{
   if (ast.type==="Literal" && typeof ast.value ==="string"){
     const location={
       str:ast.value,
@@ -113,7 +113,7 @@ function get_array(ast:Expression,full_pathname:string):LocationString[]{
     }
     return [location]
   }
-  const ans:LocationString[]=[]  
+  const ans:Lstr[]=[]  
   if (ast.type==="ArrayExpression"){
     for (const elem of ast.elements){
       if (elem==null)
@@ -131,18 +131,18 @@ function get_array(ast:Expression,full_pathname:string):LocationString[]{
   }
   return ans
 }
-
-function resolve_vars(vars:s2t<LocationString[]>,ast:Expression){
-    function resolve(a:LocationString|LocationString[]){
+function resolve_vars(vars:s2t<Lstr[]>,ast:Expression){
+    function resolve(a:Lstr|Lstr[]){
       const visiting=new Set<string>
-      function f(a:LocationString|LocationString[]):LocationString[]{
+      function f(a:Lstr|Lstr[]):Lstr[]{
         if (Array.isArray(a)){
-          const ans:s2t<LocationString>={} //because we cant have a set of location
+          const ans:s2t<Lstr>={} //because we cant have a set of location
           for (const x of a)
             for (const t of f(x))
               ans[t.str]=t
           return Object.values(ans)
         }
+
         if (!a.str.startsWith('$'))
           return [a]
         if (visiting.has(a.str))
@@ -157,7 +157,7 @@ function resolve_vars(vars:s2t<LocationString[]>,ast:Expression){
       }
       return f(a)
     }
-    const ans:s2t<LocationString[]>={}    
+    const ans:s2t<Lstr[]>={}    
     for (const [k,v] of Object.entries(vars)){
       const resolved=resolve(v)
       ans[k]=resolved
@@ -165,7 +165,7 @@ function resolve_vars(vars:s2t<LocationString[]>,ast:Expression){
     return ans
 }
 interface Watchers{
-  watches:s2t<LocationString[]>,
+  watches:s2t<Lstr[]>,
   autowatch_scripts:string[]  
 }
 export function parse_watchers(
@@ -181,7 +181,7 @@ export function parse_watchers(
   }
   const autowatch=find_prop(scriptsmon,'autowatch')
   const watch=find_prop(scriptsmon,'watch')
-  const vars:s2t<LocationString[]>={}
+  const vars:s2t<Lstr[]>={}
   const scripts=new Set<string>
   function collect_vars(ast:Expression|undefined){
     if (ast==null)
@@ -212,8 +212,8 @@ export function parse_watchers(
 export function parse_scripts2(
   ast: Expression,
   full_pathname:string
-): s2t<LocationString> { 
-  const ans:s2t<LocationString>={}
+): s2t<Lstr> { 
+  const ans:s2t<Lstr>={}
   const scripts=find_prop(ast,'scripts')
   if (scripts==null)
     return ans
@@ -329,7 +329,7 @@ async function stop({
 }
 
 
-function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<LocationString>){
+function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr>){
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
 
@@ -512,7 +512,7 @@ export class Monitor{
     this.root= await read_package_json(this.full_pathnames)
     this.watched_dirs=collect_watch_dirs(this.root)
     this.watched_runners=find_runners(this.root,(x)=>x.watched)
-    await mkdir_write_file('c:\\yigal\\generated\\packages.json',to_json(this))
+    await mkdir_write_file('.\\generated\\packages.json',to_json(this))
     
   }
   get_root(){
