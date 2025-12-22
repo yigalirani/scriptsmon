@@ -115,16 +115,45 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
     const {target}=event
     if (!(target instanceof Element))
       return
-    const parent=get_parent_by_class(target,'term_title_dir')
-    if (parent==null||!event.ctrlKey)
-      return
-    post_message({
-      command: "command_link_clicked",
-      full_pathname,
-      file:'package.json',
-      row:0,
-      col:0
-    })
+    (()=>{
+      const parent=get_parent_by_class(target,'term_title_dir')
+      if (parent==null||!event.ctrlKey)
+        return
+      post_message({
+        command: "command_link_clicked",
+        full_pathname,
+        file:'package.json',
+        row:0,
+        col:0
+      })
+    })();
+    
+    (()=>{
+      const parent=get_parent_by_class(target,'rel')
+      if (parent==null)
+        return
+      
+      if (!event.ctrlKey){
+        const {title}=parent
+        post_message({
+          command: "command_link_clicked",
+          full_pathname:title,
+          row:0,
+          col:0
+        })
+        return        
+      }
+     
+      const rel=runner.effective_watch.find(x=>x.rel.str===parent.textContent)
+      if (rel!=null){
+        post_message({
+          command: "command_link_clicked2",
+          full_pathname:rel.full,
+          ...pk(rel.rel,'start','end')
+        })
+      }
+    })()
+
    
   })
   return ans;
@@ -300,3 +329,5 @@ function start(){
   });
 }
 start()
+const el = document.querySelector('.terms_container');
+console.log(el)

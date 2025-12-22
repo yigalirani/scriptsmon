@@ -6083,12 +6083,21 @@ WARNING: This link could potentially be dangerous`)) {
   }
 });
 
+// ../node_modules/@yigal/base_types/src/index.ts
+function pk(obj, ...keys) {
+  const ret = {};
+  keys.forEach((key) => {
+    ret[key] = obj?.[key];
+  });
+  return ret;
+}
+
 // src/index.ts
 var import_xterm = __toESM(require_xterm(), 1);
 
 // src/dom_utils.ts
-function query_selector(el, selector) {
-  const ans = el.querySelector(selector);
+function query_selector(el2, selector) {
+  const ans = el2.querySelector(selector);
   if (ans == null)
     throw new Error("selector not found or not expected type");
   return ans;
@@ -6108,10 +6117,10 @@ function divs(vals) {
       ans.push(`<div class="${k}">${v}</div>`);
   return ans.join("");
 }
-function get_parent_by_class(el, className) {
-  if (el == null)
+function get_parent_by_class(el2, className) {
+  if (el2 == null)
     return null;
-  let ans = el;
+  let ans = el2;
   while (ans != null) {
     if (ans != null && ans.classList.contains(className))
       return ans;
@@ -6119,9 +6128,9 @@ function get_parent_by_class(el, className) {
   }
   return null;
 }
-function get_parent_by_classes(el, className) {
+function get_parent_by_classes(el2, className) {
   const classes = Array.isArray(className) ? className : [className];
-  let ans = el;
+  let ans = el2;
   while (ans !== null) {
     ans = ans.parentElement;
     if (ans !== null && classes.some((c) => ans.classList.contains(c))) {
@@ -6130,11 +6139,11 @@ function get_parent_by_classes(el, className) {
   }
   return null;
 }
-function remove_class(el, className) {
-  el.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
+function remove_class(el2, className) {
+  el2.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
 }
-function update_child_html(el, selector, html) {
-  const child = query_selector(el, selector);
+function update_child_html(el2, selector, html) {
+  const child = query_selector(el2, selector);
   if (child.innerHTML === html) return;
   child.innerHTML = html;
 }
@@ -6387,9 +6396,9 @@ var TreeControl = class {
     return ans;
   }
   //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
-  async set_selected(el) {
-    el.classList.add("selected");
-    await this.provider.selected(this.root, el.id);
+  async set_selected(el2) {
+    el2.classList.add("selected");
+    await this.provider.selected(this.root, el2.id);
   }
   command_clicked(evt) {
     if (evt.target == null)
@@ -6459,10 +6468,10 @@ var TreeControl = class {
     for (const id of combined) {
       const svg = this.parent.querySelector(`#${id} svg`);
       console.log(`starting #${id} svg`);
-      svg.querySelectorAll("*").forEach((el) => {
-        if (getComputedStyle(el).animationName !== "none") {
-          el.style.animationPlayState = "running";
-          console.log(el);
+      svg.querySelectorAll("*").forEach((el2) => {
+        if (getComputedStyle(el2).animationName !== "none") {
+          el2.style.animationPlayState = "running";
+          console.log(el2);
         }
       });
     }
@@ -6694,16 +6703,41 @@ function create_terminal_element(parent, runner) {
     const { target } = event;
     if (!(target instanceof Element))
       return;
-    const parent2 = get_parent_by_class(target, "term_title_dir");
-    if (parent2 == null || !event.ctrlKey)
-      return;
-    post_message({
-      command: "command_link_clicked",
-      full_pathname,
-      file: "package.json",
-      row: 0,
-      col: 0
-    });
+    (() => {
+      const parent2 = get_parent_by_class(target, "term_title_dir");
+      if (parent2 == null || !event.ctrlKey)
+        return;
+      post_message({
+        command: "command_link_clicked",
+        full_pathname,
+        file: "package.json",
+        row: 0,
+        col: 0
+      });
+    })();
+    (() => {
+      const parent2 = get_parent_by_class(target, "rel");
+      if (parent2 == null)
+        return;
+      if (!event.ctrlKey) {
+        const { title } = parent2;
+        post_message({
+          command: "command_link_clicked",
+          full_pathname: title,
+          row: 0,
+          col: 0
+        });
+        return;
+      }
+      const rel = runner.effective_watch.find((x) => x.rel.str === parent2.textContent);
+      if (rel != null) {
+        post_message({
+          command: "command_link_clicked2",
+          full_pathname: rel.full,
+          ...pk(rel.rel, "start", "end")
+        });
+      }
+    })();
   });
   return ans;
 }
@@ -6734,9 +6768,9 @@ var TerminalPanel = class {
       this.term.open(term_container);
     query_selector(this.el, ".term_title_dir .value").textContent = runner.full_pathname;
     query_selector(this.el, ".term_title_script .value").textContent = runner.script.str;
-    const el = query_selector(this.el, ".term_title_watch .value");
+    const el2 = query_selector(this.el, ".term_title_watch .value");
     for (const { rel, full } of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el);
+      create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el2);
     query_selector(this.el, ".term_title_status .value").textContent = "ready";
   }
   last_run_id;
@@ -6869,4 +6903,6 @@ function start() {
   });
 }
 start();
+var el = document.querySelector(".terms_container");
+console.log(el);
 //# sourceMappingURL=index.js.map

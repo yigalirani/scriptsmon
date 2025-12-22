@@ -1,4 +1,4 @@
-import { WebviewView, Webview, ExtensionContext } from 'vscode';
+import { type WebviewView, type Webview, type ExtensionContext } from 'vscode';
 export declare function getWebviewContent(context: ExtensionContext, webview: Webview): string;
 export type WebviewFunc = (webview: WebviewView, context: ExtensionContext) => Promise<void> | void;
 export declare function define_webview({ context, id, html, f }: {

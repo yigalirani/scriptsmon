@@ -30,21 +30,26 @@ export interface CommandClicked{
 export interface CommandLineClicked{
    command: "command_link_clicked"
    full_pathname:string,
-   file:string
+   file?:string
    row:number
    col:number
 }
 export interface CommandLineClicked2{
    command: "command_link_clicked2"
    full_pathname:string,
-   file:string
+   file?:string
    start:number
    end:number
+}
+function calc_filename(full_pathname:string,file?:string){
+  if (file==null)
+    return full_pathname
+  return path.join(full_pathname,file)
 }
 export async function open_file(pos: CommandLineClicked): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
-        const file=path.join(pos.full_pathname,pos.file)
+        const file=calc_filename(pos.full_pathname,pos.file)
         const document = await vscode.workspace.openTextDocument(file);
         const editor = await vscode.window.showTextDocument(document, {
             preview: false
@@ -70,7 +75,7 @@ export async function open_file(pos: CommandLineClicked): Promise<void> {
 export async function open_file2(pos: CommandLineClicked2): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
-        const file=path.join(pos.full_pathname,pos.file)
+        const file=calc_filename(pos.full_pathname,pos.file)
         const document = await vscode.workspace.openTextDocument(file);
         const editor = await vscode.window.showTextDocument(document, {
             preview: false,

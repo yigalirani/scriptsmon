@@ -21,14 +21,14 @@ export interface CommandClicked {
 export interface CommandLineClicked {
     command: "command_link_clicked";
     full_pathname: string;
-    file: string;
+    file?: string;
     row: number;
     col: number;
 }
 export interface CommandLineClicked2 {
     command: "command_link_clicked2";
     full_pathname: string;
-    file: string;
+    file?: string;
     start: number;
     end: number;
 }

@@ -1,12 +1,12 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import {
-  WebviewView,
-  Webview,
-  ExtensionContext,
+  type WebviewView,
+  type Webview,
+  type ExtensionContext,
   Uri,
-  WebviewViewProvider,
-  WebviewViewResolveContext,
+  type WebviewViewProvider,
+  type WebviewViewResolveContext,
   window,
   commands
 }from 'vscode';
@@ -16,9 +16,9 @@ export function getWebviewContent(context:ExtensionContext, webview:Webview): st
   let html = fs.readFileSync(htmlPath, 'utf-8');
   
   // Get URIs for CSS and JS files
-  const base = webview.asWebviewUri(
+  const base = `${webview.asWebviewUri(
     Uri.joinPath(context.extensionUri,'client','resources')
-  ).toString()+'/'
+  )}/`
 
   
   // Replace placeholders with actual URIs

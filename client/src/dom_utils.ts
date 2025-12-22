@@ -28,7 +28,7 @@ export function get_parent_by_class(el:Element|null,className:string){
   let ans:Element|null=el
   while(ans!=null){
     if (ans!=null&&ans.classList.contains(className))
-      return ans    
+      return ans as HTMLElement
     ans=ans.parentElement as HTMLElement
   }
   return null

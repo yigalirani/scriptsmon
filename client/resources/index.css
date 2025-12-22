@@ -304,6 +304,10 @@ span.term_title_watch{
 .watched .label_row {
 
 }
+.rel{
+  cursor: pointer;
+  padding: 2px;
+}
 .rel:hover{
   background-color: yellow;
   color: black;

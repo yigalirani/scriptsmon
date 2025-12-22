@@ -8533,9 +8533,9 @@ import {
 function getWebviewContent(context, webview) {
   const htmlPath = path2.join(context.extensionPath, "client", "resources", "index.html");
   let html = fs2.readFileSync(htmlPath, "utf-8");
-  const base = webview.asWebviewUri(
+  const base = `${webview.asWebviewUri(
     Uri.joinPath(context.extensionUri, "client", "resources")
-  ).toString() + "/";
+  )}/`;
   html = html.replaceAll("./", base);
   return html;
 }
@@ -8567,9 +8567,14 @@ function register_command(context, command, commandHandler) {
 }
 
 // src/extension.ts
+function calc_filename(full_pathname, file) {
+  if (file == null)
+    return full_pathname;
+  return path3.join(full_pathname, file);
+}
 async function open_file(pos) {
   try {
-    const file = path3.join(pos.full_pathname, pos.file);
+    const file = calc_filename(pos.full_pathname, pos.file);
     const document = await vscode.workspace.openTextDocument(file);
     const editor = await vscode.window.showTextDocument(document, {
       preview: false
@@ -8591,7 +8596,7 @@ async function open_file(pos) {
 }
 async function open_file2(pos) {
   try {
-    const file = path3.join(pos.full_pathname, pos.file);
+    const file = calc_filename(pos.full_pathname, pos.file);
     const document = await vscode.workspace.openTextDocument(file);
     const editor = await vscode.window.showTextDocument(document, {
       preview: false,
