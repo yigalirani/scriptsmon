@@ -51,7 +51,7 @@ function addFileLocationLinkDetection(
           activate: () => {
             if (ctrl.pressed)
               post_message({
-                command: "command_link_clicked",
+                command: "command_open_file_rowcol",
                 file,
                 full_pathname,
                 row: Number(row),
@@ -120,7 +120,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
       if (parent==null||!event.ctrlKey)
         return
       post_message({
-        command: "command_link_clicked",
+        command: "command_open_file_rowcol",
         full_pathname,
         file:'package.json',
         row:0,
@@ -136,7 +136,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
       if (!event.ctrlKey){
         const {title}=parent
         post_message({
-          command: "command_link_clicked",
+          command: "command_open_file_rowcol",
           full_pathname:title,
           row:0,
           col:0
@@ -147,7 +147,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
       const rel=runner.effective_watch.find(x=>x.rel.str===parent.textContent)
       if (rel!=null){
         post_message({
-          command: "command_link_clicked2",
+          command: "command_open_file_start_end",
           full_pathname:rel.full,
           ...pk(rel.rel,'start','end')
         })
@@ -294,7 +294,7 @@ const provider:TreeDataProvider<Folder>={
     }    
     if (ctrl.pressed)
       post_message({
-        command: "command_link_clicked2",
+        command: "command_open_file_start_end",
         full_pathname:runner.full_pathname,
         file:'package.json',
         start:runner.script.start,

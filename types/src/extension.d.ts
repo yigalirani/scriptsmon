@@ -18,22 +18,22 @@ export interface CommandClicked {
     id: string;
     command_name: string;
 }
-export interface CommandLineClicked {
-    command: "command_link_clicked";
+export interface CommandOpenFileRowCol {
+    command: "command_open_file_rowcol";
     full_pathname: string;
     file?: string;
     row: number;
     col: number;
 }
-export interface CommandLineClicked2 {
-    command: "command_link_clicked2";
+export interface CommandOpenFileStartEnd {
+    command: "command_open_file_start_end";
     full_pathname: string;
     file?: string;
     start: number;
     end: number;
 }
-export declare function open_file(pos: CommandLineClicked): Promise<void>;
-export declare function open_file2(pos: CommandLineClicked2): Promise<void>;
-export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandLineClicked | CommandLineClicked2;
+export declare function open_file(pos: CommandOpenFileRowCol): Promise<void>;
+export declare function open_file2(pos: CommandOpenFileStartEnd): Promise<void>;
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFileStartEnd;
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;

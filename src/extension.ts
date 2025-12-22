@@ -27,15 +27,15 @@ export interface CommandClicked{
    id:string
    command_name:string
 }
-export interface CommandLineClicked{
-   command: "command_link_clicked"
+export interface CommandOpenFileRowCol{
+   command: "command_open_file_rowcol"
    full_pathname:string,
    file?:string
    row:number
    col:number
 }
-export interface CommandLineClicked2{
-   command: "command_link_clicked2"
+export interface CommandOpenFileStartEnd{
+   command: "command_open_file_start_end"
    full_pathname:string,
    file?:string
    start:number
@@ -46,7 +46,7 @@ function calc_filename(full_pathname:string,file?:string){
     return full_pathname
   return path.join(full_pathname,file)
 }
-export async function open_file(pos: CommandLineClicked): Promise<void> {
+export async function open_file(pos: CommandOpenFileRowCol): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
         const file=calc_filename(pos.full_pathname,pos.file)
@@ -72,7 +72,7 @@ export async function open_file(pos: CommandLineClicked): Promise<void> {
         );
     }
 }
-export async function open_file2(pos: CommandLineClicked2): Promise<void> {
+export async function open_file2(pos: CommandOpenFileStartEnd): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
         const file=calc_filename(pos.full_pathname,pos.file)
@@ -92,7 +92,7 @@ export async function open_file2(pos: CommandLineClicked2): Promise<void> {
         );
     }
 }
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandLineClicked|CommandLineClicked2
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandOpenFileRowCol|CommandOpenFileStartEnd
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
@@ -117,12 +117,12 @@ function make_loop_func(monitor:Monitor){
     view.webview.onDidReceiveMessage(
       (message: WebviewMessage) => {
         switch (message.command) {
-        case "command_link_clicked":{
+        case "command_open_file_rowcol":{
             void open_file(message)
             //const {file,row,col}=message
             break 
           }
-        case "command_link_clicked2":{
+        case "command_open_file_start_end":{
             void open_file2(message)
             //const {file,row,col}=message
             break 

@@ -8633,11 +8633,11 @@ function make_loop_func(monitor) {
     view.webview.onDidReceiveMessage(
       (message) => {
         switch (message.command) {
-          case "command_link_clicked": {
+          case "command_open_file_rowcol": {
             void open_file(message);
             break;
           }
-          case "command_link_clicked2": {
+          case "command_open_file_start_end": {
             void open_file2(message);
             break;
           }

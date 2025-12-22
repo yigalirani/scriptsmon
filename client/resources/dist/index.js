@@ -6642,7 +6642,7 @@ function addFileLocationLinkDetection(terminal, full_pathname) {
           activate: () => {
             if (ctrl.pressed)
               post_message({
-                command: "command_link_clicked",
+                command: "command_open_file_rowcol",
                 file,
                 full_pathname,
                 row: Number(row),
@@ -6708,7 +6708,7 @@ function create_terminal_element(parent, runner) {
       if (parent2 == null || !event.ctrlKey)
         return;
       post_message({
-        command: "command_link_clicked",
+        command: "command_open_file_rowcol",
         full_pathname,
         file: "package.json",
         row: 0,
@@ -6722,7 +6722,7 @@ function create_terminal_element(parent, runner) {
       if (!event.ctrlKey) {
         const { title } = parent2;
         post_message({
-          command: "command_link_clicked",
+          command: "command_open_file_rowcol",
           full_pathname: title,
           row: 0,
           col: 0
@@ -6732,7 +6732,7 @@ function create_terminal_element(parent, runner) {
       const rel = runner.effective_watch.find((x) => x.rel.str === parent2.textContent);
       if (rel != null) {
         post_message({
-          command: "command_link_clicked2",
+          command: "command_open_file_start_end",
           full_pathname: rel.full,
           ...pk(rel.rel, "start", "end")
         });
@@ -6870,7 +6870,7 @@ var provider = {
     }
     if (ctrl.pressed)
       post_message({
-        command: "command_link_clicked2",
+        command: "command_open_file_start_end",
         full_pathname: runner.full_pathname,
         file: "package.json",
         start: runner.script.start,
