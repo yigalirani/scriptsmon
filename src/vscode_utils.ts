@@ -66,10 +66,15 @@ export function define_webview({context,id,html,f}:{
   }
   const reg=window.registerWebviewViewProvider(
       id,
-      provider
+      provider,
+      {
+        webviewOptions: {
+            retainContextWhenHidden: true
+        }
+      }     
     )
   const ans=context.subscriptions.push(reg)
-  console.log(ans)
+  console.log(ans) 
 }
 
 export function register_command(context: ExtensionContext,command:string,commandHandler:()=>void){

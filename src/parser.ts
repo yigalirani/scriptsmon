@@ -174,6 +174,9 @@ function parse_scripts2(
   }
   return ans
 }
+function escape_id(s:string){
+  return s.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
+}
 function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr>){
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
@@ -183,7 +186,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
     }
     const runner=function(){
       const full_pathname=path.dirname(pkgPath)
-      const id=`${full_pathname} ${name}`.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
+      const id=escape_id(`${full_pathname} ${name}`)
       const effective_watch_rel=watchers.watches[name]||[]
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel.str)}))
       const watched=watchers.autowatch_scripts.includes(name)
@@ -237,7 +240,7 @@ export async function read_package_json(
         if (ret!=null)
             folders.push(ret)
     }
-    const ans:Folder= {runners,folders,name,full_pathname,type:'folder',id:full_pathname}
+    const ans:Folder= {runners,folders,name,full_pathname,type:'folder',id:escape_id(full_pathname)}
     return ans
   }
   const folders=[]

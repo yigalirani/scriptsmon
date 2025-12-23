@@ -22,7 +22,7 @@ html{
 svg{
   width: 128px;
   height: 128px;
-
+  animation-play-state: paused;
 }
 .running{
   animation: running_animation 2s linear infinite;

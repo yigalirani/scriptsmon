@@ -508,8 +508,36 @@
                   "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json"
                 },
                 "full_pathname": "c:\\yigal\\scriptsmon\\client",
-                "effective_watch": [],
-                "watched": false,
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "build.ts",
+                      "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json",
+                      "start": 183,
+                      "end": 193
+                    },
+                    "full": "c:\\yigal\\scriptsmon\\client\\build.ts"
+                  },
+                  {
+                    "rel": {
+                      "str": "src",
+                      "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json",
+                      "start": 209,
+                      "end": 214
+                    },
+                    "full": "c:\\yigal\\scriptsmon\\client\\src"
+                  },
+                  {
+                    "rel": {
+                      "str": "package.json",
+                      "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json",
+                      "start": 230,
+                      "end": 244
+                    },
+                    "full": "c:\\yigal\\scriptsmon\\client\\package.json"
+                  }
+                ],
+                "watched": true,
                 "id": "c--yigal-scriptsmon-client--build",
                 "runs": []
               }
@@ -518,13 +546,13 @@
             "name": "client",
             "full_pathname": "c:\\yigal\\scriptsmon\\client",
             "type": "folder",
-            "id": "c:\\yigal\\scriptsmon\\client"
+            "id": "c--yigal-scriptsmon-client"
           }
         ],
         "name": "scriptsmon",
         "full_pathname": "c:\\yigal\\scriptsmon",
         "type": "folder",
-        "id": "c:\\yigal\\scriptsmon"
+        "id": "c--yigal-scriptsmon"
       },
       {
         "runners": [
@@ -657,7 +685,7 @@
             "name": "converter",
             "full_pathname": "c:\\yigal\\million_try3\\converter",
             "type": "folder",
-            "id": "c:\\yigal\\million_try3\\converter"
+            "id": "c--yigal-million_try3-converter"
           },
           {
             "runners": [
@@ -681,7 +709,7 @@
             "name": "main",
             "full_pathname": "c:\\yigal\\million_try3\\main",
             "type": "folder",
-            "id": "c:\\yigal\\million_try3\\main"
+            "id": "c--yigal-million_try3-main"
           },
           {
             "runners": [
@@ -720,13 +748,13 @@
             "name": "filesrvr",
             "full_pathname": "c:\\yigal\\million_try3\\filesrvr",
             "type": "folder",
-            "id": "c:\\yigal\\million_try3\\filesrvr"
+            "id": "c--yigal-million_try3-filesrvr"
           }
         ],
         "name": "million_try3",
         "full_pathname": "c:\\yigal\\million_try3",
         "type": "folder",
-        "id": "c:\\yigal\\million_try3"
+        "id": "c--yigal-million_try3"
       }
     ],
     "runners": [],
@@ -741,10 +769,55 @@
     "c:\\yigal\\scriptsmon\\tsconfig.json",
     "c:\\yigal\\scriptsmon\\eslint.config.mjs",
     "c:\\yigal\\scriptsmon\\.oxlintrc.json",
-    "c:\\yigal\\scriptsmon\\biome.json"
+    "c:\\yigal\\scriptsmon\\biome.json",
+    "c:\\yigal\\scriptsmon\\client\\build.ts",
+    "c:\\yigal\\scriptsmon\\client\\package.json"
   ],
   "changed_dirs": [],
   "watched_runners": [
+    {
+      "type": "runner",
+      "name": "build",
+      "script": {
+        "str": "node build.ts",
+        "start": 71,
+        "end": 95,
+        "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json"
+      },
+      "full_pathname": "c:\\yigal\\scriptsmon\\client",
+      "effective_watch": [
+        {
+          "rel": {
+            "str": "build.ts",
+            "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json",
+            "start": 183,
+            "end": 193
+          },
+          "full": "c:\\yigal\\scriptsmon\\client\\build.ts"
+        },
+        {
+          "rel": {
+            "str": "src",
+            "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json",
+            "start": 209,
+            "end": 214
+          },
+          "full": "c:\\yigal\\scriptsmon\\client\\src"
+        },
+        {
+          "rel": {
+            "str": "package.json",
+            "full_pathname": "c:\\yigal\\scriptsmon\\client\\package.json",
+            "start": 230,
+            "end": 244
+          },
+          "full": "c:\\yigal\\scriptsmon\\client\\package.json"
+        }
+      ],
+      "watched": true,
+      "id": "c--yigal-scriptsmon-client--build",
+      "runs": []
+    },
     {
       "type": "runner",
       "name": "test",

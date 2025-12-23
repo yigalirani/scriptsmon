@@ -284,6 +284,7 @@ const provider:TreeDataProvider<Folder>={
      })
   },
   icons_html:ICONS_HTML,
+  animated:'.running,.done .check,.error .check',
   selected(root,id){
     const runner=find_runner(root,id)
     if (runner==null)

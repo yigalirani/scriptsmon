@@ -6316,6 +6316,20 @@ var TreeControl = class {
     this.parent = parent;
     this.provider = provider2;
     this.icons = parseIcons(this.provider.icons_html);
+    setInterval(() => {
+      for (const [id, time] of Object.entries(this.id_last_changed)) {
+        const selector = this.provider.animated.split(",").map((x) => `#${id} ${x}`).join(",");
+        const element = parent.querySelectorAll(selector);
+        for (const anim of element) {
+          const timeOffset = (Date.now() - time) / 1e3;
+          if (timeOffset > 2)
+            continue;
+          const animation_delay = `-${timeOffset}s`;
+          console.log(id, animation_delay);
+          anim.style.animationDelay = animation_delay;
+        }
+      }
+    }, 100);
     parent.addEventListener("click", (evt) => {
       if (!(evt.target instanceof Element))
         return;
@@ -6371,6 +6385,7 @@ var TreeControl = class {
   base_uri = "";
   icons;
   root;
+  id_last_changed = {};
   //selected:string|boolean=false
   //last_root:T|undefined
   last_converted;
@@ -6382,6 +6397,7 @@ var TreeControl = class {
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
+    this.mark_changed(id);
     const ans = create_element(`
   <div  class="tree_${type} ${className || ""}" id="${id}" >
     <div  class=label_row>
@@ -6415,6 +6431,9 @@ var TreeControl = class {
     const id = item.id;
     void this.provider.command(this.root, id, command);
     return true;
+  }
+  mark_changed(id) {
+    this.id_last_changed[id] = Date.now();
   }
   create_node(parent, node, depth) {
     const children_el = (() => {
@@ -6466,14 +6485,7 @@ var TreeControl = class {
     }
     const combined = /* @__PURE__ */ new Set([...change.icons, ...change.versions]);
     for (const id of combined) {
-      const svg = this.parent.querySelector(`#${id} svg`);
-      console.log(`starting #${id} svg`);
-      svg.querySelectorAll("*").forEach((el2) => {
-        if (getComputedStyle(el2).animationName !== "none") {
-          el2.style.animationPlayState = "running";
-          console.log(el2);
-        }
-      });
+      this.mark_changed(id);
     }
   }
 };
@@ -6860,6 +6872,7 @@ var provider = {
     });
   },
   icons_html: icons_default,
+  animated: ".running,.done .check,.error .check",
   selected(root, id) {
     const runner = find_runner(root, id);
     if (runner == null)

@@ -8282,6 +8282,9 @@ function parse_scripts2(ast, full_pathname) {
   }
   return ans;
 }
+function escape_id(s) {
+  return s.replaceAll(/\\|:/g, "-").replaceAll(" ", "--");
+}
 function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   const ans = [];
   for (const [name, script] of Object.entries(scripts)) {
@@ -8291,7 +8294,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
     }
     const runner = (function() {
       const full_pathname = path.dirname(pkgPath);
-      const id = `${full_pathname} ${name}`.replaceAll(/\\|:/g, "-").replaceAll(" ", "--");
+      const id = escape_id(`${full_pathname} ${name}`);
       const effective_watch_rel = watchers.watches[name] || [];
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel.str) }));
       const watched = watchers.autowatch_scripts.includes(name);
@@ -8342,7 +8345,7 @@ async function read_package_json(full_pathnames) {
         if (ret != null)
           folders2.push(ret);
     }
-    const ans = { runners, folders: folders2, name, full_pathname, type: "folder", id: full_pathname };
+    const ans = { runners, folders: folders2, name, full_pathname, type: "folder", id: escape_id(full_pathname) };
     return ans;
   }
   const folders = [];
@@ -8393,7 +8396,6 @@ function extract_base(folder) {
     runners.push(copy);
     for (const run of runner.runs) {
       if (run.output.length !== 0) {
-        console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`);
         run.output = [];
       }
     }

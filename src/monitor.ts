@@ -25,7 +25,7 @@ function extract_base(folder:Folder):Folder{
     runners.push(copy)
     for (const run of runner.runs){
       if (run.output.length!==0){
-        console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`)
+       //console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`)
         run.output=[]
       }
     }    

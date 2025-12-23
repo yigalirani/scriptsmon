@@ -55,6 +55,7 @@ export interface TreeDataProvider<T>{
   command:(root:T,id:string,command:string)=>MaybePromise<void>
   selected:(root:T,id:string)=>MaybePromise<void>
   icons_html:string
+  animated:string
 }
 import isEqual from "lodash.isequal";
 function get_prev_selected(selected:HTMLElement){
@@ -215,6 +216,7 @@ export class TreeControl<T>{
   public base_uri=''
   icons:s2s
   root:T|undefined
+  id_last_changed:Record<string,number>={}
   //selected:string|boolean=false
   //last_root:T|undefined
   last_converted:TreeNode|undefined
@@ -226,6 +228,7 @@ export class TreeControl<T>{
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
+    this.mark_changed(id)
     const ans= create_element(`
   <div  class="tree_${type} ${className||""}" id="${id}" >
     <div  class=label_row>
@@ -261,11 +264,28 @@ export class TreeControl<T>{
     void this.provider.command(this.root,id,command)
     return true
   }
+  mark_changed(id:string){
+    this.id_last_changed[id]=Date.now()
+  }
   constructor(
     public parent:HTMLElement,
     public provider:TreeDataProvider<T>
   ){
     this.icons=parseIcons(this.provider.icons_html)
+    setInterval(()=>{//todo: detect if parent is dismounted and exit this interval
+      for (const [id,time] of Object.entries(this.id_last_changed)){
+        const selector=this.provider.animated.split(',').map(x=>`#${id} ${x}`).join(',')
+        const element = parent.querySelectorAll<SVGElement>(selector);
+        for ( const anim of element){ 
+          const timeOffset=(Date.now()-time)/1000
+          if (timeOffset>2)
+            continue
+          const animation_delay=`-${timeOffset}s`
+          console.log(id,animation_delay)          
+          anim.style.animationDelay = animation_delay;
+        } 
+      } 
+    },100)
     parent.addEventListener('click',(evt)=>{
       if (!(evt.target instanceof Element))
         return
@@ -371,20 +391,7 @@ export class TreeControl<T>{
     }
     const combined=new Set([...change.icons, ...change.versions]);
     for (const id of combined){
-      const svg=this.parent.querySelector<SVGSVGElement>(`#${id} svg`)  
-      console.log(`starting #${id} svg`)
-      svg!.querySelectorAll<SVGAElement>('*').forEach(el => {
-        if (getComputedStyle(el).animationName !== 'none') {
-          el.style.animationPlayState = "running";
-          console.log(el);
-        }
-      }); 
-      /*svg.forEach(x=>x.setCurrentTime(0))
-      const animate=this.parent.querySelectorAll<SVGAnimateElement>(`#${id} animateTransform`)
-      console.log(`${id}: new beginElement.count=${animate.length}`)
-      animate.forEach(x=>{
-        x.beginElement()
-      })*/
+      this.mark_changed(id)
     }
   }
 }
