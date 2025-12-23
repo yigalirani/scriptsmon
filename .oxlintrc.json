@@ -92,6 +92,7 @@
     "unicorn/no-array-callback-reference":"off",//it does make sense, todo
     "eslint/no-warning-comments":"off",//just a silly warrning that disallow todo
     "eslint/capitalized-comments":"off",
-    "eslint/no-inline-comments":"off"
+    "eslint/no-inline-comments":"off",
+    "eslint/default-case":"off"
   }
 }

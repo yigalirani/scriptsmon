@@ -75,7 +75,7 @@ function get_array(ast:Expression,full_pathname:string):Lstr[]{
       ans.push({
         str:elem.value,
         full_pathname,
-        ...pk(ast,'start','end')
+        ...pk(elem,'start','end')
       })
     }
   }

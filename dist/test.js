@@ -8193,7 +8193,7 @@ function get_array(ast, full_pathname) {
       ans.push({
         str: elem.value,
         full_pathname,
-        ...pk(ast, "start", "end")
+        ...pk(elem, "start", "end")
       });
     }
   }

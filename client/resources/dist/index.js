@@ -6733,7 +6733,8 @@ function create_terminal_element(parent, runner) {
       if (rel != null) {
         post_message({
           command: "command_open_file_start_end",
-          full_pathname: rel.full,
+          full_pathname,
+          file: "package.json",
           ...pk(rel.rel, "start", "end")
         });
       }
