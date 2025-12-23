@@ -1,6 +1,5 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-//simport * as fsSync from "node:fs";
 import type {Runner,Folder,Filename,Lstr} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
 import {
@@ -143,7 +142,6 @@ function parse_watchers(
     for (const propast of ast.properties){
       const {key,value}=read_prop_any(propast)
       const ar=get_array(value,full_pathname)
-      //if (key.startsWith('$')) //index all
       if (vars[key]!==undefined)
         throw new AstException(`duplicate value: ${key}`,propast)
       for (const subk of key.split(',')){ //so multiple scripts can easily have the save watched
@@ -170,7 +168,6 @@ function parse_scripts2(
     return ans
   if (scripts.type!=='ObjectExpression')
     return ans
-  //console.log(ast)
   for (const propast of scripts.properties){
     const {start,end,key,str}=read_prop(propast)
     ans[key]={str,start,end,full_pathname}
@@ -180,7 +177,6 @@ function parse_scripts2(
 function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr>){
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
-    //const script=scripts[name]
     if (script==null){
       console.warn(`missing script ${name}`)
       continue
@@ -198,9 +194,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
         full_pathname,
         effective_watch,
         watched,
-        //state:'ready',
         id,
-        //version:0,
         runs:[]
       }
       return ans
@@ -230,7 +224,6 @@ export async function read_package_json(
       ecmaVersion: "latest",
     });
     console.warn(`${green}${pkgPath}${reset}`)
-    //const scripts=parse_scripts2(ast)
     const scripts=parse_scripts2(ast,pkgPath)
     const watchers=parse_watchers(ast,pkgPath)
     const runners=scriptsmon_to_runners(pkgPath,watchers,scripts)
@@ -264,17 +257,11 @@ export async function read_package_json(
     runners:[],
     type:'folder'
   }
-  //const keys=Object.keys(ans)
-  //const common_prefix=getCommonPrefix(keys)
-  //const extra={keys,common_prefix}
-  //await mkdir_write_file('generated/extra.json',JSON.stringify(extra,null,2))
   return root
 }
 function set_replacer(_k:string,v:unknown){
   if (v instanceof Set)
     return [...v] as unknown
-  /*if (kdd=='init')
-    return format_ast(v)*/
   return v 
 }
 export function to_json(x:unknown){

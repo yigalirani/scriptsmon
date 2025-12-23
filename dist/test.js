@@ -8302,9 +8302,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
         full_pathname,
         effective_watch,
         watched,
-        //state:'ready',
         id,
-        //version:0,
         runs: []
       };
       return ans2;
