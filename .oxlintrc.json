@@ -90,6 +90,8 @@
     "eslint/no-return-assign":"off",
     "eslint/no-param-reassign":"off",//nitrrogen is based on param reasigna
     "unicorn/no-array-callback-reference":"off",//it does make sense, todo
-    "eslint/no-warning-comments":"off"//just a silly warrning that disallow todo
+    "eslint/no-warning-comments":"off",//just a silly warrning that disallow todo
+    "eslint/capitalized-comments":"off",
+    "eslint/no-inline-comments":"off"
   }
 }
