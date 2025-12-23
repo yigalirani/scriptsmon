@@ -3,19 +3,15 @@ import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import {type Run,type Runner,type Folder,find_runner} from './data.js'
 import chokidar from 'chokidar';
 import {read_package_json,to_json} from './parser.js'
-
 import  cloneDeep  from 'lodash.clonedeep'
 import {
   mkdir_write_file,
   sleep} from "@yigal/base_types";
-
 function is_ready_to_start(runner:Runner){
   if (runner.runs.length===0)
     return true
   return runner.runs.at(-1)?.end_time!=null;
 }
-
-
 function keep_only_last<T>(arr: T[]): void {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -38,14 +34,6 @@ function extract_base(folder:Folder):Folder{
   const folders=folder.folders.map(extract_base)
   return {...folder,folders,runners}
 }
-
-
-
-
-
-
-
-
 interface RunnerCtrl{
   ipty:Record<string,IPty> 
 }
@@ -76,7 +64,6 @@ async function stop({
     await sleep(10)
   }
 }
-
  async function run_runner({ //this is not async function on purpuse
   runner,
   reason,
@@ -101,7 +88,6 @@ async function stop({
       useConpty:false,
       cwd:full_pathname,
       env: { ...process.env, FORCE_COLOR: "3" },
-
     });
     if (child===null)
       return
@@ -123,13 +109,11 @@ async function stop({
       run_id
     }
     runner.runs.push(run)
-    
     // Listen to data events (both stdout and stderr come through onData)
     const dataDisposable = child.onData((data: string) => {
       run.output.push(data)
       //run.output_time=Date.now()
     });
-    
     // Listen to exit events
     const exitDisposable = child.onExit(({ exitCode,signal }) => {
       dataDisposable.dispose();
@@ -145,10 +129,6 @@ async function stop({
     });
   }); 
 }
-
-
-
- 
 function find_runners(root:Folder,filter:(x:Runner)=>boolean){
   const ans:Runner[]=[]
   function f(node:Folder){
@@ -173,7 +153,6 @@ function collect_watch_dirs(root:Folder){
   f(root)
   return ans
 }
-
 function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
   for (const watched_dir of watched_dirs){
     try{
@@ -182,7 +161,6 @@ function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
       //fsSync.watch(watched_dir,{},(eventType, changed_file) => {
         changed_dirs.add(watched_dir)
         console.log(`changed: *${watched_dir}/${changed_file} `)
-
       }) 
 }catch(ex){
       console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
@@ -222,7 +200,6 @@ export class Monitor{
     this.watched_dirs=collect_watch_dirs(this.root)
     this.watched_runners=find_runners(this.root,(x)=>x.watched)
     await mkdir_write_file(String.raw`.\generated\packages.json`,to_json(this))
-    
   }
   get_root(){
     if (this.root==null) 
@@ -244,7 +221,6 @@ export class Monitor{
     for each set  up node watch
     upon change, collect all the runners that depends on the change
     for each, all run_runner*/
-
     watch_to_set(this.watched_dirs,this.changed_dirs)
     setInterval(()=>{ 
       if (this.changed_dirs.size===0)

@@ -8280,22 +8280,26 @@ async function read_package_json(full_pathnames) {
     const runners = scriptsmon_to_runners(pkgPath, watchers, scripts);
     const { workspaces } = pkgJson;
     const folders2 = [];
-    if (is_string_array(workspaces))
-      for (const workspace3 of workspaces) {
-        const ret = await f(path.join(full_pathname, workspace3), workspace3);
+    if (is_string_array(workspaces)) {
+      const promises2 = [];
+      for (const workspace3 of workspaces)
+        promises2.push(f(path.join(full_pathname, workspace3), workspace3));
+      for (const ret of await Promise.all(promises2))
         if (ret != null)
           folders2.push(ret);
-      }
+    }
     const ans = { runners, folders: folders2, name, full_pathname, type: "folder", id: full_pathname };
     return ans;
   }
   const folders = [];
+  const promises = [];
   for (const pathname of full_pathnames) {
     const full_pathname = path.resolve(pathname);
-    const ret = await f(full_pathname, path.basename(full_pathname));
+    promises.push(f(full_pathname, path.basename(full_pathname)));
+  }
+  for (const ret of await Promise.all(promises))
     if (ret != null)
       folders.push(ret);
-  }
   const root = {
     name: "root",
     id: "root",

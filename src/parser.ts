@@ -3,7 +3,6 @@ import * as fs from "node:fs/promises";
 //simport * as fsSync from "node:fs";
 import type {Runner,Folder,Filename,Lstr} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
-
 import {
   type s2t,
   read_json_object ,
@@ -12,14 +11,10 @@ import {
   is_string_array,
   pk
 } from "@yigal/base_types";
-
-
-
 function is_literal(ast:Expression,literal:string){
   if (ast.type==='Literal' && ast.value===literal)
     return true
 }
-
 function find_prop(ast:Expression,name:string){
   if (ast.type!=='ObjectExpression')
     return
@@ -37,7 +32,6 @@ function find_prop(ast:Expression,name:string){
     this.name = "AstException";
   }
 }
-
 function read_prop(ast:Property|SpreadElement){
     if (
       ast.type!=="Property" || 
@@ -56,7 +50,6 @@ function read_prop_any(ast:Property|SpreadElement){
     typeof ast.key.value !=='string'
   )
     throw  new AstException('expecting "name"=value',ast)
-  
   return {
     key:ast.key.value,
     value:ast.value
@@ -96,7 +89,6 @@ function make_unique(ar:Lstr[][]):Lstr[]{
       ans[b.str]=b
   return Object.values(ans)
 }
-
 function resolve_vars(vars:s2t<Lstr[]>,ast:Expression){
     function resolve(a:Lstr|Lstr[]){
       const visiting=new Set<string>
@@ -168,7 +160,6 @@ function parse_watchers(
     autowatch_scripts
   }
 }
-
 function parse_scripts2(
   ast: Expression,
   full_pathname:string
@@ -186,12 +177,9 @@ function parse_scripts2(
   }
   return ans
 }
-
-
 function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr>){
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
-
     //const script=scripts[name]
     if (script==null){
       console.warn(`missing script ${name}`)
@@ -215,18 +203,15 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
         //version:0,
         runs:[]
       }
-
       return ans
     }()
     ans.push(runner)
   }
   return ans
 }
-
- export async function read_package_json(
+export async function read_package_json(
   full_pathnames: string[]
 ) {
-
   const folder_index: Record<string, Folder> = {}; //by full_pathname
   async function f(full_pathname: string,name:string){
     const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
@@ -239,40 +224,38 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
     //const pkgJson = await 
     const pkgJson=await read_json_object(pkgPath,'package.json')
     const source=await fs.readFile(pkgPath,'utf8')
-
     if (pkgJson==null||source==null)
       return null
     const ast = parseExpressionAt(source, 0, {
       ecmaVersion: "latest",
     });
- 
-    
     console.warn(`${green}${pkgPath}${reset}`)
-
     //const scripts=parse_scripts2(ast)
     const scripts=parse_scripts2(ast,pkgPath)
     const watchers=parse_watchers(ast,pkgPath)
     const runners=scriptsmon_to_runners(pkgPath,watchers,scripts)
     const {workspaces} = pkgJson
     const folders=[] 
-    if (is_string_array(workspaces))
-      for (const workspace of workspaces){
-          const ret=await f(path.join(full_pathname,workspace),workspace)
-          if (ret!=null)
+    if (is_string_array(workspaces)){
+      const promises=[]
+      for (const workspace of workspaces)
+          promises.push(f(path.join(full_pathname,workspace),workspace))
+      for (const ret of await Promise.all(promises))
+        if (ret!=null)
             folders.push(ret)
-        }
-
-    
+    }
     const ans:Folder= {runners,folders,name,full_pathname,type:'folder',id:full_pathname}
     return ans
   }
   const folders=[]
+  const promises=[]
   for (const pathname of full_pathnames){
     const full_pathname=path.resolve(pathname)
-    const ret=await f(full_pathname,path.basename(full_pathname))
-      if (ret!=null)
-        folders.push(ret)
+    promises.push(f(full_pathname,path.basename(full_pathname)))
   }
+  for (const ret of await Promise.all(promises))
+    if (ret!=null)
+      folders.push(ret)
   const root:Folder={
     name:'root',
     id:'root',
@@ -285,10 +268,8 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
   //const common_prefix=getCommonPrefix(keys)
   //const extra={keys,common_prefix}
   //await mkdir_write_file('generated/extra.json',JSON.stringify(extra,null,2))
-
   return root
 }
-
 function set_replacer(_k:string,v:unknown){
   if (v instanceof Set)
     return [...v] as unknown
@@ -300,4 +281,3 @@ export function to_json(x:unknown){
   const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
   return ans
 }
-
