@@ -650,7 +650,6 @@ var require_lodash = __commonJS({
 import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
 
 // src/data.ts
-void activate(null);
 function find_runner(root, id) {
   function f(folder) {
     const ans = folder.runners.find((x) => x.id === id);
@@ -8636,7 +8635,7 @@ function post_message(view, msg) {
 }
 function make_loop_func(monitor) {
   const ans = (view, context) => {
-    function send_report(root_folder) {
+    function send_report(_root_folder) {
       const root = monitor.extract_base();
       post_message(view.webview, {
         command: "RunnerReport",
@@ -8675,7 +8674,7 @@ async function activate(context) {
   const folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
     if (ans.length === 0)
-      return ["c:\\yigal\\scriptsmon"];
+      return [String.raw`c:\yigal\scriptsmon`];
     return ans;
   })();
   if (folders == null)
@@ -8694,6 +8693,7 @@ async function activate(context) {
   });
 }
 function deactivate() {
+  console.log("deactivate");
 }
 export {
   activate,

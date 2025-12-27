@@ -1,4 +1,4 @@
-import { type Folder } from './data.js';
+import type { Folder } from './data.js';
 import * as vscode from 'vscode';
 import { type CommandOpenFileRowCol, type CommandOpenFileStartEnd } from './vscode_utils.js';
 export interface WebviewMessageSimple {

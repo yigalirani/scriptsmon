@@ -1,11 +1,9 @@
 
-import {activate} from './extension.ts'
 export interface Watcher{
   watch?:string[]
   filter?:string
   pre?:string
 }
-void activate(null)
 export type Scriptsmon=  Record<string,Watcher|string[]>&
 {
   $watch?:string[]

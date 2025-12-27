@@ -1,12 +1,8 @@
-import * as path from 'node:path';
-import * as fs from 'node:fs';
 import {Monitor} from './monitor.js'
-import {FolderRunner,type Runner,type Folder, type State} from './data.js'
+import type {Folder} from './data.js'
 import * as vscode from 'vscode';
-import {pk} from '@yigal/base_types'
 import {
   type WebviewFunc,
-  getWebviewContent,
   define_webview,
   register_command,
   type CommandOpenFileRowCol,
@@ -46,7 +42,7 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
 
 function make_loop_func(monitor:Monitor){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
-    function send_report(root_folder:Folder){
+    function send_report(_root_folder:Folder){
       const root=monitor.extract_base()
       post_message(view.webview,{
         command:'RunnerReport',
@@ -90,7 +86,7 @@ export  async function activate(context: vscode.ExtensionContext) {
   const folders=function(){
     const ans= (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
-      return ["c:\\yigal\\scriptsmon"]
+      return [String.raw`c:\yigal\scriptsmon`]
     return ans
   }()
   if (folders==null) 
@@ -110,6 +106,8 @@ export  async function activate(context: vscode.ExtensionContext) {
 
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+
+export function deactivate() {
+  console.log('deactivate')
+}
 

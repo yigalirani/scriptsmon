@@ -8,7 +8,7 @@ import {type s2t,pk} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import { type Folder,type Runner,type FolderRunner,State,find_runner} from '../../src/data.js';
+import { type Folder,type Runner,type FolderRunner,find_runner} from '../../src/data.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
@@ -160,7 +160,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
   return ans;
 }
 function calc_stats_html(new_runner:Runner){
-  return Object.entries(new_runner).filter(([k,v])=>k!=='output').map(([k,v])=>`<tr>
+  return Object.entries(new_runner).filter(([k])=>k!=='output').map(([k,v])=>`<tr>
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
@@ -245,8 +245,7 @@ class Terminals{
   terminals:s2t<TerminalPanel>={}
   constructor(
     public parent:HTMLElement
-  ){
-  }
+  ){}
   get_terminal(runner:Runner){
     const ans=this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner)
     return ans

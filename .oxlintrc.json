@@ -94,6 +94,7 @@
     "eslint/capitalized-comments":"off",
     "eslint/no-inline-comments":"off",
     "eslint/default-case":"off",
-    "unicorn/switch-case-braces":"off"
+    "unicorn/switch-case-braces":"off",
+    "unicorn/require-post-message-target-origin":"off"
   }
 }

@@ -28,6 +28,7 @@ export default defineConfig(
   {
     rules: { //after taking the most tstrict setting, opnioned relaxing
       'import-x/no-cycle': 'error', 
+      'import-x/no-named-as-default-member':'off',
       "@typescript-eslint/no-unused-vars": "off", //turned off because biome does it faster
       "@typescript-eslint/no-unsafe-type-assertion":"off",
       //less than recomended
