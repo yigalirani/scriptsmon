@@ -8015,6 +8015,20 @@ function parseExpressionAt2(input, pos, options) {
 // node_modules/@yigal/base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
 var reset2 = "\x1B[0m";
+function get_error(x) {
+  if (x instanceof Error)
+    return x;
+  const str = String(x);
+  return new Error(str);
+}
+function is_object(value) {
+  if (value == null) return false;
+  if (typeof value !== "object" && typeof value !== "function") return false;
+  if (Array.isArray(value)) return false;
+  if (value instanceof Set) return false;
+  if (value instanceof Map) return false;
+  return true;
+}
 function pk(obj, ...keys) {
   const ret = {};
   keys.forEach((key) => {
@@ -8040,6 +8054,27 @@ async function mkdir_write_file(filePath, data2) {
   } catch (err) {
     console.error("Error writing file", err);
   }
+}
+async function read_json_object(filename, object_type) {
+  const { fs: fs3 } = await get_node();
+  try {
+    const data2 = await fs3.readFile(filename, "utf-8");
+    const ans = JSON.parse(data2);
+    if (!is_object(ans))
+      throw `not a valid ${object_type}`;
+    return ans;
+  } catch (ex) {
+    console.warn(`${filename}:${get_error(ex)}.message`);
+    return void 0;
+  }
+}
+function is_string_array(a) {
+  if (!Array.isArray(a))
+    return false;
+  for (const x of a)
+    if (typeof x !== "string")
+      return false;
+  return true;
 }
 async function sleep(ms) {
   return await new Promise((resolve4) => {
@@ -8081,12 +8116,20 @@ function read_prop_any(ast) {
     value: ast.value
   };
 }
-function get_erray_mandatory(ast, full_pathname) {
+function get_array(ast, full_pathname) {
+  if (ast.type === "Literal" && typeof ast.value === "string") {
+    const location = {
+      str: ast.value,
+      full_pathname,
+      ...pk(ast, "start", "end")
+    };
+    return [location];
+  }
   const ans = [];
   if (ast.type === "ArrayExpression") {
     for (const elem of ast.elements) {
       if (elem == null)
-        throw new AstException("null not supported here", ast);
+        throw new AstException("null supported here", ast);
       if (elem.type === "SpreadElement")
         throw new AstException("spread element not supported here", elem);
       if (elem.type !== "Literal" || typeof elem.value !== "string")
@@ -8097,20 +8140,8 @@ function get_erray_mandatory(ast, full_pathname) {
         ...pk(elem, "start", "end")
       });
     }
-    return ans;
   }
-  throw new AstException("expecting array", ast);
-}
-function get_array(ast, full_pathname) {
-  if (ast.type === "Literal" && typeof ast.value === "string") {
-    const location = {
-      str: ast.value,
-      full_pathname,
-      ...pk(ast, "start", "end")
-    };
-    return [location];
-  }
-  return get_erray_mandatory(ast, full_pathname);
+  return ans;
 }
 function make_unique(ar) {
   const ans = {};
@@ -8230,15 +8261,16 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
 async function read_package_json(full_pathnames) {
   const folder_index = {};
   async function f(full_pathname, name) {
-    const pkgPath = path.resolve(path.normalize(full_pathname.str), "package.json");
-    const d = path.resolve(full_pathname.str);
+    const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
+    const d = path.resolve(full_pathname);
     const exists = folder_index[d];
     if (exists != null) {
       console.warn(`${pkgPath}: skippin, already done`);
       return exists;
     }
+    const pkgJson = await read_json_object(pkgPath, "package.json");
     const source = await fs.readFile(pkgPath, "utf8");
-    if (source == null)
+    if (pkgJson == null || source == null)
       return null;
     const ast = parseExpressionAt2(source, 0, {
       ecmaVersion: "latest"
@@ -8247,10 +8279,9 @@ async function read_package_json(full_pathnames) {
     const scripts = parse_scripts2(ast, pkgPath);
     const watchers = parse_watchers(ast, pkgPath);
     const runners = scriptsmon_to_runners(pkgPath, watchers, scripts);
-    const workspaces_ast = find_prop(ast, "workspaces");
-    const workspaces = workspaces_ast ? get_erray_mandatory(workspaces_ast, full_pathname.str) : [];
+    const { workspaces } = pkgJson;
     const folders2 = [];
-    {
+    if (is_string_array(workspaces)) {
       const promises2 = [];
       for (const workspace3 of workspaces)
         promises2.push(f(path.join(full_pathname, workspace3), workspace3));
@@ -8643,7 +8674,7 @@ async function activate(context) {
   const folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
     if (ans.length === 0)
-      return [String.raw`c:\yigal\million_try3`];
+      return ["c:\\yigal\\scriptsmon"];
     return ans;
   })();
   if (folders == null)

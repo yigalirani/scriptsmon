@@ -90,7 +90,7 @@ export  async function activate(context: vscode.ExtensionContext) {
   const folders=function(){
     const ans= (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
-      return [String.raw`c:\yigal\million_try3`] 
+      return ["c:\\yigal\\scriptsmon"]
     return ans
   }()
   if (folders==null) 

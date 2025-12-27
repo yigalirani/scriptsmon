@@ -4,12 +4,11 @@ import type {Runner,Folder,Filename,Lstr} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
 import {
   type s2t,
+  read_json_object ,
   reset,
   green,
   is_string_array,
-  pk,
-  is_object,
-  get_error
+  pk
 } from "@yigal/base_types";
 function is_literal(ast:Expression,literal:string){
   if (ast.type==='Literal' && ast.value===literal)
@@ -45,7 +44,7 @@ function read_prop(ast:Property|SpreadElement){
 }
 function read_prop_any(ast:Property|SpreadElement){
   if (
-    ast.type!=="Property" ||  
+    ast.type!=="Property" || 
     ast.key.type!=='Literal' || 
     typeof ast.key.value !=='string'
   )
@@ -55,12 +54,20 @@ function read_prop_any(ast:Property|SpreadElement){
     value:ast.value
   }
 }
-function get_erray_mandatory(ast:Expression,full_pathname:string){
+function get_array(ast:Expression,full_pathname:string):Lstr[]{
+  if (ast.type==="Literal" && typeof ast.value ==="string"){
+    const location={
+      str:ast.value,
+      full_pathname,
+      ...pk(ast,'start','end')
+    }
+    return [location]
+  }
   const ans:Lstr[]=[]  
   if (ast.type==="ArrayExpression"){
     for (const elem of ast.elements){
       if (elem==null)
-        throw new AstException('null not supported here',ast)
+        throw new AstException('null supported here',ast)
       if (elem.type==="SpreadElement")
         throw new AstException('spread element not supported here',elem)
       if (elem.type!=='Literal' || typeof elem.value!=='string')
@@ -71,21 +78,8 @@ function get_erray_mandatory(ast:Expression,full_pathname:string){
         ...pk(elem,'start','end')
       })
     }
-    return ans
   }
-  throw new AstException('expecting array',ast)
-}
-
-function get_array(ast:Expression,full_pathname:string):Lstr[]{
-  if (ast.type==="Literal" && typeof ast.value ==="string"){
-    const location={
-      str:ast.value,
-      full_pathname,
-      ...pk(ast,'start','end')
-    }
-    return [location]
-  }
-  return get_erray_mandatory(ast,full_pathname)
+  return ans
 }
 function make_unique(ar:Lstr[][]):Lstr[]{
   const ans:s2t<Lstr>={}
@@ -212,44 +206,22 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
   }
   return ans
 }
-/*async function read_json_object(filename:string){
-  try{
-    const data=await fs.readFile(filename, "utf-8");
-    const ans=JSON.parse(data) as unknown
-  }catch(ex){
-    const err=get_error(ex)
-    const regex = /\(line\s+(\d+)\s+column\s+(\d+)\)/;
-    const match = err.message.match(regex);
-    if (match&&match.length>=3) {
-      const line = Number(match[1]);
-      const column = Number(match[2]);
-      throw AstException(regex.message
-      console.log({ line, column });
-    } else {
-      console.log("Line/column not found");
-    }
-
-
-    return null
-  }
-}*/
-
 export async function read_package_json(
   full_pathnames: string[]
 ) {
   const folder_index: Record<string, Folder> = {}; //by full_pathname
-  async function f(full_pathname: Lstr,name:string){
-    const pkgPath = path.resolve(path.normalize(full_pathname.str), "package.json");
-    const d= path.resolve(full_pathname.str);
+  async function f(full_pathname: string,name:string){
+    const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
+    const d= path.resolve(full_pathname);
     const exists=folder_index[d]
     if (exists!=null){
       console.warn(`${pkgPath}: skippin, already done`)
       return exists
     }    
     //const pkgJson = await 
-    //const pkgJson=await read_json_object(pkgPath,'package.json')
+    const pkgJson=await read_json_object(pkgPath,'package.json')
     const source=await fs.readFile(pkgPath,'utf8')
-    if (source==null)
+    if (pkgJson==null||source==null)
       return null
     const ast = parseExpressionAt(source, 0, {
       ecmaVersion: "latest",
@@ -258,10 +230,9 @@ export async function read_package_json(
     const scripts=parse_scripts2(ast,pkgPath)
     const watchers=parse_watchers(ast,pkgPath)
     const runners=scriptsmon_to_runners(pkgPath,watchers,scripts)
-    const workspaces_ast=find_prop (ast,'workspaces')
-    const workspaces=workspaces_ast?get_erray_mandatory(workspaces_ast,full_pathname.str):[]
+    const {workspaces} = pkgJson
     const folders=[] 
-    {
+    if (is_string_array(workspaces)){
       const promises=[]
       for (const workspace of workspaces)
           promises.push(f(path.join(full_pathname,workspace),workspace))
