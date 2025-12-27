@@ -650,6 +650,7 @@ var require_lodash = __commonJS({
 import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
 
 // src/data.ts
+void activate(null);
 function find_runner(root, id) {
   function f(folder) {
     const ans = folder.runners.find((x) => x.id === id);
