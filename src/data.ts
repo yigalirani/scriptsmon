@@ -32,7 +32,7 @@ export interface Filename{
   full:string
 }
 export interface Runner {
-  ntype          : 'runner'
+  ntype          : 'runner' //deprecated
   name           : string
   full_pathname  : string
   id             : string
@@ -55,5 +55,4 @@ export interface Folder{
   //scriptsmon   : Scriptsmon
 }
 
-export type FolderRunner=Runner|Folder
 

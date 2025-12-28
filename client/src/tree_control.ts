@@ -1,6 +1,5 @@
-import { s2t,s2s,pk} from '@yigal/base_types'
+import type { s2t,s2s} from '@yigal/base_types'
 import {get_parent_by_class,create_element,divs,get_parent_by_classes,remove_class} from './dom_utils.js'
-import { promises as fs } from 'node:fs';
 type MaybePromise<T>=T|Promise<T>
 export interface TreeNode{
   type            : 'item'|'folder' //is this needed?
@@ -12,21 +11,6 @@ export interface TreeNode{
   commands        : string[]
   children        : TreeNode[]
   icon_version     : number
-}
-function make_empty_tree_folder():TreeNode{
-  return{
-    type:'folder',
-    children:[],
-    label:'',
-    id:'roottreenode',
-    commands:[],
-    icon_version:0,
-    icon:'root_icon',
-    className:'test'
-  }
-}
-function wrap_icon(content:string,name:string){
-  return `<div class="icon ${name}_background">${content}</div>`
 }
 function parseIcons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
@@ -57,7 +41,6 @@ export interface TreeDataProvider<T>{
   icons_html:string
   animated:string
 }
-import isEqual from "lodash.isequal";
 function get_prev_selected(selected:HTMLElement){
   if (selected==null)
     return null // i like undefined better but want to have the 
@@ -89,15 +72,6 @@ function index_folder(root:TreeNode){
   f(root)
   return ans
 }
-function have_same_keys(obj_a: object, obj_b: object): boolean {
-  const keysA = new Set(Object.keys(obj_a));
-  const keysB = new Set(Object.keys(obj_b));
-  if (keysA.size !== keysB.size) return false;
-  for (const key of keysA) {
-    if (!keysB.has(key)) return false;
-  }
-  return true;
-}
 function calc_summary(node:TreeNode):string{
   const ignore=['icon_version','icon']
   function replacer(k:string,v:unknown){
@@ -121,7 +95,7 @@ function calc_changed(root:TreeNode,old_root:TreeNode|undefined){
   }
   ans.big=false
   function f(node:TreeNode){
-    const {id,children,icon_version}=node                                                                                                                                                                                                                                                                   
+    const {id,children}=node                                                                                                                                                                                                                                                                   
     const old_node=old_index[id]
     if (old_node==null)
       throw new Error('old node not found')
@@ -193,25 +167,25 @@ function element_for_down_arrow(selected:HTMLElement){
       return ans
     cur=parent
   }
-  return get_next_selected(selected)
+  //return get_next_selected(selected)
   //return a
   //if (ans==null)
   //  return get_parent_by_class(selected,'tree_folder')
 }
-function getBaseName(path: string): string {
+/*function getBaseName(path: string): string {
   // Extract last path segment
   const fileName = path.split(/[/\\]/).pop() || "";
   // Remove extension (last dot and everything after)
   const lastDot = fileName.lastIndexOf(".");
   return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
-}
-function is_html_element(el:Node|null){
+}*/
+/*function is_html_element(el:Node|null){
     return el instanceof HTMLElement||el instanceof SVGElement
   }
  function begin_element(node:SVGAnimateElement){
   node.beginElement()
   console.log('node.beginElement()')
- }
+ }*/
 export class TreeControl<T>{
   public base_uri=''
   icons:s2s
@@ -224,7 +198,7 @@ export class TreeControl<T>{
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
     const {type,id,description,label,icon='undefined',commands,className}=node
-    const template = document.createElement("template")
+    //const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')

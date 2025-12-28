@@ -50,4 +50,3 @@ export interface Folder {
     folders: Array<Folder>;
     runners: Array<Runner>;
 }
-export type FolderRunner = Runner | Folder;

@@ -7,7 +7,6 @@ import {
   type s2t,
   reset,
   green,
-  is_string_array,
   pk
 } from "@yigal/base_types";
 export function find_runner(root:Folder,id:string){

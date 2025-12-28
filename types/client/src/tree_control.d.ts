@@ -1,4 +1,4 @@
-import { s2s } from '@yigal/base_types';
+import type { s2s } from '@yigal/base_types';
 type MaybePromise<T> = T | Promise<T>;
 export interface TreeNode {
     type: 'item' | 'folder';

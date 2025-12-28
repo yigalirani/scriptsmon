@@ -8,7 +8,7 @@ import {type s2t,pk} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,FolderRunner} from '../../src/data.js';
+import type { Folder,Runner} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
@@ -260,19 +260,19 @@ function get_terminals(folder:Folder,terminals:Terminals){
   }
   f(folder)
 }
-
-function convert(root:FolderRunner):TreeNode{
-    const {name,id}=root
-    if (root.ntype==='folder'){
-    const folders=root.folders.map(convert)
-    const items=root.runners.map(convert)
-      const children=[...folders,...items]
-      return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
-    }
-    const {script,watched}=root
+function convert_runner(root:Runner):TreeNode{
+    const {script,watched,id,name}=root
     const {version,state}=calc_runner_status(root)
     const className=(watched?'watched':undefined)
     return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script.str,icon:state,icon_version:version,className}
+
+}
+function convert(root:Folder):TreeNode{
+    const {name,id}=root
+    const folders=root.folders.map(convert)
+    const items=root.runners.map(convert_runner)
+    const children=[...folders,...items]
+    return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
   }
 const provider:TreeDataProvider<Folder>={
   convert,
