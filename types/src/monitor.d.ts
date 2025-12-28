@@ -1,4 +1,4 @@
-import { type Runner, type Folder } from './data.js';
+import type { Runner, Folder } from './data.js';
 export declare class Monitor {
     full_pathnames: string[];
     runner_ctrl: {

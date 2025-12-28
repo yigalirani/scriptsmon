@@ -27,13 +27,12 @@ export interface Lstr{
   start:number
   end:number
 }
-
 export interface Filename{
   rel:Lstr
   full:string
 }
 export interface Runner {
-  type           : 'runner'
+  ntype          : 'runner'
   name           : string
   full_pathname  : string
   id             : string
@@ -41,13 +40,13 @@ export interface Runner {
   runs           : Run[]     //growing
   watched        : boolean
   effective_watch: Filename[]
-    /*state        : State
-  version: number*/
 }
-
-
+export interface FolderError{
+  ntype         : 'folder_error'
+  message       : Lstr
+}
 export interface Folder{
-  type         : 'folder'
+  ntype        : 'folder'
   name         : string
   full_pathname: string         //where the package.json is 
   id           : string
@@ -55,17 +54,6 @@ export interface Folder{
   runners      : Array<Runner>
   //scriptsmon   : Scriptsmon
 }
+
 export type FolderRunner=Runner|Folder
-export function find_runner(root:Folder,id:string){
-  function f(folder:Folder):Runner|undefined{
-    const ans=folder.runners.find(x=>x.id===id)
-    if (ans!=null)
-      return ans
-    for (const subfolder of folder.folders){
-      const ans=f(subfolder)
-      if (ans!=null)
-        return ans
-    }
-  }
-  return f(root)
-}
+

@@ -1,15 +1,28 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
+
 import type {Runner,Folder,Filename,Lstr} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
 import {
   type s2t,
-  read_json_object ,
   reset,
   green,
   is_string_array,
   pk
 } from "@yigal/base_types";
+export function find_runner(root:Folder,id:string){
+  function f(folder:Folder):Runner|undefined{
+    const ans=folder.runners.find(x=>x.id===id)
+    if (ans!=null)
+      return ans
+    for (const subfolder of folder.folders){
+      const ans=f(subfolder)
+      if (ans!=null)
+        return ans
+    }
+  }
+  return f(root)
+}
 function is_literal(ast:Expression,literal:string){
   if (ast.type==='Literal' && ast.value===literal)
     return true
@@ -54,20 +67,12 @@ function read_prop_any(ast:Property|SpreadElement){
     value:ast.value
   }
 }
-function get_array(ast:Expression,full_pathname:string):Lstr[]{
-  if (ast.type==="Literal" && typeof ast.value ==="string"){
-    const location={
-      str:ast.value,
-      full_pathname,
-      ...pk(ast,'start','end')
-    }
-    return [location]
-  }
+function get_erray_mandatory(ast:Expression,full_pathname:string){
   const ans:Lstr[]=[]  
   if (ast.type==="ArrayExpression"){
     for (const elem of ast.elements){
       if (elem==null)
-        throw new AstException('null supported here',ast)
+        throw new AstException('null not supported here',ast)
       if (elem.type==="SpreadElement")
         throw new AstException('spread element not supported here',elem)
       if (elem.type!=='Literal' || typeof elem.value!=='string')
@@ -78,8 +83,20 @@ function get_array(ast:Expression,full_pathname:string):Lstr[]{
         ...pk(elem,'start','end')
       })
     }
+    return ans
   }
-  return ans
+  throw new AstException('expecting array',ast)
+}
+function get_array(ast:Expression,full_pathname:string):Lstr[]{
+  if (ast.type==="Literal" && typeof ast.value ==="string"){
+    const location={
+      str:ast.value,
+      full_pathname,
+      ...pk(ast,'start','end')
+    }
+    return [location]
+  }
+  return get_erray_mandatory(ast,full_pathname)
 }
 function make_unique(ar:Lstr[][]):Lstr[]{
   const ans:s2t<Lstr>={}
@@ -191,7 +208,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel.str)}))
       const watched=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
-        type:'runner',
+        ntype:'runner',
         name,
         script,
         full_pathname,
@@ -210,7 +227,7 @@ export async function read_package_json(
   full_pathnames: string[]
 ) {
   const folder_index: Record<string, Folder> = {}; //by full_pathname
-  async function f(full_pathname: string,name:string){
+  async function read_one(full_pathname: string,name:string){
     const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
     const d= path.resolve(full_pathname);
     const exists=folder_index[d]
@@ -219,9 +236,8 @@ export async function read_package_json(
       return exists
     }    
     //const pkgJson = await 
-    const pkgJson=await read_json_object(pkgPath,'package.json')
     const source=await fs.readFile(pkgPath,'utf8')
-    if (pkgJson==null||source==null)
+    if (source==null)
       return null
     const ast = parseExpressionAt(source, 0, {
       ecmaVersion: "latest",
@@ -230,24 +246,25 @@ export async function read_package_json(
     const scripts=parse_scripts2(ast,pkgPath)
     const watchers=parse_watchers(ast,pkgPath)
     const runners=scriptsmon_to_runners(pkgPath,watchers,scripts)
-    const {workspaces} = pkgJson
+    const workspaces_ast=find_prop (ast,'workspaces')
+    const workspaces=workspaces_ast?get_erray_mandatory(workspaces_ast,full_pathname):[]
     const folders=[] 
-    if (is_string_array(workspaces)){
+    {
       const promises=[]
       for (const workspace of workspaces)
-          promises.push(f(path.join(full_pathname,workspace),workspace))
+          promises.push(read_one(path.join(full_pathname,workspace.str),workspace.str))
       for (const ret of await Promise.all(promises))
         if (ret!=null)
             folders.push(ret)
     }
-    const ans:Folder= {runners,folders,name,full_pathname,type:'folder',id:escape_id(full_pathname)}
+    const ans:Folder= {runners,folders,name,full_pathname,ntype:'folder',id:escape_id(full_pathname)}
     return ans
   }
   const folders=[]
   const promises=[]
   for (const pathname of full_pathnames){
     const full_pathname=path.resolve(pathname)
-    promises.push(f(full_pathname,path.basename(full_pathname)))
+    promises.push(read_one(full_pathname,path.basename(full_pathname)))
   }
   for (const ret of await Promise.all(promises))
     if (ret!=null)
@@ -258,7 +275,7 @@ export async function read_package_json(
     full_pathname: '',
     folders,
     runners:[],
-    type:'folder'
+    ntype:'folder'
   }
   return root
 }

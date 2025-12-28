@@ -1,8 +1,8 @@
 //simport * as fsSync from "node:fs";
 import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import {type Run,type Runner,type Folder,find_runner} from './data.js'
+import type {Run,Runner,Folder} from './data.js'
 import chokidar from 'chokidar';
-import {read_package_json,to_json} from './parser.js'
+import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import {
   mkdir_write_file,

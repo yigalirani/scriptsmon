@@ -29,7 +29,7 @@ export interface Filename {
     full: string;
 }
 export interface Runner {
-    type: 'runner';
+    ntype: 'runner';
     name: string;
     full_pathname: string;
     id: string;
@@ -38,8 +38,12 @@ export interface Runner {
     watched: boolean;
     effective_watch: Filename[];
 }
+export interface FolderError {
+    ntype: 'folder_error';
+    message: Lstr;
+}
 export interface Folder {
-    type: 'folder';
+    ntype: 'folder';
     name: string;
     full_pathname: string;
     id: string;
@@ -47,4 +51,3 @@ export interface Folder {
     runners: Array<Runner>;
 }
 export type FolderRunner = Runner | Folder;
-export declare function find_runner(root: Folder, id: string): Runner | undefined;

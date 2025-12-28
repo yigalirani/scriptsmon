@@ -10,7 +10,7 @@
       {
         "runners": [
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "test",
             "script": {
               "str": "node ./dist/test.js",
@@ -35,7 +35,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "build",
             "script": {
               "str": "node ./bin/run_build.ts",
@@ -78,7 +78,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "tsc",
             "script": {
               "str": "tsc",
@@ -148,7 +148,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "eslint",
             "script": {
               "str": "eslint . --color ",
@@ -218,7 +218,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "ls",
             "script": {
               "str": "ls -la  --color=always",
@@ -243,7 +243,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "vscode:prepublish",
             "script": {
               "str": "npm run compile",
@@ -258,7 +258,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "oxlinttypeaware",
             "script": {
               "str": "oxlint . --type-aware",
@@ -337,7 +337,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "oxlint",
             "script": {
               "str": "oxlint ",
@@ -416,7 +416,7 @@
             "runs": []
           },
           {
-            "type": "runner",
+            "ntype": "runner",
             "name": "biome",
             "script": {
               "str": "biome lint",
@@ -499,7 +499,7 @@
           {
             "runners": [
               {
-                "type": "runner",
+                "ntype": "runner",
                 "name": "build",
                 "script": {
                   "str": "node build.ts",
@@ -545,18 +545,26 @@
             "folders": [],
             "name": "client",
             "full_pathname": "c:\\yigal\\scriptsmon\\client",
-            "type": "folder",
+            "ntype": "folder",
             "id": "c--yigal-scriptsmon-client"
           }
         ],
         "name": "scriptsmon",
         "full_pathname": "c:\\yigal\\scriptsmon",
-        "type": "folder",
+        "ntype": "folder",
         "id": "c--yigal-scriptsmon"
+      },
+      {
+        "runners": [],
+        "folders": [],
+        "name": "million_try3",
+        "full_pathname": "c:\\yigal\\million_try3",
+        "ntype": "folder",
+        "id": "c--yigal-million_try3"
       }
     ],
     "runners": [],
-    "type": "folder"
+    "ntype": "folder"
   },
   "watched_dirs": [
     "c:\\yigal\\scriptsmon\\dist\\test.js",
@@ -574,7 +582,7 @@
   "changed_dirs": [],
   "watched_runners": [
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "build",
       "script": {
         "str": "node build.ts",
@@ -617,7 +625,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "test",
       "script": {
         "str": "node ./dist/test.js",
@@ -642,7 +650,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "build",
       "script": {
         "str": "node ./bin/run_build.ts",
@@ -685,7 +693,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "tsc",
       "script": {
         "str": "tsc",
@@ -755,7 +763,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "eslint",
       "script": {
         "str": "eslint . --color ",
@@ -825,7 +833,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "oxlinttypeaware",
       "script": {
         "str": "oxlint . --type-aware",
@@ -904,7 +912,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "oxlint",
       "script": {
         "str": "oxlint ",
@@ -983,7 +991,7 @@
       "runs": []
     },
     {
-      "type": "runner",
+      "ntype": "runner",
       "name": "biome",
       "script": {
         "str": "biome lint",

@@ -649,21 +649,6 @@ var require_lodash = __commonJS({
 // src/monitor.ts
 import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
 
-// src/data.ts
-function find_runner(root, id) {
-  function f(folder) {
-    const ans = folder.runners.find((x) => x.id === id);
-    if (ans != null)
-      return ans;
-    for (const subfolder of folder.folders) {
-      const ans2 = f(subfolder);
-      if (ans2 != null)
-        return ans2;
-    }
-  }
-  return f(root);
-}
-
 // node_modules/chokidar/index.js
 import { EventEmitter } from "node:events";
 import { stat as statcb, Stats } from "node:fs";
@@ -8017,12 +8002,6 @@ var green = "\x1B[40m\x1B[32m";
 var red = "\x1B[40m\x1B[31m";
 var yellow = "\x1B[40m\x1B[33m";
 var reset2 = "\x1B[0m";
-function get_error(x) {
-  if (x instanceof Error)
-    return x;
-  const str = String(x);
-  return new Error(str);
-}
 function is_object(value) {
   if (value == null) return false;
   if (typeof value !== "object" && typeof value !== "function") return false;
@@ -8111,27 +8090,6 @@ async function mkdir_write_file(filePath, data2) {
     console.error("Error writing file", err);
   }
 }
-async function read_json_object(filename, object_type) {
-  const { fs: fs2 } = await get_node();
-  try {
-    const data2 = await fs2.readFile(filename, "utf-8");
-    const ans = JSON.parse(data2);
-    if (!is_object(ans))
-      throw `not a valid ${object_type}`;
-    return ans;
-  } catch (ex) {
-    console.warn(`${filename}:${get_error(ex)}.message`);
-    return void 0;
-  }
-}
-function is_string_array(a) {
-  if (!Array.isArray(a))
-    return false;
-  for (const x of a)
-    if (typeof x !== "string")
-      return false;
-  return true;
-}
 async function sleep(ms) {
   return await new Promise((resolve4) => {
     setTimeout(() => resolve4(void 0), ms);
@@ -8139,6 +8097,19 @@ async function sleep(ms) {
 }
 
 // src/parser.ts
+function find_runner(root, id) {
+  function f(folder) {
+    const ans = folder.runners.find((x) => x.id === id);
+    if (ans != null)
+      return ans;
+    for (const subfolder of folder.folders) {
+      const ans2 = f(subfolder);
+      if (ans2 != null)
+        return ans2;
+    }
+  }
+  return f(root);
+}
 function is_literal(ast, literal2) {
   if (ast.type === "Literal" && ast.value === literal2)
     return true;
@@ -8172,20 +8143,12 @@ function read_prop_any(ast) {
     value: ast.value
   };
 }
-function get_array(ast, full_pathname) {
-  if (ast.type === "Literal" && typeof ast.value === "string") {
-    const location = {
-      str: ast.value,
-      full_pathname,
-      ...pk(ast, "start", "end")
-    };
-    return [location];
-  }
+function get_erray_mandatory(ast, full_pathname) {
   const ans = [];
   if (ast.type === "ArrayExpression") {
     for (const elem of ast.elements) {
       if (elem == null)
-        throw new AstException("null supported here", ast);
+        throw new AstException("null not supported here", ast);
       if (elem.type === "SpreadElement")
         throw new AstException("spread element not supported here", elem);
       if (elem.type !== "Literal" || typeof elem.value !== "string")
@@ -8196,8 +8159,20 @@ function get_array(ast, full_pathname) {
         ...pk(elem, "start", "end")
       });
     }
+    return ans;
   }
-  return ans;
+  throw new AstException("expecting array", ast);
+}
+function get_array(ast, full_pathname) {
+  if (ast.type === "Literal" && typeof ast.value === "string") {
+    const location = {
+      str: ast.value,
+      full_pathname,
+      ...pk(ast, "start", "end")
+    };
+    return [location];
+  }
+  return get_erray_mandatory(ast, full_pathname);
 }
 function make_unique(ar) {
   const ans = {};
@@ -8299,7 +8274,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel.str) }));
       const watched = watchers.autowatch_scripts.includes(name);
       const ans2 = {
-        type: "runner",
+        ntype: "runner",
         name,
         script,
         full_pathname,
@@ -8316,7 +8291,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
 }
 async function read_package_json(full_pathnames) {
   const folder_index = {};
-  async function f(full_pathname, name) {
+  async function read_one(full_pathname, name) {
     const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
     const d = path.resolve(full_pathname);
     const exists = folder_index[d];
@@ -8324,9 +8299,8 @@ async function read_package_json(full_pathnames) {
       console.warn(`${pkgPath}: skippin, already done`);
       return exists;
     }
-    const pkgJson = await read_json_object(pkgPath, "package.json");
     const source = await fs.readFile(pkgPath, "utf8");
-    if (pkgJson == null || source == null)
+    if (source == null)
       return null;
     const ast = parseExpressionAt2(source, 0, {
       ecmaVersion: "latest"
@@ -8335,24 +8309,25 @@ async function read_package_json(full_pathnames) {
     const scripts = parse_scripts2(ast, pkgPath);
     const watchers = parse_watchers(ast, pkgPath);
     const runners = scriptsmon_to_runners(pkgPath, watchers, scripts);
-    const { workspaces } = pkgJson;
+    const workspaces_ast = find_prop(ast, "workspaces");
+    const workspaces = workspaces_ast ? get_erray_mandatory(workspaces_ast, full_pathname) : [];
     const folders2 = [];
-    if (is_string_array(workspaces)) {
+    {
       const promises2 = [];
       for (const workspace of workspaces)
-        promises2.push(f(path.join(full_pathname, workspace), workspace));
+        promises2.push(read_one(path.join(full_pathname, workspace.str), workspace.str));
       for (const ret of await Promise.all(promises2))
         if (ret != null)
           folders2.push(ret);
     }
-    const ans = { runners, folders: folders2, name, full_pathname, type: "folder", id: escape_id(full_pathname) };
+    const ans = { runners, folders: folders2, name, full_pathname, ntype: "folder", id: escape_id(full_pathname) };
     return ans;
   }
   const folders = [];
   const promises = [];
   for (const pathname of full_pathnames) {
     const full_pathname = path.resolve(pathname);
-    promises.push(f(full_pathname, path.basename(full_pathname)));
+    promises.push(read_one(full_pathname, path.basename(full_pathname)));
   }
   for (const ret of await Promise.all(promises))
     if (ret != null)
@@ -8363,7 +8338,7 @@ async function read_package_json(full_pathnames) {
     full_pathname: "",
     folders,
     runners: [],
-    type: "folder"
+    ntype: "folder"
   };
   return root;
 }

@@ -8,7 +8,8 @@ import {type s2t,pk} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import { type Folder,type Runner,type FolderRunner,find_runner} from '../../src/data.js';
+import type { Folder,Runner,FolderRunner} from '../../src/data.js';
+import * as parser from '../../src/parser.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
@@ -262,7 +263,7 @@ function get_terminals(folder:Folder,terminals:Terminals){
 
 function convert(root:FolderRunner):TreeNode{
     const {name,id}=root
-    if (root.type==='folder'){
+    if (root.ntype==='folder'){
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert)
       const children=[...folders,...items]
@@ -285,7 +286,7 @@ const provider:TreeDataProvider<Folder>={
   icons_html:ICONS_HTML,
   animated:'.running,.done .check,.error .check',
   selected(root,id){
-    const runner=find_runner(root,id)
+    const runner=parser.find_runner(root,id)
     if (runner==null)
       return
     for (const panel of document.querySelectorAll('.term_panel')){
