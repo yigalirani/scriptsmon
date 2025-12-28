@@ -10,7 +10,6 @@
       {
         "runners": [
           {
-            "ntype": "runner",
             "name": "test",
             "script": {
               "str": "node ./dist/test.js",
@@ -35,7 +34,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "build",
             "script": {
               "str": "node ./bin/run_build.ts",
@@ -78,7 +76,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "tsc",
             "script": {
               "str": "tsc",
@@ -148,7 +145,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "eslint",
             "script": {
               "str": "eslint . --color ",
@@ -218,7 +214,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "ls",
             "script": {
               "str": "ls -la  --color=always",
@@ -243,7 +238,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "vscode:prepublish",
             "script": {
               "str": "npm run compile",
@@ -258,7 +252,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "oxlinttypeaware",
             "script": {
               "str": "oxlint . --type-aware",
@@ -337,7 +330,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "oxlint",
             "script": {
               "str": "oxlint ",
@@ -416,7 +408,6 @@
             "runs": []
           },
           {
-            "ntype": "runner",
             "name": "biome",
             "script": {
               "str": "biome lint",
@@ -499,7 +490,6 @@
           {
             "runners": [
               {
-                "ntype": "runner",
                 "name": "build",
                 "script": {
                   "str": "node build.ts",
@@ -545,13 +535,11 @@
             "folders": [],
             "name": "client",
             "full_pathname": "c:\\yigal\\scriptsmon\\client",
-            "ntype": "folder",
             "id": "c--yigal-scriptsmon-client"
           }
         ],
         "name": "scriptsmon",
         "full_pathname": "c:\\yigal\\scriptsmon",
-        "ntype": "folder",
         "id": "c--yigal-scriptsmon"
       },
       {
@@ -559,12 +547,10 @@
         "folders": [],
         "name": "million_try3",
         "full_pathname": "c:\\yigal\\million_try3",
-        "ntype": "folder",
         "id": "c--yigal-million_try3"
       }
     ],
-    "runners": [],
-    "ntype": "folder"
+    "runners": []
   },
   "watched_dirs": [
     "c:\\yigal\\scriptsmon\\dist\\test.js",
@@ -582,7 +568,6 @@
   "changed_dirs": [],
   "watched_runners": [
     {
-      "ntype": "runner",
       "name": "build",
       "script": {
         "str": "node build.ts",
@@ -625,7 +610,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "test",
       "script": {
         "str": "node ./dist/test.js",
@@ -650,7 +634,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "build",
       "script": {
         "str": "node ./bin/run_build.ts",
@@ -693,7 +676,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "tsc",
       "script": {
         "str": "tsc",
@@ -763,7 +745,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "eslint",
       "script": {
         "str": "eslint . --color ",
@@ -833,7 +814,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "oxlinttypeaware",
       "script": {
         "str": "oxlint . --type-aware",
@@ -912,7 +892,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "oxlint",
       "script": {
         "str": "oxlint ",
@@ -991,7 +970,6 @@
       "runs": []
     },
     {
-      "ntype": "runner",
       "name": "biome",
       "script": {
         "str": "biome lint",

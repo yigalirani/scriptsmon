@@ -8210,7 +8210,7 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel.str) }));
       const watched = watchers.autowatch_scripts.includes(name);
       const ans2 = {
-        ntype: "runner",
+        //ntype:'runner',
         name,
         script,
         full_pathname,
@@ -8256,7 +8256,14 @@ async function read_package_json(full_pathnames) {
         if (ret != null)
           folders2.push(ret);
     }
-    const ans = { runners, folders: folders2, name, full_pathname, ntype: "folder", id: escape_id(full_pathname) };
+    const ans = {
+      runners,
+      folders: folders2,
+      name,
+      full_pathname,
+      /*ntype:'folder',*/
+      id: escape_id(full_pathname)
+    };
     return ans;
   }
   const folders = [];
@@ -8273,8 +8280,9 @@ async function read_package_json(full_pathnames) {
     id: "root",
     full_pathname: "",
     folders,
-    runners: [],
-    ntype: "folder"
+    runners: []
+    //,
+    //ntype:'folder'
   };
   return root;
 }

@@ -32,7 +32,7 @@ export interface Filename{
   full:string
 }
 export interface Runner {
-  ntype          : 'runner' //deprecated
+  //ntype          : 'runner' //deprecated
   name           : string
   full_pathname  : string
   id             : string
@@ -42,11 +42,11 @@ export interface Runner {
   effective_watch: Filename[]
 }
 export interface FolderError{
-  ntype         : 'folder_error'
+  //ntype         : 'folder_error'
   message       : Lstr
 }
 export interface Folder{
-  ntype        : 'folder'
+  //ntype        : 'folder'
   name         : string
   full_pathname: string         //where the package.json is 
   id           : string

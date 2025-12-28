@@ -207,7 +207,7 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel.str)}))
       const watched=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
-        ntype:'runner',
+        //ntype:'runner',
         name,
         script,
         full_pathname,
@@ -256,7 +256,7 @@ export async function read_package_json(
         if (ret!=null)
             folders.push(ret)
     }
-    const ans:Folder= {runners,folders,name,full_pathname,ntype:'folder',id:escape_id(full_pathname)}
+    const ans:Folder= {runners,folders,name,full_pathname,/*ntype:'folder',*/id:escape_id(full_pathname)}
     return ans
   }
   const folders=[]
@@ -273,8 +273,8 @@ export async function read_package_json(
     id:'root',
     full_pathname: '',
     folders,
-    runners:[],
-    ntype:'folder'
+    runners:[]//,
+    //ntype:'folder'
   }
   return root
 }

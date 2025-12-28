@@ -29,7 +29,6 @@ export interface Filename {
     full: string;
 }
 export interface Runner {
-    ntype: 'runner';
     name: string;
     full_pathname: string;
     id: string;
@@ -39,11 +38,9 @@ export interface Runner {
     effective_watch: Filename[];
 }
 export interface FolderError {
-    ntype: 'folder_error';
     message: Lstr;
 }
 export interface Folder {
-    ntype: 'folder';
     name: string;
     full_pathname: string;
     id: string;
