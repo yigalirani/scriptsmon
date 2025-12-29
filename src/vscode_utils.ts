@@ -13,15 +13,13 @@ import {
 }from 'vscode';
 export interface CommandOpenFileRowCol{
    command: "command_open_file_rowcol"
-   full_pathname:string,
-   file?:string
+   source_file:string,
    row:number
    col:number
 }
 export interface CommandOpenFileStartEnd{
    command: "command_open_file_start_end"
-   full_pathname:string,
-   file?:string
+   source_file:string,
    start:number
    end:number
 }
@@ -81,16 +79,20 @@ export function register_command(context: ExtensionContext,command:string,comman
   context.subscriptions.push(commands.registerCommand(command, commandHandler));
 }
 
-function calc_filename(full_pathname:string,file?:string){
-  if (file==null)
-    return full_pathname
-  return path.join(full_pathname,file)
+/*function calc_filename({workspace_folder,source_file}:{
+  workspace_folder?:string
+  source_file:string
 }
+){
+  if (workspace_folder==null)
+    return source_file
+  return path.join(workspace_folder,source_file)
+}*/
 export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
-        const file=calc_filename(pos.full_pathname,pos.file)
-        const document = await vscode.workspace.openTextDocument(file);
+        const {source_file}=pos
+        const document = await vscode.workspace.openTextDocument(source_file);
         const editor = await vscode.window.showTextDocument(document, {
             preview: false
         });
@@ -108,15 +110,15 @@ export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<voi
         );
     } catch (_err) {
         vscode.window.showErrorMessage(
-            `Failed to open file: ${pos.file}`
+            `Failed to open file: ${pos.source_file}`
         );
     }
 }
 async function open_file_start_end(pos: CommandOpenFileStartEnd): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
-        const file=calc_filename(pos.full_pathname,pos.file)
-        const document = await vscode.workspace.openTextDocument(file);
+        const {source_file}=pos
+        const document = await vscode.workspace.openTextDocument(source_file);
         const editor = await vscode.window.showTextDocument(document, {
             preview: false,
             preserveFocus:true
@@ -128,7 +130,7 @@ async function open_file_start_end(pos: CommandOpenFileStartEnd): Promise<void> 
         );
     } catch (_err) {
         vscode.window.showErrorMessage(
-            `Failed to open file: ${pos.file}`
+            `Failed to open file: ${pos.source_file}`
         );
     }
 }

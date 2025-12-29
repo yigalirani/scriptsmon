@@ -24,7 +24,7 @@ function post_message(msg:WebviewMessage){
 const ctrl=new CtrlTracker()
 function addFileLocationLinkDetection(
   terminal: Terminal,
-  full_pathname:string
+  workspace_folder:string
 ): void {
   const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
   const provider: ILinkProvider = {
@@ -41,8 +41,8 @@ function addFileLocationLinkDetection(
         match = pattern.exec(text)
         if (match==null)
           break
-        const [full, file, row, col] = match;
-        if (file==null)
+        const [full, source_file, row, col] = match;
+        if (source_file==null)
           continue
         links.push({
           range: {
@@ -53,8 +53,8 @@ function addFileLocationLinkDetection(
             if (ctrl.pressed)
               post_message({
                 command: "command_open_file_rowcol",
-                file,
-                full_pathname,
+                //workspace_folder,
+                source_file,
                 row: Number(row),
                 col: Number(col)
               });
@@ -83,7 +83,7 @@ function formatElapsedTime(ms: number): string {
   return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
-  const {id,full_pathname}=runner
+  const {id,workspace_folder}=runner
   const ret=parent.querySelector<HTMLElement>(`#${id}`)
   if (ret!=null)
     return ret //todo check that it is HTMLElement
@@ -122,8 +122,8 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         return
       post_message({
         command: "command_open_file_rowcol",
-        full_pathname,
-        file:'package.json',
+        //workspace_folder,
+        source_file:'package.json',
         row:0,
         col:0
       })
@@ -138,7 +138,8 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         const {title}=parent
         post_message({
           command: "command_open_file_rowcol",
-          full_pathname:title,
+          //workspace_folder,
+          source_file:title,
           row:0,
           col:0
         })
@@ -147,11 +148,12 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
      
       const rel=runner.effective_watch.find(x=>x.rel.str===parent.textContent)
       if (rel!=null){
+        //rel
         post_message({
           command: "command_open_file_start_end",
-          full_pathname,
-          file:'package.json',
-          ...pk(rel.rel,'start','end')
+          //workspace_folder,
+          //source_file:'package.json',
+          ...pk(rel.rel,'start','end','source_file')
         })
       }
     })()
@@ -192,12 +194,12 @@ class TerminalPanel{
   ){
     this.el=create_terminal_element(parent,runner)
     this.term=new Terminal({cols:200})
-    addFileLocationLinkDetection(this.term,runner.full_pathname)
+    addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
     // Initialize title bar with full filename plus script
-    query_selector(this.el, '.term_title_dir .value').textContent=runner.full_pathname
+    query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
     query_selector(this.el, '.term_title_script .value').textContent=runner.script.str
     const el=query_selector(this.el, '.term_title_watch .value')
     for (const {rel,full} of runner.effective_watch)
@@ -297,8 +299,8 @@ const provider:TreeDataProvider<Folder>={
     if (ctrl.pressed)
       post_message({
         command: "command_open_file_start_end",
-        full_pathname:runner.full_pathname,
-        file:'package.json',
+        //workspace_folder:runner.workspace_folder,
+        source_file:runner.script.source_file,
         start:runner.script.start,
         end:runner.script.end    
       })

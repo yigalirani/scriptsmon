@@ -83,15 +83,15 @@ function make_loop_func(monitor:Monitor){
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
-  const folders=function(){
+  const workspace_folders=function(){
     const ans= (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
-      return [String.raw`c:\yigal\scriptsmon`]
+      return [String.raw`c:/yigal/scriptsmon`]
     return ans
   }()
-  if (folders==null) 
+  if (workspace_folders==null) 
     return  
-  const monitor=new Monitor(folders)
+  const monitor=new Monitor(workspace_folders)
   await monitor.read_package_json()
   const the_loop=make_loop_func(monitor)
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})

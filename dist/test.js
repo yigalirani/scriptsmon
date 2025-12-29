@@ -8143,7 +8143,7 @@ function read_prop_any(ast) {
     value: ast.value
   };
 }
-function get_erray_mandatory(ast, full_pathname) {
+function get_erray_mandatory(ast, source_file) {
   const ans = [];
   if (ast.type === "ArrayExpression") {
     for (const elem of ast.elements) {
@@ -8155,7 +8155,7 @@ function get_erray_mandatory(ast, full_pathname) {
         throw new AstException("expecting string here", elem);
       ans.push({
         str: elem.value,
-        full_pathname,
+        source_file,
         ...pk(elem, "start", "end")
       });
     }
@@ -8163,16 +8163,16 @@ function get_erray_mandatory(ast, full_pathname) {
   }
   throw new AstException("expecting array", ast);
 }
-function get_array(ast, full_pathname) {
+function get_array(ast, source_file) {
   if (ast.type === "Literal" && typeof ast.value === "string") {
     const location = {
       str: ast.value,
-      full_pathname,
+      source_file,
       ...pk(ast, "start", "end")
     };
     return [location];
   }
-  return get_erray_mandatory(ast, full_pathname);
+  return get_erray_mandatory(ast, source_file);
 }
 function make_unique(ar) {
   const ans = {};
@@ -8208,7 +8208,7 @@ function resolve_vars(vars, ast) {
   }
   return ans;
 }
-function parse_watchers(ast, full_pathname) {
+function parse_watchers(ast, source_file) {
   const scriptsmon = find_prop(ast, "scriptsmon");
   if (scriptsmon == null) {
     return {
@@ -8227,7 +8227,7 @@ function parse_watchers(ast, full_pathname) {
       return;
     for (const propast of ast2.properties) {
       const { key, value } = read_prop_any(propast);
-      const ar = get_array(value, full_pathname);
+      const ar = get_array(value, source_file);
       if (vars[key] !== void 0)
         throw new AstException(`duplicate value: ${key}`, propast);
       for (const subk of key.split(",")) {
@@ -8244,7 +8244,7 @@ function parse_watchers(ast, full_pathname) {
     autowatch_scripts
   };
 }
-function parse_scripts2(ast, full_pathname) {
+function parse_scripts2(ast, source_file) {
   const ans = {};
   const scripts = find_prop(ast, "scripts");
   if (scripts == null)
@@ -8253,14 +8253,14 @@ function parse_scripts2(ast, full_pathname) {
     return ans;
   for (const propast of scripts.properties) {
     const { start, end, key, str } = read_prop(propast);
-    ans[key] = { str, start, end, full_pathname };
+    ans[key] = { str, start, end, source_file };
   }
   return ans;
 }
 function escape_id(s) {
-  return s.replaceAll(/\\|:/g, "-").replaceAll(" ", "--");
+  return s.replaceAll(/\\|:|\//g, "-").replaceAll(" ", "--");
 }
-function scriptsmon_to_runners(pkgPath, watchers, scripts) {
+function scriptsmon_to_runners(source_file, watchers, scripts) {
   const ans = [];
   for (const [name, script] of Object.entries(scripts)) {
     if (script == null) {
@@ -8268,16 +8268,16 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
       continue;
     }
     const runner = (function() {
-      const full_pathname = path.dirname(pkgPath);
-      const id = escape_id(`${full_pathname} ${name}`);
+      const workspace_folder = path.dirname(source_file);
+      const id = escape_id(`${workspace_folder} ${name}`);
       const effective_watch_rel = watchers.watches[name] || [];
-      const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(full_pathname, rel.str) }));
+      const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(workspace_folder, rel.str) }));
       const watched = watchers.autowatch_scripts.includes(name);
       const ans2 = {
         //ntype:'runner',
         name,
         script,
-        full_pathname,
+        workspace_folder,
         effective_watch,
         watched,
         id,
@@ -8289,33 +8289,33 @@ function scriptsmon_to_runners(pkgPath, watchers, scripts) {
   }
   return ans;
 }
-async function read_package_json(full_pathnames) {
+async function read_package_json(workspace_folders) {
   const folder_index = {};
-  async function read_one(full_pathname, name) {
-    const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
-    const d = path.resolve(full_pathname);
+  async function read_one(workspace_folder, name) {
+    const source_file = path.resolve(path.normalize(workspace_folder), "package.json");
+    const d = path.resolve(source_file);
     const exists = folder_index[d];
     if (exists != null) {
-      console.warn(`${pkgPath}: skippin, already done`);
+      console.warn(`${source_file}: skippin, already done`);
       return exists;
     }
-    const source = await fs.readFile(pkgPath, "utf8");
+    const source = await fs.readFile(source_file, "utf8");
     if (source == null)
       return null;
     const ast = parseExpressionAt2(source, 0, {
       ecmaVersion: "latest"
     });
-    console.warn(`${green}${pkgPath}${reset2}`);
-    const scripts = parse_scripts2(ast, pkgPath);
-    const watchers = parse_watchers(ast, pkgPath);
-    const runners = scriptsmon_to_runners(pkgPath, watchers, scripts);
+    console.warn(`${green}${source_file}${reset2}`);
+    const scripts = parse_scripts2(ast, source_file);
+    const watchers = parse_watchers(ast, source_file);
+    const runners = scriptsmon_to_runners(source_file, watchers, scripts);
     const workspaces_ast = find_prop(ast, "workspaces");
-    const workspaces = workspaces_ast ? get_erray_mandatory(workspaces_ast, full_pathname) : [];
+    const workspaces = workspaces_ast ? get_erray_mandatory(workspaces_ast, source_file) : [];
     const folders2 = [];
     {
       const promises2 = [];
       for (const workspace of workspaces)
-        promises2.push(read_one(path.join(full_pathname, workspace.str), workspace.str));
+        promises2.push(read_one(path.join(workspace_folder, workspace.str), workspace.str));
       for (const ret of await Promise.all(promises2))
         if (ret != null)
           folders2.push(ret);
@@ -8324,17 +8324,16 @@ async function read_package_json(full_pathnames) {
       runners,
       folders: folders2,
       name,
-      full_pathname,
+      workspace_folder,
       /*ntype:'folder',*/
-      id: escape_id(full_pathname)
+      id: escape_id(workspace_folder)
     };
     return ans;
   }
   const folders = [];
   const promises = [];
-  for (const pathname of full_pathnames) {
-    const full_pathname = path.resolve(pathname);
-    promises.push(read_one(full_pathname, path.basename(full_pathname)));
+  for (const workspace_folder of workspace_folders) {
+    promises.push(read_one(workspace_folder, path.basename(workspace_folder)));
   }
   for (const ret of await Promise.all(promises))
     if (ret != null)
@@ -8342,7 +8341,7 @@ async function read_package_json(full_pathnames) {
   const root = {
     name: "root",
     id: "root",
-    full_pathname: "",
+    workspace_folder: "",
     folders,
     runners: []
     //,
@@ -8417,14 +8416,14 @@ async function run_runner({
 }) {
   await stop({ runner_ctrl, runner });
   await new Promise((resolve4, _reject) => {
-    const { full_pathname, runs, name } = runner;
+    const { workspace_folder, runs, name } = runner;
     const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
     const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
     const child = spawn(shell, shellArgs, {
       // name: 'xterm-color',
       cols: 200,
       useConpty: false,
-      cwd: full_pathname,
+      cwd: workspace_folder,
       env: { ...process.env, FORCE_COLOR: "3" }
     });
     if (child === null)
@@ -8517,8 +8516,8 @@ function get_runners_by_changed_dirs(root, changed_dirs) {
   return Object.values(ans);
 }
 var Monitor = class {
-  constructor(full_pathnames) {
-    this.full_pathnames = full_pathnames;
+  constructor(workspace_folders) {
+    this.workspace_folders = workspace_folders;
   }
   runner_ctrl = make_runner_ctrl();
   root;
@@ -8526,7 +8525,7 @@ var Monitor = class {
   changed_dirs = /* @__PURE__ */ new Set();
   watched_runners = [];
   async read_package_json() {
-    this.root = await read_package_json(this.full_pathnames);
+    this.root = await read_package_json(this.workspace_folders);
     this.watched_dirs = collect_watch_dirs(this.root);
     this.watched_runners = find_runners(this.root, (x) => x.watched);
     await mkdir_write_file(String.raw`.\generated\packages.json`, to_json(this));

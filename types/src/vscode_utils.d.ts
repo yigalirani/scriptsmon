@@ -1,15 +1,13 @@
 import { type WebviewView, type Webview, type ExtensionContext } from 'vscode';
 export interface CommandOpenFileRowCol {
     command: "command_open_file_rowcol";
-    full_pathname: string;
-    file?: string;
+    source_file: string;
     row: number;
     col: number;
 }
 export interface CommandOpenFileStartEnd {
     command: "command_open_file_start_end";
-    full_pathname: string;
-    file?: string;
+    source_file: string;
     start: number;
     end: number;
 }

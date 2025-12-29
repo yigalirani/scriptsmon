@@ -66,7 +66,7 @@ function read_prop_any(ast:Property|SpreadElement){
     value:ast.value
   }
 }
-function get_erray_mandatory(ast:Expression,full_pathname:string){
+function get_erray_mandatory(ast:Expression,source_file:string){
   const ans:Lstr[]=[]  
   if (ast.type==="ArrayExpression"){
     for (const elem of ast.elements){
@@ -78,7 +78,7 @@ function get_erray_mandatory(ast:Expression,full_pathname:string){
         throw new AstException('expecting string here',elem)
       ans.push({
         str:elem.value,
-        full_pathname,
+        source_file,
         ...pk(elem,'start','end')
       })
     }
@@ -86,16 +86,16 @@ function get_erray_mandatory(ast:Expression,full_pathname:string){
   }
   throw new AstException('expecting array',ast)
 }
-function get_array(ast:Expression,full_pathname:string):Lstr[]{
+function get_array(ast:Expression,source_file:string):Lstr[]{
   if (ast.type==="Literal" && typeof ast.value ==="string"){
     const location={
       str:ast.value,
-      full_pathname,
+      source_file,
       ...pk(ast,'start','end')
     }
     return [location]
   }
-  return get_erray_mandatory(ast,full_pathname)
+  return get_erray_mandatory(ast,source_file)
 }
 function make_unique(ar:Lstr[][]):Lstr[]{
   const ans:s2t<Lstr>={}
@@ -137,7 +137,7 @@ interface Watchers{
 }
 function parse_watchers(
   ast: Expression,
-  full_pathname:string
+  source_file:string
 ):Watchers { 
   const scriptsmon=find_prop(ast,'scriptsmon')
   if (scriptsmon==null){
@@ -157,7 +157,7 @@ function parse_watchers(
       return    
     for (const propast of ast.properties){
       const {key,value}=read_prop_any(propast)
-      const ar=get_array(value,full_pathname)
+      const ar=get_array(value,source_file)
       if (vars[key]!==undefined)
         throw new AstException(`duplicate value: ${key}`,propast)
       for (const subk of key.split(',')){ //so multiple scripts can easily have the save watched
@@ -176,7 +176,7 @@ function parse_watchers(
 }
 function parse_scripts2(
   ast: Expression,
-  full_pathname:string
+  source_file:string
 ): s2t<Lstr> { 
   const ans:s2t<Lstr>={}
   const scripts=find_prop(ast,'scripts')
@@ -186,14 +186,14 @@ function parse_scripts2(
     return ans
   for (const propast of scripts.properties){
     const {start,end,key,str}=read_prop(propast)
-    ans[key]={str,start,end,full_pathname}
+    ans[key]={str,start,end,source_file}
   }
   return ans
 }
 function escape_id(s:string){
-  return s.replaceAll(/\\|:/g,'-').replaceAll(' ','--')
+  return s.replaceAll(/\\|:|\//g,'-').replaceAll(' ','--')
 }
-function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr>){
+function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<Lstr>){
   const ans=[]
   for (const [name,script] of Object.entries(scripts)){
     if (script==null){
@@ -201,16 +201,16 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
       continue
     }
     const runner=function(){
-      const full_pathname=path.dirname(pkgPath)
-      const id=escape_id(`${full_pathname} ${name}`)
+      const workspace_folder=path.dirname(source_file)
+      const id=escape_id(`${workspace_folder} ${name}`)
       const effective_watch_rel=watchers.watches[name]||[]
-      const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(full_pathname,rel.str)}))
+      const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(workspace_folder,rel.str)}))
       const watched=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
         //ntype:'runner',
         name,
         script,
-        full_pathname,
+        workspace_folder,
         effective_watch,
         watched,
         id,
@@ -223,47 +223,47 @@ function scriptsmon_to_runners(pkgPath:string,watchers:Watchers,scripts:s2t<Lstr
   return ans
 }
 export async function read_package_json(
-  full_pathnames: string[]
+  workspace_folders: string[]
 ) {
   const folder_index: Record<string, Folder> = {}; //by full_pathname
-  async function read_one(full_pathname: string,name:string){
-    const pkgPath = path.resolve(path.normalize(full_pathname), "package.json");
-    const d= path.resolve(full_pathname);
+  async function read_one(workspace_folder: string,name:string){
+    const source_file = path.resolve(path.normalize(workspace_folder), "package.json");
+    const d= path.resolve(source_file);
     const exists=folder_index[d]
     if (exists!=null){
-      console.warn(`${pkgPath}: skippin, already done`)
+      console.warn(`${source_file}: skippin, already done`)
       return exists
     }    
     //const pkgJson = await 
-    const source=await fs.readFile(pkgPath,'utf8')
+    const source=await fs.readFile(source_file,'utf8')
     if (source==null)
       return null
     const ast = parseExpressionAt(source, 0, {
       ecmaVersion: "latest",
     });
-    console.warn(`${green}${pkgPath}${reset}`)
-    const scripts=parse_scripts2(ast,pkgPath)
-    const watchers=parse_watchers(ast,pkgPath)
-    const runners=scriptsmon_to_runners(pkgPath,watchers,scripts)
+    console.warn(`${green}${source_file}${reset}`)
+    const scripts=parse_scripts2(ast,source_file)
+    const watchers=parse_watchers(ast,source_file)
+    const runners=scriptsmon_to_runners(source_file,watchers,scripts)
     const workspaces_ast=find_prop (ast,'workspaces')
-    const workspaces=workspaces_ast?get_erray_mandatory(workspaces_ast,full_pathname):[]
+    const workspaces=workspaces_ast?get_erray_mandatory(workspaces_ast,source_file):[]
     const folders=[] 
     {
       const promises=[]
       for (const workspace of workspaces)
-          promises.push(read_one(path.join(full_pathname,workspace.str),workspace.str))
+          promises.push(read_one(path.join(workspace_folder,workspace.str),workspace.str))
       for (const ret of await Promise.all(promises))
         if (ret!=null)
             folders.push(ret)
     }
-    const ans:Folder= {runners,folders,name,full_pathname,/*ntype:'folder',*/id:escape_id(full_pathname)}
+    const ans:Folder= {runners,folders,name,workspace_folder,/*ntype:'folder',*/id:escape_id(workspace_folder)}
     return ans
   }
   const folders=[]
   const promises=[]
-  for (const pathname of full_pathnames){
-    const full_pathname=path.resolve(pathname)
-    promises.push(read_one(full_pathname,path.basename(full_pathname)))
+  for (const workspace_folder of workspace_folders){
+    //const full_pathname=path.resolve(pathname)
+    promises.push(read_one(workspace_folder,path.basename(workspace_folder)))
   }
   for (const ret of await Promise.all(promises))
     if (ret!=null)
@@ -271,7 +271,7 @@ export async function read_package_json(
   const root:Folder={
     name:'root',
     id:'root',
-    full_pathname: '',
+    workspace_folder: '',
     folders,
     runners:[]//,
     //ntype:'folder'

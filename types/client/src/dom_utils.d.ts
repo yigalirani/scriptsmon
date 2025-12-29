@@ -1,4 +1,4 @@
-import { s2t } from '@yigal/base_types';
+import type { s2t } from '@yigal/base_types';
 export declare function query_selector<T extends Element = Element>(el: Element, selector: string): T;
 export declare function create_element(html: string, parent?: HTMLElement): HTMLElement;
 export declare function divs(vals: s2t<string | undefined>): string;

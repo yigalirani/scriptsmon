@@ -6238,7 +6238,7 @@ function calc_changed(root, old_root) {
   }
   ans.big = false;
   function f(node) {
-    const { id, children, icon_version } = node;
+    const { id, children } = node;
     const old_node = old_index[id];
     if (old_node == null)
       throw new Error("old node not found");
@@ -6309,7 +6309,6 @@ function element_for_down_arrow(selected) {
       return ans2;
     cur = parent;
   }
-  return get_next_selected(selected);
 }
 var TreeControl = class {
   constructor(parent, provider2) {
@@ -6393,7 +6392,6 @@ var TreeControl = class {
   create_node_element(node, margin, parent) {
     const { icons } = this;
     const { type, id, description, label, icon = "undefined", commands, className } = node;
-    const template = document.createElement("template");
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
@@ -6450,7 +6448,7 @@ var TreeControl = class {
     }
   }
   render(root, base_uri) {
-    this.base_uri = base_uri + "/client/resources";
+    this.base_uri = `${base_uri}/client/resources`;
     const converted = this.provider.convert(root);
     this.root = root;
     const change = calc_changed(converted, this.last_converted);
@@ -12236,7 +12234,7 @@ function post_message(msg) {
   vscode.postMessage(msg);
 }
 var ctrl = new CtrlTracker();
-function addFileLocationLinkDetection(terminal, full_pathname) {
+function addFileLocationLinkDetection(terminal, workspace_folder) {
   const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
   const provider2 = {
     provideLinks(y, callback) {
@@ -12252,8 +12250,8 @@ function addFileLocationLinkDetection(terminal, full_pathname) {
         match = pattern.exec(text);
         if (match == null)
           break;
-        const [full, file, row, col] = match;
-        if (file == null)
+        const [full, source_file, row, col] = match;
+        if (source_file == null)
           continue;
         links.push({
           range: {
@@ -12264,8 +12262,8 @@ function addFileLocationLinkDetection(terminal, full_pathname) {
             if (ctrl.pressed)
               post_message({
                 command: "command_open_file_rowcol",
-                file,
-                full_pathname,
+                //workspace_folder,
+                source_file,
                 row: Number(row),
                 col: Number(col)
               });
@@ -12291,7 +12289,7 @@ function formatElapsedTime(ms) {
   return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent, runner) {
-  const { id, full_pathname } = runner;
+  const { id, workspace_folder } = runner;
   const ret = parent.querySelector(`#${id}`);
   if (ret != null)
     return ret;
@@ -12330,8 +12328,8 @@ function create_terminal_element(parent, runner) {
         return;
       post_message({
         command: "command_open_file_rowcol",
-        full_pathname,
-        file: "package.json",
+        //workspace_folder,
+        source_file: "package.json",
         row: 0,
         col: 0
       });
@@ -12344,7 +12342,8 @@ function create_terminal_element(parent, runner) {
         const { title } = parent2;
         post_message({
           command: "command_open_file_rowcol",
-          full_pathname: title,
+          //workspace_folder,
+          source_file: title,
           row: 0,
           col: 0
         });
@@ -12354,9 +12353,9 @@ function create_terminal_element(parent, runner) {
       if (rel != null) {
         post_message({
           command: "command_open_file_start_end",
-          full_pathname,
-          file: "package.json",
-          ...pk(rel.rel, "start", "end")
+          //workspace_folder,
+          //source_file:'package.json',
+          ...pk(rel.rel, "start", "end", "source_file")
         });
       }
     })();
@@ -12384,11 +12383,11 @@ var TerminalPanel = class {
     this.parent = parent;
     this.el = create_terminal_element(parent, runner);
     this.term = new import_xterm.Terminal({ cols: 200 });
-    addFileLocationLinkDetection(this.term, runner.full_pathname);
+    addFileLocationLinkDetection(this.term, runner.workspace_folder);
     const term_container = query_selector(this.el, ".term");
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
-    query_selector(this.el, ".term_title_dir .value").textContent = runner.full_pathname;
+    query_selector(this.el, ".term_title_dir .value").textContent = runner.workspace_folder;
     query_selector(this.el, ".term_title_script .value").textContent = runner.script.str;
     const el2 = query_selector(this.el, ".term_title_watch .value");
     for (const { rel, full } of runner.effective_watch)
@@ -12458,18 +12457,18 @@ function get_terminals(folder, terminals) {
   }
   f(folder);
 }
-function convert(root) {
-  const { name, id } = root;
-  if (root.ntype === "folder") {
-    const folders = root.folders.map(convert);
-    const items = root.runners.map(convert);
-    const children = [...folders, ...items];
-    return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0, className: void 0 };
-  }
-  const { script, watched } = root;
+function convert_runner(root) {
+  const { script, watched, id, name } = root;
   const { version: version2, state } = calc_runner_status(root);
   const className = watched ? "watched" : void 0;
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script.str, icon: state, icon_version: version2, className };
+}
+function convert(root) {
+  const { name, id } = root;
+  const folders = root.folders.map(convert);
+  const items = root.runners.map(convert_runner);
+  const children = [...folders, ...items];
+  return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0, className: void 0 };
 }
 var provider = {
   convert,
@@ -12494,8 +12493,8 @@ var provider = {
     if (ctrl.pressed)
       post_message({
         command: "command_open_file_start_end",
-        full_pathname: runner.full_pathname,
-        file: "package.json",
+        //workspace_folder:runner.workspace_folder,
+        source_file: runner.script.source_file,
         start: runner.script.start,
         end: runner.script.end
       });

@@ -20,7 +20,7 @@ export interface Run {
 }
 export interface Lstr {
     str: string;
-    full_pathname: string;
+    source_file: string;
     start: number;
     end: number;
 }
@@ -30,7 +30,7 @@ export interface Filename {
 }
 export interface Runner {
     name: string;
-    full_pathname: string;
+    workspace_folder: string;
     id: string;
     script: Lstr;
     runs: Run[];
@@ -42,7 +42,7 @@ export interface FolderError {
 }
 export interface Folder {
     name: string;
-    full_pathname: string;
+    workspace_folder: string;
     id: string;
     folders: Array<Folder>;
     runners: Array<Runner>;

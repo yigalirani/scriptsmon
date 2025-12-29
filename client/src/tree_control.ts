@@ -329,7 +329,7 @@ export class TreeControl<T>{
   }
   render(root:T,base_uri:string){
     /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
-    this.base_uri=base_uri+'/client/resources'
+    this.base_uri=`${base_uri}/client/resources`
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
     this.root=root

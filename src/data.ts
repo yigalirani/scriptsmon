@@ -23,7 +23,7 @@ export interface Run{
 }
 export interface Lstr{
   str:string
-  full_pathname:string
+  source_file:string
   start:number
   end:number
 }
@@ -34,7 +34,7 @@ export interface Filename{
 export interface Runner {
   //ntype          : 'runner' //deprecated
   name           : string
-  full_pathname  : string
+  workspace_folder  : string
   id             : string
   script         : Lstr
   runs           : Run[]     //growing
@@ -48,7 +48,7 @@ export interface FolderError{
 export interface Folder{
   //ntype        : 'folder'
   name         : string
-  full_pathname: string         //where the package.json is 
+  workspace_folder: string         //where the package.json is 
   id           : string
   folders      : Array<Folder>
   runners      : Array<Runner>

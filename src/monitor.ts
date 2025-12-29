@@ -75,7 +75,7 @@ async function stop({
 }) {
   await stop({runner_ctrl,runner})
   await new Promise((resolve, _reject) => { 
-    const {full_pathname,runs,name}=runner
+    const {workspace_folder,runs,name}=runner
     //(runner,'running')
     // Spawn a shell with the script as command
     //const split_args=script.str.split(' ').filter(Boolean)
@@ -86,7 +86,7 @@ async function stop({
      // name: 'xterm-color',
       cols:200,
       useConpty:false,
-      cwd:full_pathname,
+      cwd:workspace_folder,
       env: { ...process.env, FORCE_COLOR: "3" },
     });
     if (child===null)
@@ -193,10 +193,10 @@ export class Monitor{
   changed_dirs=new Set<string>()
   watched_runners:Runner[]=[]
   constructor(
-    public full_pathnames:string[]
+    public workspace_folders:string[]
   ){}
   async read_package_json(){
-    this.root= await read_package_json(this.full_pathnames)
+    this.root= await read_package_json(this.workspace_folders)
     this.watched_dirs=collect_watch_dirs(this.root)
     this.watched_runners=find_runners(this.root,(x)=>x.watched)
     await mkdir_write_file(String.raw`.\generated\packages.json`,to_json(this))

@@ -1,4 +1,4 @@
-import { s2t} from '@yigal/base_types'
+import type { s2t} from '@yigal/base_types'
 
 export function query_selector<T extends Element=Element>(el:Element,selector:string){
     const ans=el.querySelector<T>(selector);
