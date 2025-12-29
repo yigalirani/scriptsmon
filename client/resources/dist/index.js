@@ -6280,7 +6280,9 @@ function calc_changed(root, old_root) {
 function get_children(selected) {
   if (selected.classList.contains("collapsed"))
     return null;
-  return selected.querySelector(".children");
+  const ans = selected.querySelector(".children");
+  if (ans != null)
+    return ans;
 }
 function getLastElementChild(parent) {
   for (let i = parent.childNodes.length - 1; i >= 0; i--) {
@@ -6423,7 +6425,7 @@ var TreeControl = class {
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
     this.mark_changed(id);
     const ans = create_element(`
-  <div  class="tree_${type} ${className || ""}" id="${id}" >
+  <div  class="tree_${type} ${className ?? ""}" id="${id}" >
     <div  class=label_row>
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>

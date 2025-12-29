@@ -111,7 +111,10 @@ function calc_changed(root:TreeNode,old_root:TreeNode|undefined){
 function get_children(selected:HTMLElement){
   if (selected.classList.contains('collapsed'))
     return null
-  return selected.querySelector('.children') as HTMLElement//by thoernm is an HTMLElement
+  const ans= selected.querySelector('.children')//by thoernm is an HTMLElement
+  if (ans!=null)
+    return ans as HTMLElement 
+
 }
 function getLastElementChild(parent: HTMLElement): HTMLElement | null {
   // Iterate backwards through child nodes
@@ -204,7 +207,7 @@ export class TreeControl<T>{
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
     this.mark_changed(id)
     const ans= create_element(`
-  <div  class="tree_${type} ${className||""}" id="${id}" >
+  <div  class="tree_${type} ${className??""}" id="${id}" >
     <div  class=label_row>
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
