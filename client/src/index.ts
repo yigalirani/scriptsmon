@@ -6,7 +6,7 @@ interface VSCodeApi {
 import type {WebviewMessage} from '../../src/extension.js'
 import {type s2t,pk} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
-import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker} from './dom_utils.js'
+import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker,path_join} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
 import type { Folder,Runner} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
@@ -41,9 +41,10 @@ function addFileLocationLinkDetection(
         match = pattern.exec(text)
         if (match==null)
           break
-        const [full, source_file, row, col] = match;
-        if (source_file==null)
+        const [full, file, row, col] = match;
+        if (file==null)
           continue
+        const source_file=path_join(workspace_folder,file)
         links.push({
           range: {
             start: { x: match.index + 1, y },

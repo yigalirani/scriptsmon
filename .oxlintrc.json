@@ -1,5 +1,5 @@
 {
-  "ignorePatterns": ["main/old","converter_old","main/unused_code","main/try","**/dist/","**/*.mjs","/scripts","main/ext","main/bookmarks"],
+  "ignorePatterns": ["**/dist/","**types"],
   "env": {
     "node": true,
     "browser":true,
@@ -95,6 +95,7 @@
     "eslint/no-inline-comments":"off",
     "eslint/default-case":"off",
     "unicorn/switch-case-braces":"off",
-    "unicorn/require-post-message-target-origin":"off"
+    "unicorn/require-post-message-target-origin":"off",
+    "unicorn/text-encoding-identifier-case":"off"
   }
 }

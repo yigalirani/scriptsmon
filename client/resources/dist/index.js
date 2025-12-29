@@ -6162,6 +6162,32 @@ var CtrlTracker = class {
     });
   }
 };
+function path_join(...segments) {
+  const parts = [];
+  let absolute = true;
+  for (const segment of segments) {
+    if (!segment) continue;
+    absolute = absolute || segment.startsWith("/");
+    const tokens = segment.split("/");
+    for (const token of tokens) {
+      if (token === "" || token === ".") continue;
+      if (token === ".." && parts.length && parts[parts.length - 1] !== "..") {
+        parts.pop();
+        continue;
+      }
+      if (token === ".." && !absolute) {
+        parts.push("..");
+        continue;
+      }
+      if (token !== "..") {
+        parts.push(token);
+      }
+    }
+  }
+  const ans = parts.join("/");
+  if (absolute) return `/${ans}`;
+  return ans || ".";
+}
 
 // src/tree_control.ts
 function parseIcons(html) {
@@ -12250,9 +12276,10 @@ function addFileLocationLinkDetection(terminal, workspace_folder) {
         match = pattern.exec(text);
         if (match == null)
           break;
-        const [full, source_file, row, col] = match;
-        if (source_file == null)
+        const [full, file, row, col] = match;
+        if (file == null)
           continue;
+        const source_file = path_join(workspace_folder, file);
         links.push({
           range: {
             start: { x: match.index + 1, y },

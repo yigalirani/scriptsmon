@@ -56,19 +56,6 @@ export function update_child_html(el: HTMLElement, selector: string, html: strin
   if (child.innerHTML === html) return; // skip if same
   child.innerHTML = html;
 }
-export function reset_animation(ids:Set<string>){ //not in use
-  function collect_elements(parent: HTMLElement, ids: Set<string>): HTMLElement[] {
-    // Select all elements under parent that have an id
-    const allWithId = parent.querySelectorAll<HTMLElement>('[id]');
-    for (const el of allWithId)
-      if (ids.has(el.id)){
-        //query_selector(el,'.icon') instanceof ImageEl
-      }
-    // Filter only the ones whose id is in the set
-    return Array.from(allWithId).filter(el => ids.has(el.id));
-}
-  //firs
-}
 export class CtrlTracker{
   pressed = false;
   constructor(){
@@ -84,4 +71,36 @@ export class CtrlTracker{
       }
     });    
   }
+}
+export function path_join(...segments: string[]): string {
+  const parts: string[] = [];
+  let absolute = true;
+
+  for (const segment of segments) {
+    if (!segment) continue;
+
+    absolute = absolute || segment.startsWith("/");
+
+    const tokens = segment.split("/");
+    for (const token of tokens) {
+      if (token === "" || token === ".") continue;
+
+      if (token === ".." && parts.length && parts[parts.length - 1] !== "..") {
+        parts.pop();
+        continue;
+      }
+
+      if (token === ".." && !absolute) {
+        parts.push("..");
+        continue;
+      }
+
+      if (token !== "..") {
+        parts.push(token);
+      }
+    }
+  }
+  const ans = parts.join("/");
+  if (absolute) return `/${ans}`;
+  return ans || ".";
 }
