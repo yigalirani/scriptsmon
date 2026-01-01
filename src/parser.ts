@@ -1,14 +1,30 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 
-import type {Runner,Folder,Filename,Lstr} from './data.js'
+import type {Runner,Folder,Filename,Lstr,Pos,RunnerBase,FolderError} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
 import {
   type s2t,
   reset,
   green,
-  pk
+  pk,
+  get_error
 } from "@yigal/base_types";
+export function find_base(root:Folder,id:string){
+  function f(folder:Folder):RunnerBase|undefined{
+    for (const ar of [folder.runners,folder.errors,folder.folders]){
+      const ans=ar.find(x=>x.id===id)
+      if (ans!=null)
+        return ans
+    }
+    for (const subfolder of folder.folders){
+      const ans=f(subfolder)
+      if (ans!=null)
+        return ans
+    }
+  }
+  return f(root)
+}
 export function find_runner(root:Folder,id:string){
   function f(folder:Folder):Runner|undefined{
     const ans=folder.runners.find(x=>x.id===id)
@@ -208,8 +224,10 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
       const watched=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
         //ntype:'runner',
+        pos: script,
+        need_ctl:true,
         name,
-        script,
+        script:script.str,
         workspace_folder,
         effective_watch,
         watched,
@@ -226,44 +244,68 @@ export async function read_package_json(
   workspace_folders: string[]
 ) {
   const folder_index: Record<string, Folder> = {}; //by full_pathname
-  async function read_one(workspace_folder: string,name:string){
-    const source_file = path.resolve(path.normalize(workspace_folder), "package.json");
-    const d= path.resolve(source_file);
-    const exists=folder_index[d]
-    if (exists!=null){
-      console.warn(`${source_file}: skippin, already done`)
-      return exists
-    }    
-    //const pkgJson = await 
-    const source=await fs.readFile(source_file,'utf8')
-    if (source==null)
-      return null
-    const ast = parseExpressionAt(source, 0, {
-      ecmaVersion: "latest",
-    });
-    console.warn(`${green}${source_file}${reset}`)
-    const scripts=parse_scripts2(ast,source_file)
-    const watchers=parse_watchers(ast,source_file)
-    const runners=scriptsmon_to_runners(source_file,watchers,scripts)
-    const workspaces_ast=find_prop (ast,'workspaces')
-    const workspaces=workspaces_ast?get_erray_mandatory(workspaces_ast,source_file):[]
-    const folders=[] 
-    {
-      const promises=[]
-      for (const workspace of workspaces)
-          promises.push(read_one(path.join(workspace_folder,workspace.str),workspace.str))
-      for (const ret of await Promise.all(promises))
-        if (ret!=null)
-            folders.push(ret)
+  async function read_one(workspace_folder: string,name:string,pos:Pos|undefined):Promise<Folder>{
+    const ans:Folder= {
+        runners:[],
+        folders:[],
+        name,
+        workspace_folder,/*ntype:'folder',*/
+        id:escape_id(workspace_folder),
+        pos,
+        need_ctl:true,
+        errors:[]
     }
-    const ans:Folder= {runners,folders,name,workspace_folder,/*ntype:'folder',*/id:escape_id(workspace_folder)}
-    return ans
+    const source_file = path.resolve(path.normalize(workspace_folder), "package.json");
+    try{
+
+      const d= path.resolve(source_file);
+      const exists=folder_index[d]
+      if (exists!=null){
+        console.warn(`${source_file}: skippin, already done`)
+        return exists
+      }    
+      //const pkgJson = await 
+      const source=await fs.readFile(source_file,'utf8')
+      const ast = parseExpressionAt(source, 0, {
+        ecmaVersion: "latest",
+      });
+      console.warn(`${green}${source_file}${reset}`)
+      const scripts=parse_scripts2(ast,source_file)
+      const watchers=parse_watchers(ast,source_file)
+      ans.runners=scriptsmon_to_runners(source_file,watchers,scripts)
+      const workspaces_ast=find_prop (ast,'workspaces')
+      const workspaces=workspaces_ast?get_erray_mandatory(workspaces_ast,source_file):[]
+      ans.folders=[] 
+      {
+        const promises=[]
+        for (const workspace of workspaces)
+            promises.push(read_one(path.join(workspace_folder,workspace.str),workspace.str,workspace))
+        for (const ret of await Promise.all(promises))
+          if (ret!=null)
+              ans.folders.push(ret)
+      }
+      return ans
+    }catch(ex){
+      const ex_error=get_error(ex)
+      const pos:Pos={
+            source_file,
+          ...(ex_error instanceof AstException?pk(ex_error.ast,'start','end'):{})
+      }
+      ans.errors=[{
+          pos,
+          id:`${ans.id}error`,
+          need_ctl:false,
+          message:ex_error.message
+      }
+      ]
+      return ans
+    }
   }
   const folders=[]
   const promises=[]
   for (const workspace_folder of workspace_folders){
     //const full_pathname=path.resolve(pathname)
-    promises.push(read_one(workspace_folder,path.basename(workspace_folder)))
+    promises.push(read_one(workspace_folder,path.basename(workspace_folder),undefined))
   }
   for (const ret of await Promise.all(promises))
     if (ret!=null)
@@ -273,7 +315,10 @@ export async function read_package_json(
     id:'root',
     workspace_folder: '',
     folders,
-    runners:[]//,
+    runners:[],//,
+    need_ctl:true,
+    pos:undefined,
+    errors:[]
     //ntype:'folder'
   }
   return root

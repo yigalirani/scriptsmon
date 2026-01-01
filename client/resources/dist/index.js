@@ -6083,15 +6083,6 @@ WARNING: This link could potentially be dangerous`)) {
   }
 });
 
-// ../node_modules/@yigal/base_types/src/index.ts
-function pk(obj, ...keys) {
-  const ret = {};
-  keys.forEach((key) => {
-    ret[key] = obj?.[key];
-  });
-  return ret;
-}
-
 // src/index.ts
 var import_xterm = __toESM(require_xterm(), 1);
 
@@ -12126,6 +12117,21 @@ Parser.acorn = {
 };
 
 // ../src/parser.ts
+function find_base(root, id) {
+  function f(folder) {
+    for (const ar of [folder.runners, folder.errors, folder.folders]) {
+      const ans = ar.find((x) => x.id === id);
+      if (ans != null)
+        return ans;
+    }
+    for (const subfolder of folder.folders) {
+      const ans = f(subfolder);
+      if (ans != null)
+        return ans;
+    }
+  }
+  return f(root);
+}
 function find_runner(root, id) {
   function f(folder) {
     const ans = folder.runners.find((x) => x.id === id);
@@ -12381,10 +12387,8 @@ function create_terminal_element(parent, runner) {
       const rel = runner.effective_watch.find((x) => x.rel.str === parent2.textContent);
       if (rel != null) {
         post_message({
-          command: "command_open_file_start_end",
-          //workspace_folder,
-          //source_file:'package.json',
-          ...pk(rel.rel, "start", "end", "source_file")
+          command: "command_open_file_pos",
+          pos: rel.rel
         });
       }
     })();
@@ -12417,7 +12421,7 @@ var TerminalPanel = class {
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
     query_selector(this.el, ".term_title_dir .value").textContent = runner.workspace_folder;
-    query_selector(this.el, ".term_title_script .value").textContent = runner.script.str;
+    query_selector(this.el, ".term_title_script .value").textContent = runner.script;
     const el2 = query_selector(this.el, ".term_title_watch .value");
     for (const { rel, full } of runner.effective_watch)
       create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el2);
@@ -12490,7 +12494,7 @@ function convert_runner(root) {
   const { script, watched, id, name } = root;
   const { version: version2, state } = calc_runner_status(root);
   const className = watched ? "watched" : void 0;
-  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script.str, icon: state, icon_version: version2, className };
+  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version2, className };
 }
 function convert(root) {
   const { name, id } = root;
@@ -12511,6 +12515,18 @@ var provider = {
   icons_html: icons_default,
   animated: ".running,.done .check,.error .check",
   selected(root, id) {
+    (() => {
+      const base = find_base(root, id);
+      if (base == null || base.pos == null)
+        return;
+      if (base.need_ctl && !ctrl.pressed)
+        return;
+      const { pos } = base;
+      post_message({
+        command: "command_open_file_pos",
+        pos
+      });
+    })();
     const runner = find_runner(root, id);
     if (runner == null)
       return;
@@ -12519,14 +12535,6 @@ var provider = {
         continue;
       panel.style.display = panel.id === id ? "flex" : "none";
     }
-    if (ctrl.pressed)
-      post_message({
-        command: "command_open_file_start_end",
-        //workspace_folder:runner.workspace_folder,
-        source_file: runner.script.source_file,
-        start: runner.script.start,
-        end: runner.script.end
-      });
   }
 };
 function start() {

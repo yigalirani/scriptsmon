@@ -8000,6 +8000,12 @@ function parseExpressionAt2(input, pos, options) {
 // node_modules/@yigal/base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
 var reset2 = "\x1B[0m";
+function get_error(x) {
+  if (x instanceof Error)
+    return x;
+  const str = String(x);
+  return new Error(str);
+}
 function pk(obj, ...keys) {
   const ret = {};
   keys.forEach((key) => {
@@ -8211,8 +8217,10 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
       const watched = watchers.autowatch_scripts.includes(name);
       const ans2 = {
         //ntype:'runner',
+        pos: script,
+        need_ctl: true,
         name,
-        script,
+        script: script.str,
         workspace_folder,
         effective_watch,
         watched,
@@ -8227,49 +8235,67 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
 }
 async function read_package_json(workspace_folders) {
   const folder_index = {};
-  async function read_one(workspace_folder, name) {
-    const source_file = path.resolve(path.normalize(workspace_folder), "package.json");
-    const d = path.resolve(source_file);
-    const exists = folder_index[d];
-    if (exists != null) {
-      console.warn(`${source_file}: skippin, already done`);
-      return exists;
-    }
-    const source = await fs.readFile(source_file, "utf8");
-    if (source == null)
-      return null;
-    const ast = parseExpressionAt2(source, 0, {
-      ecmaVersion: "latest"
-    });
-    console.warn(`${green}${source_file}${reset2}`);
-    const scripts = parse_scripts2(ast, source_file);
-    const watchers = parse_watchers(ast, source_file);
-    const runners = scriptsmon_to_runners(source_file, watchers, scripts);
-    const workspaces_ast = find_prop(ast, "workspaces");
-    const workspaces = workspaces_ast ? get_erray_mandatory(workspaces_ast, source_file) : [];
-    const folders2 = [];
-    {
-      const promises2 = [];
-      for (const workspace3 of workspaces)
-        promises2.push(read_one(path.join(workspace_folder, workspace3.str), workspace3.str));
-      for (const ret of await Promise.all(promises2))
-        if (ret != null)
-          folders2.push(ret);
-    }
+  async function read_one(workspace_folder, name, pos) {
     const ans = {
-      runners,
-      folders: folders2,
+      runners: [],
+      folders: [],
       name,
       workspace_folder,
       /*ntype:'folder',*/
-      id: escape_id(workspace_folder)
+      id: escape_id(workspace_folder),
+      pos,
+      need_ctl: true,
+      errors: []
     };
-    return ans;
+    const source_file = path.resolve(path.normalize(workspace_folder), "package.json");
+    try {
+      const d = path.resolve(source_file);
+      const exists = folder_index[d];
+      if (exists != null) {
+        console.warn(`${source_file}: skippin, already done`);
+        return exists;
+      }
+      const source = await fs.readFile(source_file, "utf8");
+      const ast = parseExpressionAt2(source, 0, {
+        ecmaVersion: "latest"
+      });
+      console.warn(`${green}${source_file}${reset2}`);
+      const scripts = parse_scripts2(ast, source_file);
+      const watchers = parse_watchers(ast, source_file);
+      ans.runners = scriptsmon_to_runners(source_file, watchers, scripts);
+      const workspaces_ast = find_prop(ast, "workspaces");
+      const workspaces = workspaces_ast ? get_erray_mandatory(workspaces_ast, source_file) : [];
+      ans.folders = [];
+      {
+        const promises2 = [];
+        for (const workspace3 of workspaces)
+          promises2.push(read_one(path.join(workspace_folder, workspace3.str), workspace3.str, workspace3));
+        for (const ret of await Promise.all(promises2))
+          if (ret != null)
+            ans.folders.push(ret);
+      }
+      return ans;
+    } catch (ex) {
+      const ex_error = get_error(ex);
+      const pos2 = {
+        source_file,
+        ...ex_error instanceof AstException ? pk(ex_error.ast, "start", "end") : {}
+      };
+      ans.errors = [
+        {
+          pos: pos2,
+          id: `${ans.id}error`,
+          need_ctl: false,
+          message: ex_error.message
+        }
+      ];
+      return ans;
+    }
   }
   const folders = [];
   const promises = [];
   for (const workspace_folder of workspace_folders) {
-    promises.push(read_one(workspace_folder, path.basename(workspace_folder)));
+    promises.push(read_one(workspace_folder, path.basename(workspace_folder), void 0));
   }
   for (const ret of await Promise.all(promises))
     if (ret != null)
@@ -8279,8 +8305,11 @@ async function read_package_json(workspace_folders) {
     id: "root",
     workspace_folder: "",
     folders,
-    runners: []
+    runners: [],
     //,
+    need_ctl: true,
+    pos: void 0,
+    errors: []
     //ntype:'folder'
   };
   return root;
@@ -8579,7 +8608,9 @@ async function open_file_start_end(pos) {
       preview: false,
       preserveFocus: true
     });
-    const selection = new vscode.Selection(document.positionAt(pos.start), document.positionAt(pos.end));
+    if (pos.start == null)
+      return;
+    const selection = new vscode.Selection(document.positionAt(pos.start), document.positionAt(pos.end || pos.start));
     editor.selection = selection;
     editor.revealRange(
       selection,
@@ -8592,10 +8623,10 @@ async function open_file_start_end(pos) {
   }
 }
 async function open_file(pos) {
-  if (pos.command === "command_open_file_rowcol")
+  if (pos.command === "command_open_file_rowcol") {
     await open_file_row_col(pos);
-  else
-    await open_file_start_end(pos);
+  } else
+    await open_file_start_end(pos.pos);
 }
 
 // src/extension.ts
@@ -8622,7 +8653,7 @@ function make_loop_func(monitor) {
             void open_file(message);
             break;
           }
-          case "command_open_file_start_end": {
+          case "command_open_file_pos": {
             void open_file(message);
             break;
           }
@@ -8643,7 +8674,7 @@ async function activate(context) {
   const workspace_folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
     if (ans.length === 0)
-      return [String.raw`c:/yigal/scriptsmon`];
+      return ["c:/yigal/million_try3"];
     return ans;
   })();
   if (workspace_folders == null)

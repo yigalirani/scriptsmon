@@ -1,3 +1,5 @@
+import type{Pos} from './vscode_utils.ts'
+export type {Pos}
 
 export interface Watcher{
   watch?:string[]
@@ -21,37 +23,39 @@ export interface Run{
   stopped   : undefined|true
   run_id    : number
 }
-export interface Lstr{
+
+export interface Lstr extends Pos{
   str:string
-  source_file:string
-  start:number
-  end:number
 }
 export interface Filename{
   rel:Lstr
   full:string
 }
-export interface Runner {
+export interface RunnerBase{
+  pos:Pos|undefined
+  id:string
+  need_ctl:boolean
+}
+export interface Runner extends RunnerBase{
   //ntype          : 'runner' //deprecated
   name           : string
-  workspace_folder  : string
-  id             : string
-  script         : Lstr
+  workspace_folder : string
+  script         : string
   runs           : Run[]     //growing
   watched        : boolean
   effective_watch: Filename[]
 }
-export interface FolderError{
+export interface FolderError extends RunnerBase{
   //ntype         : 'folder_error'
-  message       : Lstr
+  message       : string
 }
-export interface Folder{
+export interface Folder extends RunnerBase{
   //ntype        : 'folder'
   name         : string
   workspace_folder: string         //where the package.json is 
-  id           : string
   folders      : Array<Folder>
   runners      : Array<Runner>
+  errors       : Array<FolderError>
   //scriptsmon   : Scriptsmon
 }
 

@@ -11,17 +11,20 @@ import {
   window,
   commands
 }from 'vscode';
+export interface Pos{
+  source_file:string
+  start?:number
+  end?:number
+}
 export interface CommandOpenFileRowCol{
    command: "command_open_file_rowcol"
    source_file:string,
    row:number
    col:number
 }
-export interface CommandOpenFileStartEnd{
-   command: "command_open_file_start_end"
-   source_file:string,
-   start:number
-   end:number
+export interface CommandOpenFilePos{
+   command: "command_open_file_pos"
+   pos:Pos
 }
 export function getWebviewContent(context:ExtensionContext, webview:Webview): string {
   const htmlPath = path.join(context.extensionPath, 'client','resources', 'index.html');
@@ -114,7 +117,7 @@ export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<voi
         );
     }
 }
-async function open_file_start_end(pos: CommandOpenFileStartEnd): Promise<void> {
+async function open_file_start_end(pos: Pos): Promise<void> {
     try {
         //const uri = vscode.Uri.file(pos.file);
         const {source_file}=pos
@@ -123,7 +126,9 @@ async function open_file_start_end(pos: CommandOpenFileStartEnd): Promise<void> 
             preview: false,
             preserveFocus:true
         });
-        const selection = new vscode.Selection(document.positionAt(pos.start),document.positionAt(pos.end))
+        if (pos.start==null)
+          return
+        const selection = new vscode.Selection(document.positionAt(pos.start),document.positionAt(pos.end||pos.start))
         editor.selection = selection
         editor.revealRange(selection,
             vscode.TextEditorRevealType.InCenter
@@ -135,9 +140,9 @@ async function open_file_start_end(pos: CommandOpenFileStartEnd): Promise<void> 
     }
 }
 
-export async function open_file(pos:CommandOpenFileRowCol|CommandOpenFileStartEnd){
-  if (pos.command==='command_open_file_rowcol')
+export async function open_file(pos:CommandOpenFileRowCol|CommandOpenFilePos){
+  if (pos.command==='command_open_file_rowcol'){
     await open_file_row_col(pos)
-  else
-    await open_file_start_end(pos)
+  }else
+    await open_file_start_end(pos.pos)
 }

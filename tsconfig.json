@@ -16,6 +16,6 @@
     "strictNullChecks":true,
     "noUncheckedIndexedAccess"     : true,
   },
-  "include": ["**/src/**/*","bin/**/*","eslint.config.mjs","main/build.ts", "client/build.ts","**/src/**/*","./client/resources/icons.js"],             // include all .ts files in src/
+  "include": ["**/src/**/*","bin/**/*","build.ts","eslint.config.mjs","main/build.ts", "client/build.ts","**/src/**/*","./client/resources/icons.js"],             // include all .ts files in src/
   "exclude": ["node_modules", "dist","types/**/*"]  // avoid compiling output & deps
 }

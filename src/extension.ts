@@ -6,7 +6,7 @@ import {
   define_webview,
   register_command,
   type CommandOpenFileRowCol,
-  type CommandOpenFileStartEnd,
+  type CommandOpenFilePos,
   open_file
 } from './vscode_utils.js'
 import type {
@@ -32,7 +32,7 @@ export interface CommandClicked{
    command_name:string
 }
 
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandOpenFileRowCol|CommandOpenFileStartEnd
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandOpenFileRowCol|CommandOpenFilePos
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
@@ -62,7 +62,7 @@ function make_loop_func(monitor:Monitor){
             //const {file,row,col}=message
             break 
           }
-        case "command_open_file_start_end":{
+        case "command_open_file_pos":{
             void open_file(message)
             //const {file,row,col}=message
             break 
@@ -86,7 +86,8 @@ export  async function activate(context: vscode.ExtensionContext) {
   const workspace_folders=function(){
     const ans= (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
-      return [String.raw`c:/yigal/scriptsmon`]
+//      return ['c:/yigal/myfastifyapp']
+      return ['c:/yigal/million_try3']
     return ans
   }()
   if (workspace_folders==null) 

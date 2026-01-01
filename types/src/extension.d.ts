@@ -1,6 +1,6 @@
 import type { Folder } from './data.js';
 import * as vscode from 'vscode';
-import { type CommandOpenFileRowCol, type CommandOpenFileStartEnd } from './vscode_utils.js';
+import { type CommandOpenFileRowCol, type CommandOpenFilePos } from './vscode_utils.js';
 export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";
     text?: string;
@@ -19,6 +19,6 @@ export interface CommandClicked {
     id: string;
     command_name: string;
 }
-export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFileStartEnd;
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos;
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;

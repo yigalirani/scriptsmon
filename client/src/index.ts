@@ -151,10 +151,8 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
       if (rel!=null){
         //rel
         post_message({
-          command: "command_open_file_start_end",
-          //workspace_folder,
-          //source_file:'package.json',
-          ...pk(rel.rel,'start','end','source_file')
+          command: "command_open_file_pos",
+          pos:rel.rel
         })
       }
     })()
@@ -201,7 +199,7 @@ class TerminalPanel{
       this.term.open(term_container);
     // Initialize title bar with full filename plus script
     query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
-    query_selector(this.el, '.term_title_script .value').textContent=runner.script.str
+    query_selector(this.el, '.term_title_script .value').textContent=runner.script
     const el=query_selector(this.el, '.term_title_watch .value')
     for (const {rel,full} of runner.effective_watch)
       create_element(`<div title='${full}'class=rel>${rel.str}</div>`,el as HTMLElement)
@@ -267,7 +265,7 @@ function convert_runner(root:Runner):TreeNode{
     const {script,watched,id,name}=root
     const {version,state}=calc_runner_status(root)
     const className=(watched?'watched':undefined)
-    return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script.str,icon:state,icon_version:version,className}
+    return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
 
 }
 function convert(root:Folder):TreeNode{
@@ -289,6 +287,19 @@ const provider:TreeDataProvider<Folder>={
   icons_html:ICONS_HTML,
   animated:'.running,.done .check,.error .check',
   selected(root,id){
+    (()=>{
+      const base=parser.find_base(root,id)
+      if (base==null||base.pos==null)
+        return
+      if (base.need_ctl&&!ctrl.pressed)
+        return
+      const {pos}=base
+      post_message({
+        command: "command_open_file_pos",
+        pos
+      })
+    })()
+    
     const runner=parser.find_runner(root,id)
     if (runner==null)
       return
@@ -297,14 +308,6 @@ const provider:TreeDataProvider<Folder>={
         continue
       panel.style.display=(panel.id===id)?'flex':'none'
     }    
-    if (ctrl.pressed)
-      post_message({
-        command: "command_open_file_start_end",
-        //workspace_folder:runner.workspace_folder,
-        source_file:runner.script.source_file,
-        start:runner.script.start,
-        end:runner.script.end    
-      })
   }
 }
 function start(){
