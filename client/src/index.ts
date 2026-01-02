@@ -270,7 +270,7 @@ function convert_runner(root:Runner):TreeNode{
 }
 function convert_error(root:FolderError):TreeNode{
     const {id,message}=root
-    return {type:"item",id,label:message,children:[],icon:"warning",icon_version:1,commands:[],className:"warning"}
+    return {type:"item",id,label:message,children:[],icon:"syntaxerror",icon_version:1,commands:[],className:"warning"}
 
 }
 
@@ -281,7 +281,8 @@ function convert(root:Folder):TreeNode{
     const items=root.runners.map(convert_runner)
     const errors=root.errors.map(convert_error)  
     const children=[...folders,...items,...errors]
-    return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
+    const icon=errors.length===0?'folder':'foldersyntaxerror'
+    return {children,type:'folder',id,label:name,commands:[],icon,icon_version:0,className:undefined}
   }
 const provider:TreeDataProvider<Folder>={
   convert,

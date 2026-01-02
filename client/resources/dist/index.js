@@ -12189,7 +12189,14 @@ var icons_default = `<!DOCTYPE html>
     </svg>
 
   </div>
+  <div class="icon">syntaxerror
 
+    <svg width="64px" height="64px" viewBox="-4 -4 22.00 22.00" xmlns="http://www.w3.org/2000/svg" stroke-width="2">
+      <path stroke="currentColor" fill="red"
+        d="M 8 0 L 0 16 L 16 16 z8 0" />
+    </svg>
+
+  </div>
 
   <div class="icon">oldrunning
     <svg class=running width="64px" height="64px" viewBox="10 10 45.00 45.00" xmlns="http://www.w3.org/2000/svg"
@@ -12241,6 +12248,16 @@ var icons_default = `<!DOCTYPE html>
       <path stroke='currentColor' fill="transparent"
         d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z" />
     </svg>
+  </div>
+
+   <div class="icon">foldersyntaxerror
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 20 20" width="16" height="16">
+  <path stroke='currentColor' fill="transparent"
+    d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z" />
+  <path stroke="currentColor" fill="red"
+    d="M 8 5.3333 L 4 13.3333 L 12 13.3333 Z" />
+</svg>
+
   </div>
 
   <div class="icon">play
@@ -12498,7 +12515,7 @@ function convert_runner(root) {
 }
 function convert_error(root) {
   const { id, message } = root;
-  return { type: "item", id, label: message, children: [], icon: "warning", icon_version: 1, commands: [], className: "warning" };
+  return { type: "item", id, label: message, children: [], icon: "syntaxerror", icon_version: 1, commands: [], className: "warning" };
 }
 function convert(root) {
   const { name, id } = root;
@@ -12506,7 +12523,8 @@ function convert(root) {
   const items = root.runners.map(convert_runner);
   const errors = root.errors.map(convert_error);
   const children = [...folders, ...items, ...errors];
-  return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0, className: void 0 };
+  const icon = errors.length === 0 ? "folder" : "foldersyntaxerror";
+  return { children, type: "folder", id, label: name, commands: [], icon, icon_version: 0, className: void 0 };
 }
 var provider = {
   convert,
