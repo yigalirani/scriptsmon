@@ -12324,7 +12324,7 @@ function formatElapsedTime(ms) {
   return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent, runner) {
-  const { id, workspace_folder } = runner;
+  const { id } = runner;
   const ret = parent.querySelector(`#${id}`);
   if (ret != null)
     return ret;
@@ -12496,11 +12496,16 @@ function convert_runner(root) {
   const className = watched ? "watched" : void 0;
   return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version2, className };
 }
+function convert_error(root) {
+  const { id, message } = root;
+  return { type: "item", id, label: message, children: [], icon: "warning", icon_version: 1, commands: [], className: "warning" };
+}
 function convert(root) {
   const { name, id } = root;
   const folders = root.folders.map(convert);
   const items = root.runners.map(convert_runner);
-  const children = [...folders, ...items];
+  const errors = root.errors.map(convert_error);
+  const children = [...folders, ...items, ...errors];
   return { children, type: "folder", id, label: name, commands: [], icon: "folder", icon_version: 0, className: void 0 };
 }
 var provider = {

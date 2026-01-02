@@ -8233,6 +8233,13 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
   }
   return ans;
 }
+function calc_pos(ex) {
+  if (ex instanceof AstException)
+    return pk(ex.ast, "start", "end");
+  const start = ex.pos || 0;
+  const end = ex.raisedAt || 0;
+  return { start, end };
+}
 async function read_package_json(workspace_folders) {
   const folder_index = {};
   async function read_one(workspace_folder, name, pos) {
@@ -8277,10 +8284,8 @@ async function read_package_json(workspace_folders) {
       return ans;
     } catch (ex) {
       const ex_error = get_error(ex);
-      const pos2 = {
-        source_file,
-        ...ex_error instanceof AstException ? pk(ex_error.ast, "start", "end") : {}
-      };
+      const pos2 = { source_file, ...calc_pos(ex_error) };
+      console.log({ pos: pos2 });
       ans.errors = [
         {
           pos: pos2,
@@ -8493,7 +8498,10 @@ var Monitor = class {
     this.root = await read_package_json(this.workspace_folders);
     this.watched_dirs = collect_watch_dirs(this.root);
     this.watched_runners = find_runners(this.root, (x) => x.watched);
-    await mkdir_write_file(String.raw`.\generated\packages.json`, to_json(this));
+    const name = this.workspace_folders.map((x) => x.split(/(\/)|(\\\\)/).at(-1)).join("_");
+    const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
+    console.log(filename);
+    await mkdir_write_file(filename, to_json(this));
   }
   get_root() {
     if (this.root == null)
@@ -8541,9 +8549,10 @@ import {
 function getWebviewContent(context, webview) {
   const htmlPath = path2.join(context.extensionPath, "client", "resources", "index.html");
   let html = fs2.readFileSync(htmlPath, "utf-8");
-  const base = `${webview.asWebviewUri(
+  const uri = webview.asWebviewUri(
     Uri.joinPath(context.extensionUri, "client", "resources")
-  )}/`;
+  ).toString();
+  const base = `${uri}/`;
   html = html.replaceAll("./", base);
   return html;
 }

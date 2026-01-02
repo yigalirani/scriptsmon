@@ -1,0 +1,41 @@
+{
+  "runner_ctrl": {
+    "ipty": {}
+  },
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [],
+        "folders": [],
+        "name": "million_try3",
+        "workspace_folder": "c:/yigal/million_try3",
+        "id": "c--yigal-million_try3",
+        "need_ctl": true,
+        "errors": [
+          {
+            "pos": {
+              "source_file": "c:\\yigal\\million_try3\\package.json",
+              "start": 214,
+              "end": 225
+            },
+            "id": "c--yigal-million_try3error",
+            "need_ctl": false,
+            "message": "Unterminated string constant (13:2)"
+          }
+        ]
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watched_dirs": [],
+  "changed_dirs": [],
+  "watched_runners": [],
+  "workspace_folders": [
+    "c:/yigal/million_try3"
+  ]
+}

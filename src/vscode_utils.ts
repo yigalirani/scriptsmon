@@ -31,9 +31,10 @@ export function getWebviewContent(context:ExtensionContext, webview:Webview): st
   let html = fs.readFileSync(htmlPath, 'utf-8');
   
   // Get URIs for CSS and JS files
-  const base = `${webview.asWebviewUri(
+  const uri=webview.asWebviewUri(
     Uri.joinPath(context.extensionUri,'client','resources')
-  )}/`
+  ).toString()
+  const base = `${uri}/`
 
   
   // Replace placeholders with actual URIs

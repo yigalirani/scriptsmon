@@ -239,6 +239,14 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
     ans.push(runner)
   }
   return ans
+}   
+
+function calc_pos(ex:Error){
+  if (ex instanceof AstException)
+    return pk(ex.ast,'start','end')
+  const start=ex.pos as unknown as number||0
+  const end=ex.raisedAt as unknown as number||0
+  return {start,end}
 }
 export async function read_package_json(
   workspace_folders: string[]
@@ -287,16 +295,14 @@ export async function read_package_json(
       return ans
     }catch(ex){
       const ex_error=get_error(ex)
-      const pos:Pos={
-            source_file,
-          ...(ex_error instanceof AstException?pk(ex_error.ast,'start','end'):{})
-      }
+      const pos:Pos={source_file,...calc_pos(ex_error)}
+      console.log({pos})
       ans.errors=[{
           pos,
           id:`${ans.id}error`,
           need_ctl:false,
           message:ex_error.message
-      }
+  }
       ]
       return ans
     }

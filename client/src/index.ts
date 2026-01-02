@@ -4,11 +4,11 @@ interface VSCodeApi {
   setState(state: unknown): void;
 }
 import type {WebviewMessage} from '../../src/extension.js'
-import {type s2t,pk} from '@yigal/base_types'
+import type {s2t} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker,path_join} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner} from '../../src/data.js';
+import type { Folder,Runner,FolderError} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
@@ -84,7 +84,7 @@ function formatElapsedTime(ms: number): string {
   return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
-  const {id,workspace_folder}=runner
+  const {id}=runner
   const ret=parent.querySelector<HTMLElement>(`#${id}`)
   if (ret!=null)
     return ret //todo check that it is HTMLElement
@@ -268,11 +268,19 @@ function convert_runner(root:Runner):TreeNode{
     return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
 
 }
+function convert_error(root:FolderError):TreeNode{
+    const {id,message}=root
+    return {type:"item",id,label:message,children:[],icon:"warning",icon_version:1,commands:[],className:"warning"}
+
+}
+
+
 function convert(root:Folder):TreeNode{
     const {name,id}=root
     const folders=root.folders.map(convert)
     const items=root.runners.map(convert_runner)
-    const children=[...folders,...items]
+    const errors=root.errors.map(convert_error)  
+    const children=[...folders,...items,...errors]
     return {children,type:'folder',id,label:name,commands:[],icon:'folder',icon_version:0,className:undefined}
   }
 const provider:TreeDataProvider<Folder>={

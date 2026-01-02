@@ -199,7 +199,10 @@ export class Monitor{
     this.root= await read_package_json(this.workspace_folders)
     this.watched_dirs=collect_watch_dirs(this.root)
     this.watched_runners=find_runners(this.root,(x)=>x.watched)
-    await mkdir_write_file(String.raw`.\generated\packages.json`,to_json(this))
+    const name=this.workspace_folders.map(x=>x.split(/(\/)|(\\\\)/).at(-1)).join('_')
+    const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
+    console.log(filename)
+    await mkdir_write_file(filename,to_json(this))
   }
   get_root(){
     if (this.root==null) 
