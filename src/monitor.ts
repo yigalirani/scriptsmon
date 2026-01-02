@@ -4,6 +4,7 @@ import type {Run,Runner,Folder} from './data.js'
 import chokidar from 'chokidar';
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
+import * as path from 'node:path';
 import {
   mkdir_write_file,
   sleep} from "@yigal/base_types";
@@ -186,6 +187,13 @@ function get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
   f(root)
   return Object.values(ans)
 }
+function calc_one_debug_name(workspace_folder:string){
+  return path.basename(path.resolve(workspace_folder));
+  /*const full_path=path.resolve(path.normalize(workspace_folder))
+  const split=full_path.split(/(\/)|(\\\\)/)
+  const ans=split.at(-1)
+  return ans*/
+}
 export class Monitor{
   runner_ctrl=make_runner_ctrl()
   root?:Folder
@@ -199,7 +207,7 @@ export class Monitor{
     this.root= await read_package_json(this.workspace_folders)
     this.watched_dirs=collect_watch_dirs(this.root)
     this.watched_runners=find_runners(this.root,(x)=>x.watched)
-    const name=this.workspace_folders.map(x=>x.split(/(\/)|(\\\\)/).at(-1)).join('_')
+    const name=this.workspace_folders.map(calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
     await mkdir_write_file(filename,to_json(this))

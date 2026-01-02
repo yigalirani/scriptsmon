@@ -10,6 +10,20 @@ import {
   pk,
   get_error
 } from "@yigal/base_types";
+interface AcornSyntaxError extends SyntaxError {
+  pos: number;        // same as raisedAt
+  raisedAt: number;   // index in source string where error occurred
+  loc?: {
+    line: number;
+    column: number;
+  };
+}
+function is_acorn_error(e: unknown):e is AcornSyntaxError {
+  return (
+    e instanceof SyntaxError &&
+    typeof (e as AcornSyntaxError).raisedAt === "number"
+  );
+}
 export function find_base(root:Folder,id:string){
   function f(folder:Folder):RunnerBase|undefined{
     for (const ar of [folder.runners,folder.errors,folder.folders]){
@@ -244,9 +258,11 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
 function calc_pos(ex:Error){
   if (ex instanceof AstException)
     return pk(ex.ast,'start','end')
-  const start=ex.pos as unknown as number||0
-  const end=ex.raisedAt as unknown as number||0
-  return {start,end}
+  if (is_acorn_error(ex)){
+    const start=ex.pos
+    const end=ex.raisedAt
+    return {start,end}
+  }
 }
 export async function read_package_json(
   workspace_folders: string[]
