@@ -1,7 +1,5 @@
 {
-  "runner_ctrl": {
-    "ipty": {}
-  },
+  "runner_ctrl": "<skipped>",
   "root": {
     "name": "root",
     "id": "root",
@@ -1089,6 +1087,7 @@
       "runs": []
     }
   ],
+  "is_running": true,
   "workspace_folders": [
     "c:\\yigal\\scriptsmon"
   ]

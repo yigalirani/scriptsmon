@@ -8085,12 +8085,12 @@ async function get_node() {
   const fs2 = await import("node:fs/promises");
   return { fs: fs2, path: path3 };
 }
-async function mkdir_write_file(filePath, data2) {
+async function mkdir_write_file(filePath, to_write) {
   const { path: path3, fs: fs2 } = await get_node();
   const directory = path3.dirname(filePath);
   try {
     await fs2.mkdir(directory, { recursive: true });
-    await fs2.writeFile(filePath, data2);
+    await fs2.writeFile(filePath, to_write);
     console.log(`File '${filePath}' has been written successfully.`);
   } catch (err) {
     console.error("Error writing file", err);
@@ -8126,7 +8126,6 @@ function is_literal(ast, literal2) {
 function find_prop(ast, name) {
   if (ast.type !== "ObjectExpression")
     return;
-  console.log(ast);
   for (const prop of ast.properties)
     if (prop.type === "Property" && is_literal(prop.key, name))
       return prop.value;
@@ -8388,12 +8387,14 @@ async function read_package_json(workspace_folders) {
   };
   return root;
 }
-function set_replacer(_k, v) {
-  if (v instanceof Set)
-    return [...v];
-  return v;
-}
-function to_json(x) {
+function to_json(x, skip_keys) {
+  function set_replacer(k, v) {
+    if (skip_keys.includes(k))
+      return "<skipped>";
+    if (v instanceof Set)
+      return [...v];
+    return v;
+  }
   const ans = JSON.stringify(x, set_replacer, 2).replace(/\\n/g, "\n");
   return ans;
 }
@@ -8586,7 +8587,8 @@ var Monitor = class {
     const name = this.workspace_folders.map(calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
-    await mkdir_write_file(filename, to_json(this));
+    const to_write = to_json(this, ["runner_ctrl"]);
+    await mkdir_write_file(filename, to_write);
   }
   get_root() {
     if (this.root == null)

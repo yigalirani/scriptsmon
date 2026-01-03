@@ -59,7 +59,7 @@ function is_literal(ast:Expression,literal:string){
 function find_prop(ast:Expression,name:string){
   if (ast.type!=='ObjectExpression')
     return
-  console.log(ast)
+  //console.log(ast)
   for (const prop of ast.properties)
     if (prop.type==='Property' && is_literal(prop.key,name))
       return prop.value
@@ -345,12 +345,15 @@ export async function read_package_json(
   }
   return root
 }
-function set_replacer(_k:string,v:unknown){
-  if (v instanceof Set)
-    return [...v] as unknown
-  return v 
-}
-export function to_json(x:unknown){
+
+export function to_json(x:unknown,skip_keys:string[]){
+  function set_replacer(k:string,v:unknown){
+    if (skip_keys.includes(k))
+      return '<skipped>'
+    if (v instanceof Set)
+      return [...v] as unknown
+    return v 
+  }  
   const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
   return ans
 }

@@ -227,7 +227,8 @@ export class Monitor{
     const name=this.workspace_folders.map(calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
-    await mkdir_write_file(filename,to_json(this))
+    const to_write=to_json(this,["runner_ctrl"])
+    await mkdir_write_file(filename,to_write) 
   }
   get_root(){
     if (this.root==null) 

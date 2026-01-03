@@ -97,6 +97,7 @@
     "unicorn/switch-case-braces":"off",
     "unicorn/require-post-message-target-origin":"off",
     "unicorn/text-encoding-identifier-case":"off",
-    "unicorn/no-process-exit":"off"
+    "unicorn/no-process-exit":"off",
+    "typescript-eslint/no-misused-spread":"off"
   }
 }
