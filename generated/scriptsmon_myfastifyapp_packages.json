@@ -554,8 +554,8 @@
             ],
             "folders": [],
             "name": "client",
-            "workspace_folder": "client",
-            "id": "client",
+            "workspace_folder": "c:\\yigal\\scriptsmon\\client",
+            "id": "c--yigal-scriptsmon-client",
             "pos": {
               "str": "client",
               "source_file": "c:\\yigal\\scriptsmon\\package.json",
@@ -566,31 +566,291 @@
             "errors": []
           }
         ],
-        "name": ".",
-        "workspace_folder": ".",
-        "id": ".",
+        "name": "scriptsmon",
+        "workspace_folder": "c:\\yigal\\scriptsmon",
+        "id": "c--yigal-scriptsmon",
         "need_ctl": true,
         "errors": []
       },
       {
-        "runners": [],
-        "folders": [],
-        "name": "million_try3",
-        "workspace_folder": "..\\million_try3",
-        "id": "..-million_try3",
-        "need_ctl": true,
-        "errors": [
+        "runners": [
           {
             "pos": {
-              "source_file": "c:\\yigal\\million_try3\\package.json",
-              "start": 214,
-              "end": 225
+              "str": "biome lint",
+              "start": 21,
+              "end": 42,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
             },
-            "id": "..-million_try3error",
-            "need_ctl": false,
-            "message": "Unterminated string constant (13:2)"
+            "need_ctl": true,
+            "name": "biome",
+            "script": "biome lint",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 348,
+                  "end": 353
+                },
+                "full": "c:\\yigal\\myfastifyapp\\src"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 452,
+                  "end": 464
+                },
+                "full": "c:\\yigal\\myfastifyapp\\biome.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 385,
+                  "end": 400
+                },
+                "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+              }
+            ],
+            "watched": true,
+            "id": "c--yigal-myfastifyapp--biome",
+            "runs": []
+          },
+          {
+            "pos": {
+              "str": "eslint . --debug --color",
+              "start": 48,
+              "end": 84,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "eslint . --debug --color",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 348,
+                  "end": 353
+                },
+                "full": "c:\\yigal\\myfastifyapp\\src"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 363,
+                  "end": 375
+                },
+                "full": "c:\\yigal\\myfastifyapp\\biome.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 385,
+                  "end": 400
+                },
+                "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 517,
+                  "end": 536
+                },
+                "full": "c:\\yigal\\myfastifyapp\\eslint.config.mjs"
+              }
+            ],
+            "watched": true,
+            "id": "c--yigal-myfastifyapp--eslint",
+            "runs": []
+          },
+          {
+            "pos": {
+              "str": "oxlint --type-aware",
+              "start": 90,
+              "end": 121,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint",
+            "script": "oxlint --type-aware",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 348,
+                  "end": 353
+                },
+                "full": "c:\\yigal\\myfastifyapp\\src"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 363,
+                  "end": 375
+                },
+                "full": "c:\\yigal\\myfastifyapp\\biome.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 385,
+                  "end": 400
+                },
+                "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 589,
+                  "end": 605
+                },
+                "full": "c:\\yigal\\myfastifyapp\\.oxlintrc.json"
+              }
+            ],
+            "watched": true,
+            "id": "c--yigal-myfastifyapp--oxlint",
+            "runs": []
+          },
+          {
+            "pos": {
+              "str": "node build.ts",
+              "start": 127,
+              "end": 151,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+            },
+            "need_ctl": true,
+            "name": "build",
+            "script": "node build.ts",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 640,
+                  "end": 645
+                },
+                "full": "c:\\yigal\\myfastifyapp\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 655,
+                  "end": 669
+                },
+                "full": "c:\\yigal\\myfastifyapp\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "build.ts",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 679,
+                  "end": 689
+                },
+                "full": "c:\\yigal\\myfastifyapp\\build.ts"
+              }
+            ],
+            "watched": true,
+            "id": "c--yigal-myfastifyapp--build",
+            "runs": []
+          },
+          {
+            "pos": {
+              "str": "node ./dist/index.js",
+              "start": 157,
+              "end": 189,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+            },
+            "need_ctl": true,
+            "name": "server",
+            "script": "node ./dist/index.js",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-myfastifyapp--server",
+            "runs": []
+          },
+          {
+            "pos": {
+              "str": "tsc",
+              "start": 195,
+              "end": 207,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsc",
+            "script": "tsc",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 348,
+                  "end": 353
+                },
+                "full": "c:\\yigal\\myfastifyapp\\src"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 363,
+                  "end": 375
+                },
+                "full": "c:\\yigal\\myfastifyapp\\biome.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+                  "start": 385,
+                  "end": 400
+                },
+                "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+              }
+            ],
+            "watched": true,
+            "id": "c--yigal-myfastifyapp--tsc",
+            "runs": []
+          },
+          {
+            "pos": {
+              "str": "kysely-codegen --config-file kysely_config.json",
+              "start": 213,
+              "end": 280,
+              "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+            },
+            "need_ctl": true,
+            "name": "kysely-codegen",
+            "script": "kysely-codegen --config-file kysely_config.json",
+            "workspace_folder": "c:\\yigal\\myfastifyapp",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-myfastifyapp--kysely-codegen",
+            "runs": []
           }
-        ]
+        ],
+        "folders": [],
+        "name": "myfastifyapp",
+        "workspace_folder": "c:\\yigal\\myfastifyapp",
+        "id": "c--yigal-myfastifyapp",
+        "need_ctl": true,
+        "errors": []
       }
     ],
     "runners": [],
@@ -608,7 +868,14 @@
     "c:\\yigal\\scriptsmon\\.oxlintrc.json",
     "c:\\yigal\\scriptsmon\\biome.json",
     "c:\\yigal\\scriptsmon\\client\\build.ts",
-    "c:\\yigal\\scriptsmon\\client\\package.json"
+    "c:\\yigal\\scriptsmon\\client\\package.json",
+    "c:\\yigal\\myfastifyapp\\src",
+    "c:\\yigal\\myfastifyapp\\biome.json",
+    "c:\\yigal\\myfastifyapp\\tsconfig.json",
+    "c:\\yigal\\myfastifyapp\\eslint.config.mjs",
+    "c:\\yigal\\myfastifyapp\\.oxlintrc.json",
+    "c:\\yigal\\myfastifyapp\\package.json",
+    "c:\\yigal\\myfastifyapp\\build.ts"
   ],
   "changed_dirs": [],
   "watched_runners": [
@@ -1107,11 +1374,248 @@
       "watched": true,
       "id": "c--yigal-scriptsmon--biome",
       "runs": []
+    },
+    {
+      "pos": {
+        "str": "biome lint",
+        "start": 21,
+        "end": 42,
+        "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+      },
+      "need_ctl": true,
+      "name": "biome",
+      "script": "biome lint",
+      "workspace_folder": "c:\\yigal\\myfastifyapp",
+      "effective_watch": [
+        {
+          "rel": {
+            "str": "src",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 348,
+            "end": 353
+          },
+          "full": "c:\\yigal\\myfastifyapp\\src"
+        },
+        {
+          "rel": {
+            "str": "biome.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 452,
+            "end": 464
+          },
+          "full": "c:\\yigal\\myfastifyapp\\biome.json"
+        },
+        {
+          "rel": {
+            "str": "tsconfig.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 385,
+            "end": 400
+          },
+          "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+        }
+      ],
+      "watched": true,
+      "id": "c--yigal-myfastifyapp--biome",
+      "runs": []
+    },
+    {
+      "pos": {
+        "str": "eslint . --debug --color",
+        "start": 48,
+        "end": 84,
+        "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+      },
+      "need_ctl": true,
+      "name": "eslint",
+      "script": "eslint . --debug --color",
+      "workspace_folder": "c:\\yigal\\myfastifyapp",
+      "effective_watch": [
+        {
+          "rel": {
+            "str": "src",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 348,
+            "end": 353
+          },
+          "full": "c:\\yigal\\myfastifyapp\\src"
+        },
+        {
+          "rel": {
+            "str": "biome.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 363,
+            "end": 375
+          },
+          "full": "c:\\yigal\\myfastifyapp\\biome.json"
+        },
+        {
+          "rel": {
+            "str": "tsconfig.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 385,
+            "end": 400
+          },
+          "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+        },
+        {
+          "rel": {
+            "str": "eslint.config.mjs",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 517,
+            "end": 536
+          },
+          "full": "c:\\yigal\\myfastifyapp\\eslint.config.mjs"
+        }
+      ],
+      "watched": true,
+      "id": "c--yigal-myfastifyapp--eslint",
+      "runs": []
+    },
+    {
+      "pos": {
+        "str": "oxlint --type-aware",
+        "start": 90,
+        "end": 121,
+        "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+      },
+      "need_ctl": true,
+      "name": "oxlint",
+      "script": "oxlint --type-aware",
+      "workspace_folder": "c:\\yigal\\myfastifyapp",
+      "effective_watch": [
+        {
+          "rel": {
+            "str": "src",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 348,
+            "end": 353
+          },
+          "full": "c:\\yigal\\myfastifyapp\\src"
+        },
+        {
+          "rel": {
+            "str": "biome.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 363,
+            "end": 375
+          },
+          "full": "c:\\yigal\\myfastifyapp\\biome.json"
+        },
+        {
+          "rel": {
+            "str": "tsconfig.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 385,
+            "end": 400
+          },
+          "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+        },
+        {
+          "rel": {
+            "str": ".oxlintrc.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 589,
+            "end": 605
+          },
+          "full": "c:\\yigal\\myfastifyapp\\.oxlintrc.json"
+        }
+      ],
+      "watched": true,
+      "id": "c--yigal-myfastifyapp--oxlint",
+      "runs": []
+    },
+    {
+      "pos": {
+        "str": "node build.ts",
+        "start": 127,
+        "end": 151,
+        "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+      },
+      "need_ctl": true,
+      "name": "build",
+      "script": "node build.ts",
+      "workspace_folder": "c:\\yigal\\myfastifyapp",
+      "effective_watch": [
+        {
+          "rel": {
+            "str": "src",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 640,
+            "end": 645
+          },
+          "full": "c:\\yigal\\myfastifyapp\\src"
+        },
+        {
+          "rel": {
+            "str": "package.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 655,
+            "end": 669
+          },
+          "full": "c:\\yigal\\myfastifyapp\\package.json"
+        },
+        {
+          "rel": {
+            "str": "build.ts",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 679,
+            "end": 689
+          },
+          "full": "c:\\yigal\\myfastifyapp\\build.ts"
+        }
+      ],
+      "watched": true,
+      "id": "c--yigal-myfastifyapp--build",
+      "runs": []
+    },
+    {
+      "pos": {
+        "str": "tsc",
+        "start": 195,
+        "end": 207,
+        "source_file": "c:\\yigal\\myfastifyapp\\package.json"
+      },
+      "need_ctl": true,
+      "name": "tsc",
+      "script": "tsc",
+      "workspace_folder": "c:\\yigal\\myfastifyapp",
+      "effective_watch": [
+        {
+          "rel": {
+            "str": "src",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 348,
+            "end": 353
+          },
+          "full": "c:\\yigal\\myfastifyapp\\src"
+        },
+        {
+          "rel": {
+            "str": "biome.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 363,
+            "end": 375
+          },
+          "full": "c:\\yigal\\myfastifyapp\\biome.json"
+        },
+        {
+          "rel": {
+            "str": "tsconfig.json",
+            "source_file": "c:\\yigal\\myfastifyapp\\package.json",
+            "start": 385,
+            "end": 400
+          },
+          "full": "c:\\yigal\\myfastifyapp\\tsconfig.json"
+        }
+      ],
+      "watched": true,
+      "id": "c--yigal-myfastifyapp--tsc",
+      "runs": []
     }
   ],
-  "is_running": true,
   "workspace_folders": [
-    ".",
-    "..\\million_try3"
+    "c:\\yigal\\scriptsmon",
+    "c:\\yigal\\myfastifyapp"
   ]
 }

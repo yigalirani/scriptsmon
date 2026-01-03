@@ -8503,6 +8503,18 @@ var Monitor = class {
   watched_dirs = /* @__PURE__ */ new Set();
   changed_dirs = /* @__PURE__ */ new Set();
   watched_runners = [];
+  is_running = true;
+  async runRepeatedly() {
+    while (this.is_running) {
+      try {
+        const result = await this.read_package_json();
+        console.log(result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      await new Promise((resolve5) => setTimeout(resolve5, 2e3));
+    }
+  }
   async read_package_json() {
     this.root = await read_package_json(this.workspace_folders);
     this.watched_dirs = collect_watch_dirs(this.root);
@@ -8699,6 +8711,7 @@ async function activate(context) {
     return;
   const monitor = new Monitor(workspace_folders);
   await monitor.read_package_json();
+  void monitor.runRepeatedly();
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");

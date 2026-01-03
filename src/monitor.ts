@@ -200,9 +200,26 @@ export class Monitor{
   watched_dirs=new Set<string>()
   changed_dirs=new Set<string>()
   watched_runners:Runner[]=[]
+  is_running=true
   constructor(
     public workspace_folders:string[]
-  ){}
+
+  ){
+  }
+  async runRepeatedly() {
+    while (this.is_running) {
+      try {
+        const result = await this.read_package_json();
+        console.log(result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+      // wait before next run
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
   async read_package_json(){
     this.root= await read_package_json(this.workspace_folders)
     this.watched_dirs=collect_watch_dirs(this.root)

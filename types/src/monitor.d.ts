@@ -8,7 +8,9 @@ export declare class Monitor {
     watched_dirs: Set<string>;
     changed_dirs: Set<string>;
     watched_runners: Runner[];
+    is_running: boolean;
     constructor(workspace_folders: string[]);
+    runRepeatedly(): Promise<void>;
     read_package_json(): Promise<void>;
     get_root(): Folder;
     run_runner(runner_id: string, reason: string): Promise<void>;
