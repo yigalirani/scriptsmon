@@ -86,7 +86,7 @@ export  async function activate(context: vscode.ExtensionContext) {
     return  
   const monitor=new Monitor(workspace_folders)
   await monitor.read_package_json() 
-  //void monitor.runRepeatedly()
+  void monitor.runRepeatedly()
   const the_loop=make_loop_func(monitor)
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  

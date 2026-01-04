@@ -8,8 +8,9 @@ import type {s2t} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker,path_join} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,FolderError} from '../../src/data.js';
+import type { Folder,Runner,FolderError, Run} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
+import type {RunnerReport} from '../../src/monitor.js';  
 import ICONS_HTML from '../resources/icons.html'
 declare function acquireVsCodeApi(): VSCodeApi;
 const vscode = acquireVsCodeApi();
@@ -166,8 +167,8 @@ function calc_stats_html(new_runner:Runner){
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
-function calc_runner_status(runner:Runner){
-  const {runs}=runner
+function calc_runner_status(report:RunnerReport ,runner:Runner){
+  const runs=report.runs[runner.id]||[]
   if (runs.length===0)
     return{version:0,state:'ready'}
   const {end_time,run_id:version,exit_code}=runs.at(-1)!
@@ -205,10 +206,11 @@ class TerminalPanel{
       create_element(`<div title='${full}'class=rel>${rel.str}</div>`,el as HTMLElement)
     query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
-  update(new_runner:Runner){
+  update_terminal(report:RunnerReport,new_runner:Runner){
     // Update title bar with runner status (always update, even if no runs)
-    const {runs}=new_runner
-    const {state} = calc_runner_status(new_runner)
+    //const {runs}=new_runner
+    const runs=report.runs[new_runner.id]||[]
+    const {state} = calc_runner_status(report,new_runner)
     const last_run=runs.at(-1)
     if (last_run!=null){
       const {start_time,end_time}=last_run
@@ -243,48 +245,58 @@ class TerminalPanel{
     
   }
 }
+function default_get<T>(obj:Record<PropertyKey,T>,k:PropertyKey,maker:()=>T){
+  const exists=obj[k]
+  if (exists==null){
+    obj[k]=maker()
+  }
+  return obj[k]
+}
 class Terminals{
   terminals:s2t<TerminalPanel>={}
   constructor(
     public parent:HTMLElement
   ){}
   get_terminal(runner:Runner){
-    const ans=this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner)
+    const ans=default_get(this.terminals,runner.id,()=> new TerminalPanel(this.parent, runner))
     return ans
   }
 }
-function get_terminals(folder:Folder,terminals:Terminals){
+function get_terminals(report:RunnerReport,terminals:Terminals){
   function f(folder:Folder){
     for (const runner of folder.runners)
-      terminals.get_terminal(runner).update(runner)
+      terminals.get_terminal(runner)?.update_terminal(report,runner)
     folder.folders.forEach(f) 
   }
-  f(folder)
-}
-function convert_runner(root:Runner):TreeNode{
-    const {script,watched,id,name}=root
-    const {version,state}=calc_runner_status(root)
-    const className=(watched?'watched':undefined)
-    return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
-
-}
-function convert_error(root:FolderError):TreeNode{
-    const {id,message}=root
-    return {type:"item",id,label:message,children:[],icon:"syntaxerror",icon_version:1,commands:[],className:"warning"}
-
+  f(report.root)
 }
 
 
-function convert(root:Folder):TreeNode{
-    const {name,id}=root
-    const folders=root.folders.map(convert)
-    const items=root.runners.map(convert_runner)
-    const errors=root.errors.map(convert_error)  
-    const children=[...folders,...items,...errors]
-    const icon=errors.length===0?'folder':'foldersyntaxerror'
-    return {children,type:'folder',id,label:name,commands:[],icon,icon_version:0,className:undefined}
+function convert(report:RunnerReport):TreeNode{
+  function convert_runner(runner:Runner):TreeNode{
+      const {script,watched,id,name}=runner
+      const {version,state}=calc_runner_status(report,runner)
+      const className=(watched?'watched':undefined)
+      return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
   }
-const provider:TreeDataProvider<Folder>={
+  function convert_error(root:FolderError):TreeNode{
+      const {id,message}=root
+      return {type:"item",id,label:message,children:[],icon:"syntaxerror",icon_version:1,commands:[],className:"warning"}
+
+  }  
+  function convert_folder(root:Folder):TreeNode{
+      const {name,id}=root
+      const folders=root.folders.map(convert_folder)
+      const items=root.runners.map(convert_runner)
+      const errors=root.errors.map(convert_error)  
+      const children=[...folders,...items,...errors]
+      const icon=errors.length===0?'folder':'foldersyntaxerror'
+      return {children,type:'folder',id,label:name,commands:[],icon,icon_version:0,className:undefined}
+  }
+  return convert_folder(report.root)
+}
+
+const provider:TreeDataProvider<RunnerReport>={
   convert,
   command(root,id,command_name,){
      post_message({
@@ -295,9 +307,9 @@ const provider:TreeDataProvider<Folder>={
   },
   icons_html:ICONS_HTML,
   animated:'.running,.done .check,.error .check',
-  selected(root,id){
+  selected(report,id){
     (()=>{
-      const base=parser.find_base(root,id)
+      const base=parser.find_base(report.root,id)
       if (base==null||base.pos==null)
         return
       if (base.need_ctl&&!ctrl.pressed)
@@ -309,7 +321,7 @@ const provider:TreeDataProvider<Folder>={
       })
     })()
     
-    const runner=parser.find_runner(root,id)
+    const runner=parser.find_runner(report.root,id)
     if (runner==null)
       return
     for (const panel of document.querySelectorAll('.term_panel')){
@@ -324,20 +336,20 @@ function start(){
   const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
   let base_uri=''
   const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider) //no error, whay
-  let root:Folder|undefined
+  let report:RunnerReport|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
           case 'RunnerReport':{
-            root=message.root
-            get_terminals(message.root,terminals)
+            report=message
+            get_terminals(message,terminals)
             base_uri=message.base_uri
-            tree.render(message.root,base_uri)
+            tree.render(message,base_uri)
             break
           }
           case 'set_selected':
             //upda(document.body,'#selected', message.selected)
-            void provider.selected(root!,message.selected)
+            void provider.selected(report!,message.selected)
             break
           case 'updateContent':
             //append(message.text||'<no message>')

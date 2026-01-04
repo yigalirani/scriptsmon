@@ -8711,6 +8711,7 @@ async function activate(context) {
     return;
   const monitor = new Monitor(workspace_folders);
   await monitor.read_package_json();
+  void monitor.runRepeatedly();
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");

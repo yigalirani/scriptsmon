@@ -12417,8 +12417,8 @@ function calc_stats_html(new_runner) {
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join("\n");
 }
-function calc_runner_status(runner) {
-  const { runs } = runner;
+function calc_runner_status(report, runner) {
+  const runs = report.runs[runner.id] || [];
   if (runs.length === 0)
     return { version: 0, state: "ready" };
   const { end_time, run_id: version2, exit_code } = runs.at(-1);
@@ -12453,9 +12453,9 @@ var TerminalPanel = class {
   onLink = (location) => {
     console.log(location);
   };
-  update(new_runner) {
-    const { runs } = new_runner;
-    const { state } = calc_runner_status(new_runner);
+  update_terminal(report, new_runner) {
+    const runs = report.runs[new_runner.id] || [];
+    const { state } = calc_runner_status(report, new_runner);
     const last_run = runs.at(-1);
     if (last_run != null) {
       const { start_time, end_time } = last_run;
@@ -12489,42 +12489,52 @@ var TerminalPanel = class {
     update_child_html(this.el, ".term_title_runid .value", `${run_id}`);
   }
 };
+function default_get(obj, k, maker) {
+  const exists = obj[k];
+  if (exists == null) {
+    obj[k] = maker();
+  }
+  return obj[k];
+}
 var Terminals = class {
   constructor(parent) {
     this.parent = parent;
   }
   terminals = {};
   get_terminal(runner) {
-    const ans = this.terminals[runner.id] ??= new TerminalPanel(this.parent, runner);
+    const ans = default_get(this.terminals, runner.id, () => new TerminalPanel(this.parent, runner));
     return ans;
   }
 };
-function get_terminals(folder, terminals) {
-  function f(folder2) {
-    for (const runner of folder2.runners)
-      terminals.get_terminal(runner).update(runner);
-    folder2.folders.forEach(f);
+function get_terminals(report, terminals) {
+  function f(folder) {
+    for (const runner of folder.runners)
+      terminals.get_terminal(runner)?.update_terminal(report, runner);
+    folder.folders.forEach(f);
   }
-  f(folder);
+  f(report.root);
 }
-function convert_runner(root) {
-  const { script, watched, id, name } = root;
-  const { version: version2, state } = calc_runner_status(root);
-  const className = watched ? "watched" : void 0;
-  return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version2, className };
-}
-function convert_error(root) {
-  const { id, message } = root;
-  return { type: "item", id, label: message, children: [], icon: "syntaxerror", icon_version: 1, commands: [], className: "warning" };
-}
-function convert(root) {
-  const { name, id } = root;
-  const folders = root.folders.map(convert);
-  const items = root.runners.map(convert_runner);
-  const errors = root.errors.map(convert_error);
-  const children = [...folders, ...items, ...errors];
-  const icon = errors.length === 0 ? "folder" : "foldersyntaxerror";
-  return { children, type: "folder", id, label: name, commands: [], icon, icon_version: 0, className: void 0 };
+function convert(report) {
+  function convert_runner(runner) {
+    const { script, watched, id, name } = runner;
+    const { version: version2, state } = calc_runner_status(report, runner);
+    const className = watched ? "watched" : void 0;
+    return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version2, className };
+  }
+  function convert_error(root) {
+    const { id, message } = root;
+    return { type: "item", id, label: message, children: [], icon: "syntaxerror", icon_version: 1, commands: [], className: "warning" };
+  }
+  function convert_folder(root) {
+    const { name, id } = root;
+    const folders = root.folders.map(convert_folder);
+    const items = root.runners.map(convert_runner);
+    const errors = root.errors.map(convert_error);
+    const children = [...folders, ...items, ...errors];
+    const icon = errors.length === 0 ? "folder" : "foldersyntaxerror";
+    return { children, type: "folder", id, label: name, commands: [], icon, icon_version: 0, className: void 0 };
+  }
+  return convert_folder(report.root);
 }
 var provider = {
   convert,
@@ -12537,9 +12547,9 @@ var provider = {
   },
   icons_html: icons_default,
   animated: ".running,.done .check,.error .check",
-  selected(root, id) {
+  selected(report, id) {
     (() => {
-      const base = find_base(root, id);
+      const base = find_base(report.root, id);
       if (base == null || base.pos == null)
         return;
       if (base.need_ctl && !ctrl.pressed)
@@ -12550,7 +12560,7 @@ var provider = {
         pos
       });
     })();
-    const runner = find_runner(root, id);
+    const runner = find_runner(report.root, id);
     if (runner == null)
       return;
     for (const panel of document.querySelectorAll(".term_panel")) {
@@ -12565,19 +12575,19 @@ function start() {
   const terminals = new Terminals(query_selector(document.body, ".terms_container"));
   let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
-  let root;
+  let report;
   window.addEventListener("message", (event) => {
     const message = event.data;
     switch (message.command) {
       case "RunnerReport": {
-        root = message.root;
-        get_terminals(message.root, terminals);
+        report = message;
+        get_terminals(message, terminals);
         base_uri = message.base_uri;
-        tree.render(message.root, base_uri);
+        tree.render(message, base_uri);
         break;
       }
       case "set_selected":
-        void provider.selected(root, message.selected);
+        void provider.selected(report, message.selected);
         break;
       case "updateContent":
         break;
