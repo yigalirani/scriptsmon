@@ -8,108 +8,137 @@ import * as path from 'node:path';
 import {
   mkdir_write_file,
   sleep} from "@yigal/base_types";
-function is_ready_to_start(runner:Runner){
-  if (runner.runs.length===0)
-    return true
-  return runner.runs.at(-1)?.end_time!=null;
-}
 function keep_only_last<T>(arr: T[]): void {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
   }
-}
-function extract_base(folder:Folder):Folder{
-  //const {full_pathname}=folder
-  const runners=[]
-  for (const runner of folder.runners){
-    const copy=cloneDeep(runner)
-    runners.push(copy)
-    for (const run of runner.runs){
-      if (run.output.length!==0){
-       //console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`)
-        run.output=[]
-      }
-    }    
-    keep_only_last(runner.runs)
-  }
-  const folders=folder.folders.map(extract_base)
-  return {...folder,folders,runners}
-}
-interface RunnerCtrl{
-  ipty:Record<string,IPty> 
-}
-function make_runner_ctrl(){
-  const ipty={}
-  return {ipty}
-}
-async function stop({
-  runner_ctrl,runner
-}:{
-  runner_ctrl:RunnerCtrl,
-  runner: Runner
-}): Promise<void> {
-  //const { state } = runner;
-  let was_stopped=false
-  while(true){
-    if (is_ready_to_start(runner)) {
-      /*if (was_stopped)
-        set_state(runner,'stopped')*/
-      return
-    }
-    if (!was_stopped){
-      was_stopped=true
-      console.log(`stopping runner ${runner.name}...`)
-      const {id}=runner
-      runner_ctrl.ipty[id]?.kill() // what if more than one kill function call is needed
-    }
-    await sleep(10)
-  }
-}
- async function run_runner({ //this is not async function on purpuse
-  runner,
-  reason,
-  runner_ctrl
-}: {
-  runner: Runner;
+}  
+interface RunnerWithReason{
+  runner:Runner
   reason:string
-  runner_ctrl:RunnerCtrl
-}) {
-  await stop({runner_ctrl,runner})
-  await new Promise((resolve, _reject) => { 
-    const {workspace_folder,runs,name}=runner
-    //(runner,'running')
-    // Spawn a shell with the script as command
-    //const split_args=script.str.split(' ').filter(Boolean)
-    const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
-    const shellArgs = process.platform === 'win32' ? ['/c', 'npm run',name] : ['-c', 'npm run',name];
-    //const shellArgs = process.platform === 'win32' ? ['/c', ...split_args] : ['-c', ...split_args];
-    const child = spawn(shell, shellArgs,  {
-     // name: 'xterm-color',
-      cols:200,
-      useConpty:false,
-      cwd:workspace_folder,
-      env: { ...process.env, FORCE_COLOR: "3" },
-    });
-    if (child===null)
-      return
-    runner_ctrl.ipty[runner.id]=child//overrides that last on
-    // Set state to running immediately (spawn happens synchronously)
-    const run_id=function(){
-      if (runs.length===0)
-        return 0 
-      return runs.at(-1)!.run_id+1
-    }()
-    const run:Run={
-      start_time: Date.now(),
-      end_time  : undefined,    //initialy is undefined then changes to number and stops changing
-      reason,
-      output   : [],
-      Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
-      exit_code: undefined,
-      stopped  : undefined,
-      run_id
+}
+export class Foo{
+  a(){
+    return this.b()+1
+  }
+  b(){
+    return 4
+  }
+}
+export class Monitor{
+  ipty:Record<string,IPty>={}
+  runs:Record<string,Run[]>={}
+  root?:Folder
+  watched_dirs=new Set<string>()
+  changed_dirs=new Set<string>()
+  watched_runners:Runner[]=[]
+  is_running=true  
+  constructor(
+    public workspace_folders:string[]    
+  ){}
+  get_runner_runs(runner:Runner):Run[]{
+    const {id}=runner
+    const exists=this.runs[id]
+    if (exists!=null)
+      return exists
+    this.runs[id]=[]
+    return this.runs[id]
+  }
+  is_ready_to_start(runner:Runner){
+    const runs=this.get_runner_runs(runner)
+    if (runs.length===0)
+      return true
+    return runs.at(-1)?.end_time!=null;
+  }
+
+  extract_base(folder:Folder|undefined):Folder{ //tbd: delete
+    //const {full_pathname}=folder
+    const f=(folder:Folder):Folder=>{
+      const runners=[]
+      for (const runner of folder.runners){
+        const copy=cloneDeep(runner)
+        runners.push(copy)
+        const runs=this.get_runner_runs(runner)
+        for (const run of runs){
+          if (run.output.length!==0){
+          //console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`)
+            run.output=[]
+          }
+        }    
+        keep_only_last(runs)
+      }
+      const folders=folder.folders.map(f)
+      return {...folder,folders,runners}
     }
-    runner.runs.push(run)
+    return f(this.get_root())
+  }
+  async  stop({
+    runner
+  }:{
+    runner: Runner
+  }): Promise<void> {
+    //const { state } = runner;
+    let was_stopped=false
+    while(true){
+      if (this.is_ready_to_start(runner)) {
+        /*if (was_stopped)
+          set_state(runner,'stopped')*/
+        return
+      }
+      if (!was_stopped){
+        was_stopped=true
+        console.log(`stopping runner ${runner.name}...`)
+        const {id}=runner
+        this.ipty[id]?.kill() // what if more than one kill function call is needed
+      }
+      await sleep(10)
+    }
+  }
+  async run_runner2({ //this is not async function on purpuse
+    runner,
+    reason,
+  }: {
+    runner: Runner;
+    reason:string
+  }) {
+    await this.stop({runner})
+    await new Promise((resolve, _reject) => { 
+      const runs=this.get_runner_runs(runner)
+      const {workspace_folder,name}=runner
+      //(runner,'running')
+      // Spawn a shell with the script as command
+      //const split_args=script.str.split(' ').filter(Boolean)
+      const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
+      const shellArgs = process.platform === 'win32' ? ['/c', 'npm run',name] : ['-c', 'npm run',name];
+      //const shellArgs = process.platform === 'win32' ? ['/c', ...split_args] : ['-c', ...split_args];
+      const child = spawn(shell, shellArgs,  {
+      // name: 'xterm-color',
+        cols:200,
+        useConpty:false,
+        cwd:workspace_folder,
+        env: { ...process.env, FORCE_COLOR: "3" },
+      });
+      if (child===null)
+        return
+      this.ipty[runner.id]=child//overrides that last on
+      // Set state to running immediately (spawn happens synchronously)
+      const run_id=function(){
+        if (runs.length===0)
+          return 0 
+        return runs.at(-1)!.run_id+1
+      }()
+      const run:Run={
+        start_time: Date.now(),
+        end_time  : undefined,    //initialy is undefined then changes to number and stops changing
+        reason,
+        output   : [],
+        Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
+        exit_code: undefined,
+        stopped  : undefined,
+        run_id
+      }
+    
+    this.get_runner_runs(runner).push(run)
     // Listen to data events (both stdout and stderr come through onData)
     const dataDisposable = child.onData((data: string) => {
       run.output.push(data)
@@ -130,7 +159,7 @@ async function stop({
     });
   }); 
 }
-function find_runners(root:Folder,filter:(x:Runner)=>boolean){
+find_runners(root:Folder,filter:(x:Runner)=>boolean){
   const ans:Runner[]=[]
   function f(node:Folder){
     node.folders.forEach(f)
@@ -142,7 +171,7 @@ function find_runners(root:Folder,filter:(x:Runner)=>boolean){
   f(root)
   return ans
 }
-function collect_watch_dirs(root:Folder){
+collect_watch_dirs(root:Folder){
   const ans=new Set<string>
   function f(node:Folder){
     for (const runner of node.runners)
@@ -154,7 +183,7 @@ function collect_watch_dirs(root:Folder){
   f(root)
   return ans
 }
-function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
+watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
   for (const watched_dir of watched_dirs){
     try{
       console.log(`watching ${watched_dir}`)
@@ -163,16 +192,13 @@ function watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
         changed_dirs.add(watched_dir)
         console.log(`changed: *${watched_dir}/${changed_file} `)
       }) 
-}catch(ex){
+    }catch(ex){
       console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
     }
   }
 }
-interface RunnerWithReason{
-  runner:Runner
-  reason:string
-}
-function get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
+
+get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
   const ans:RunnerWithReason[]=[]
   function f(node:Folder){
     const {folders,runners}=node
@@ -187,25 +213,13 @@ function get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
   f(root)
   return Object.values(ans)
 }
-function calc_one_debug_name(workspace_folder:string){
-  return path.basename(path.resolve(workspace_folder));
+calc_one_debug_name=(workspace_folder:string)=>{
+   path.basename(path.resolve(workspace_folder));
   /*const full_path=path.resolve(path.normalize(workspace_folder))
   const split=full_path.split(/(\/)|(\\\\)/)
   const ans=split.at(-1)
   return ans*/
 }
-export class Monitor{
-  runner_ctrl=make_runner_ctrl()
-  root?:Folder
-  watched_dirs=new Set<string>()
-  changed_dirs=new Set<string>()
-  watched_runners:Runner[]=[]
-  is_running=true
-  constructor(
-    public workspace_folders:string[]
-
-  ){
-  }
   async runRepeatedly() {
     while (this.is_running) {
       try {
@@ -221,10 +235,11 @@ export class Monitor{
   }
 
   async read_package_json(){
-    this.root= await read_package_json(this.workspace_folders)
-    this.watched_dirs=collect_watch_dirs(this.root)
-    this.watched_runners=find_runners(this.root,(x)=>x.watched)
-    const name=this.workspace_folders.map(calc_one_debug_name).join('_')
+    const new_root= await read_package_json(this.workspace_folders)
+    this.root=new_root
+    this.watched_dirs=this.collect_watch_dirs(this.root)
+    this.watched_runners=this.find_runners(this.root,(x)=>x.watched)
+    const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
     const to_write=to_json(this,["runner_ctrl"])
@@ -236,25 +251,22 @@ export class Monitor{
     return this.root    
   }
   async run_runner(runner_id:string,reason:string){
-    const {runner_ctrl}=this
     const runner=find_runner(this.get_root(),runner_id)
     if (runner==null)
       throw new Error(`runnwe is not found:${runner_id}`)
-    await run_runner({runner,reason,runner_ctrl})
+    await this.run_runner2({runner,reason})
   }
-  extract_base():Folder{
-    return extract_base(this.get_root())
-  }
+
   start_watching(){
     /*collect all invidyalk watch dirs
     for each set  up node watch
     upon change, collect all the runners that depends on the change
     for each, all run_runner*/
-    watch_to_set(this.watched_dirs,this.changed_dirs)
+    this.watch_to_set(this.watched_dirs,this.changed_dirs)
     setInterval(()=>{ 
       if (this.changed_dirs.size===0)
         return
-      const runners=get_runners_by_changed_dirs(this.root!,this.changed_dirs)
+      const runners=this.get_runners_by_changed_dirs(this.root!,this.changed_dirs)
       for (const {runner,reason} of runners){
         void this.run_runner(runner.id,reason)
       }

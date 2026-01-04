@@ -8402,173 +8402,182 @@ function to_json(x, skip_keys) {
 // src/monitor.ts
 var import_lodash = __toESM(require_lodash(), 1);
 import * as path2 from "node:path";
-function is_ready_to_start(runner) {
-  if (runner.runs.length === 0)
-    return true;
-  return runner.runs.at(-1)?.end_time != null;
-}
 function keep_only_last(arr) {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
   }
 }
-function extract_base(folder) {
-  const runners = [];
-  for (const runner of folder.runners) {
-    const copy = (0, import_lodash.default)(runner);
-    runners.push(copy);
-    for (const run of runner.runs) {
-      if (run.output.length !== 0) {
-        run.output = [];
-      }
-    }
-    keep_only_last(runner.runs);
-  }
-  const folders = folder.folders.map(extract_base);
-  return { ...folder, folders, runners };
-}
-function make_runner_ctrl() {
-  const ipty = {};
-  return { ipty };
-}
-async function stop({
-  runner_ctrl,
-  runner
-}) {
-  let was_stopped = false;
-  while (true) {
-    if (is_ready_to_start(runner)) {
-      return;
-    }
-    if (!was_stopped) {
-      was_stopped = true;
-      console.log(`stopping runner ${runner.name}...`);
-      const { id } = runner;
-      runner_ctrl.ipty[id]?.kill();
-    }
-    await sleep(10);
-  }
-}
-async function run_runner({
-  //this is not async function on purpuse
-  runner,
-  reason,
-  runner_ctrl
-}) {
-  await stop({ runner_ctrl, runner });
-  await new Promise((resolve5, _reject) => {
-    const { workspace_folder, runs, name } = runner;
-    const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
-    const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
-    const child = spawn(shell, shellArgs, {
-      // name: 'xterm-color',
-      cols: 200,
-      useConpty: false,
-      cwd: workspace_folder,
-      env: { ...process.env, FORCE_COLOR: "3" }
-    });
-    if (child === null)
-      return;
-    runner_ctrl.ipty[runner.id] = child;
-    const run_id = (function() {
-      if (runs.length === 0)
-        return 0;
-      return runs.at(-1).run_id + 1;
-    })();
-    const run = {
-      start_time: Date.now(),
-      end_time: void 0,
-      //initialy is undefined then changes to number and stops changing
-      reason,
-      output: [],
-      Err: void 0,
-      //initialy is undefined then maybe changes to error and stop changing
-      exit_code: void 0,
-      stopped: void 0,
-      run_id
-    };
-    runner.runs.push(run);
-    const dataDisposable = child.onData((data2) => {
-      run.output.push(data2);
-    });
-    const exitDisposable = child.onExit(({ exitCode, signal }) => {
-      dataDisposable.dispose();
-      exitDisposable.dispose();
-      console.log({ exitCode, signal });
-      run.end_time = Date.now();
-      run.exit_code = exitCode;
-      if (signal != null)
-        run.stopped = true;
-      resolve5(null);
-    });
-  });
-}
-function find_runners(root, filter) {
-  const ans = [];
-  function f(node) {
-    node.folders.forEach(f);
-    for (const runner of node.runners) {
-      if (filter(runner))
-        ans.push(runner);
-    }
-  }
-  f(root);
-  return ans;
-}
-function collect_watch_dirs(root) {
-  const ans = /* @__PURE__ */ new Set();
-  function f(node) {
-    for (const runner of node.runners)
-      if (runner.watched)
-        for (const x of runner.effective_watch)
-          ans.add(x.full);
-    node.folders.forEach(f);
-  }
-  f(root);
-  return ans;
-}
-function watch_to_set(watched_dirs, changed_dirs) {
-  for (const watched_dir of watched_dirs) {
-    try {
-      console.log(`watching ${watched_dir}`);
-      chokidar_default.watch(watched_dir).on("change", (changed_file) => {
-        changed_dirs.add(watched_dir);
-        console.log(`changed: *${watched_dir}/${changed_file} `);
-      });
-    } catch (ex) {
-      console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`);
-    }
-  }
-}
-function get_runners_by_changed_dirs(root, changed_dirs) {
-  const ans = [];
-  function f(node) {
-    const { folders, runners } = node;
-    folders.forEach(f);
-    for (const runner of runners) {
-      if (runner.watched) {
-        for (const { full } of runner.effective_watch)
-          if (changed_dirs.has(full))
-            ans.push({ runner, reason: full });
-      }
-    }
-  }
-  f(root);
-  return Object.values(ans);
-}
-function calc_one_debug_name(workspace_folder) {
-  return path2.basename(path2.resolve(workspace_folder));
-}
 var Monitor = class {
   constructor(workspace_folders) {
     this.workspace_folders = workspace_folders;
   }
-  runner_ctrl = make_runner_ctrl();
+  ipty = {};
+  runs = {};
   root;
   watched_dirs = /* @__PURE__ */ new Set();
   changed_dirs = /* @__PURE__ */ new Set();
   watched_runners = [];
   is_running = true;
+  get_runner_runs(runner) {
+    const { id } = runner;
+    const exists = this.runs[id];
+    if (exists != null)
+      return exists;
+    this.runs[id] = [];
+    return this.runs[id];
+  }
+  is_ready_to_start(runner) {
+    const runs = this.get_runner_runs(runner);
+    if (runs.length === 0)
+      return true;
+    return runs.at(-1)?.end_time != null;
+  }
+  extract_base(folder) {
+    const f = (folder2) => {
+      const runners = [];
+      for (const runner of folder2.runners) {
+        const copy = (0, import_lodash.default)(runner);
+        runners.push(copy);
+        const runs = this.get_runner_runs(runner);
+        for (const run of runs) {
+          if (run.output.length !== 0) {
+            run.output = [];
+          }
+        }
+        keep_only_last(runs);
+      }
+      const folders = folder2.folders.map(f);
+      return { ...folder2, folders, runners };
+    };
+    return f(this.get_root());
+  }
+  async stop({
+    runner
+  }) {
+    let was_stopped = false;
+    while (true) {
+      if (this.is_ready_to_start(runner)) {
+        return;
+      }
+      if (!was_stopped) {
+        was_stopped = true;
+        console.log(`stopping runner ${runner.name}...`);
+        const { id } = runner;
+        this.ipty[id]?.kill();
+      }
+      await sleep(10);
+    }
+  }
+  async run_runner2({
+    //this is not async function on purpuse
+    runner,
+    reason
+  }) {
+    await this.stop({ runner });
+    await new Promise((resolve5, _reject) => {
+      const runs = this.get_runner_runs(runner);
+      const { workspace_folder, name } = runner;
+      const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
+      const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
+      const child = spawn(shell, shellArgs, {
+        // name: 'xterm-color',
+        cols: 200,
+        useConpty: false,
+        cwd: workspace_folder,
+        env: { ...process.env, FORCE_COLOR: "3" }
+      });
+      if (child === null)
+        return;
+      this.ipty[runner.id] = child;
+      const run_id = (function() {
+        if (runs.length === 0)
+          return 0;
+        return runs.at(-1).run_id + 1;
+      })();
+      const run = {
+        start_time: Date.now(),
+        end_time: void 0,
+        //initialy is undefined then changes to number and stops changing
+        reason,
+        output: [],
+        Err: void 0,
+        //initialy is undefined then maybe changes to error and stop changing
+        exit_code: void 0,
+        stopped: void 0,
+        run_id
+      };
+      this.get_runner_runs(runner).push(run);
+      const dataDisposable = child.onData((data2) => {
+        run.output.push(data2);
+      });
+      const exitDisposable = child.onExit(({ exitCode, signal }) => {
+        dataDisposable.dispose();
+        exitDisposable.dispose();
+        console.log({ exitCode, signal });
+        run.end_time = Date.now();
+        run.exit_code = exitCode;
+        if (signal != null)
+          run.stopped = true;
+        resolve5(null);
+      });
+    });
+  }
+  find_runners(root, filter) {
+    const ans = [];
+    function f(node) {
+      node.folders.forEach(f);
+      for (const runner of node.runners) {
+        if (filter(runner))
+          ans.push(runner);
+      }
+    }
+    f(root);
+    return ans;
+  }
+  collect_watch_dirs(root) {
+    const ans = /* @__PURE__ */ new Set();
+    function f(node) {
+      for (const runner of node.runners)
+        if (runner.watched)
+          for (const x of runner.effective_watch)
+            ans.add(x.full);
+      node.folders.forEach(f);
+    }
+    f(root);
+    return ans;
+  }
+  watch_to_set(watched_dirs, changed_dirs) {
+    for (const watched_dir of watched_dirs) {
+      try {
+        console.log(`watching ${watched_dir}`);
+        chokidar_default.watch(watched_dir).on("change", (changed_file) => {
+          changed_dirs.add(watched_dir);
+          console.log(`changed: *${watched_dir}/${changed_file} `);
+        });
+      } catch (ex) {
+        console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`);
+      }
+    }
+  }
+  get_runners_by_changed_dirs(root, changed_dirs) {
+    const ans = [];
+    function f(node) {
+      const { folders, runners } = node;
+      folders.forEach(f);
+      for (const runner of runners) {
+        if (runner.watched) {
+          for (const { full } of runner.effective_watch)
+            if (changed_dirs.has(full))
+              ans.push({ runner, reason: full });
+        }
+      }
+    }
+    f(root);
+    return Object.values(ans);
+  }
+  calc_one_debug_name = (workspace_folder) => {
+    path2.basename(path2.resolve(workspace_folder));
+  };
   async runRepeatedly() {
     while (this.is_running) {
       try {
@@ -8581,10 +8590,11 @@ var Monitor = class {
     }
   }
   async read_package_json() {
-    this.root = await read_package_json(this.workspace_folders);
-    this.watched_dirs = collect_watch_dirs(this.root);
-    this.watched_runners = find_runners(this.root, (x) => x.watched);
-    const name = this.workspace_folders.map(calc_one_debug_name).join("_");
+    const new_root = await read_package_json(this.workspace_folders);
+    this.root = new_root;
+    this.watched_dirs = this.collect_watch_dirs(this.root);
+    this.watched_runners = this.find_runners(this.root, (x) => x.watched);
+    const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
     const to_write = to_json(this, ["runner_ctrl"]);
@@ -8596,21 +8606,17 @@ var Monitor = class {
     return this.root;
   }
   async run_runner(runner_id, reason) {
-    const { runner_ctrl } = this;
     const runner = find_runner(this.get_root(), runner_id);
     if (runner == null)
       throw new Error(`runnwe is not found:${runner_id}`);
-    await run_runner({ runner, reason, runner_ctrl });
-  }
-  extract_base() {
-    return extract_base(this.get_root());
+    await this.run_runner2({ runner, reason });
   }
   start_watching() {
-    watch_to_set(this.watched_dirs, this.changed_dirs);
+    this.watch_to_set(this.watched_dirs, this.changed_dirs);
     setInterval(() => {
       if (this.changed_dirs.size === 0)
         return;
-      const runners = get_runners_by_changed_dirs(this.root, this.changed_dirs);
+      const runners = this.get_runners_by_changed_dirs(this.root, this.changed_dirs);
       for (const { runner, reason } of runners) {
         void this.run_runner(runner.id, reason);
       }
