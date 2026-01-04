@@ -8322,7 +8322,7 @@ async function read_package_json(workspace_folders) {
   };
   return root;
 }
-function to_json(x, skip_keys) {
+function to_json(x, skip_keys = []) {
   function set_replacer(k, v) {
     if (skip_keys.includes(k))
       return "<skipped>";
@@ -8508,7 +8508,8 @@ var Monitor = class {
     return Object.values(ans);
   }
   calc_one_debug_name = (workspace_folder) => {
-    path2.basename(path2.resolve(workspace_folder));
+    const ans = path2.basename(path2.resolve(path2.normalize(workspace_folder)));
+    return ans;
   };
   async runRepeatedly() {
     while (this.is_running) {
@@ -8529,7 +8530,7 @@ var Monitor = class {
     const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
-    const to_write = to_json(this, ["runner_ctrl"]);
+    const to_write = to_json(this, ["ipty"]);
     await mkdir_write_file(filename, to_write);
   }
   get_root() {
@@ -8701,20 +8702,21 @@ function make_loop_func(monitor) {
 }
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");
   const workspace_folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
     if (ans.length === 0)
-      return ["c:/yigal/million_try3"];
+      return [String.raw`c:\yigal\scriptsmon`];
     return ans;
   })();
   if (workspace_folders == null)
     return;
+  outputChannel.append(to_json({ workspace_folders }));
   const monitor = new Monitor(workspace_folders);
   await monitor.read_package_json();
   void monitor.runRepeatedly();
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
-  const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");
   register_command(context, "Scriptsmon.startWatching", () => {
     monitor.start_watching();
     outputChannel.append("start watching");

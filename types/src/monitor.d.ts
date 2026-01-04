@@ -36,7 +36,7 @@ export declare class Monitor {
     collect_watch_dirs(root: Folder): Set<string>;
     watch_to_set(watched_dirs: Set<string>, changed_dirs: Set<string>): void;
     get_runners_by_changed_dirs(root: Folder, changed_dirs: Set<string>): RunnerWithReason[];
-    calc_one_debug_name: (workspace_folder: string) => void;
+    calc_one_debug_name: (workspace_folder: string) => string;
     runRepeatedly(): Promise<void>;
     read_package_json(): Promise<void>;
     get_root(): Folder;

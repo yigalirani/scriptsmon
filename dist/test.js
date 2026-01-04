@@ -8386,7 +8386,7 @@ async function read_package_json(workspace_folders) {
   };
   return root;
 }
-function to_json(x, skip_keys) {
+function to_json(x, skip_keys = []) {
   function set_replacer(k, v) {
     if (skip_keys.includes(k))
       return "<skipped>";
@@ -8572,7 +8572,8 @@ var Monitor = class {
     return Object.values(ans);
   }
   calc_one_debug_name = (workspace_folder) => {
-    path2.basename(path2.resolve(workspace_folder));
+    const ans = path2.basename(path2.resolve(path2.normalize(workspace_folder)));
+    return ans;
   };
   async runRepeatedly() {
     while (this.is_running) {
@@ -8593,7 +8594,7 @@ var Monitor = class {
     const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
-    const to_write = to_json(this, ["runner_ctrl"]);
+    const to_write = to_json(this, ["ipty"]);
     await mkdir_write_file(filename, to_write);
   }
   get_root() {

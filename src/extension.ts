@@ -32,7 +32,7 @@ export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|Command
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
-
+import {to_json} from './parser.js'
 //const folders=["c:\\yigal\\scriptsmon"]
 //const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
@@ -75,21 +75,24 @@ function make_loop_func(monitor:Monitor){
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
+  const outputChannel = vscode.window.createOutputChannel("Scriptsmon");    
   const workspace_folders=function(){
     const ans= (vscode.workspace.workspaceFolders||[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
 //      return ['c:/yigal/myfastifyapp']
-      return ['c:/yigal/million_try3']
-    return ans
+      return [String.raw`c:\yigal\scriptsmon`]
+      //return ['c:/yigal/million_try3']
+      return ans
   }()
   if (workspace_folders==null) 
     return  
+  outputChannel.append(to_json({workspace_folders}))
   const monitor=new Monitor(workspace_folders)
   await monitor.read_package_json() 
   void monitor.runRepeatedly()
   const the_loop=make_loop_func(monitor)
   define_webview({context,id:"Scriptsmon.webview",html:'client/resources/index.html',f:the_loop})
-  const outputChannel = vscode.window.createOutputChannel("Scriptsmon");  
+
   register_command(context,'Scriptsmon.startWatching',()=>{
     monitor.start_watching()
     outputChannel.append('start watching')

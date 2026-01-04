@@ -345,7 +345,7 @@ export async function read_package_json(
   return root
 }
 
-export function to_json(x:unknown,skip_keys:string[]){
+export function to_json(x:unknown,skip_keys:string[]=[]){
   function set_replacer(k:string,v:unknown){
     if (skip_keys.includes(k))
       return '<skipped>'

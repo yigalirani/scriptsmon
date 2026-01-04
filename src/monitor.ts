@@ -207,7 +207,8 @@ export class Monitor{
     return Object.values(ans)
   }
   calc_one_debug_name=(workspace_folder:string)=>{
-    path.basename(path.resolve(workspace_folder));
+    const ans=path.basename(path.resolve(path.normalize(workspace_folder)));
+    return ans
     /*const full_path=path.resolve(path.normalize(workspace_folder))
     const split=full_path.split(/(\/)|(\\\\)/)
     const ans=split.at(-1)
@@ -234,7 +235,7 @@ export class Monitor{
     const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
-    const to_write=to_json(this,["runner_ctrl"])
+    const to_write=to_json(this,["ipty"])
     await mkdir_write_file(filename,to_write) 
   }
   get_root(){
