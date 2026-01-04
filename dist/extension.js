@@ -8226,8 +8226,7 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
         workspace_folder,
         effective_watch,
         watched,
-        id,
-        runs: []
+        id
       };
       return ans2;
     })();
@@ -8368,24 +8367,21 @@ var Monitor = class {
       return true;
     return runs.at(-1)?.end_time != null;
   }
-  extract_base(folder) {
-    const f = (folder2) => {
-      const runners = [];
-      for (const runner of folder2.runners) {
-        const copy = (0, import_lodash.default)(runner);
-        runners.push(copy);
-        const runs = this.get_runner_runs(runner);
-        for (const run of runs) {
-          if (run.output.length !== 0) {
-            run.output = [];
-          }
-        }
-        keep_only_last(runs);
-      }
-      const folders = folder2.folders.map(f);
-      return { ...folder2, folders, runners };
+  extract_report(base_uri) {
+    const runs = {};
+    for (const [k, v] of Object.entries(this.runs)) {
+      if (v.length === 0)
+        continue;
+      runs[k] = (0, import_lodash.default)(v);
+      keep_only_last(v);
+      v[0].output = [];
+    }
+    return {
+      command: "RunnerReport",
+      root: this.get_root(),
+      base_uri,
+      runs
     };
-    return f(this.get_root());
   }
   async stop({
     runner
@@ -8674,12 +8670,8 @@ function post_message(view, msg) {
 function make_loop_func(monitor) {
   const ans = (view, context) => {
     function send_report(_root_folder) {
-      const root = monitor.extract_base();
-      post_message(view.webview, {
-        command: "RunnerReport",
-        root,
-        base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
-      });
+      const report = monitor.extract_report(view.webview.asWebviewUri(context.extensionUri).toString());
+      post_message(view.webview, report);
     }
     setInterval(() => {
       send_report(monitor.get_root());

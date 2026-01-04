@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 
-import type {Runner,Folder,Filename,Lstr,Pos,RunnerBase,FolderError} from './data.js'
+import type {Runner,Folder,Filename,Lstr,Pos,RunnerBase} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
 import {
   type s2t,
@@ -245,8 +245,7 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
         workspace_folder,
         effective_watch,
         watched,
-        id,
-        runs:[]
+        id
       }
       return ans
     }()

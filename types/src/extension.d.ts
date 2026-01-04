@@ -1,14 +1,9 @@
-import type { Folder } from './data.js';
+import { type RunnerReport } from './monitor.js';
 import * as vscode from 'vscode';
 import { type CommandOpenFileRowCol, type CommandOpenFilePos } from './vscode_utils.js';
 export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";
     text?: string;
-}
-export interface RunnerReport {
-    command: "RunnerReport";
-    root: Folder;
-    base_uri: string;
 }
 export interface SetSelected {
     command: "set_selected";

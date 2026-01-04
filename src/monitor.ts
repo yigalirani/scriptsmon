@@ -17,17 +17,16 @@ interface RunnerWithReason{
   runner:Runner
   reason:string
 }
-export class Foo{
-  a(){
-    return this.b()+1
-  }
-  b(){
-    return 4
-  }
+type Runs=Record<string,Run[]>
+export interface RunnerReport{
+  command: "RunnerReport";
+  root:Folder,
+  base_uri:string,
+  runs:Runs  
 }
 export class Monitor{
   ipty:Record<string,IPty>={}
-  runs:Record<string,Run[]>={}
+  runs:Runs={}
   root?:Folder
   watched_dirs=new Set<string>()
   changed_dirs=new Set<string>()
@@ -50,27 +49,22 @@ export class Monitor{
       return true
     return runs.at(-1)?.end_time!=null;
   }
-
-  extract_base(folder:Folder|undefined):Folder{ //tbd: delete
+  extract_report(base_uri:string):RunnerReport{ //tbd: delete
     //const {full_pathname}=folder
-    const f=(folder:Folder):Folder=>{
-      const runners=[]
-      for (const runner of folder.runners){
-        const copy=cloneDeep(runner)
-        runners.push(copy)
-        const runs=this.get_runner_runs(runner)
-        for (const run of runs){
-          if (run.output.length!==0){
-          //console.log(`runner ${runner.name} ${JSON.stringify(run.output)}`)
-            run.output=[]
-          }
-        }    
-        keep_only_last(runs)
-      }
-      const folders=folder.folders.map(f)
-      return {...folder,folders,runners}
+    const runs:Runs={}
+    for (const [k,v] of Object.entries(this.runs)){
+      if (v.length===0)
+        continue
+      runs[k]=cloneDeep(v)
+      keep_only_last(v)
+      v[0]!.output=[]
     }
-    return f(this.get_root())
+    return {
+      command: "RunnerReport",
+      root:this.get_root(),
+      base_uri,
+      runs
+    }
   }
   async  stop({
     runner
@@ -158,68 +152,67 @@ export class Monitor{
       resolve(null);
     });
   }); 
-}
-find_runners(root:Folder,filter:(x:Runner)=>boolean){
-  const ans:Runner[]=[]
-  function f(node:Folder){
-    node.folders.forEach(f)
-    for (const runner of node.runners){
-      if (filter(runner))
-        ans.push(runner)
+  }
+  find_runners(root:Folder,filter:(x:Runner)=>boolean){
+    const ans:Runner[]=[]
+    function f(node:Folder){
+      node.folders.forEach(f)
+      for (const runner of node.runners){
+        if (filter(runner))
+          ans.push(runner)
+      }
+    }
+    f(root)
+    return ans
+  }
+  collect_watch_dirs(root:Folder){
+    const ans=new Set<string>
+    function f(node:Folder){
+      for (const runner of node.runners)
+        if (runner.watched)
+          for (const x of runner.effective_watch)
+            ans.add(x.full)
+      node.folders.forEach(f)
+    }
+    f(root)
+    return ans
+  }
+  watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
+    for (const watched_dir of watched_dirs){
+      try{
+        console.log(`watching ${watched_dir}`)
+        chokidar.watch(watched_dir).on('change', (changed_file) =>{
+        //fsSync.watch(watched_dir,{},(eventType, changed_file) => {
+          changed_dirs.add(watched_dir)
+          console.log(`changed: *${watched_dir}/${changed_file} `)
+        }) 
+      }catch(ex){
+        console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
+      }
     }
   }
-  f(root)
-  return ans
-}
-collect_watch_dirs(root:Folder){
-  const ans=new Set<string>
-  function f(node:Folder){
-    for (const runner of node.runners)
-      if (runner.watched)
-        for (const x of runner.effective_watch)
-          ans.add(x.full)
-    node.folders.forEach(f)
-  }
-  f(root)
-  return ans
-}
-watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
-  for (const watched_dir of watched_dirs){
-    try{
-      console.log(`watching ${watched_dir}`)
-      chokidar.watch(watched_dir).on('change', (changed_file) =>{
-      //fsSync.watch(watched_dir,{},(eventType, changed_file) => {
-        changed_dirs.add(watched_dir)
-        console.log(`changed: *${watched_dir}/${changed_file} `)
-      }) 
-    }catch(ex){
-      console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
+  get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
+    const ans:RunnerWithReason[]=[]
+    function f(node:Folder){
+      const {folders,runners}=node
+      folders.forEach(f);
+      for (const runner of runners){
+        if (runner.watched)
+          for (const {full} of runner.effective_watch)
+            if (changed_dirs.has(full))
+              ans.push({runner,reason:full})
+      }
     }
+    f(root)
+    return Object.values(ans)
   }
-}
-
-get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
-  const ans:RunnerWithReason[]=[]
-  function f(node:Folder){
-    const {folders,runners}=node
-    folders.forEach(f);
-    for (const runner of runners){
-      if (runner.watched)
-        for (const {full} of runner.effective_watch)
-          if (changed_dirs.has(full))
-            ans.push({runner,reason:full})
-    }
+  calc_one_debug_name=(workspace_folder:string)=>{
+    path.basename(path.resolve(workspace_folder));
+    /*const full_path=path.resolve(path.normalize(workspace_folder))
+    const split=full_path.split(/(\/)|(\\\\)/)
+    const ans=split.at(-1)
+    return ans*/
   }
-  f(root)
-  return Object.values(ans)
-}
-calc_one_debug_name=(workspace_folder:string)=>{
-   path.basename(path.resolve(workspace_folder));
-  /*const full_path=path.resolve(path.normalize(workspace_folder))
-  const split=full_path.split(/(\/)|(\\\\)/)
-  const ans=split.at(-1)
-  return ans*/
-}
   async runRepeatedly() {
     while (this.is_running) {
       try {
@@ -233,7 +226,6 @@ calc_one_debug_name=(workspace_folder:string)=>{
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
-
   async read_package_json(){
     const new_root= await read_package_json(this.workspace_folders)
     this.root=new_root
@@ -256,7 +248,6 @@ calc_one_debug_name=(workspace_folder:string)=>{
       throw new Error(`runnwe is not found:${runner_id}`)
     await this.run_runner2({runner,reason})
   }
-
   start_watching(){
     /*collect all invidyalk watch dirs
     for each set  up node watch

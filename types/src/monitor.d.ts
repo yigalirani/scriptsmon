@@ -4,14 +4,17 @@ interface RunnerWithReason {
     runner: Runner;
     reason: string;
 }
-export declare class Foo {
-    a(): number;
-    b(): number;
+type Runs = Record<string, Run[]>;
+export interface RunnerReport {
+    command: "RunnerReport";
+    root: Folder;
+    base_uri: string;
+    runs: Runs;
 }
 export declare class Monitor {
     workspace_folders: string[];
     ipty: Record<string, IPty>;
-    runs: Record<string, Run[]>;
+    runs: Runs;
     root?: Folder;
     watched_dirs: Set<string>;
     changed_dirs: Set<string>;
@@ -20,7 +23,7 @@ export declare class Monitor {
     constructor(workspace_folders: string[]);
     get_runner_runs(runner: Runner): Run[];
     is_ready_to_start(runner: Runner): boolean;
-    extract_base(folder: Folder | undefined): Folder;
+    extract_report(base_uri: string): RunnerReport;
     stop({ runner }: {
         runner: Runner;
     }): Promise<void>;

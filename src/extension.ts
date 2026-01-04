@@ -1,4 +1,4 @@
-import {Monitor} from './monitor.js'
+import {Monitor,type RunnerReport} from './monitor.js'
 import type {Folder} from './data.js'
 import * as vscode from 'vscode';
 import {
@@ -17,11 +17,7 @@ export interface WebviewMessageSimple {
   command: "buttonClick"|"updateContent"|"get_report";
   text?: string;
 }
-export interface RunnerReport{
-   command: "RunnerReport";
-   root:Folder,
-   base_uri:string
-}
+
 export interface SetSelected{
    command: "set_selected"
    selected:string
@@ -43,12 +39,8 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
 function make_loop_func(monitor:Monitor){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
     function send_report(_root_folder:Folder){
-      const root=monitor.extract_base()
-      post_message(view.webview,{
-        command:'RunnerReport',
-        root,
-        base_uri: view.webview.asWebviewUri(context.extensionUri).toString()
-      })
+      const report=monitor.extract_report(view.webview.asWebviewUri(context.extensionUri).toString())
+      post_message(view.webview,report)
     }
     setInterval(() => {
       send_report(monitor.get_root())
