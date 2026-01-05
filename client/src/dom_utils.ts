@@ -51,9 +51,13 @@ export function get_parent_by_classes(
 export function remove_class(el:HTMLElement,className:string){
   el.querySelectorAll(`.${className}`).forEach(x => x.classList.remove(className))      
 }
+const el_to_html= new WeakMap<HTMLElement,string>()
 export function update_child_html(el: HTMLElement, selector: string, html: string) {
-  const child = query_selector(el,selector)
-  if (child.innerHTML === html) return; // skip if same
+  const child = query_selector<HTMLElement>(el,selector)
+  const exists=el_to_html.get(child)
+  if (exists===html)
+    return
+  el_to_html.set(child,html)
   child.innerHTML = html;
 }
 export class CtrlTracker{

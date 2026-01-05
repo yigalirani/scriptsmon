@@ -190,9 +190,9 @@ class TerminalPanel{
   }
   show_watch(runner:Runner){
     query_selector(this.el, '.term_title_script .value').textContent=runner.script
-    const el=query_selector(this.el, '.term_title_watch .value')
-    for (const {rel,full} of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel.str}</div>`,el as HTMLElement)
+    //const el=query_selector(this.el, '.term_title_watch .value')
+    const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join('')
+    update_child_html(this.el,'.term_title_watch .value',html)
   }
   constructor(
     public parent:HTMLElement,
@@ -242,9 +242,9 @@ class TerminalPanel{
     for (const line of last_run.output)
       this.term.write(line)
     const stats=calc_stats_html(new_runner)
-    if (stats!==this.last_stats)
+    //if (stats!==this.last_stats)
       update_child_html(this.el,'.stats>tbody',stats)
-    this.last_stats=stats
+    //this.last_stats=stats
       update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
     
   }

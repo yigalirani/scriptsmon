@@ -6133,9 +6133,13 @@ function get_parent_by_classes(el2, className) {
 function remove_class(el2, className) {
   el2.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
 }
+var el_to_html = /* @__PURE__ */ new WeakMap();
 function update_child_html(el2, selector, html) {
   const child = query_selector(el2, selector);
-  if (child.innerHTML === html) return;
+  const exists = el_to_html.get(child);
+  if (exists === html)
+    return;
+  el_to_html.set(child, html);
   child.innerHTML = html;
 }
 var CtrlTracker = class {
@@ -12452,9 +12456,8 @@ var TerminalPanel = class {
   };
   show_watch(runner) {
     query_selector(this.el, ".term_title_script .value").textContent = runner.script;
-    const el2 = query_selector(this.el, ".term_title_watch .value");
-    for (const { rel, full } of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el2);
+    const html = runner.effective_watch.map(({ rel, full }) => `<div title='${full}'class=rel>${rel.str}</div>`).join("");
+    update_child_html(this.el, ".term_title_watch .value", html);
   }
   update_terminal(report, new_runner) {
     const runs = report.runs[new_runner.id] || [];
@@ -12487,9 +12490,7 @@ var TerminalPanel = class {
     for (const line of last_run.output)
       this.term.write(line);
     const stats = calc_stats_html(new_runner);
-    if (stats !== this.last_stats)
-      update_child_html(this.el, ".stats>tbody", stats);
-    this.last_stats = stats;
+    update_child_html(this.el, ".stats>tbody", stats);
     update_child_html(this.el, ".term_title_runid .value", `${run_id}`);
   }
 };
