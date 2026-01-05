@@ -12449,13 +12449,12 @@ var TerminalPanel = class {
   el;
   term;
   //last_runner:Runner|undefined=undefined
-  last_stats;
-  last_time;
+  //:string|undefined
   onLink = (location) => {
     console.log(location);
   };
   show_watch(runner) {
-    query_selector(this.el, ".term_title_script .value").textContent = runner.script;
+    update_child_html(this.el, ".term_title_script .value", runner.script);
     const html = runner.effective_watch.map(({ rel, full }) => `<div title='${full}'class=rel>${rel.str}</div>`).join("");
     update_child_html(this.el, ".term_title_watch .value", html);
   }
@@ -12473,9 +12472,7 @@ var TerminalPanel = class {
         return end_time;
       })();
       const new_time = formatElapsedTime(effective_end_time - start_time);
-      if (new_time !== this.last_time)
-        query_selector(this.el, ".term_title_duration .value").innerHTML = new_time;
-      this.last_time = new_time;
+      update_child_html(this.el, ".term_title_duration .value", new_time);
     }
     const statusEl = query_selector(this.el, ".term_title_status .value");
     statusEl.textContent = state;

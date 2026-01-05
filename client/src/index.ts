@@ -183,13 +183,13 @@ class TerminalPanel{
   el:HTMLElement
   term:Terminal
   //last_runner:Runner|undefined=undefined
-  last_stats:string|undefined
-  last_time:string|undefined
+  //:string|undefined
   onLink =(location: FileLocation)=>{
     console.log(location)
   }
   show_watch(runner:Runner){
-    query_selector(this.el, '.term_title_script .value').textContent=runner.script
+//    update_child_html(this.el,'.term_title_watch .value',html)
+    update_child_html(this.el, '.term_title_script .value',runner.script)
     //const el=query_selector(this.el, '.term_title_watch .value')
     const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join('')
     update_child_html(this.el,'.term_title_watch .value',html)
@@ -225,9 +225,8 @@ class TerminalPanel{
         return end_time
       }()
       const new_time=formatElapsedTime(effective_end_time-start_time)
-      if (new_time!==this.last_time)
-        query_selector(this.el, '.term_title_duration .value').innerHTML=new_time
-      this.last_time=new_time
+      update_child_html(this.el,'.term_title_duration .value',new_time)
+      //this.last_time=new_time
     }
       const statusEl = query_selector(this.el, '.term_title_status .value')
     statusEl.textContent = state
