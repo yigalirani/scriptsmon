@@ -188,6 +188,12 @@ class TerminalPanel{
   onLink =(location: FileLocation)=>{
     console.log(location)
   }
+  show_watch(runner:Runner){
+    query_selector(this.el, '.term_title_script .value').textContent=runner.script
+    const el=query_selector(this.el, '.term_title_watch .value')
+    for (const {rel,full} of runner.effective_watch)
+      create_element(`<div title='${full}'class=rel>${rel.str}</div>`,el as HTMLElement)
+  }
   constructor(
     public parent:HTMLElement,
     runner:Runner
@@ -200,10 +206,7 @@ class TerminalPanel{
       this.term.open(term_container);
     // Initialize title bar with full filename plus script
     query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
-    query_selector(this.el, '.term_title_script .value').textContent=runner.script
-    const el=query_selector(this.el, '.term_title_watch .value')
-    for (const {rel,full} of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel.str}</div>`,el as HTMLElement)
+    this.show_watch(runner)
     query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
   update_terminal(report:RunnerReport,new_runner:Runner){
@@ -229,6 +232,7 @@ class TerminalPanel{
       const statusEl = query_selector(this.el, '.term_title_status .value')
     statusEl.textContent = state
     statusEl.className = `value background_${state}`
+    this.show_watch(new_runner)
     if (last_run==null)
       return
     const {run_id}=last_run

@@ -12438,10 +12438,7 @@ var TerminalPanel = class {
     if (term_container instanceof HTMLElement)
       this.term.open(term_container);
     query_selector(this.el, ".term_title_dir .value").textContent = runner.workspace_folder;
-    query_selector(this.el, ".term_title_script .value").textContent = runner.script;
-    const el2 = query_selector(this.el, ".term_title_watch .value");
-    for (const { rel, full } of runner.effective_watch)
-      create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el2);
+    this.show_watch(runner);
     query_selector(this.el, ".term_title_status .value").textContent = "ready";
   }
   last_run_id;
@@ -12453,6 +12450,12 @@ var TerminalPanel = class {
   onLink = (location) => {
     console.log(location);
   };
+  show_watch(runner) {
+    query_selector(this.el, ".term_title_script .value").textContent = runner.script;
+    const el2 = query_selector(this.el, ".term_title_watch .value");
+    for (const { rel, full } of runner.effective_watch)
+      create_element(`<div title='${full}'class=rel>${rel.str}</div>`, el2);
+  }
   update_terminal(report, new_runner) {
     const runs = report.runs[new_runner.id] || [];
     const { state } = calc_runner_status(report, new_runner);
@@ -12474,6 +12477,7 @@ var TerminalPanel = class {
     const statusEl = query_selector(this.el, ".term_title_status .value");
     statusEl.textContent = state;
     statusEl.className = `value background_${state}`;
+    this.show_watch(new_runner);
     if (last_run == null)
       return;
     const { run_id } = last_run;
