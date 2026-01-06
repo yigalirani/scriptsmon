@@ -1,0 +1,15 @@
+node_modules/
+src/
+.vscode/
+*.log
+*.ts
+tsconfig.json
+eslint*
+biome.json
+.oxlintrc.json
+bin/
+../
+base_types/
+types/
+generated/
+!node_modules/@homebridge/node-pty-prebuilt-multiarch/**
