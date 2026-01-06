@@ -1,4 +1,4 @@
-import type { s2t,s2s,} from '@yigal/base_types'
+import type { s2t,s2s} from '@yigal/base_types'
 import {get_parent_by_class,create_element,divs,get_parent_by_classes,remove_class} from './dom_utils.js'
 type MaybePromise<T>=T|Promise<T>
 export interface TreeNode{
