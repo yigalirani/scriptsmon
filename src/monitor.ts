@@ -1,10 +1,9 @@
-//simport * as fsSync from "node:fs";
 import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import type {Run,Runner,Folder} from './data.js'
-import chokidar from 'chokidar';
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import * as path from 'node:path';
+import {Watcher} from './watcher.js'
 import {
   mkdir_write_file,
   sleep} from "@yigal/base_types";
@@ -13,10 +12,6 @@ function keep_only_last<T>(arr: T[]): void {
     arr.splice(0, arr.length - 1);
   }
 }  
-interface RunnerWithReason{
-  runner:Runner
-  reason:string
-}
 type Runs=Record<string,Run[]>
 export interface RunnerReport{
   command: "RunnerReport";
@@ -28,9 +23,8 @@ export class Monitor{
   ipty:Record<string,IPty>={}
   runs:Runs={}
   root?:Folder
-  watched_dirs=new Set<string>()
-  changed_dirs=new Set<string>()
-  watched_runners:Runner[]=[]
+  watcher=new Watcher()
+  monitored_runners:Runner[]=[]
   is_running=true  
   constructor(
     public workspace_folders:string[]    
@@ -143,8 +137,6 @@ export class Monitor{
       dataDisposable.dispose();
       exitDisposable.dispose();
       console.log({ exitCode,signal })
-      //const new_state=(exitCode===0?'done':'error') //todo: should think of aborted
-      //set_state(runner,new_state)
       run.end_time=Date.now()
       run.exit_code=exitCode
       if (signal!=null)
@@ -165,78 +157,44 @@ export class Monitor{
     f(root)
     return ans
   }
-  collect_watch_dirs(root:Folder){
-    const ans=new Set<string>
-    function f(node:Folder){
-      for (const runner of node.runners)
-        if (runner.watched)
-          for (const x of runner.effective_watch)
-            ans.add(x.full)
-      node.folders.forEach(f)
-    }
-    f(root)
-    return ans
-  }
-  watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
-    for (const watched_dir of watched_dirs){
-      try{
-        console.log(`watching ${watched_dir}`)
-        chokidar.watch(watched_dir).on('change', (changed_file) =>{
-        //fsSync.watch(watched_dir,{},(eventType, changed_file) => {
-          changed_dirs.add(watched_dir)
-          console.log(`changed: *${watched_dir}/${changed_file} `)
-        }) 
-      }catch(ex){
-        console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
-      }
-    }
-  }
-  get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
-    const ans:RunnerWithReason[]=[]
-    function f(node:Folder){
-      const {folders,runners}=node
-      folders.forEach(f);
-      for (const runner of runners){
-        if (runner.watched)
-          for (const {full} of runner.effective_watch)
-            if (changed_dirs.has(full))
-              ans.push({runner,reason:full})
-      }
-    }
-    f(root)
-    return Object.values(ans)
-  }
   calc_one_debug_name=(workspace_folder:string)=>{
     const ans=path.basename(path.resolve(path.normalize(workspace_folder)));
     return ans
-    /*const full_path=path.resolve(path.normalize(workspace_folder))
-    const split=full_path.split(/(\/)|(\\\\)/)
-    const ans=split.at(-1)
-    return ans*/
   }
-  async runRepeatedly() {
-    while (this.is_running) {
-      try {
-        const result = await this.read_package_json();
-        console.log(result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-
-      // wait before next run
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
+  add_watch=(folder:Folder)=>{
+    this.watcher.add("root",folder.workspace_folder+'/package.json')
+    for (const runner of folder.runners){
+      const {watched,id,effective_watch}=runner
+      //if (runner.watched)
+      for (const x of effective_watch)
+          this.watcher.add(id,x.full)
+    }    
+    folder.folders.map(this.add_watch)
   }
-  async read_package_json(){
-    const new_root= await read_package_json(this.workspace_folders)
-    this.root=new_root
-    this.watched_dirs=this.collect_watch_dirs(this.root)
-    this.watched_runners=this.find_runners(this.root,(x)=>x.watched)
+  async dump_debug(){
     const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
     const to_write=to_json(this,["ipty"])
-    await mkdir_write_file(filename,to_write) 
+    await mkdir_write_file(filename,to_write)    
+  }
+  async iter(){
+    const new_root= await read_package_json(this.workspace_folders)
+    if (this.watcher.has_changed('root'))
+      return
+    this.watcher.stop_watching() //does not clear the changed 
+    this.add_watch(new_root)
+    this.root=new_root
+    this.monitored_runners=this.find_runners(this.root,(x)=>x.watched)
+    for (const {id} of this.monitored_runners){
+      const changed=this.watcher.get_changed(id)
+      const reason=changed[0]
+      if (reason!=null){
+        void this.run_runner(id,reason)
+      }
+    }
+    this.watcher.clear_changed()
+    await this.dump_debug()
   }
   get_root(){
     if (this.root==null) 
@@ -250,21 +208,5 @@ export class Monitor{
     await this.run_runner2({runner,reason})
   }
   start_watching(){
-    /*collect all invidyalk watch dirs
-    for each set  up node watch
-    upon change, collect all the runners that depends on the change
-    for each, all run_runner*/
-    this.watch_to_set(this.watched_dirs,this.changed_dirs)
-    setInterval(()=>{ 
-      if (this.changed_dirs.size===0)
-        return
-      const runners=this.get_runners_by_changed_dirs(this.root!,this.changed_dirs)
-      for (const {runner,reason} of runners){
-        void this.run_runner(runner.id,reason)
-      }
-      this.changed_dirs.clear()
-    },100)
-    for (const runner of this.watched_runners)
-      void this.run_runner(runner.id,"start")
   }
 }

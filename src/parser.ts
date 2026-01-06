@@ -292,7 +292,7 @@ export async function read_package_json(
       const ast = parseExpressionAt(source, 0, {
         ecmaVersion: "latest",
       });
-      console.warn(`${green}${source_file}${reset}`)
+      console.log(`${green}${source_file}${reset}`)
       const scripts=parse_scripts2(ast,source_file)
       const watchers=parse_watchers(ast,source_file)
       ans.runners=scriptsmon_to_runners(source_file,watchers,scripts)

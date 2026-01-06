@@ -1,6 +1,87 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
+  "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1767664364694,
+        "end_time": 1767664366096,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 10
+      }
+    ],
+    "c--yigal-scriptsmon--test": [
+      {
+        "start_time": 1767664808736,
+        "end_time": 1767664810174,
+        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 40
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1767664807626,
+        "end_time": 1767664808968,
+        "reason": "c:\\yigal\\scriptsmon\\src",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 52
+      }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1767664807719,
+        "end_time": 1767664811150,
+        "reason": "c:\\yigal\\scriptsmon\\src",
+        "output": [],
+        "exit_code": 2,
+        "run_id": 61
+      }
+    ],
+    "c--yigal-scriptsmon--eslint": [
+      {
+        "start_time": 1767664807861,
+        "end_time": 1767664815222,
+        "reason": "c:\\yigal\\scriptsmon\\src",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 59
+      }
+    ],
+    "c--yigal-scriptsmon--oxlinttypeaware": [
+      {
+        "start_time": 1767664807994,
+        "end_time": 1767664810113,
+        "reason": "c:\\yigal\\scriptsmon\\src",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 61
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1767664808145,
+        "end_time": 1767664809561,
+        "reason": "c:\\yigal\\scriptsmon\\src",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 61
+      }
+    ],
+    "c--yigal-scriptsmon--biome": [
+      {
+        "start_time": 1767664808275,
+        "end_time": 1767664812166,
+        "reason": "c:\\yigal\\scriptsmon\\src",
+        "output": [],
+        "exit_code": 1,
+        "run_id": 61
+      }
+    ]
+  },
   "root": {
     "name": "root",
     "id": "root",
@@ -529,12 +610,12 @@
                   },
                   {
                     "rel": {
-                      "str": "package.json",
+                      "str": "paddddckage.json",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
                       "start": 230,
-                      "end": 244
+                      "end": 248
                     },
-                    "full": "c:\\yigal\\scriptsmon\\client\\package.json"
+                    "full": "c:\\yigal\\scriptsmon\\client\\paddddckage.json"
                   }
                 ],
                 "watched": true,
@@ -577,7 +658,7 @@
     "c:\\yigal\\scriptsmon\\.oxlintrc.json",
     "c:\\yigal\\scriptsmon\\biome.json",
     "c:\\yigal\\scriptsmon\\client\\build.ts",
-    "c:\\yigal\\scriptsmon\\client\\package.json"
+    "c:\\yigal\\scriptsmon\\client\\paddddckage.json"
   ],
   "changed_dirs": [],
   "watched_runners": [
@@ -613,12 +694,12 @@
         },
         {
           "rel": {
-            "str": "package.json",
+            "str": "paddddckage.json",
             "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
             "start": 230,
-            "end": 244
+            "end": 248
           },
-          "full": "c:\\yigal\\scriptsmon\\client\\package.json"
+          "full": "c:\\yigal\\scriptsmon\\client\\paddddckage.json"
         }
       ],
       "watched": true,

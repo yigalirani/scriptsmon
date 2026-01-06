@@ -9,7 +9,7 @@
             "build": [
               "build.ts",
               "src",
-              "package.json"
+              "paddddckage.json"
             ]
         }
     },

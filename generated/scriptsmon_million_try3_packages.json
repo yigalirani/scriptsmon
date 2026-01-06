@@ -529,12 +529,12 @@
                   },
                   {
                     "rel": {
-                      "str": "package.json",
+                      "str": "paddddckage.json",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
                       "start": 230,
-                      "end": 244
+                      "end": 248
                     },
-                    "full": "c:\\yigal\\scriptsmon\\client\\package.json"
+                    "full": "c:\\yigal\\scriptsmon\\client\\paddddckage.json"
                   }
                 ],
                 "watched": true,
@@ -982,6 +982,7 @@
     "need_ctl": true,
     "errors": []
   },
+  "watche": {},
   "watched_dirs": [
     "c:\\yigal\\scriptsmon\\dist\\test.js",
     "c:\\yigal\\scriptsmon\\src",
@@ -993,7 +994,7 @@
     "c:\\yigal\\scriptsmon\\.oxlintrc.json",
     "c:\\yigal\\scriptsmon\\biome.json",
     "c:\\yigal\\scriptsmon\\client\\build.ts",
-    "c:\\yigal\\scriptsmon\\client\\package.json",
+    "c:\\yigal\\scriptsmon\\client\\paddddckage.json",
     "c:\\yigal\\million_try3\\main\\src",
     "c:\\yigal\\million_try3\\converter\\src",
     "c:\\yigal\\million_try3\\filesrvr\\src",
@@ -1038,12 +1039,12 @@
         },
         {
           "rel": {
-            "str": "package.json",
+            "str": "paddddckage.json",
             "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
             "start": 230,
-            "end": 244
+            "end": 248
           },
-          "full": "c:\\yigal\\scriptsmon\\client\\package.json"
+          "full": "c:\\yigal\\scriptsmon\\client\\paddddckage.json"
         }
       ],
       "watched": true,
