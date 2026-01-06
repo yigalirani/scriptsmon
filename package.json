@@ -122,7 +122,7 @@
     },
     "dependencies": {
         "@homebridge/node-pty-prebuilt-multiarch": "^0.13.1",
-        "@yigal/base_types": "^1.5.0",
+        "@yigal/base_types": "file:../base_types",
         "@yigal/watch_runner": "^2.0.0",
         "acorn": "^8.15.0",
         "chokidar": "^5.0.0",

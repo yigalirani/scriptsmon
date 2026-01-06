@@ -15,7 +15,7 @@ export interface Pos{
   source_file:string
   start?:number
   end?:number
-}type MaybePromise<T>=T|Promise<T>
+}
 export interface CommandOpenFileRowCol{
    command: "command_open_file_rowcol"
    source_file:string,
@@ -148,19 +148,3 @@ export async function open_file(pos:CommandOpenFileRowCol|CommandOpenFilePos){
     await open_file_start_end(pos.pos)
 }
 
-class Repeater{
-  is_running:boolean=true
-  async repeat(f:()=>MaybePromise<void>){
-    while (this.is_running) {
-      try {
-        const result = await f();
-        console.log(result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-
-      // wait before next run
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
-  }
-}

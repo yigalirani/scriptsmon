@@ -6,7 +6,9 @@ import * as path from 'node:path';
 import {Watcher} from './watcher.js'
 import {
   mkdir_write_file,
-  sleep} from "@yigal/base_types";
+  sleep,
+  Repeater
+} from "@yigal/base_types";
 function keep_only_last<T>(arr: T[]): void {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -25,10 +27,13 @@ export class Monitor{
   root?:Folder
   watcher=new Watcher()
   monitored_runners:Runner[]=[]
-  is_running=true  
+  repeater=new Repeater()
   constructor(
     public workspace_folders:string[]    
   ){}
+  async run(){
+    return await this.repeater.repeat(this.iter)
+  }
   get_runner_runs(runner:Runner):Run[]{
     const {id}=runner
     const exists=this.runs[id]
@@ -178,7 +183,7 @@ export class Monitor{
     const to_write=to_json(this,["ipty"])
     await mkdir_write_file(filename,to_write)    
   }
-  async iter(){
+  iter=async ()=>{
     const new_root= await read_package_json(this.workspace_folders)
     if (this.watcher.has_changed('root'))
       return

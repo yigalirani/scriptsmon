@@ -1,19 +1,20 @@
 export class Watcher{
-  add(k:string,path:string){//can have multiple watchers per k
+  changed: Record<string,string[]>={}
+  add(watch_id:string,path:string){//can have multiple watchers per k
   }
-  unchnaged(k:string):boolean{ //have watches under this k and did not changed
-    return this.has('root') && this.get_changed('root').length===0
+  unchnaged(watch_id:string):boolean{ //have watches under this k and did not changed
+    return this.has(watch_id) && this.get_changed(watch_id).length===0
   }
   has(k:string):boolean{
   }
-  has_changed(k:string):boolean{
+  has_changed(watch_id:string):boolean{
   }
-  get_changed(k:string):string[]{//return list of paths that have changed
-    return []
+  get_changed(watch_id:string):string[]{//return list of paths that have changed
+    return this.get_changed[watch_id]
   }
   clear(k:string){
   }
-  stop_watching(){ //and clear the 
+  clear_watching(){ //and clear the 
   }
     
 

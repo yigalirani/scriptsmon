@@ -6265,7 +6265,7 @@ function parseExpressionAt2(input, pos, options) {
   return Parser.parseExpressionAt(input, pos, options);
 }
 
-// node_modules/@yigal/base_types/src/index.ts
+// ../base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
 var reset2 = "\x1B[0m";
 function get_error(x) {
@@ -6289,12 +6289,12 @@ async function get_node() {
   const fs3 = await import("node:fs/promises");
   return { fs: fs3, path: path4 };
 }
-async function mkdir_write_file(filePath, to_write) {
+async function mkdir_write_file(filePath, data2) {
   const { path: path4, fs: fs3 } = await get_node();
   const directory = path4.dirname(filePath);
   try {
     await fs3.mkdir(directory, { recursive: true });
-    await fs3.writeFile(filePath, to_write);
+    await fs3.writeFile(filePath, data2);
     console.log(`File '${filePath}' has been written successfully.`);
   } catch (err) {
     console.error("Error writing file", err);
@@ -6305,6 +6305,25 @@ async function sleep(ms) {
     setTimeout(() => resolve3(void 0), ms);
   });
 }
+var Repeater = class {
+  is_running = true;
+  loop = async (f) => {
+    while (this.is_running) {
+      try {
+        const result = await f();
+        console.log(result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      await new Promise((resolve3) => setTimeout(resolve3, 2e3));
+    }
+  };
+  async repeat(f) {
+    const first = await f();
+    void this.loop(f);
+    return first;
+  }
+};
 
 // src/parser.ts
 function is_acorn_error(e) {
@@ -6608,21 +6627,22 @@ import * as path2 from "node:path";
 
 // src/watcher.ts
 var Watcher = class {
-  add(k, path4) {
+  changed = {};
+  add(watch_id, path4) {
   }
-  unchnaged(k) {
-    return this.has("root") && this.get_changed("root").length === 0;
+  unchnaged(watch_id) {
+    return this.has(watch_id) && this.get_changed(watch_id).length === 0;
   }
   has(k) {
   }
-  has_changed(k) {
+  has_changed(watch_id) {
   }
-  get_changed(k) {
-    return [];
+  get_changed(watch_id) {
+    return this.get_changed[watch_id];
   }
   clear(k) {
   }
-  stop_watching() {
+  clear_watching() {
   }
 };
 
@@ -6641,7 +6661,10 @@ var Monitor = class {
   root;
   watcher = new Watcher();
   monitored_runners = [];
-  is_running = true;
+  repeater = new Repeater();
+  async run() {
+    return await this.repeater.repeat(this.iter);
+  }
   get_runner_runs(runner) {
     const { id } = runner;
     const exists = this.runs[id];
@@ -6775,7 +6798,7 @@ var Monitor = class {
     const to_write = to_json(this, ["ipty"]);
     await mkdir_write_file(filename, to_write);
   }
-  async iter() {
+  iter = async () => {
     const new_root = await read_package_json(this.workspace_folders);
     if (this.watcher.has_changed("root"))
       return;
@@ -6792,7 +6815,7 @@ var Monitor = class {
     }
     this.watcher.clear_changed();
     await this.dump_debug();
-  }
+  };
   get_root() {
     if (this.root == null)
       throw new Error("Monitor not initialied succsfuly");
@@ -6961,8 +6984,7 @@ async function activate(context) {
     return;
   outputChannel.append(to_json({ workspace_folders }));
   const monitor = new Monitor(workspace_folders);
-  await monitor.read_package_json();
-  void monitor.runRepeatedly();
+  await monitor.run();
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   register_command(context, "Scriptsmon.startWatching", () => {

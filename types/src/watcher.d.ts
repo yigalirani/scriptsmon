@@ -1,9 +1,10 @@
 export declare class Watcher {
-    add(k: string, path: string): void;
-    unchnaged(k: string): boolean;
+    changed: Record<string, string[]>;
+    add(watch_id: string, path: string): void;
+    unchnaged(watch_id: string): boolean;
     has(k: string): boolean;
-    has_changed(k: string): boolean;
-    get_changed(k: string): string[];
+    has_changed(watch_id: string): boolean;
+    get_changed(watch_id: string): string[];
     clear(k: string): void;
-    stop_watching(): void;
+    clear_watching(): void;
 }

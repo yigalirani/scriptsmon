@@ -1,6 +1,7 @@
 import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import type { Run, Runner, Folder } from './data.js';
 import { Watcher } from './watcher.js';
+import { Repeater } from "@yigal/base_types";
 type Runs = Record<string, Run[]>;
 export interface RunnerReport {
     command: "RunnerReport";
@@ -15,8 +16,9 @@ export declare class Monitor {
     root?: Folder;
     watcher: Watcher;
     monitored_runners: Runner[];
-    is_running: boolean;
+    repeater: Repeater;
     constructor(workspace_folders: string[]);
+    run(): Promise<void>;
     get_runner_runs(runner: Runner): Run[];
     is_ready_to_start(runner: Runner): boolean;
     extract_report(base_uri: string): RunnerReport;
@@ -32,7 +34,7 @@ export declare class Monitor {
     calc_one_debug_name: (workspace_folder: string) => string;
     add_watch: (folder: Folder) => void;
     dump_debug(): Promise<void>;
-    iter(): Promise<void>;
+    iter: () => Promise<void>;
     get_root(): Folder;
     run_runner(runner_id: string, reason: string): Promise<void>;
     start_watching(): void;
