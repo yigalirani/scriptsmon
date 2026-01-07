@@ -1,6 +1,5 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-
 import type {Runner,Folder,Filename,Lstr,Pos,RunnerBase} from './data.js'
 import {parseExpressionAt, type Node,type Expression,type SpreadElement, type Property} from "acorn"
 import {
@@ -8,7 +7,9 @@ import {
   reset,
   green,
   pk,
-  get_error
+  get_error,
+  is_object,
+  is_atom
 } from "@yigal/base_types";
 interface AcornSyntaxError extends SyntaxError {
   pos: number;        // same as raisedAt
@@ -345,14 +346,67 @@ export async function read_package_json(
   return root
 }
 
+/*function prep_to_json(v:unknown){
+  const seen=new WeakSet()
+  function f(v:unknown){
+    if (v==null||is_atom(v))
+      return v
+    if (seen.has(
+  if (v instanceof Set)
+    return [...v].map(prep_to_json)
+}
 export function to_json(x:unknown,skip_keys:string[]=[]){
   function set_replacer(k:string,v:unknown){
+    if (typeof v === "function")
+      return '<function>'
+
     if (skip_keys.includes(k))
       return '<skipped>'
     if (v instanceof Set)
       return [...v] as unknown
+
+    if (v!=null&&!Array.isArray(v) && !is_object(v) &&!is_atom(v))
+      return '<unhnown type>'    
+    if 
     return v 
   }  
   const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
+  return ans
+}
+*/
+export function no_cycles(x:unknown){
+   const ws=new WeakSet
+   function f(v:unknown):unknown{
+    if (typeof v === "function")
+      return '<function>'
+    if (v instanceof Set)
+      return [...v].map(f)
+    if (v==null||is_atom(v))
+      return v
+    if (ws.has(v))
+      return '<cycle>'
+    ws.add(v)    
+    const ans=function (){
+      if (Array.isArray(v))
+        return v.map(f)
+      if (is_object(v)){
+        return Object.fromEntries(Object.entries(v).map(([ k, v]) => [k, f(v)]))
+      }
+      return v.constructor.name||"<unknown type>"
+    }()
+    ws.delete(v)
+    return ans
+   }
+   return f(x)
+}
+export function to_json(x:unknown,skip_keys:string[]=[]){
+ 
+  function set_replacer(k:string,v:unknown){
+    if (skip_keys.includes(k))
+      return '<skipped>'
+    return v 
+  }
+  const x2=no_cycles(x)
+  const ans=JSON.stringify(x2,set_replacer,2).replace(/\\n/g, '\n');
   return ans
 }

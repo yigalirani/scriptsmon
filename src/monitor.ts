@@ -184,7 +184,7 @@ export class Monitor{
     const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
-    const to_write=to_json(this,["ipty"])
+    const to_write=to_json(this,["ipty","watchers"])
     await mkdir_write_file(filename,to_write)    
   }
   get_reason(id:string){

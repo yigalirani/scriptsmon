@@ -6268,11 +6268,23 @@ function parseExpressionAt2(input, pos, options) {
 // ../base_types/src/index.ts
 var green = "\x1B[40m\x1B[32m";
 var reset2 = "\x1B[0m";
+function is_atom(x) {
+  if (x == null) return false;
+  return ["number", "string", "boolean"].includes(typeof x);
+}
 function get_error(x) {
   if (x instanceof Error)
     return x;
   const str = String(x);
   return new Error(str);
+}
+function is_object(value) {
+  if (value == null) return false;
+  if (typeof value !== "object" && typeof value !== "function") return false;
+  if (Array.isArray(value)) return false;
+  if (value instanceof Set) return false;
+  if (value instanceof Map) return false;
+  return true;
 }
 function pk(obj, ...keys) {
   const ret = {};
@@ -6616,15 +6628,39 @@ async function read_package_json(workspace_folders) {
   };
   return root;
 }
+function no_cycles(x) {
+  const ws = /* @__PURE__ */ new WeakSet();
+  function f(v) {
+    if (typeof v === "function")
+      return "<function>";
+    if (v instanceof Set)
+      return [...v].map(f);
+    if (v == null || is_atom(v))
+      return v;
+    if (ws.has(v))
+      return "<cycle>";
+    ws.add(v);
+    const ans = (function() {
+      if (Array.isArray(v))
+        return v.map(f);
+      if (is_object(v)) {
+        return Object.fromEntries(Object.entries(v).map(([k, v2]) => [k, f(v2)]));
+      }
+      return v.constructor.name || "<unknown type>";
+    })();
+    ws.delete(v);
+    return ans;
+  }
+  return f(x);
+}
 function to_json(x, skip_keys = []) {
   function set_replacer(k, v) {
     if (skip_keys.includes(k))
       return "<skipped>";
-    if (v instanceof Set)
-      return [...v];
     return v;
   }
-  const ans = JSON.stringify(x, set_replacer, 2).replace(/\\n/g, "\n");
+  const x2 = no_cycles(x);
+  const ans = JSON.stringify(x2, set_replacer, 2).replace(/\\n/g, "\n");
   return ans;
 }
 
@@ -8556,7 +8592,7 @@ var Monitor = class {
     const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
-    const to_write = to_json(this, ["ipty"]);
+    const to_write = to_json(this, ["ipty", "watchers"]);
     await mkdir_write_file(filename, to_write);
   }
   get_reason(id) {

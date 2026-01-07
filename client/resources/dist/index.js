@@ -6414,7 +6414,7 @@ var TreeControl = class {
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
     const { icons } = this;
-    const { type, id, description, label, icon = "undefined", commands, className } = node;
+    const { type, id, description, label, icon, commands, className } = node;
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");

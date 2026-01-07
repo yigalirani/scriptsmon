@@ -103,13 +103,13 @@
                 {
                     "type": "webview",
                     "id": "Scriptsmon.webview",
-                    "name": "Scriptsmon web view"
+                    "name": "Scriptsmon web view2"
                 }
             ]
         }
     },
     "engines": {
-        "vscode": "1.107.0"
+        "vscode": "^1.107.0"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.3.11",
