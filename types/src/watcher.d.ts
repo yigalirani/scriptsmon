@@ -1,10 +1,13 @@
+import * as chokidar from 'chokidar';
 export declare class Watcher {
-    changed: Record<string, string[]>;
-    add(watch_id: string, path: string): void;
-    unchnaged(watch_id: string): boolean;
-    has(k: string): boolean;
-    has_changed(watch_id: string): boolean;
+    id_to_changed_path: Record<string, Set<string>>;
+    id_to_watching_path: Record<string, Set<string>>;
+    watching_path_to_id: Record<string, Set<string>>;
+    watchers: Set<chokidar.FSWatcher>;
+    add_watch(watch_id: string, path: string): void;
+    start_watching(): void;
+    stop_watching(): Promise<void>;
+    initial_or_changed(watch_id: string): boolean;
     get_changed(watch_id: string): string[];
-    clear(k: string): void;
-    clear_watching(): void;
+    clear_changed(): void;
 }

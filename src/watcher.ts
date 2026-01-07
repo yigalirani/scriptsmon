@@ -1,21 +1,56 @@
+import * as chokidar from 'chokidar'; //{watch,FSWatcher}
+import {default_get} from '@yigal/base_types'
+
+/*interface OneWatcher{
+  fs_watcher:chokidar.FSWatcher|undefined
+  watch_id_set:Set<string>
+}
+function make_OneWatcher():OneWatcher{
+  return {fs_watcher:undefined,watch_id_set:new Set<string>}
+}
+  */
+function new_set(){
+  return new Set<string>
+}
+function add(data:Record<string,Set<string>>,id:string,value:string){
+    default_get(data,id,new_set).add(value)
+}
+
 export class Watcher{
-  changed: Record<string,string[]>={}
-  add(watch_id:string,path:string){//can have multiple watchers per k
+  id_to_changed_path     : Record<string, Set<string> > = {}  //watch id to list of paths
+  id_to_watching_path    : Record<string, Set<string>>  = {}  //watch id to list of paths
+  watching_path_to_id    :Record<string,  Set<string>>  = {}
+  watchers         = new Set< chokidar.FSWatcher> 
+
+  add_watch(watch_id:string,path:string){//can have multiple watchers per k
+    add(this.id_to_watching_path,watch_id,path)
+    add(this.watching_path_to_id,path,watch_id)
   }
-  unchnaged(watch_id:string):boolean{ //have watches under this k and did not changed
-    return this.has(watch_id) && this.get_changed(watch_id).length===0
+  start_watching(){
+    for (const [watching_path,ids] of Object.entries(this.watching_path_to_id)){
+      const watcher=chokidar.watch(watching_path).on('change', (path) => {
+        for (const id of ids)
+          add(this.id_to_changed_path,id,path) //path can be file within watching_path
+      })
+      this.watchers.add(watcher)
+    }
   }
-  has(k:string):boolean{
-  }
-  has_changed(watch_id:string):boolean{
+  async stop_watching(){ //and clear the 
+    const promises=[...this.watchers].map( x=> x.close())
+    this.watchers.clear()
+    await Promise.all(promises)
+  }  
+  initial_or_changed(watch_id:string):boolean{ //have watches under this k and did not changed
+    const exists=this.id_to_changed_path[watch_id]
+    return exists==null
   }
   get_changed(watch_id:string):string[]{//return list of paths that have changed
-    return this.get_changed[watch_id]
+    return [...(this.id_to_changed_path[watch_id]||new Set())]
   }
-  clear(k:string){
+  clear_changed(){
+    this.id_to_changed_path={}
   }
-  clear_watching(){ //and clear the 
-  }
+
     
 
 }

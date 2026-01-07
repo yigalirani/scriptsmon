@@ -15,7 +15,6 @@ export declare class Monitor {
     runs: Runs;
     root?: Folder;
     watcher: Watcher;
-    monitored_runners: Runner[];
     repeater: Repeater;
     constructor(workspace_folders: string[]);
     run(): Promise<void>;
@@ -34,9 +33,17 @@ export declare class Monitor {
     calc_one_debug_name: (workspace_folder: string) => string;
     add_watch: (folder: Folder) => void;
     dump_debug(): Promise<void>;
+    get_reason(id: string): string | undefined;
+    get_changed_runners(monitored_runners: Runner[]): {
+        runner_id: string;
+        reason: string;
+    }[];
     iter: () => Promise<void>;
     get_root(): Folder;
-    run_runner(runner_id: string, reason: string): Promise<void>;
+    run_runner({ runner_id, reason }: {
+        runner_id: string;
+        reason: string;
+    }): Promise<void>;
     start_watching(): void;
 }
 export {};

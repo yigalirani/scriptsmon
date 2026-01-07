@@ -11,5 +11,5 @@ bin/
 ../
 base_types/
 types/
-generated/
+generated/  
 !node_modules/@homebridge/node-pty-prebuilt-multiarch/**

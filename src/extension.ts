@@ -60,7 +60,7 @@ function make_loop_func(monitor:Monitor){
             break 
           }          
           case 'command_clicked':{
-            void monitor.run_runner(message.id,'user')
+            void monitor.run_runner({runner_id:message.id,reason:'user'})
             break          
           }
         }

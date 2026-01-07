@@ -14,6 +14,10 @@ function keep_only_last<T>(arr: T[]): void {
     arr.splice(0, arr.length - 1);
   }
 }  
+interface RunnerWithReason{
+  runner:Runner
+  reason:string
+}
 type Runs=Record<string,Run[]>
 export interface RunnerReport{
   command: "RunnerReport";
@@ -26,7 +30,7 @@ export class Monitor{
   runs:Runs={}
   root?:Folder
   watcher=new Watcher()
-  monitored_runners:Runner[]=[]
+  //monitored_runners:Runner[]=[]
   repeater=new Repeater()
   constructor(
     public workspace_folders:string[]    
@@ -167,12 +171,12 @@ export class Monitor{
     return ans
   }
   add_watch=(folder:Folder)=>{
-    this.watcher.add("root",folder.workspace_folder+'/package.json')
+    this.watcher.add_watch("root",folder.workspace_folder+'/package.json')
     for (const runner of folder.runners){
       const {watched,id,effective_watch}=runner
       //if (runner.watched)
       for (const x of effective_watch)
-          this.watcher.add(id,x.full)
+          this.watcher.add_watch(id,x.full)
     }    
     folder.folders.map(this.add_watch)
   }
@@ -183,22 +187,36 @@ export class Monitor{
     const to_write=to_json(this,["ipty"])
     await mkdir_write_file(filename,to_write)    
   }
-  iter=async ()=>{
-    const new_root= await read_package_json(this.workspace_folders)
-    if (this.watcher.has_changed('root'))
-      return
-    this.watcher.stop_watching() //does not clear the changed 
-    this.add_watch(new_root)
-    this.root=new_root
-    this.monitored_runners=this.find_runners(this.root,(x)=>x.watched)
-    for (const {id} of this.monitored_runners){
-      const changed=this.watcher.get_changed(id)
-      const reason=changed[0]
-      if (reason!=null){
-        void this.run_runner(id,reason)
-      }
+  get_reason(id:string){
+    const changed=this.watcher.get_changed(id)
+    if (changed[0]!==null)
+      return changed[0]
+    if (this.watcher.initial_or_changed(id))
+      return 'inital'
+  }
+  get_changed_runners(monitored_runners:Runner[]){
+    const ans=[]
+    for (const runner of monitored_runners){
+      const {id}=runner
+      const reason=this.get_reason(id)
+      if (reason!=null)
+        ans.push({runner_id:id,reason})
     }
+    return ans
+  }
+  iter=async ()=>{
+    if (this.watcher.initial_or_changed('root')){
+      await this.watcher.stop_watching() //does not clear the changed 
+      const new_root= await read_package_json(this.workspace_folders)
+      this.add_watch(new_root)
+      this.root=new_root
+      this.watcher.start_watching() //based on add watcg from before
+    }
+    const monitored_runners=this.find_runners(this.root!,(x)=>x.watched)
+    const changed=this.get_changed_runners(monitored_runners)
     this.watcher.clear_changed()
+    for (const x of changed)
+      void this.run_runner(x)
     await this.dump_debug()
   }
   get_root(){
@@ -206,7 +224,10 @@ export class Monitor{
       throw new Error("Monitor not initialied succsfuly")
     return this.root    
   }
-  async run_runner(runner_id:string,reason:string){
+  async run_runner({runner_id,reason}:{
+    runner_id:string
+    reason:string
+  }){
     const runner=find_runner(this.get_root(),runner_id)
     if (runner==null)
       throw new Error(`runnwe is not found:${runner_id}`)
