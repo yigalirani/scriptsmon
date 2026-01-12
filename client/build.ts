@@ -2,8 +2,8 @@ import { build } from "esbuild";
 async function call_build(){
   try{
     await build({
-      entryPoints: ["src/index.ts"],
-      outfile: "resources/dist/index.js",
+      entryPoints: ["src/index.ts","src/tree_view.ts"],
+      outdir: "resources/dist",
       bundle: true,
       platform: "node",
       format: "esm",

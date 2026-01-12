@@ -100,11 +100,11 @@
             ]
         },
         "views": {
-            "panel": [
+            "explorer": [
                 {
                     "type": "webview",
-                    "id": "Scriptsmon.webview",
-                    "name": "Scriptsmon web view2"
+                    "id": "Scriptsmon.treeview",
+                    "name": "Scriptsmon2"
                 }
             ]
         }

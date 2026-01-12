@@ -14,12 +14,12 @@ export interface CommandOpenFilePos {
     command: "command_open_file_pos";
     pos: Pos;
 }
-export declare function getWebviewContent(context: ExtensionContext, webview: Webview): string;
+export declare function get_webview_content(context: ExtensionContext, webview: Webview, html_filename: string): string;
 export type WebviewFunc = (webview: WebviewView, context: ExtensionContext) => Promise<void> | void;
-export declare function define_webview({ context, id, html, f }: {
+export declare function define_webview({ context, id, html_filename, f }: {
     context: ExtensionContext;
     id: string;
-    html: string;
+    html_filename: string;
     f?: WebviewFunc;
 }): void;
 export declare function register_command(context: ExtensionContext, command: string, commandHandler: () => void): void;

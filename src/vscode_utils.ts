@@ -26,8 +26,8 @@ export interface CommandOpenFilePos{
    command: "command_open_file_pos"
    pos:Pos
 }
-export function getWebviewContent(context:ExtensionContext, webview:Webview): string {
-  const htmlPath = path.join(context.extensionPath, 'client','resources', 'index.html');
+export function get_webview_content(context:ExtensionContext, webview:Webview,html_filename:string): string {
+  const htmlPath = path.join(context.extensionPath, 'client','resources', html_filename);
   let html = fs.readFileSync(htmlPath, 'utf-8');
   
   // Get URIs for CSS and JS files
@@ -45,10 +45,10 @@ export function getWebviewContent(context:ExtensionContext, webview:Webview): st
 }
 export type WebviewFunc=(webview:WebviewView,context:ExtensionContext)=>Promise<void>|void
 
-export function define_webview({context,id,html,f}:{
+export function define_webview({context,id,html_filename,f}:{
   context: ExtensionContext,
   id:string,
-  html:string,
+  html_filename:string,
   f?:WebviewFunc}
 ){
   console.log('define_webview')
@@ -61,7 +61,7 @@ export function define_webview({context,id,html,f}:{
           Uri.file(path.join(context.extensionPath, "client/resources"))
         ]
       }
-      webviewView.webview.html = getWebviewContent(context, webviewView.webview)
+      webviewView.webview.html = get_webview_content(context, webviewView.webview,html_filename)
       if (f)
         void f(webviewView,context) //fire and forget
     }
