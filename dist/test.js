@@ -5974,7 +5974,6 @@ async function get_package_json_length() {
 }
 if (import.meta.main) {
   void run_tests({
-    k: "run on self",
     v: 8,
     f: get_package_json_length
   });

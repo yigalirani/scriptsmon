@@ -1,15 +1,33 @@
-node_modules/
-src/
+# 1. Global Exclusions
+../
 .vscode/
 *.log
-*.ts
+*.zip
+*.pdb
+**/*.map
+**/test.*
+
+# 2. Development & Tooling Configs
 tsconfig.json
 eslint*
 biome.json
 .oxlintrc.json
-bin/
-../
+
+# 3. Source & Build Artifacts
+src/
+src                # Duplicate of src/ 
 base_types/
 types/
 generated/  
-!node_modules/@homebridge/node-pty-prebuilt-multiarch/**
+bin/
+
+# 4. Dependency Management
+# 1. Ignore all node_modules first
+node_modules/
+
+# 2. Un-ignore the specific package
+!node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.exe
+!node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.dll
+!node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.node
+!node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.js
+!node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.json

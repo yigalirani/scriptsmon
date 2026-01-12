@@ -18,7 +18,8 @@
         "vscode:prepublish": "npm run compile",
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ",
-        "biome": "biome lint"
+        "biome": "biome lint",
+        "vsce":"vsce package"
     },
     "workspaces": [
         "client"
@@ -109,7 +110,7 @@
         }
     },
     "engines": {
-        "vscode": "^1.107.0"
+        "vscode": "^1.108.0"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.3.11",
