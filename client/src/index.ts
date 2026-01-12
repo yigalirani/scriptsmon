@@ -55,7 +55,6 @@ function addFileLocationLinkDetection(
             if (ctrl.pressed)
               post_message({
                 command: "command_open_file_rowcol",
-                //workspace_folder,
                 source_file,
                 row: Number(row),
                 col: Number(col)
@@ -124,7 +123,6 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         return
       post_message({
         command: "command_open_file_rowcol",
-        //workspace_folder,
         source_file:'package.json',
         row:0,
         col:0
@@ -140,7 +138,6 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         const {title}=parent
         post_message({
           command: "command_open_file_rowcol",
-          //workspace_folder,
           source_file:title,
           row:0,
           col:0

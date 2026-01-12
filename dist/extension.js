@@ -6293,25 +6293,6 @@ function pk(obj, ...keys) {
   });
   return ret;
 }
-async function get_node() {
-  if (typeof window !== "undefined") {
-    throw new Error("getFileContents() requires Node.js");
-  }
-  const path4 = await import("node:path");
-  const fs3 = await import("node:fs/promises");
-  return { fs: fs3, path: path4 };
-}
-async function mkdir_write_file(filePath, data2) {
-  const { path: path4, fs: fs3 } = await get_node();
-  const directory = path4.dirname(filePath);
-  try {
-    await fs3.mkdir(directory, { recursive: true });
-    await fs3.writeFile(filePath, data2);
-    console.log(`File '${filePath}' has been written successfully.`);
-  } catch (err) {
-    console.error("Error writing file", err);
-  }
-}
 async function sleep(ms) {
   return await new Promise((resolve5) => {
     setTimeout(() => resolve5(void 0), ms);
@@ -7413,9 +7394,9 @@ var NodeFsHandler = class {
     if (this.fsw.closed) {
       return;
     }
-    const dirname4 = sp.dirname(file);
+    const dirname5 = sp.dirname(file);
     const basename5 = sp.basename(file);
-    const parent = this.fsw._getWatchedDir(dirname4);
+    const parent = this.fsw._getWatchedDir(dirname5);
     let prevStats = stats;
     if (parent.has(basename5))
       return;
@@ -7442,7 +7423,7 @@ var NodeFsHandler = class {
             prevStats = newStats2;
           }
         } catch (error) {
-          this.fsw._remove(dirname4, basename5);
+          this.fsw._remove(dirname5, basename5);
         }
       } else if (parent.has(basename5)) {
         const at2 = newStats.atimeMs;
@@ -8444,9 +8425,33 @@ var Watcher = class {
 };
 
 // src/monitor.ts
+var fs2 = await import("node:fs/promises");
 function keep_only_last(arr) {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
+  }
+}
+async function read_file(filename) {
+  try {
+    const ans = await fs2.readFile(filename);
+    return ans.toString();
+  } catch {
+    return null;
+  }
+}
+async function mkdir_write_file(filePath, data2, cache = false) {
+  const directory = path2.dirname(filePath);
+  try {
+    await fs2.mkdir(directory, { recursive: true });
+    if (cache) {
+      const exists = await read_file(filePath);
+      if (exists === data2)
+        return;
+    }
+    await fs2.writeFile(filePath, data2);
+    console.log(`File '${filePath}' has been written successfully.`);
+  } catch (err) {
+    console.error("Error writing file", err);
   }
 }
 var Monitor = class {
@@ -8580,7 +8585,7 @@ var Monitor = class {
     return ans;
   };
   add_watch = (folder) => {
-    this.watcher.add_watch("root", folder.workspace_folder + "/package.json");
+    this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"));
     for (const runner of folder.runners) {
       const { watched, id, effective_watch } = runner;
       for (const x of effective_watch)
@@ -8593,7 +8598,7 @@ var Monitor = class {
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
     const to_write = to_json(this, ["ipty", "watchers"]);
-    await mkdir_write_file(filename, to_write);
+    await mkdir_write_file(filename, to_write, true);
   }
   get_reason(id) {
     const changed = this.watcher.get_changed(id);
@@ -8647,7 +8652,7 @@ import * as vscode2 from "vscode";
 
 // src/vscode_utils.ts
 import * as path3 from "node:path";
-import * as fs2 from "node:fs";
+import * as fs3 from "node:fs";
 import * as vscode from "vscode";
 import {
   Uri,
@@ -8656,7 +8661,7 @@ import {
 } from "vscode";
 function getWebviewContent(context, webview) {
   const htmlPath = path3.join(context.extensionPath, "client", "resources", "index.html");
-  let html = fs2.readFileSync(htmlPath, "utf-8");
+  let html = fs3.readFileSync(htmlPath, "utf-8");
   const uri = webview.asWebviewUri(
     Uri.joinPath(context.extensionUri, "client", "resources")
   ).toString();

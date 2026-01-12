@@ -1,21 +1,41 @@
 {
   "compilerOptions": {
-    "target": "es2022",                // JS output target (change if needed)
-    "module": "nodenext",              // or "ESNext" if you're using ES modules
-    "declaration": true,               // <-- generate .d.ts files
-    "outDir": "types",                  // output directory for compiled files
-    "rootDir": ".",                  // your TypeScript source folder
-    "strict": true,                    // enable all strict type-checking options
-    "esModuleInterop": true,           // smoother interop with CommonJS modules
-    "skipLibCheck": true,              // speed up compilation
-    "sourceMap": false,                  // (optional) generate .map files for debugging
+    /* Language and Environment */
+    "target": "ES2022",
+    /* Modules */
+    "esModuleInterop": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    /* JavaScript Support */
     "allowJs": true,
-    "allowImportingTsExtensions":false,
-    "moduleResolution":"nodenext",
-    "emitDeclarationOnly":true,
-    "strictNullChecks":true,
-    "noUncheckedIndexedAccess"     : true,
+    /* Emit */
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types",
+    "rootDir": ".",
+    "sourceMap": false,
+    /* Interop Constraints */
+    "allowImportingTsExtensions": false,
+    /* Type Checking */
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "strictNullChecks": true,
+    /* Completeness */
+    "skipLibCheck": true
   },
-  "include": ["**/src/**/*","bin/**/*","build.ts","eslint.config.mjs","main/build.ts", "client/build.ts","**/src/**/*","./client/resources/icons.js"],             // include all .ts files in src/
-  "exclude": ["node_modules", "dist","types/**/*"]  // avoid compiling output & deps
+  "include": [
+    "**/src/*",
+    "bin",
+    "build.ts",
+    "eslint.config.mjs",
+    "main/build.ts",
+    "client/build.ts",
+    "client/src",
+    "./client/resources/icons.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "types/*" 
+  ]
 }

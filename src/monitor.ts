@@ -3,9 +3,10 @@ import type {Run,Runner,Folder} from './data.js'
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import * as path from 'node:path';
+const fs = await import("node:fs/promises");
 import {Watcher} from './watcher.js'
 import {
-  mkdir_write_file,
+  //mkdir_write_file,
   sleep,
   Repeater
 } from "@yigal/base_types";
@@ -24,6 +25,31 @@ export interface RunnerReport{
   root:Folder,
   base_uri:string,
   runs:Runs  
+}
+
+async function read_file(filename:string){
+  try{
+    const ans=await fs.readFile(filename)
+    return ans.toString()
+  } catch {
+    return null
+  }
+}
+export async function mkdir_write_file(filePath:string,data:string,cache=false){
+  const directory=path.dirname(filePath);
+  try{
+    await fs.mkdir(directory,{recursive:true});
+    if (cache){
+      const exists=await read_file(filePath);
+      if (exists===data)
+        return
+    }                                                           
+
+    await fs.writeFile(filePath,data);
+    console.log(`File '${filePath}' has been written successfully.`);
+  } catch (err){
+    console.error('Error writing file',err)
+  }
 }
 export class Monitor{
   ipty:Record<string,IPty>={}
@@ -171,7 +197,7 @@ export class Monitor{
     return ans
   }
   add_watch=(folder:Folder)=>{
-    this.watcher.add_watch("root",folder.workspace_folder+'/package.json')
+    this.watcher.add_watch("root",path.join(folder.workspace_folder,'package.json'))
     for (const runner of folder.runners){
       const {watched,id,effective_watch}=runner
       //if (runner.watched)
@@ -185,7 +211,7 @@ export class Monitor{
     const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
     console.log(filename)
     const to_write=to_json(this,["ipty","watchers"])
-    await mkdir_write_file(filename,to_write)    
+    await mkdir_write_file(filename,to_write,true)
   }
   get_reason(id:string){
     const changed=this.watcher.get_changed(id)

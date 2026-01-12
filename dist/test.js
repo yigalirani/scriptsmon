@@ -6349,25 +6349,6 @@ Summary:  all ${passed} passed`);
     console.log(`
 Summary:  ${failed} failed, ${passed} passed`);
 }
-async function get_node() {
-  if (typeof window !== "undefined") {
-    throw new Error("getFileContents() requires Node.js");
-  }
-  const path3 = await import("node:path");
-  const fs2 = await import("node:fs/promises");
-  return { fs: fs2, path: path3 };
-}
-async function mkdir_write_file(filePath, data2) {
-  const { path: path3, fs: fs2 } = await get_node();
-  const directory = path3.dirname(filePath);
-  try {
-    await fs2.mkdir(directory, { recursive: true });
-    await fs2.writeFile(filePath, data2);
-    console.log(`File '${filePath}' has been written successfully.`);
-  } catch (err) {
-    console.error("Error writing file", err);
-  }
-}
 async function sleep(ms) {
   return await new Promise((resolve5) => {
     setTimeout(() => resolve5(void 0), ms);
@@ -7469,9 +7450,9 @@ var NodeFsHandler = class {
     if (this.fsw.closed) {
       return;
     }
-    const dirname4 = sp.dirname(file);
+    const dirname5 = sp.dirname(file);
     const basename5 = sp.basename(file);
-    const parent = this.fsw._getWatchedDir(dirname4);
+    const parent = this.fsw._getWatchedDir(dirname5);
     let prevStats = stats;
     if (parent.has(basename5))
       return;
@@ -7498,7 +7479,7 @@ var NodeFsHandler = class {
             prevStats = newStats2;
           }
         } catch (error) {
-          this.fsw._remove(dirname4, basename5);
+          this.fsw._remove(dirname5, basename5);
         }
       } else if (parent.has(basename5)) {
         const at2 = newStats.atimeMs;
@@ -8500,9 +8481,33 @@ var Watcher = class {
 };
 
 // src/monitor.ts
+var fs2 = await import("node:fs/promises");
 function keep_only_last(arr) {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
+  }
+}
+async function read_file(filename) {
+  try {
+    const ans = await fs2.readFile(filename);
+    return ans.toString();
+  } catch {
+    return null;
+  }
+}
+async function mkdir_write_file(filePath, data2, cache = false) {
+  const directory = path2.dirname(filePath);
+  try {
+    await fs2.mkdir(directory, { recursive: true });
+    if (cache) {
+      const exists = await read_file(filePath);
+      if (exists === data2)
+        return;
+    }
+    await fs2.writeFile(filePath, data2);
+    console.log(`File '${filePath}' has been written successfully.`);
+  } catch (err) {
+    console.error("Error writing file", err);
   }
 }
 var Monitor = class {
@@ -8636,7 +8641,7 @@ var Monitor = class {
     return ans;
   };
   add_watch = (folder) => {
-    this.watcher.add_watch("root", folder.workspace_folder + "/package.json");
+    this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"));
     for (const runner of folder.runners) {
       const { watched, id, effective_watch } = runner;
       for (const x of effective_watch)
@@ -8649,7 +8654,7 @@ var Monitor = class {
     const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
     console.log(filename);
     const to_write = to_json(this, ["ipty", "watchers"]);
-    await mkdir_write_file(filename, to_write);
+    await mkdir_write_file(filename, to_write, true);
   }
   get_reason(id) {
     const changed = this.watcher.get_changed(id);
@@ -8700,7 +8705,7 @@ var Monitor = class {
 
 // src/test.ts
 async function get_package_json_length() {
-  const monitor = new Monitor([".", "..\\million_try3"]);
+  const monitor = new Monitor([".", "..\\tsbase"]);
   await monitor.run();
   return Object.keys(monitor.root).length;
 }

@@ -1,7 +1,7 @@
 import {Monitor} from './monitor.js'
 import {run_tests} from '@yigal/base_types'
 async function get_package_json_length(){
-  const monitor=new Monitor(['.','..\\million_try3'])
+  const monitor=new Monitor(['.','..\\tsbase'])
   await monitor.run()
   return Object.keys(monitor.root!).length
 }

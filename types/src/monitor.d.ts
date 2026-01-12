@@ -9,6 +9,7 @@ export interface RunnerReport {
     base_uri: string;
     runs: Runs;
 }
+export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
 export declare class Monitor {
     workspace_folders: string[];
     ipty: Record<string, IPty>;

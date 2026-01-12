@@ -200,7 +200,7 @@ export class TreeControl<T>{
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon='undefined',commands,className}=node
+    const {type,id,description,label,icon,commands,className}=node
     //const template = document.createElement("template")
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
