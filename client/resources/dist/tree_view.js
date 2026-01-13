@@ -6013,19 +6013,6 @@ function find_base(root, id) {
   }
   return f(root);
 }
-function find_runner(root, id) {
-  function f(folder) {
-    const ans = folder.runners.find((x) => x.id === id);
-    if (ans != null)
-      return ans;
-    for (const subfolder of folder.folders) {
-      const ans2 = f(subfolder);
-      if (ans2 != null)
-        return ans2;
-    }
-  }
-  return f(root);
-}
 
 // resources/icons.html
 var icons_default = `<!DOCTYPE html>
@@ -6225,14 +6212,6 @@ var provider = {
         pos
       });
     })();
-    const runner = find_runner(report.root, id);
-    if (runner == null)
-      return;
-    for (const panel of document.querySelectorAll(".term_panel")) {
-      if (!(panel instanceof HTMLElement))
-        continue;
-      panel.style.display = panel.id === id ? "flex" : "none";
-    }
   }
 };
 function start() {

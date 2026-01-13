@@ -1,6 +1,87 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
+  "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1768283082409,
+        "end_time": 1768283084118,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\terminals_view.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 17
+      }
+    ],
+    "c--yigal-scriptsmon--test": [
+      {
+        "start_time": 1768282175639,
+        "end_time": 1768282176288,
+        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 10
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1768282173096,
+        "end_time": 1768282174237,
+        "reason": "c:\\yigal\\scriptsmon\\src\\vscode_utils.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 9
+      }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1768283082471,
+        "end_time": 1768283084831,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\terminals_view.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 25
+      }
+    ],
+    "c--yigal-scriptsmon--eslint": [
+      {
+        "start_time": 1768283082537,
+        "end_time": 1768283086993,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\terminals_view.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 25
+      }
+    ],
+    "c--yigal-scriptsmon--oxlinttypeaware": [
+      {
+        "start_time": 1768283082608,
+        "end_time": 1768283084505,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\terminals_view.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 25
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1768283082683,
+        "end_time": 1768283083828,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\terminals_view.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 25
+      }
+    ],
+    "c--yigal-scriptsmon--biome": [
+      {
+        "start_time": 1768283082776,
+        "end_time": 1768283084848,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\terminals_view.ts",
+        "output": [],
+        "exit_code": 1,
+        "run_id": 25
+      }
+    ]
+  },
   "root": {
     "name": "root",
     "id": "root",

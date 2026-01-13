@@ -8802,7 +8802,7 @@ async function activate(context) {
   const monitor = new Monitor(workspace_folders);
   await monitor.run();
   const the_loop = make_loop_func(monitor);
-  define_webview({ context, id: "Scriptsmon.terminals", html_filename: "index.html", f: the_loop });
+  define_webview({ context, id: "Scriptsmon.terminals", html_filename: "terminals_view.html", f: the_loop });
   define_webview({ context, id: "Scriptsmon.treeview", html_filename: "tree_view.html", f: the_loop });
   register_command(context, "Scriptsmon.startWatching", () => {
     monitor.start_watching();

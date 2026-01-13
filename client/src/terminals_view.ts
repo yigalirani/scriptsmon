@@ -1,28 +1,11 @@
-interface VSCodeApi {
-  postMessage(message: unknown): void;
-  getState(): unknown;
-  setState(state: unknown): void;
-}
 import type {WebviewMessage} from '../../src/extension.js'
 import type {s2t} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
-import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker,path_join} from './dom_utils.js'
-import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,FolderError, Run} from '../../src/data.js';
+import {query_selector,create_element,get_parent_by_class,update_child_html,path_join} from './dom_utils.js'
+import type { Folder,Runner} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
 import type {RunnerReport} from '../../src/monitor.js';  
-import ICONS_HTML from '../resources/icons.html'
-declare function acquireVsCodeApi(): VSCodeApi;
-const vscode = acquireVsCodeApi();
-export interface FileLocation {
-  file: string;
-  row: number;
-  col: number;
-}
-function post_message(msg:WebviewMessage){
-  vscode.postMessage(msg)
-}
-const ctrl=new CtrlTracker()
+import {calc_runner_status,post_message,ctrl,type FileLocation,default_get,formatElapsedTime} from './common.js'
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
@@ -67,21 +50,6 @@ function addFileLocationLinkDetection(
     }
   };
   terminal.registerLinkProvider(provider);
-}
-function formatElapsedTime(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const milliseconds = ms % 1000;
-  const seconds = totalSeconds % 60;
-  const totalMinutes = Math.floor(totalSeconds / 60);
-  const minutes = totalMinutes % 60;
-  const hours = Math.floor(totalMinutes / 60);
-  const pad2 = (n: number) => n.toString().padStart(2, '0');
-  const pad3 = (n: number) => n.toString().padStart(3, '0');
-  const time =
-    hours > 0
-      ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`
-      : `${pad2(minutes)}:${pad2(seconds)}`;
-  return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
   const {id}=runner
@@ -164,17 +132,6 @@ function calc_stats_html(new_runner:Runner){
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
-function calc_runner_status(report:RunnerReport ,runner:Runner){
-  const runs=report.runs[runner.id]||[]
-  if (runs.length===0)
-    return{version:0,state:'ready'}
-  const {end_time,run_id:version,exit_code}=runs.at(-1)!
-  if (end_time==null)
-    return {version,state:'running'}
-  if (exit_code===0)
-    return {version,state:'done'}
-  return {version,state:'error'}
-}
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
@@ -245,13 +202,6 @@ class TerminalPanel{
     
   }
 }
-function default_get<T>(obj:Record<PropertyKey,T>,k:PropertyKey,maker:()=>T){
-  const exists=obj[k]
-  if (exists==null){
-    obj[k]=maker()
-  }
-  return obj[k]
-}
 class Terminals{
   terminals:s2t<TerminalPanel>={}
   constructor(
@@ -270,87 +220,37 @@ function get_terminals(report:RunnerReport,terminals:Terminals){
   }
   f(report.root)
 }
-
-
-function convert(report:RunnerReport):TreeNode{
-  function convert_runner(runner:Runner):TreeNode{
-      const {script,watched,id,name}=runner
-      const {version,state}=calc_runner_status(report,runner)
-      const className=(watched?'watched':undefined)
-      return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
-  }
-  function convert_error(root:FolderError):TreeNode{
-      const {id,message}=root
-      return {type:"item",id,label:message,children:[],icon:"syntaxerror",icon_version:1,commands:[],className:"warning"}
-
-  }  
-  function convert_folder(root:Folder):TreeNode{
-      const {name,id}=root
-      const folders=root.folders.map(convert_folder)
-      const items=root.runners.map(convert_runner)
-      const errors=root.errors.map(convert_error)  
-      const children=[...folders,...items,...errors]
-      const icon=errors.length===0?'folder':'foldersyntaxerror'
-      return {children,type:'folder',id,label:name,commands:[],icon,icon_version:0,className:undefined}
-  }
-  return convert_folder(report.root)
-}
-
-const provider:TreeDataProvider<RunnerReport>={
-  convert,
-  command(root,id,command_name,){
-     post_message({
-      command: "command_clicked",
-      id,
-      command_name
-     })
-  },
-  icons_html:ICONS_HTML,
-  animated:'.running,.done .check,.error .check',
-  selected(report,id){
-    (()=>{
-      const base=parser.find_base(report.root,id)
-      if (base==null||base.pos==null)
-        return
-      if (base.need_ctl&&!ctrl.pressed)
-        return
-      const {pos}=base
-      post_message({
-        command: "command_open_file_pos",
-        pos
-      })
-    })()
-    
-    const runner=parser.find_runner(report.root,id)
-    if (runner==null)
-      return
-    for (const panel of document.querySelectorAll('.term_panel')){
-      if (!(panel instanceof HTMLElement))
-        continue
-      panel.style.display=(panel.id===id)?'flex':'none'
-    }    
-  }
-}
 function start(){
   console.log('start')
   const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
   let base_uri=''
-  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider) //no error, whay
   let report:RunnerReport|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
           case 'RunnerReport':{
+            const count=Object.keys(report?.runs||{}).length
+            update_child_html(document.body,'.terms_counter',`${count}`)
             report=message
             get_terminals(message,terminals)
             base_uri=message.base_uri
-            tree.render(message,base_uri)
             break
           }
-          case 'set_selected':
+          case 'set_selected':{
+            const {selected}=message
             //upda(document.body,'#selected', message.selected)
-            void provider.selected(report!,message.selected)
+            if (report==null)
+              return
+            const runner=parser.find_runner(report.root,selected)
+            if (runner==null)
+              return
+            for (const panel of document.querySelectorAll('.term_panel')){
+              if (!(panel instanceof HTMLElement))
+                continue
+              panel.style.display=(panel.id===selected)?'flex':'none'
+            }               
             break
+          }
           case 'updateContent':
             //append(message.text||'<no message>')
             break;

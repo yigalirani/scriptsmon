@@ -55,14 +55,8 @@ const provider:TreeDataProvider<RunnerReport>={
       })
     })()
     
-    const runner=parser.find_runner(report.root,id)
-    if (runner==null)
-      return
-    for (const panel of document.querySelectorAll('.term_panel')){
-      if (!(panel instanceof HTMLElement))
-        continue
-      panel.style.display=(panel.id===id)?'flex':'none'
-    }    
+
+ 
   }
 }
 function start(){

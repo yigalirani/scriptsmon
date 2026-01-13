@@ -6083,7 +6083,7 @@ WARNING: This link could potentially be dangerous`)) {
   }
 });
 
-// src/index.ts
+// src/terminals_view.ts
 var import_xterm = __toESM(require_xterm(), 1);
 
 // src/dom_utils.ts
@@ -11824,7 +11824,7 @@ function default_get(obj, k, maker) {
   return obj[k];
 }
 
-// src/index.ts
+// src/terminals_view.ts
 function addFileLocationLinkDetection(terminal, workspace_folder) {
   const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
   const provider = {
@@ -12028,6 +12028,8 @@ function start() {
     const message = event.data;
     switch (message.command) {
       case "RunnerReport": {
+        const count = Object.keys(report?.runs || {}).length;
+        update_child_html(document.body, ".terms_counter", `${count}`);
         report = message;
         get_terminals(message, terminals);
         base_uri = message.base_uri;
@@ -12055,4 +12057,4 @@ function start() {
 start();
 var el = document.querySelector(".terms_container");
 console.log(el);
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=terminals_view.js.map
