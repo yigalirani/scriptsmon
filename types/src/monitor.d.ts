@@ -6,7 +6,6 @@ type Runs = Record<string, Run[]>;
 export interface RunnerReport {
     command: "RunnerReport";
     root: Folder;
-    base_uri: string;
     runs: Runs;
 }
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
@@ -21,7 +20,7 @@ export declare class Monitor {
     run(): Promise<void>;
     get_runner_runs(runner: Runner): Run[];
     is_ready_to_start(runner: Runner): boolean;
-    extract_report(base_uri: string): RunnerReport;
+    extract_report(): RunnerReport;
     stop({ runner }: {
         runner: Runner;
     }): Promise<void>;

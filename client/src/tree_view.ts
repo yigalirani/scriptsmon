@@ -67,14 +67,14 @@ const provider:TreeDataProvider<RunnerReport>={
 }
 function start(){
   console.log('start')
-  let base_uri=''
+  //let base_uri=''
   const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider) //no error, whay
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
           case 'RunnerReport':{
-            base_uri=message.base_uri
-            tree.render(message,base_uri)
+            //base_uri=message.base_uri
+            tree.render(message)//,base_uri)
             break
           }
           default:

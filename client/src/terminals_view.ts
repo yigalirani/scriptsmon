@@ -223,7 +223,7 @@ function get_terminals(report:RunnerReport,terminals:Terminals){
 function start(){
   console.log('start')
   const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
-  let base_uri=''
+  //let base_uri=''
   let report:RunnerReport|undefined
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
@@ -233,7 +233,7 @@ function start(){
             update_child_html(document.body,'.terms_counter',`${count}`)
             report=message
             get_terminals(message,terminals)
-            base_uri=message.base_uri
+            //base_uri=message.base_uri
             break
           }
           case 'set_selected_command':{

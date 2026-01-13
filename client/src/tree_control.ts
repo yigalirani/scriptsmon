@@ -190,7 +190,7 @@ function element_for_down_arrow(selected:HTMLElement){
   console.log('node.beginElement()')
  }*/
 export class TreeControl<T>{
-  public base_uri=''
+  //public base_uri=''
   icons:s2s
   root:T|undefined
   id_last_changed:Record<string,number>={}
@@ -330,9 +330,9 @@ export class TreeControl<T>{
       this.create_node(children_el as HTMLElement,x,depth+1)
     }
   }
-  render(root:T,base_uri:string){
+  render(root:T){
     /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
-    this.base_uri=`${base_uri}/client/resources`
+    //this.base_uri=`${base_uri}/client/resources`
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
     this.root=root

@@ -12022,7 +12022,6 @@ function get_terminals(report, terminals) {
 function start() {
   console.log("start");
   const terminals = new Terminals(query_selector(document.body, ".terms_container"));
-  let base_uri = "";
   let report;
   window.addEventListener("message", (event) => {
     const message = event.data;
@@ -12032,7 +12031,6 @@ function start() {
         update_child_html(document.body, ".terms_counter", `${count}`);
         report = message;
         get_terminals(message, terminals);
-        base_uri = message.base_uri;
         break;
       }
       case "set_selected_command": {

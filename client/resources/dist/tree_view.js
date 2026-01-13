@@ -281,7 +281,7 @@ var TreeControl = class {
       }
     });
   }
-  base_uri = "";
+  //public base_uri=''
   icons;
   root;
   id_last_changed = {};
@@ -347,8 +347,7 @@ var TreeControl = class {
       this.create_node(children_el, x, depth + 1);
     }
   }
-  render(root, base_uri) {
-    this.base_uri = `${base_uri}/client/resources`;
+  render(root) {
     const converted = this.provider.convert(root);
     this.root = root;
     const change = calc_changed(converted, this.last_converted);
@@ -6220,14 +6219,12 @@ var provider = {
 };
 function start() {
   console.log("start");
-  let base_uri = "";
   const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
   window.addEventListener("message", (event) => {
     const message = event.data;
     switch (message.command) {
       case "RunnerReport": {
-        base_uri = message.base_uri;
-        tree.render(message, base_uri);
+        tree.render(message);
         break;
       }
       default:
