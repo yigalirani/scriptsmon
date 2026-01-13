@@ -6200,6 +6200,10 @@ var provider = {
   icons_html: icons_default,
   animated: ".running,.done .check,.error .check",
   selected(report, id) {
+    post_message({
+      command: "set_selected_command",
+      selected: id
+    });
     (() => {
       const base = find_base(report.root, id);
       if (base == null || base.pos == null)

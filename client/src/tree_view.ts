@@ -42,6 +42,12 @@ const provider:TreeDataProvider<RunnerReport>={
   icons_html:ICONS_HTML,
   animated:'.running,.done .check,.error .check',
   selected(report,id){
+    // Send SetSelectedCommand to extension
+    post_message({
+      command: "set_selected_command",
+      selected: id
+    });
+    
     (()=>{
       const base=parser.find_base(report.root,id)
       if (base==null||base.pos==null)

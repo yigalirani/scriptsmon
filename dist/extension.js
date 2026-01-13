@@ -8755,8 +8755,12 @@ async function open_file(pos) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-function make_loop_func(monitor) {
+var terminalsWebview;
+function make_loop_func(monitor, isTerminalsView) {
   const ans = (view, context) => {
+    if (isTerminalsView) {
+      terminalsWebview = view;
+    }
     function send_report(_root_folder) {
       const report = monitor.extract_report(view.webview.asWebviewUri(context.extensionUri).toString());
       post_message(view.webview, report);
@@ -8777,6 +8781,12 @@ function make_loop_func(monitor) {
           }
           case "command_clicked": {
             void monitor.run_runner({ runner_id: message.id, reason: "user" });
+            break;
+          }
+          case "set_selected_command": {
+            if (terminalsWebview) {
+              post_message(terminalsWebview.webview, message);
+            }
             break;
           }
         }
@@ -8801,9 +8811,10 @@ async function activate(context) {
   outputChannel.append(to_json({ workspace_folders }));
   const monitor = new Monitor(workspace_folders);
   await monitor.run();
-  const the_loop = make_loop_func(monitor);
-  define_webview({ context, id: "Scriptsmon.terminals", html_filename: "terminals_view.html", f: the_loop });
-  define_webview({ context, id: "Scriptsmon.treeview", html_filename: "tree_view.html", f: the_loop });
+  const terminals_loop = make_loop_func(monitor, true);
+  const tree_loop = make_loop_func(monitor, false);
+  define_webview({ context, id: "Scriptsmon.terminals", html_filename: "terminals_view.html", f: terminals_loop });
+  define_webview({ context, id: "Scriptsmon.treeview", html_filename: "tree_view.html", f: tree_loop });
   register_command(context, "Scriptsmon.startWatching", () => {
     monitor.start_watching();
     outputChannel.append("start watching");

@@ -36,8 +36,15 @@ import {to_json} from './parser.js'
 //const folders=["c:\\yigal\\scriptsmon"]
 //const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
 
-function make_loop_func(monitor:Monitor){
+let terminalsWebview: vscode.WebviewView | undefined;
+
+function make_loop_func(monitor:Monitor, isTerminalsView: boolean){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
+    // Store reference to terminals webview
+    if (isTerminalsView) {
+      terminalsWebview = view;
+    }
+    
     function send_report(_root_folder:Folder){
       const report=monitor.extract_report(view.webview.asWebviewUri(context.extensionUri).toString())
       post_message(view.webview,report)
@@ -62,6 +69,13 @@ function make_loop_func(monitor:Monitor){
           case 'command_clicked':{
             void monitor.run_runner({runner_id:message.id,reason:'user'})
             break          
+          }
+          case 'set_selected_command':{
+            // Forward SetSelectedCommand from tree view to terminals view
+            if (terminalsWebview) {
+              post_message(terminalsWebview.webview, message);
+            }
+            break
           }
         }
       },
@@ -89,9 +103,10 @@ export  async function activate(context: vscode.ExtensionContext) {
   outputChannel.append(to_json({workspace_folders}))
   const monitor=new Monitor(workspace_folders)
   await monitor.run() 
-  const the_loop=make_loop_func(monitor)
-  define_webview({context,id:"Scriptsmon.terminals",html_filename:'terminals_view.html',f:the_loop})
-  define_webview({context,id:"Scriptsmon.treeview",html_filename:'tree_view.html',f:the_loop})
+  const terminals_loop=make_loop_func(monitor, true)
+  const tree_loop=make_loop_func(monitor, false)
+  define_webview({context,id:"Scriptsmon.terminals",html_filename:'terminals_view.html',f:terminals_loop})
+  define_webview({context,id:"Scriptsmon.treeview",html_filename:'tree_view.html',f:tree_loop})
 
   register_command(context,'Scriptsmon.startWatching',()=>{
     monitor.start_watching()
