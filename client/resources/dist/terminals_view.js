@@ -12035,7 +12035,7 @@ function start() {
         base_uri = message.base_uri;
         break;
       }
-      case "set_selected": {
+      case "set_selected_command": {
         const { selected } = message;
         if (report == null)
           return;

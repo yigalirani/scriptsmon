@@ -5,8 +5,8 @@ export interface WebviewMessageSimple {
     command: "buttonClick" | "updateContent" | "get_report";
     text?: string;
 }
-export interface SetSelected {
-    command: "set_selected";
+export interface SetSelectedCommand {
+    command: "set_selected_command";
     selected: string;
 }
 export interface CommandClicked {
@@ -14,6 +14,6 @@ export interface CommandClicked {
     id: string;
     command_name: string;
 }
-export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos;
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelectedCommand | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos;
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;

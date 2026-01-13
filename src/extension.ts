@@ -18,8 +18,8 @@ export interface WebviewMessageSimple {
   text?: string;
 }
 
-export interface SetSelected{
-   command: "set_selected"
+export interface SetSelectedCommand{
+   command: "set_selected_command"
    selected:string
 }
 export interface CommandClicked{
@@ -28,7 +28,7 @@ export interface CommandClicked{
    command_name:string
 }
 
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandOpenFileRowCol|CommandOpenFilePos
+export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelectedCommand|CommandClicked|CommandOpenFileRowCol|CommandOpenFilePos
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
