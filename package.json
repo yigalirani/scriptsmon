@@ -12,7 +12,7 @@
         "test": "node ./dist/test.js",
         "build": "node ./bin/run_build.ts",
         "tsc": "tsc",
-        "eslint": "set timing=1&eslint . --color ",
+        "eslint": "eslint . --color ",
         "ls": "ls -la  --color=always",
         "compile":"npm run build & cd client & npm run build",
         "vscode:prepublish": "npm run compile",
@@ -99,34 +99,11 @@
                 }
             ]
         },
-        "viewsContainers": {
-          "activitybar": [
-            {
-                "id": "scriptsmon-container",
-                "title": "Scriptsmon",
-                "icon":"$(terminal)"
-            }
-          ],
-        "panel": [
-          {
-            "id": "scriptsmon-bottom-drawer",
-            "title": "Scriptsmon Terminals",
-            "icon": "$(terminal)"
-          }
-        ]          
-        },        
         "views": {
-            "scriptsmon-container": [
+            "panel": [
                 {
                     "type": "webview",
-                    "id": "Scriptsmon.treeview",
-                    "name": "Scriptsmon2"
-                }
-            ],
-            "scriptsmon-bottom-drawer": [
-                {
-                    "type": "webview",
-                    "id": "Scriptsmon.terminals",
+                    "id": "Scriptsmon.webview",
                     "name": "Scriptsmon web view2"
                 }
             ]

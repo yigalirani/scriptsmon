@@ -6101,6 +6101,13 @@ function create_element(html, parent) {
     parent.appendChild(ans);
   return ans;
 }
+function divs(vals) {
+  const ans = [];
+  for (const [k, v] of Object.entries(vals))
+    if (v != null && v !== "")
+      ans.push(`<div class="${k}">${v}</div>`);
+  return ans.join("");
+}
 function get_parent_by_class(el2, className) {
   if (el2 == null)
     return null;
@@ -6111,6 +6118,20 @@ function get_parent_by_class(el2, className) {
     ans = ans.parentElement;
   }
   return null;
+}
+function get_parent_by_classes(el2, className) {
+  const classes = Array.isArray(className) ? className : [className];
+  let ans = el2;
+  while (ans !== null) {
+    ans = ans.parentElement;
+    if (ans !== null && classes.some((c) => ans.classList.contains(c))) {
+      return ans;
+    }
+  }
+  return null;
+}
+function remove_class(el2, className) {
+  el2.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
 }
 var el_to_html = /* @__PURE__ */ new WeakMap();
 function update_child_html(el2, selector, html) {
@@ -6162,6 +6183,333 @@ function path_join(...segments) {
   if (absolute) return `/${ans}`;
   return ans || ".";
 }
+
+// src/tree_control.ts
+function parseIcons(html) {
+  const result = {};
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const icons = doc.querySelectorAll(".icon");
+  icons.forEach((icon) => {
+    const nameEl = icon.childNodes[0];
+    const contentEl = icon.querySelector("svg");
+    if (nameEl && contentEl) {
+      const name = nameEl.textContent?.trim();
+      const content = contentEl.outerHTML;
+      if (name) {
+        result[name] = content;
+      }
+    }
+  });
+  const iconnames = Object.keys(result);
+  console.log({ iconnames });
+  return result;
+}
+function get_prev_selected(selected) {
+  if (selected == null)
+    return null;
+  let cur = selected;
+  while (cur != null) {
+    cur = cur.previousSibling;
+    if (cur instanceof HTMLElement)
+      return cur;
+  }
+  return null;
+}
+function get_next_selected(selected) {
+  if (selected == null)
+    return null;
+  let cur = selected;
+  while (cur != null) {
+    cur = cur.nextSibling;
+    if (cur instanceof HTMLElement)
+      return cur;
+  }
+  return null;
+}
+function index_folder(root) {
+  const ans = {};
+  function f(node) {
+    ans[node.id] = node;
+    node.children.forEach(f);
+  }
+  f(root);
+  return ans;
+}
+function calc_summary(node) {
+  const ignore = ["icon_version", "icon"];
+  function replacer(k, v) {
+    if (ignore.includes(k))
+      return "";
+    return v;
+  }
+  return JSON.stringify(node, replacer, 2);
+}
+function calc_changed(root, old_root) {
+  const versions = /* @__PURE__ */ new Set();
+  const icons = /* @__PURE__ */ new Set();
+  const big = true;
+  const new_index = index_folder(root);
+  const ans = { versions, icons, big, new_index };
+  if (old_root == null)
+    return ans;
+  const old_index = index_folder(old_root);
+  if (calc_summary(root) !== calc_summary(old_root)) {
+    return ans;
+  }
+  ans.big = false;
+  function f(node) {
+    const { id, children } = node;
+    const old_node = old_index[id];
+    if (old_node == null)
+      throw new Error("old node not found");
+    if (node.icon !== old_node.icon)
+      icons.add(id);
+    if (node.icon_version !== old_node.icon_version)
+      versions.add(id);
+    children.map(f);
+  }
+  f(root);
+  return ans;
+}
+function get_children(selected) {
+  if (selected.classList.contains("collapsed"))
+    return null;
+  const ans = selected.querySelector(".children");
+  if (ans != null)
+    return ans;
+}
+function getLastElementChild(parent) {
+  for (let i = parent.childNodes.length - 1; i >= 0; i--) {
+    const node = parent.childNodes[i];
+    if (node instanceof HTMLElement) {
+      return node;
+    }
+  }
+  return null;
+}
+function getFirstElementChild(parent) {
+  for (let i = 0; i < parent.childNodes.length; i++) {
+    const node = parent.childNodes[i];
+    if (node instanceof HTMLElement) {
+      return node;
+    }
+  }
+  return null;
+}
+function get_last_visible(selected) {
+  const children_div = get_children(selected);
+  if (children_div == null)
+    return selected;
+  const last_child = getLastElementChild(children_div);
+  if (last_child == null)
+    return selected;
+  return get_last_visible(last_child);
+}
+function element_for_up_arrow(selected) {
+  const ans = get_prev_selected(selected);
+  if (ans == null)
+    return get_parent_by_class(selected.parentElement, "tree_folder");
+  return get_last_visible(ans);
+}
+function element_for_down_arrow(selected) {
+  const children_div = get_children(selected);
+  if (children_div != null) {
+    const first = getFirstElementChild(children_div);
+    if (first !== null)
+      return first;
+  }
+  const ans = get_next_selected(selected);
+  if (ans != null)
+    return ans;
+  let cur = selected;
+  while (true) {
+    const parent = get_parent_by_class(cur.parentElement, "tree_folder");
+    if (!(parent instanceof HTMLElement))
+      return null;
+    const ans2 = get_next_selected(parent);
+    if (ans2 != null)
+      return ans2;
+    cur = parent;
+  }
+}
+var TreeControl = class {
+  constructor(parent, provider2) {
+    this.parent = parent;
+    this.provider = provider2;
+    this.icons = parseIcons(this.provider.icons_html);
+    setInterval(() => {
+      for (const [id, time] of Object.entries(this.id_last_changed)) {
+        const selector = this.provider.animated.split(",").map((x) => `#${id} ${x}`).join(",");
+        const element = parent.querySelectorAll(selector);
+        for (const anim of element) {
+          const timeOffset = (Date.now() - time) / 1e3;
+          if (timeOffset > 2)
+            continue;
+          const animation_delay = `-${timeOffset}s`;
+          console.log(id, animation_delay);
+          anim.style.animationDelay = animation_delay;
+        }
+      }
+    }, 100);
+    parent.addEventListener("click", (evt) => {
+      if (!(evt.target instanceof Element))
+        return;
+      parent.tabIndex = 0;
+      parent.focus();
+      const command_clicked = this.command_clicked(evt);
+      const clicked = get_parent_by_class(evt.target, "label_row")?.parentElement;
+      if (clicked == null)
+        return;
+      if (!command_clicked && clicked.classList.contains("tree_folder"))
+        clicked.classList.toggle("collapsed");
+      remove_class(parent, "selected");
+      void this.set_selected(clicked);
+    });
+    parent.addEventListener("keydown", (evt) => {
+      if (!(evt.target instanceof HTMLElement))
+        return;
+      evt.preventDefault();
+      console.log(evt.key);
+      const selected = parent.querySelector(".selected");
+      if (!(selected instanceof HTMLElement))
+        return;
+      switch (evt.key) {
+        case "ArrowUp": {
+          const prev = element_for_up_arrow(selected);
+          if (!(prev instanceof HTMLElement))
+            return;
+          remove_class(parent, "selected");
+          void this.set_selected(prev);
+          break;
+        }
+        case "ArrowDown": {
+          const prev = element_for_down_arrow(selected);
+          if (prev == null)
+            return;
+          remove_class(parent, "selected");
+          void this.set_selected(prev);
+          break;
+        }
+        case "ArrowRight":
+          selected.classList.remove("collapsed");
+          break;
+        case "ArrowLeft":
+          selected.classList.add("collapsed");
+          break;
+        case "Enter":
+        case " ":
+          selected.classList.toggle("collapsed");
+          break;
+      }
+    });
+  }
+  base_uri = "";
+  icons;
+  root;
+  id_last_changed = {};
+  //selected:string|boolean=false
+  //last_root:T|undefined
+  last_converted;
+  //collapsed_set:Set<string>=new Set()
+  create_node_element(node, margin, parent) {
+    const { icons } = this;
+    const { type, id, description, label, icon, commands, className } = node;
+    const style = "";
+    const children = type === "folder" ? `<div class=children ${style}></div>` : "";
+    const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
+    this.mark_changed(id);
+    const ans = create_element(`
+  <div  class="tree_${type} ${className ?? ""}" id="${id}" >
+    <div  class=label_row>
+      <div  class=shifter style='margin-left:${margin}px'>
+        <div class="icon background_${icon}">${icons[icon]}</div>
+        ${divs({ label, description })}
+      </div>
+      ${divs({ commands_icons })}
+    </div>
+    ${children}
+  </div>`, parent);
+    return ans;
+  }
+  //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
+  async set_selected(el2) {
+    el2.classList.add("selected");
+    await this.provider.selected(this.root, el2.id);
+  }
+  command_clicked(evt) {
+    if (evt.target == null)
+      return false;
+    const command_icon = get_parent_by_class(evt.target, "command_icon");
+    if (command_icon == null)
+      return false;
+    const command = command_icon.id;
+    if (command == null)
+      return false;
+    const item = get_parent_by_classes(evt.target, ["tree_item", "tree_folder"]);
+    if (item == null || this.root == null)
+      return false;
+    const id = item.id;
+    void this.provider.command(this.root, id, command);
+    return true;
+  }
+  mark_changed(id) {
+    this.id_last_changed[id] = Date.now();
+  }
+  create_node(parent, node, depth) {
+    const children_el = (() => {
+      if (depth === 0)
+        return create_element("<div class=children></div>", parent);
+      const new_parent = this.create_node_element(node, 16 + depth * 20, parent);
+      return new_parent.querySelector(".children");
+    })();
+    if (children_el == null) {
+      return;
+    }
+    for (const x of node.children) {
+      this.create_node(children_el, x, depth + 1);
+    }
+  }
+  render(root, base_uri) {
+    this.base_uri = `${base_uri}/client/resources`;
+    const converted = this.provider.convert(root);
+    this.root = root;
+    const change = calc_changed(converted, this.last_converted);
+    this.last_converted = converted;
+    if (change.big) {
+      this.parent.innerHTML = "";
+      this.create_node(this.parent, converted, 0);
+      return;
+    }
+    for (const id of change.icons) {
+      const existing_svg = this.parent.querySelector(`#${id} svg`);
+      if (existing_svg == null) {
+        console.warn(`cant find old svg for ${id}`);
+        continue;
+      }
+      if (id == null) {
+        console.warn("id is null");
+        continue;
+      }
+      const new_index = change.new_index[id];
+      if (new_index == null)
+        continue;
+      const icon = new_index.icon;
+      const new_svg = this.icons[icon];
+      if (new_svg == null) {
+        console.warn("new_svg is null");
+        continue;
+      }
+      existing_svg.outerHTML = new_svg;
+      console.log(`${id}: new svg`);
+      this.parent.querySelector(`#${id} .icon`).className = `icon background_${icon}`;
+    }
+    const combined = /* @__PURE__ */ new Set([...change.icons, ...change.versions]);
+    for (const id of combined) {
+      this.mark_changed(id);
+    }
+  }
+};
 
 // ../node_modules/acorn/dist/acorn.mjs
 var astralIdentifierCodes = [509, 0, 227, 0, 150, 4, 294, 9, 1368, 2, 2, 1, 6, 3, 41, 2, 5, 0, 166, 1, 574, 3, 9, 9, 7, 9, 32, 4, 318, 1, 80, 3, 71, 10, 50, 3, 123, 2, 54, 14, 32, 10, 3, 1, 11, 3, 46, 10, 8, 0, 46, 9, 7, 2, 37, 13, 2, 9, 6, 1, 45, 0, 13, 2, 49, 13, 9, 3, 2, 11, 83, 11, 7, 0, 3, 0, 158, 11, 6, 9, 7, 3, 56, 1, 2, 6, 3, 1, 3, 2, 10, 0, 11, 1, 3, 6, 4, 4, 68, 8, 2, 0, 3, 0, 2, 3, 2, 4, 2, 0, 15, 1, 83, 17, 10, 9, 5, 0, 82, 19, 13, 9, 214, 6, 3, 8, 28, 1, 83, 16, 16, 9, 82, 12, 9, 9, 7, 19, 58, 14, 5, 9, 243, 14, 166, 9, 71, 5, 2, 1, 3, 3, 2, 0, 2, 1, 13, 9, 120, 6, 3, 6, 4, 0, 29, 9, 41, 6, 2, 3, 9, 0, 10, 10, 47, 15, 343, 9, 54, 7, 2, 7, 17, 9, 57, 21, 2, 13, 123, 5, 4, 0, 2, 1, 2, 6, 2, 0, 9, 9, 49, 4, 2, 1, 2, 4, 9, 9, 330, 3, 10, 1, 2, 0, 49, 6, 4, 4, 14, 10, 5350, 0, 7, 14, 11465, 27, 2343, 9, 87, 9, 39, 4, 60, 6, 26, 9, 535, 9, 470, 0, 2, 54, 8, 3, 82, 0, 12, 1, 19628, 1, 4178, 9, 519, 45, 3, 22, 543, 4, 4, 5, 9, 7, 3, 6, 31, 3, 149, 2, 1418, 49, 513, 54, 5, 49, 9, 0, 15, 0, 23, 4, 2, 14, 1361, 6, 2, 16, 3, 6, 2, 1, 2, 4, 101, 0, 161, 6, 10, 9, 357, 0, 62, 13, 499, 13, 245, 1, 2, 9, 726, 6, 110, 6, 6, 9, 4759, 9, 787719, 239];
@@ -11773,6 +12121,21 @@ Parser.acorn = {
 };
 
 // ../src/parser.ts
+function find_base(root, id) {
+  function f(folder) {
+    for (const ar of [folder.runners, folder.errors, folder.folders]) {
+      const ans = ar.find((x) => x.id === id);
+      if (ans != null)
+        return ans;
+    }
+    for (const subfolder of folder.folders) {
+      const ans = f(subfolder);
+      if (ans != null)
+        return ans;
+    }
+  }
+  return f(root);
+}
 function find_runner(root, id) {
   function f(folder) {
     const ans = folder.runners.find((x) => x.id === id);
@@ -11787,47 +12150,148 @@ function find_runner(root, id) {
   return f(root);
 }
 
-// src/common.ts
+// resources/icons.html
+var icons_default = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Scriptsmon icons</title>
+  <link rel="stylesheet" href="./icons.css">
+</head>
+
+<body>
+  <button id=animatebutton>animate</button>
+  <button id=animatebutton_the_done>animatebutton_the_done</button>
+  <div class="icon">error
+    <svg class=error width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="red">
+      <!-- Circle -->
+      <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="transparent" />
+      <!-- X -->
+      <path d="M5 5 L11 11 M5 11 L11 5" class="check" stroke="currentColor" stroke-width="1.5" fill="transparent"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+
+  <div class="icon" id="the_done">done
+    <svg class=done width="16" height="16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="10" fill="transparent" />
+      <g class="check" transform-origin="50 50">
+        <path d="M30 50 L45 65 L70 35" stroke="currentColor" stroke-width="10" fill="transparent" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </g>
+    </svg>
+  </div>
+
+
+  <div class="icon">ready
+
+
+    <svg width="64px" height="64px" viewBox="10 10 45.00 45.00" xmlns="http://www.w3.org/2000/svg" stroke-width="3">
+      <path stroke="currentColor" fill="none"
+        d="M41.71,10.58H28l-7.4,22.28a.1.1,0,0,0,.09.13h8.49a.1.1,0,0,1,.1.13L22.71,52.76a.5.5,0,0,0,.88.45L43.41,26a.1.1,0,0,0-.08-.16H34.42a.11.11,0,0,1-.09-.15l7.47-15A.1.1,0,0,0,41.71,10.58Z" />
+    </svg>
+
+  </div>
+  <div class="icon">syntaxerror
+
+    <svg width="64px" height="64px" viewBox="-4 -4 22.00 22.00" xmlns="http://www.w3.org/2000/svg" stroke-width="2">
+      <path stroke="currentColor" fill="red"
+        d="M 8 0 L 0 16 L 16 16 z8 0" />
+    </svg>
+
+  </div>
+
+  <div class="icon">oldrunning
+    <svg class=running width="64px" height="64px" viewBox="10 10 45.00 45.00" xmlns="http://www.w3.org/2000/svg"
+      stroke-width="3">
+      <path stroke="currentColor" fill="none"
+        d="M41.71,10.58H28l-7.4,22.28a.1.1,0,0,0,.09.13h8.49a.1.1,0,0,1,.1.13L22.71,52.76a.5.5,0,0,0,.88.45L43.41,26a.1.1,0,0,0-.08-.16H34.42a.11.11,0,0,1-.09-.15l7.47-15A.1.1,0,0,0,41.71,10.58Z" />
+    </svg>
+  </div>
+
+   <div class="icon">running
+<svg class=running xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 100 100" preserveAspectRatio = "xMidYMid" width = "233" height = "233" fill="none" xmlns:xlink = "http://www.w3.org/1999/xlink">
+    <circle stroke-dasharray = "164.93361431346415 56.97787143782138" r = "35" stroke-width = "10" stroke = "currentColor" fill = "none" cy = "50" cx = "50"></circle>
+</svg>
+</div>
+
+
+  <div class="icon">chevron-down
+    <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <path
+        d="M3.14645 5.64645C3.34171 5.45118 3.65829 5.45118 3.85355 5.64645L8 9.79289L12.1464 5.64645C12.3417 5.45118 12.6583 5.45118 12.8536 5.64645C13.0488 5.84171 13.0488 6.15829 12.8536 6.35355L8.35355 10.8536C8.15829 11.0488 7.84171 11.0488 7.64645 10.8536L3.14645 6.35355C2.95118 6.15829 2.95118 5.84171 3.14645 5.64645Z" />
+    </svg>
+  </div>
+
+  <div class="icon">chevron-right
+    <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <path
+        d="M5.64645 3.14645C5.45118 3.34171 5.45118 3.65829 5.64645 3.85355L9.79289 8L5.64645 12.1464C5.45118 12.3417 5.45118 12.6583 5.64645 12.8536C5.84171 13.0488 6.15829 13.0488 6.35355 12.8536L10.8536 8.35355C11.0488 8.15829 11.0488 7.84171 10.8536 7.64645L6.35355 3.14645C6.15829 2.95118 5.84171 2.95118 5.64645 3.14645Z" />
+    </svg>
+  </div>
+
+  <div class="icon">debug
+    <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <path
+        d="M21.75 12H19.5V9C19.5 8.445 19.347 7.9245 19.083 7.4775L20.7795 5.781C21.072 5.4885 21.072 5.013 20.7795 4.7205C20.487 4.428 20.0115 4.428 19.719 4.7205L18.0225 6.417C17.5755 6.153 17.055 6 16.5 6C16.5 3.519 14.481 1.5 12 1.5C9.519 1.5 7.5 3.519 7.5 6C6.945 6 6.4245 6.153 5.9775 6.417L4.281 4.7205C3.9885 4.428 3.513 4.428 3.2205 4.7205C2.928 5.013 2.928 5.4885 3.2205 5.781L4.917 7.4775C4.653 7.9245 4.5 8.445 4.5 9V12H2.25C1.836 12 1.5 12.336 1.5 12.75C1.5 13.164 1.836 13.5 2.25 13.5H4.5C4.5 15.2985 5.136 16.95 6.195 18.2445L3.594 20.8455C3.3015 21.138 3.3015 21.6135 3.594 21.906C3.741 22.053 3.933 22.125 4.125 22.125C4.317 22.125 4.509 22.0515 4.656 21.906L7.257 19.305C8.55 20.364 10.203 21 12.0015 21C13.8 21 15.4515 20.364 16.746 19.305L19.347 21.906C19.494 22.053 19.686 22.125 19.878 22.125C20.07 22.125 20.262 22.0515 20.409 21.906C20.7015 21.6135 20.7015 21.138 20.409 20.8455L17.808 18.2445C18.867 16.9515 19.503 15.2985 19.503 13.5H21.753C22.167 13.5 22.503 13.164 22.503 12.75C22.503 12.336 22.167 12 21.753 12H21.75ZM12 3C13.6545 3 15 4.3455 15 6H9C9 4.3455 10.3455 3 12 3ZM18 13.5C18 16.809 15.309 19.5 12 19.5C8.691 19.5 6 16.809 6 13.5V9C6 8.172 6.672 7.5 7.5 7.5H16.5C17.328 7.5 18 8.172 18 9V13.5ZM14.781 11.031L13.062 12.75L14.781 14.469C15.0735 14.7615 15.0735 15.237 14.781 15.5295C14.634 15.6765 14.442 15.7485 14.25 15.7485C14.058 15.7485 13.866 15.675 13.719 15.5295L12 13.8105L10.281 15.5295C10.134 15.6765 9.942 15.7485 9.75 15.7485C9.558 15.7485 9.366 15.675 9.219 15.5295C8.9265 15.237 8.9265 14.7615 9.219 14.469L10.938 12.75L9.219 11.031C8.9265 10.7385 8.9265 10.263 9.219 9.9705C9.5115 9.678 9.987 9.678 10.2795 9.9705L11.9985 11.6895L13.7175 9.9705C14.01 9.678 14.4855 9.678 14.778 9.9705C15.0705 10.263 15.0705 10.7385 14.778 11.031H14.781Z" />
+    </svg>
+  </div>
+
+  <div class="icon">file
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+      <path fill="currentColor"
+        d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z" />
+    </svg>
+  </div>
+
+  </div>
+
+  <div class="icon">folder
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 20 20" width="16" height="16">
+      <path stroke='currentColor' fill="transparent"
+        d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z" />
+    </svg>
+  </div>
+
+   <div class="icon">foldersyntaxerror
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 20 20" width="16" height="16">
+  <path stroke='currentColor' fill="transparent"
+    d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25V4.75A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1L5.875 1.475A1.75 1.75 0 0 0 4.518 1H1.75Z" />
+  <path stroke="currentColor" fill="red"
+    d="M 8 5.3333 L 4 13.3333 L 12 13.3333 Z" />
+</svg>
+
+  </div>
+
+  <div class="icon">play
+    <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <path
+        d="M4.74514 3.06414C4.41183 2.87665 4 3.11751 4 3.49993V12.5002C4 12.8826 4.41182 13.1235 4.74512 12.936L12.7454 8.43601C13.0852 8.24486 13.0852 7.75559 12.7454 7.56443L4.74514 3.06414ZM3 3.49993C3 2.35268 4.2355 1.63011 5.23541 2.19257L13.2357 6.69286C14.2551 7.26633 14.2551 8.73415 13.2356 9.30759L5.23537 13.8076C4.23546 14.37 3 13.6474 3 12.5002V3.49993Z" />
+    </svg>
+  </div>
+
+  <div class="icon">undefined
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="6.5" stroke="white" stroke-width="1" />
+      <path d="M8 4.25c1.19 0 2.1.77 2.1 1.86 0 .86-.47 1.32-1.05 1.8-.52.42-.78.69-.78 1.27v.22"
+        stroke="var(--icon-color)" stroke-width="1" stroke-linecap="round" />
+      <circle cx="8" cy="11.4" r="0.75" fill="currentColor" />
+    </svg>
+  </div>
+
+</body>
+<script src="./icons.js"></script>`;
+
+// src/index.ts
 var vscode = acquireVsCodeApi();
 function post_message(msg) {
   vscode.postMessage(msg);
 }
 var ctrl = new CtrlTracker();
-function formatElapsedTime(ms) {
-  const totalSeconds = Math.floor(ms / 1e3);
-  const milliseconds = ms % 1e3;
-  const seconds = totalSeconds % 60;
-  const totalMinutes = Math.floor(totalSeconds / 60);
-  const minutes = totalMinutes % 60;
-  const hours = Math.floor(totalMinutes / 60);
-  const pad2 = (n) => n.toString().padStart(2, "0");
-  const pad3 = (n) => n.toString().padStart(3, "0");
-  const time = hours > 0 ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}` : `${pad2(minutes)}:${pad2(seconds)}`;
-  return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
-}
-function calc_runner_status(report, runner) {
-  const runs = report.runs[runner.id] || [];
-  if (runs.length === 0)
-    return { version: 0, state: "ready" };
-  const { end_time, run_id: version2, exit_code } = runs.at(-1);
-  if (end_time == null)
-    return { version: version2, state: "running" };
-  if (exit_code === 0)
-    return { version: version2, state: "done" };
-  return { version: version2, state: "error" };
-}
-function default_get(obj, k, maker) {
-  const exists = obj[k];
-  if (exists == null) {
-    obj[k] = maker();
-  }
-  return obj[k];
-}
-
-// src/index.ts
 function addFileLocationLinkDetection(terminal, workspace_folder) {
   const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
-  const provider = {
+  const provider2 = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1);
       if (!line) {
@@ -11865,7 +12329,19 @@ function addFileLocationLinkDetection(terminal, workspace_folder) {
       callback(links);
     }
   };
-  terminal.registerLinkProvider(provider);
+  terminal.registerLinkProvider(provider2);
+}
+function formatElapsedTime(ms) {
+  const totalSeconds = Math.floor(ms / 1e3);
+  const milliseconds = ms % 1e3;
+  const seconds = totalSeconds % 60;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60);
+  const pad2 = (n) => n.toString().padStart(2, "0");
+  const pad3 = (n) => n.toString().padStart(3, "0");
+  const time = hours > 0 ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}` : `${pad2(minutes)}:${pad2(seconds)}`;
+  return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
 function create_terminal_element(parent, runner) {
   const { id } = runner;
@@ -11942,6 +12418,17 @@ function calc_stats_html(new_runner) {
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join("\n");
 }
+function calc_runner_status(report, runner) {
+  const runs = report.runs[runner.id] || [];
+  if (runs.length === 0)
+    return { version: 0, state: "ready" };
+  const { end_time, run_id: version2, exit_code } = runs.at(-1);
+  if (end_time == null)
+    return { version: version2, state: "running" };
+  if (exit_code === 0)
+    return { version: version2, state: "done" };
+  return { version: version2, state: "error" };
+}
 var TerminalPanel = class {
   constructor(parent, runner) {
     this.parent = parent;
@@ -12001,6 +12488,13 @@ var TerminalPanel = class {
     update_child_html(this.el, ".term_title_runid .value", `${run_id}`);
   }
 };
+function default_get(obj, k, maker) {
+  const exists = obj[k];
+  if (exists == null) {
+    obj[k] = maker();
+  }
+  return obj[k];
+}
 var Terminals = class {
   constructor(parent) {
     this.parent = parent;
@@ -12019,10 +12513,67 @@ function get_terminals(report, terminals) {
   }
   f(report.root);
 }
+function convert(report) {
+  function convert_runner(runner) {
+    const { script, watched, id, name } = runner;
+    const { version: version2, state } = calc_runner_status(report, runner);
+    const className = watched ? "watched" : void 0;
+    return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version2, className };
+  }
+  function convert_error(root) {
+    const { id, message } = root;
+    return { type: "item", id, label: message, children: [], icon: "syntaxerror", icon_version: 1, commands: [], className: "warning" };
+  }
+  function convert_folder(root) {
+    const { name, id } = root;
+    const folders = root.folders.map(convert_folder);
+    const items = root.runners.map(convert_runner);
+    const errors = root.errors.map(convert_error);
+    const children = [...folders, ...items, ...errors];
+    const icon = errors.length === 0 ? "folder" : "foldersyntaxerror";
+    return { children, type: "folder", id, label: name, commands: [], icon, icon_version: 0, className: void 0 };
+  }
+  return convert_folder(report.root);
+}
+var provider = {
+  convert,
+  command(root, id, command_name) {
+    post_message({
+      command: "command_clicked",
+      id,
+      command_name
+    });
+  },
+  icons_html: icons_default,
+  animated: ".running,.done .check,.error .check",
+  selected(report, id) {
+    (() => {
+      const base = find_base(report.root, id);
+      if (base == null || base.pos == null)
+        return;
+      if (base.need_ctl && !ctrl.pressed)
+        return;
+      const { pos } = base;
+      post_message({
+        command: "command_open_file_pos",
+        pos
+      });
+    })();
+    const runner = find_runner(report.root, id);
+    if (runner == null)
+      return;
+    for (const panel of document.querySelectorAll(".term_panel")) {
+      if (!(panel instanceof HTMLElement))
+        continue;
+      panel.style.display = panel.id === id ? "flex" : "none";
+    }
+  }
+};
 function start() {
   console.log("start");
   const terminals = new Terminals(query_selector(document.body, ".terms_container"));
   let base_uri = "";
+  const tree = new TreeControl(query_selector(document.body, "#the_tree"), provider);
   let report;
   window.addEventListener("message", (event) => {
     const message = event.data;
@@ -12031,22 +12582,12 @@ function start() {
         report = message;
         get_terminals(message, terminals);
         base_uri = message.base_uri;
+        tree.render(message, base_uri);
         break;
       }
-      case "set_selected": {
-        const { selected } = message;
-        if (report == null)
-          return;
-        const runner = find_runner(report.root, selected);
-        if (runner == null)
-          return;
-        for (const panel of document.querySelectorAll(".term_panel")) {
-          if (!(panel instanceof HTMLElement))
-            continue;
-          panel.style.display = panel.id === selected ? "flex" : "none";
-        }
+      case "set_selected":
+        void provider.selected(report, message.selected);
         break;
-      }
       case "updateContent":
         break;
     }

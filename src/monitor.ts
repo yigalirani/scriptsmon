@@ -23,7 +23,7 @@ type Runs=Record<string,Run[]>
 export interface RunnerReport{
   command: "RunnerReport";
   root:Folder,
-  //base_uri:string,
+  base_uri:string,
   runs:Runs  
 }
 
@@ -78,7 +78,7 @@ export class Monitor{
       return true
     return runs.at(-1)?.end_time!=null;
   }
-  extract_report(/*base_uri:string*/):RunnerReport{ //tbd: delete
+  extract_report(base_uri:string):RunnerReport{ //tbd: delete
     //const {full_pathname}=folder
     const runs:Runs={}
     for (const [k,v] of Object.entries(this.runs)){
@@ -91,7 +91,7 @@ export class Monitor{
     return {
       command: "RunnerReport",
       root:this.get_root(),
-      //base_uri,
+      base_uri,
       runs
     }
   }

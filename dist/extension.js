@@ -8659,8 +8659,8 @@ import {
   window as window3,
   commands
 } from "vscode";
-function get_webview_content(context, webview, html_filename) {
-  const htmlPath = path3.join(context.extensionPath, "client", "resources", html_filename);
+function getWebviewContent(context, webview) {
+  const htmlPath = path3.join(context.extensionPath, "client", "resources", "index.html");
   let html = fs3.readFileSync(htmlPath, "utf-8");
   const uri = webview.asWebviewUri(
     Uri.joinPath(context.extensionUri, "client", "resources")
@@ -8669,7 +8669,7 @@ function get_webview_content(context, webview, html_filename) {
   html = html.replaceAll("./", base);
   return html;
 }
-function define_webview({ context, id, html_filename, f }) {
+function define_webview({ context, id, html, f }) {
   console.log("define_webview");
   const provider = {
     resolveWebviewView(webviewView, webview_context) {
@@ -8680,7 +8680,7 @@ function define_webview({ context, id, html_filename, f }) {
           Uri.file(path3.join(context.extensionPath, "client/resources"))
         ]
       };
-      webviewView.webview.html = get_webview_content(context, webviewView.webview, html_filename);
+      webviewView.webview.html = getWebviewContent(context, webviewView.webview);
       if (f)
         void f(webviewView, context);
     }
@@ -8755,12 +8755,8 @@ async function open_file(pos) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-var terminalsWebview;
-function make_loop_func(monitor, isTerminalsView) {
+function make_loop_func(monitor) {
   const ans = (view, context) => {
-    if (isTerminalsView) {
-      terminalsWebview = view;
-    }
     function send_report(_root_folder) {
       const report = monitor.extract_report(view.webview.asWebviewUri(context.extensionUri).toString());
       post_message(view.webview, report);
@@ -8781,15 +8777,6 @@ function make_loop_func(monitor, isTerminalsView) {
           }
           case "command_clicked": {
             void monitor.run_runner({ runner_id: message.id, reason: "user" });
-            break;
-          }
-          case "set_selected_command": {
-            void vscode2.commands.executeCommand("Scriptsmon.terminals.focus", {
-              preserveFocus: true
-            });
-            if (terminalsWebview) {
-              post_message(terminalsWebview.webview, message);
-            }
             break;
           }
         }
@@ -8814,10 +8801,8 @@ async function activate(context) {
   outputChannel.append(to_json({ workspace_folders }));
   const monitor = new Monitor(workspace_folders);
   await monitor.run();
-  const terminals_loop = make_loop_func(monitor, true);
-  const tree_loop = make_loop_func(monitor, false);
-  define_webview({ context, id: "Scriptsmon.terminals", html_filename: "terminals_view.html", f: terminals_loop });
-  define_webview({ context, id: "Scriptsmon.treeview", html_filename: "tree_view.html", f: tree_loop });
+  const the_loop = make_loop_func(monitor);
+  define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
   register_command(context, "Scriptsmon.startWatching", () => {
     monitor.start_watching();
     outputChannel.append("start watching");

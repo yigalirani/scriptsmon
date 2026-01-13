@@ -7,9 +7,9 @@ html,body {
     height: 100%;
     display: flex;
     flex-direction: row;
+       overflow: hidden;
     width: 100%;
     background-color: black;
-        overflow-x: clip;
 }
 
 
@@ -239,6 +239,8 @@ span.term_title_watch{
 
 }
 #the_tree{
+  overflow: scroll;
+  resize: horizontal;
 }
 .commands_icons{
   margin-left: auto;
