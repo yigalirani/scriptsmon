@@ -99,12 +99,35 @@
                 }
             ]
         },
+        "viewsContainers": {
+          "activitybar": [
+            {
+                "id": "scriptsmon-container",
+                "title": "Scriptsmon",
+                "icon":"$(terminal)"
+            }
+          ],
+        "panel": [
+          {
+            "id": "scriptsmon-bottom-drawer",
+            "title": "Scriptsmon Terminals",
+            "icon": "$(terminal)"
+          }
+        ]          
+        },        
         "views": {
-            "explorer": [
+            "scriptsmon-container": [
                 {
                     "type": "webview",
                     "id": "Scriptsmon.treeview",
                     "name": "Scriptsmon2"
+                }
+            ],
+            "scriptsmon-bottom-drawer": [
+                {
+                    "type": "webview",
+                    "id": "Scriptsmon.terminals",
+                    "name": "Scriptsmon web view2"
                 }
             ]
         }
