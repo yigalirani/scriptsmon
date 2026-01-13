@@ -72,6 +72,9 @@ function make_loop_func(monitor:Monitor, isTerminalsView: boolean){
           }
           case 'set_selected_command':{
             // Forward SetSelectedCommand from tree view to terminals view
+            void vscode.commands.executeCommand('Scriptsmon.terminals.focus', {
+              preserveFocus: true
+            });
             if (terminalsWebview) {
               post_message(terminalsWebview.webview, message);
             }

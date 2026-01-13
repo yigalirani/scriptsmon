@@ -1,0 +1,127 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "biome lint",
+              "start": 239,
+              "end": 264,
+              "source_file": "c:\\yigal\\base_types\\package.json"
+            },
+            "need_ctl": true,
+            "name": "run_biome",
+            "script": "biome lint",
+            "workspace_folder": "c:\\yigal\\base_types",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-base_types--run_biome"
+          },
+          {
+            "pos": {
+              "str": "node ./run_eslint.mjs",
+              "start": 270,
+              "end": 307,
+              "source_file": "c:\\yigal\\base_types\\package.json"
+            },
+            "need_ctl": true,
+            "name": "run_eslint",
+            "script": "node ./run_eslint.mjs",
+            "workspace_folder": "c:\\yigal\\base_types",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-base_types--run_eslint"
+          },
+          {
+            "pos": {
+              "str": "node --watch-path=./dist/test.js dist/test.js",
+              "start": 313,
+              "end": 368,
+              "source_file": "c:\\yigal\\base_types\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test",
+            "script": "node --watch-path=./dist/test.js dist/test.js",
+            "workspace_folder": "c:\\yigal\\base_types",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-base_types--test"
+          },
+          {
+            "pos": {
+              "str": "node --watch-path=./src build.ts",
+              "start": 374,
+              "end": 423,
+              "source_file": "c:\\yigal\\base_types\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch_build",
+            "script": "node --watch-path=./src build.ts",
+            "workspace_folder": "c:\\yigal\\base_types",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-base_types--watch_build"
+          },
+          {
+            "pos": {
+              "str": "tsc --build --watch",
+              "start": 429,
+              "end": 463,
+              "source_file": "c:\\yigal\\base_types\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch_tsc",
+            "script": "tsc --build --watch",
+            "workspace_folder": "c:\\yigal\\base_types",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-base_types--watch_tsc"
+          }
+        ],
+        "folders": [],
+        "name": "base_types",
+        "workspace_folder": "c:\\yigal\\base_types",
+        "id": "c--yigal-base_types",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\base_types\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\base_types\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>"
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\base_types"
+  ]
+}

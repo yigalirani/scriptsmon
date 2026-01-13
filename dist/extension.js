@@ -8784,6 +8784,9 @@ function make_loop_func(monitor, isTerminalsView) {
             break;
           }
           case "set_selected_command": {
+            void vscode2.commands.executeCommand("Scriptsmon.terminals.focus", {
+              preserveFocus: true
+            });
             if (terminalsWebview) {
               post_message(terminalsWebview.webview, message);
             }
