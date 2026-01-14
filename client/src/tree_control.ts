@@ -76,7 +76,7 @@ function index_folder(root:TreeNode){
   return ans
 }
 function calc_summary(node:TreeNode):string{
-  const ignore=['icon_version','icon']
+  const ignore=['icon_version','icon','checkbox_state'] 
   function replacer(k:string,v:unknown){
     if (ignore.includes(k))
       return ''
@@ -219,10 +219,12 @@ export class TreeControl<T>{
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
     const checkbox=make_checkbox(node)
+    const {checkbox_state}=node
     this.mark_changed(id)
+    const check_class=checkbox_state===true?"checked":''
     const ans= create_element(` 
-  <div  class="tree_${type} ${className??""}" id="${id}" >
-    <div  class=label_row>${checkbox}
+  <div  class="tree_${type} ${className??""} ${check_class}" id="${id}" >
+    <div  class="label_row {check_class}">${checkbox}
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}

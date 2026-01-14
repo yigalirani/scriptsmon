@@ -41,8 +41,11 @@ export class Watcher{
     await Promise.all(promises)
   }  
   initial_or_changed(watch_id:string):boolean{ //have watches under this k and did not changed
-    const exists=this.id_to_changed_path[watch_id]
-    return exists==null
+    const exists=this.id_to_watching_path[watch_id]
+    if (exists==null)
+      return true
+    const changed=this.id_to_changed_path[watch_id]
+    return changed!=null
   }
   get_changed(watch_id:string):string[]{//return list of paths that have changed
     return [...(this.id_to_changed_path[watch_id]||new Set())]

@@ -8414,8 +8414,11 @@ var Watcher = class {
     await Promise.all(promises);
   }
   initial_or_changed(watch_id) {
-    const exists = this.id_to_changed_path[watch_id];
-    return exists == null;
+    const exists = this.id_to_watching_path[watch_id];
+    if (exists == null)
+      return true;
+    const changed = this.id_to_changed_path[watch_id];
+    return changed != null;
   }
   get_changed(watch_id) {
     return [...this.id_to_changed_path[watch_id] || /* @__PURE__ */ new Set()];
@@ -8787,6 +8790,7 @@ function make_loop_func(monitor) {
             const { command_name, id: runner_id } = message;
             if (command_name === "checkbox_clicked") {
               monitor.toggle_watch_state(runner_id);
+              return;
             }
             void monitor.run_runner({ runner_id, reason: "user" });
             break;
