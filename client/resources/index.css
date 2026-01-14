@@ -184,7 +184,7 @@ span.term_title_watch{
 
 }
 .label_row{
-    padding: 4px;
+    padding: 1px;
     white-space: nowrap;
     display: flex;
     width: 1000px;
@@ -278,6 +278,48 @@ span.term_title_watch{
   height: 16px;
 
 }
+.tree_checkbox {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  border-radius: 3px;
+  position: absolute;
+  left:10px;
+  /* Official VS Code Colors */
+  background: var(--vscode-checkbox-background);
+  border: 1px solid var(--vscode-checkbox-border);
+}
+.tree_checkbox.diffrent::before{
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: -2px;
+  bottom: -2px;
+  width: 3px;
+  background-color: var(--vscode-settings-modifiedItemIndicator);
+}
+/* Hover state */
+.tree_checkbox:hover {
+  background: var(--vscode-checkbox-background);
+  border-color: var(--vscode-checkbox-border);
+}
+
+/* Active/Checked state logic */
+.tree_checkbox.checked {
+  background: var(--vscode-checkbox-background);
+  border-color: var(--vscode-checkbox-border);
+}
+
+/* Style for the SVG checkmark inside */
+.tree_checkbox svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--vscode-checkbox-foreground);
+}
 .background_done{
   background-color: green;
 }
@@ -295,7 +337,7 @@ span.term_title_watch{
 .icon.background_ready,.icon.background_folder{
   border: 0px solid #474747;  
 }
-.watched .label_row::before {
+.watched2 .label_row::before {
   content: url('icons/watched.svg');
   position: absolute;
   left: 0px;

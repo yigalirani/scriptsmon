@@ -236,7 +236,7 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
       const id=escape_id(`${workspace_folder} ${name}`)
       const effective_watch_rel=watchers.watches[name]||[]
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(workspace_folder,rel.str)}))
-      const watched=watchers.autowatch_scripts.includes(name)
+      const watched_default=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
         //ntype:'runner',
         pos: script,
@@ -245,8 +245,9 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
         script:script.str,
         workspace_folder,
         effective_watch,
-        watched,
-        id
+        watched_default,
+        id,
+        watched:false
       }
       return ans
     }()

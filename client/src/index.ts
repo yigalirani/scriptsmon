@@ -274,14 +274,39 @@ function get_terminals(report:RunnerReport,terminals:Terminals){
 
 function convert(report:RunnerReport):TreeNode{
   function convert_runner(runner:Runner):TreeNode{
-      const {script,watched,id,name}=runner
+      const {script,watched,id,name,watched_default}=runner
       const {version,state}=calc_runner_status(report,runner)
       const className=(watched?'watched':undefined)
-      return {type:'item',id,label:name,commands:['play','debug'],children:[],description:script,icon:state,icon_version:version,className}
+      return {
+        type:'item',
+        id,
+        label:name,
+        commands:['play','debug'],
+        children:[],
+        description:script,
+        icon:state,
+        icon_version:
+        version,
+        className,
+        checkbox_state: watched,
+        default_checkbox_state: watched_default        
+    }
   }
   function convert_error(root:FolderError):TreeNode{
       const {id,message}=root
-      return {type:"item",id,label:message,children:[],icon:"syntaxerror",icon_version:1,commands:[],className:"warning"}
+      return {
+        type:"item",
+        id,
+        label:message,
+        children:[],
+        icon:"syntaxerror",
+        icon_version:1,
+        commands:[],
+        className:"warning",
+        checkbox_state: undefined,
+        default_checkbox_state: undefined    
+       
+    }
 
   }  
   function convert_folder(root:Folder):TreeNode{
@@ -291,7 +316,17 @@ function convert(report:RunnerReport):TreeNode{
       const errors=root.errors.map(convert_error)  
       const children=[...folders,...items,...errors]
       const icon=errors.length===0?'folder':'foldersyntaxerror'
-      return {children,type:'folder',id,label:name,commands:[],icon,icon_version:0,className:undefined}
+      return {
+        children,
+        type:'folder',
+        id,label:name,
+        commands:[],
+        icon,
+        icon_version:0,
+        className:undefined,
+        checkbox_state: undefined,
+        default_checkbox_state: undefined            
+    }
   }
   return convert_folder(report.root)
 }

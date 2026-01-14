@@ -1,16 +1,19 @@
 import type { s2t,s2s} from '@yigal/base_types'
 import {get_parent_by_class,create_element,divs,get_parent_by_classes,remove_class} from './dom_utils.js'
 type MaybePromise<T>=T|Promise<T>
+
 export interface TreeNode{
-  type            : 'item'|'folder' //is this needed?
-  label           : string,
-  id              : string;
-  icon            : string
-  className       : string|undefined
-  description    ?: string
-  commands        : string[]
-  children        : TreeNode[]
-  icon_version     : number
+  type                   : 'item'|'folder'   //is this needed?
+  label                  : string,
+  id                     : string;
+  icon                   : string
+  className              : string|undefined
+  description           ?: string
+  commands               : string[]          //hard codded commmand: checkbox clicked
+  children               : TreeNode[]
+  icon_version           : number
+  checkbox_state         : boolean|undefined
+  default_checkbox_state : boolean|undefined
 }
 function parseIcons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
@@ -189,6 +192,15 @@ function element_for_down_arrow(selected:HTMLElement){
   node.beginElement()
   console.log('node.beginElement()')
  }*/
+const check_svg=`<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/></svg>`
+function make_checkbox(node:TreeNode){
+  const {checkbox_state,default_checkbox_state}=node
+  if (checkbox_state==null)
+    return ''
+  const cls=(default_checkbox_state!==checkbox_state)?' diffrent':''
+  const check=checkbox_state?check_svg:''
+  return `<div class="tree_checkbox ${cls}">${check}</div>`
+}
 export class TreeControl<T>{
   public base_uri=''
   icons:s2s
@@ -205,10 +217,11 @@ export class TreeControl<T>{
     const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
     const children=(type==='folder')?`<div class=children ${style}></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
+    const checkbox=make_checkbox(node)
     this.mark_changed(id)
-    const ans= create_element(`
+    const ans= create_element(` 
   <div  class="tree_${type} ${className??""}" id="${id}" >
-    <div  class=label_row>
+    <div  class=label_row>${checkbox}
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}
@@ -320,7 +333,7 @@ export class TreeControl<T>{
     const children_el=(()=>{
       if (depth===0)
         return create_element('<div class=children></div>',parent)
-      const new_parent=this.create_node_element(node,16+depth*20,parent)
+      const new_parent=this.create_node_element(node,depth*20+16+16,parent)
       return new_parent.querySelector('.children') //return value might be null for item node  
     })()
     if (children_el==null){

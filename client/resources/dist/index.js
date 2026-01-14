@@ -6333,6 +6333,15 @@ function element_for_down_arrow(selected) {
     cur = parent;
   }
 }
+var check_svg = `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/></svg>`;
+function make_checkbox(node) {
+  const { checkbox_state, default_checkbox_state } = node;
+  if (checkbox_state == null)
+    return "";
+  const cls = default_checkbox_state !== checkbox_state ? " diffrent" : "";
+  const check = checkbox_state ? check_svg : "";
+  return `<div class="tree_checkbox ${cls}">${check}</div>`;
+}
 var TreeControl = class {
   constructor(parent, provider2) {
     this.parent = parent;
@@ -6418,10 +6427,11 @@ var TreeControl = class {
     const style = "";
     const children = type === "folder" ? `<div class=children ${style}></div>` : "";
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
+    const checkbox = make_checkbox(node);
     this.mark_changed(id);
-    const ans = create_element(`
+    const ans = create_element(` 
   <div  class="tree_${type} ${className ?? ""}" id="${id}" >
-    <div  class=label_row>
+    <div  class=label_row>${checkbox}
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({ label, description })}
@@ -6460,7 +6470,7 @@ var TreeControl = class {
     const children_el = (() => {
       if (depth === 0)
         return create_element("<div class=children></div>", parent);
-      const new_parent = this.create_node_element(node, 16 + depth * 20, parent);
+      const new_parent = this.create_node_element(node, depth * 20 + 16 + 16, parent);
       return new_parent.querySelector(".children");
     })();
     if (children_el == null) {
@@ -12515,14 +12525,37 @@ function get_terminals(report, terminals) {
 }
 function convert(report) {
   function convert_runner(runner) {
-    const { script, watched, id, name } = runner;
+    const { script, watched, id, name, watched_default } = runner;
     const { version: version2, state } = calc_runner_status(report, runner);
     const className = watched ? "watched" : void 0;
-    return { type: "item", id, label: name, commands: ["play", "debug"], children: [], description: script, icon: state, icon_version: version2, className };
+    return {
+      type: "item",
+      id,
+      label: name,
+      commands: ["play", "debug"],
+      children: [],
+      description: script,
+      icon: state,
+      icon_version: version2,
+      className,
+      checkbox_state: watched,
+      default_checkbox_state: watched_default
+    };
   }
   function convert_error(root) {
     const { id, message } = root;
-    return { type: "item", id, label: message, children: [], icon: "syntaxerror", icon_version: 1, commands: [], className: "warning" };
+    return {
+      type: "item",
+      id,
+      label: message,
+      children: [],
+      icon: "syntaxerror",
+      icon_version: 1,
+      commands: [],
+      className: "warning",
+      checkbox_state: void 0,
+      default_checkbox_state: void 0
+    };
   }
   function convert_folder(root) {
     const { name, id } = root;
@@ -12531,7 +12564,18 @@ function convert(report) {
     const errors = root.errors.map(convert_error);
     const children = [...folders, ...items, ...errors];
     const icon = errors.length === 0 ? "folder" : "foldersyntaxerror";
-    return { children, type: "folder", id, label: name, commands: [], icon, icon_version: 0, className: void 0 };
+    return {
+      children,
+      type: "folder",
+      id,
+      label: name,
+      commands: [],
+      icon,
+      icon_version: 0,
+      className: void 0,
+      checkbox_state: void 0,
+      default_checkbox_state: void 0
+    };
   }
   return convert_folder(report.root);
 }

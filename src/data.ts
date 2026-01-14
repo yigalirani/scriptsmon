@@ -43,6 +43,7 @@ export interface Runner extends RunnerBase{
   script         : string
   //growing
   watched        : boolean
+  watched_default: boolean      
   effective_watch: Filename[]
 }
 export interface FolderError extends RunnerBase{

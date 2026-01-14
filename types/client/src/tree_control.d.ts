@@ -10,6 +10,8 @@ export interface TreeNode {
     commands: string[];
     children: TreeNode[];
     icon_version: number;
+    checkbox_state: boolean | undefined;
+    default_checkbox_state: boolean | undefined;
 }
 export interface TreeDataProvider<T> {
     convert: (root: T) => TreeNode;
