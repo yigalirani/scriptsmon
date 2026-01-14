@@ -41,11 +41,11 @@ export function get_parent_by_classes(
   let ans: HTMLElement | null = el;
 
   while (ans !== null) {
-    ans = ans.parentElement;
     if (ans !== null && classes.some(c => ans!.classList.contains(c))) {
       return ans;
     }
-  }
+    ans = ans.parentElement;
+  } 
   return null;
 }
 export function remove_class(el:HTMLElement,className:string){

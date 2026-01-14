@@ -45,6 +45,7 @@ export declare class Monitor {
         runner_id: string;
         reason: string;
     }): Promise<void>;
+    toggle_watch_state(runner_id: string): void;
     start_watching(): void;
 }
 export {};

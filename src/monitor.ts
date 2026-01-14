@@ -259,6 +259,12 @@ export class Monitor{
       throw new Error(`runnwe is not found:${runner_id}`)
     await this.run_runner2({runner,reason})
   }
+  toggle_watch_state(runner_id:string){
+    const runner=find_runner(this.get_root(),runner_id)
+    if (runner==null)
+      throw new Error(`runnwe is not found:${runner_id}`)  
+    runner.watched=!runner.watched
+  }
   start_watching(){
   }
 }

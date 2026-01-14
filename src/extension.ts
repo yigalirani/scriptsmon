@@ -60,7 +60,11 @@ function make_loop_func(monitor:Monitor){
             break 
           }          
           case 'command_clicked':{
-            void monitor.run_runner({runner_id:message.id,reason:'user'})
+            const {command_name,id:runner_id}=message
+            if (command_name==='checkbox_clicked'){
+              monitor.toggle_watch_state(runner_id)
+            }
+            void monitor.run_runner({runner_id,reason:'user'})
             break          
           }
         }

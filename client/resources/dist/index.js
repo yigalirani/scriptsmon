@@ -6123,10 +6123,10 @@ function get_parent_by_classes(el2, className) {
   const classes = Array.isArray(className) ? className : [className];
   let ans = el2;
   while (ans !== null) {
-    ans = ans.parentElement;
     if (ans !== null && classes.some((c) => ans.classList.contains(c))) {
       return ans;
     }
+    ans = ans.parentElement;
   }
   return null;
 }
@@ -6340,7 +6340,7 @@ function make_checkbox(node) {
     return "";
   const cls = default_checkbox_state !== checkbox_state ? " diffrent" : "";
   const check = checkbox_state ? check_svg : "";
-  return `<div class="tree_checkbox ${cls}">${check}</div>`;
+  return `<div id='checkbox_clicked' class="tree_checkbox ${cls}">${check}</div>`;
 }
 var TreeControl = class {
   constructor(parent, provider2) {
@@ -6450,7 +6450,7 @@ var TreeControl = class {
   command_clicked(evt) {
     if (evt.target == null)
       return false;
-    const command_icon = get_parent_by_class(evt.target, "command_icon");
+    const command_icon = get_parent_by_classes(evt.target, ["command_icon", "tree_checkbox"]);
     if (command_icon == null)
       return false;
     const command = command_icon.id;

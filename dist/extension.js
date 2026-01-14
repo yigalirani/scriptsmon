@@ -8644,6 +8644,12 @@ var Monitor = class {
       throw new Error(`runnwe is not found:${runner_id}`);
     await this.run_runner2({ runner, reason });
   }
+  toggle_watch_state(runner_id) {
+    const runner = find_runner(this.get_root(), runner_id);
+    if (runner == null)
+      throw new Error(`runnwe is not found:${runner_id}`);
+    runner.watched = !runner.watched;
+  }
   start_watching() {
   }
 };
@@ -8777,7 +8783,11 @@ function make_loop_func(monitor) {
             break;
           }
           case "command_clicked": {
-            void monitor.run_runner({ runner_id: message.id, reason: "user" });
+            const { command_name, id: runner_id } = message;
+            if (command_name === "checkbox_clicked") {
+              monitor.toggle_watch_state(runner_id);
+            }
+            void monitor.run_runner({ runner_id, reason: "user" });
             break;
           }
         }

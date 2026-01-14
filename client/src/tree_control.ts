@@ -199,8 +199,9 @@ function make_checkbox(node:TreeNode){
     return ''
   const cls=(default_checkbox_state!==checkbox_state)?' diffrent':''
   const check=checkbox_state?check_svg:''
-  return `<div class="tree_checkbox ${cls}">${check}</div>`
+  return `<div id='checkbox_clicked' class="tree_checkbox ${cls}">${check}</div>`
 }
+
 export class TreeControl<T>{
   public base_uri=''
   icons:s2s
@@ -241,7 +242,7 @@ export class TreeControl<T>{
   command_clicked(evt:Event){
     if (evt.target==null)
       return false
-    const command_icon=get_parent_by_class(evt.target as HTMLElement,'command_icon')
+    const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','tree_checkbox'])
     if (command_icon==null)
       return false
     const command=command_icon.id
