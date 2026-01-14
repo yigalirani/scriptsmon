@@ -358,7 +358,7 @@ export class TreeControl<T>{
       return
     }
     for (const id of change.icons){
-      const existing_svg=this.parent.querySelector<SVGElement>(`#${id} svg`)
+      const existing_svg=this.parent.querySelector<SVGElement>(`#${id} .icon svg`)
       if (existing_svg==null){
         console.warn(`cant find old svg for ${id}`)
         continue

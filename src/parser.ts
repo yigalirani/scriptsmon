@@ -247,8 +247,8 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
         effective_watch,
         watched_default,
         id,
-        watched:false
-      }
+        //watched:false
+      } 
       return ans
     }()
     ans.push(runner)

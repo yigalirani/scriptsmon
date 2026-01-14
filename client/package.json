@@ -7,7 +7,7 @@
     "scriptsmon": {
         "autowatch": {
             "build": [
-              "build.ts",
+              "build.ts", 
               "src",
               "package.json"
             ]

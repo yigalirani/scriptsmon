@@ -36,7 +36,6 @@ export interface Runner extends RunnerBase {
     name: string;
     workspace_folder: string;
     script: string;
-    watched: boolean;
     watched_default: boolean;
     effective_watch: Filename[];
 }

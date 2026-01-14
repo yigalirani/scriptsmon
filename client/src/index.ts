@@ -274,7 +274,8 @@ function get_terminals(report:RunnerReport,terminals:Terminals){
 
 function convert(report:RunnerReport):TreeNode{
   function convert_runner(runner:Runner):TreeNode{
-      const {script,watched,id,name,watched_default}=runner
+      const {script,id,name,watched_default}=runner
+      const watched=report.watched[id]===true
       const {version,state}=calc_runner_status(report,runner)
       const className=(watched?'watched':undefined)
       return {

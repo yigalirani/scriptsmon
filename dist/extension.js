@@ -6513,8 +6513,8 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
         workspace_folder,
         effective_watch,
         watched_default,
-        id,
-        watched: false
+        id
+        //watched:false
       };
       return ans2;
     })();
@@ -8461,6 +8461,7 @@ var Monitor = class {
   }
   ipty = {};
   runs = {};
+  watched = {};
   root;
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
@@ -8495,7 +8496,8 @@ var Monitor = class {
       command: "RunnerReport",
       root: this.get_root(),
       base_uri,
-      runs
+      runs,
+      watched: this.watched
     };
   }
   async stop({
@@ -8588,7 +8590,8 @@ var Monitor = class {
   add_watch = (folder) => {
     this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"));
     for (const runner of folder.runners) {
-      const { watched, id, effective_watch } = runner;
+      const { id, effective_watch } = runner;
+      const watched = this.watched[id] === true;
       for (const x of effective_watch)
         this.watcher.add_watch(id, x.full);
     }
@@ -8626,7 +8629,7 @@ var Monitor = class {
       this.root = new_root;
       this.watcher.start_watching();
     }
-    const monitored_runners = this.find_runners(this.root, (x) => x.watched);
+    const monitored_runners = this.find_runners(this.root, (x) => this.watched[x.id] === true);
     const changed = this.get_changed_runners(monitored_runners);
     this.watcher.clear_changed();
     for (const x of changed)
@@ -8645,10 +8648,8 @@ var Monitor = class {
     await this.run_runner2({ runner, reason });
   }
   toggle_watch_state(runner_id) {
-    const runner = find_runner(this.get_root(), runner_id);
-    if (runner == null)
-      throw new Error(`runnwe is not found:${runner_id}`);
-    runner.watched = !runner.watched;
+    const exists = this.watched[runner_id] === true;
+    this.watched[runner_id] = !exists;
   }
   start_watching() {
   }

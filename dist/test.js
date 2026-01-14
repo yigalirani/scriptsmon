@@ -5870,8 +5870,8 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
         workspace_folder,
         effective_watch,
         watched_default,
-        id,
-        watched: false
+        id
+        //watched:false
       };
       return ans2;
     })();

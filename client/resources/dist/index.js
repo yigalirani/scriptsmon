@@ -6492,7 +6492,7 @@ var TreeControl = class {
       return;
     }
     for (const id of change.icons) {
-      const existing_svg = this.parent.querySelector(`#${id} svg`);
+      const existing_svg = this.parent.querySelector(`#${id} .icon svg`);
       if (existing_svg == null) {
         console.warn(`cant find old svg for ${id}`);
         continue;
@@ -12525,7 +12525,8 @@ function get_terminals(report, terminals) {
 }
 function convert(report) {
   function convert_runner(runner) {
-    const { script, watched, id, name, watched_default } = runner;
+    const { script, id, name, watched_default } = runner;
+    const watched = report.watched[id] === true;
     const { version: version2, state } = calc_runner_status(report, runner);
     const className = watched ? "watched" : void 0;
     return {

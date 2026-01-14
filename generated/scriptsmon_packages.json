@@ -3,82 +3,82 @@
   "runs": {
     "c--yigal-scriptsmon-client--build": [
       {
-        "start_time": 1768372516600,
-        "end_time": 1768372519040,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\dom_utils.ts",
+        "start_time": 1768375626375,
+        "end_time": 1768375629791,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 12
+        "run_id": 18
       }
     ],
     "c--yigal-scriptsmon--tsc": [
       {
-        "start_time": 1768373835019,
-        "end_time": 1768373837500,
-        "reason": "c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1768375626581,
+        "end_time": 1768375631617,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 21
+        "run_id": 47
       }
     ],
     "c--yigal-scriptsmon--eslint": [
       {
-        "start_time": 1768373835098,
-        "end_time": 1768373839682,
-        "reason": "c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1768375626788,
+        "end_time": 1768375634594,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 21
+        "run_id": 47
       }
     ],
     "c--yigal-scriptsmon--oxlinttypeaware": [
       {
-        "start_time": 1768373835175,
-        "end_time": 1768373837495,
-        "reason": "c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1768375626949,
+        "end_time": 1768375629806,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 21
+        "run_id": 47
       }
     ],
     "c--yigal-scriptsmon--oxlint": [
       {
-        "start_time": 1768373835266,
-        "end_time": 1768373836979,
-        "reason": "c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1768375627140,
+        "end_time": 1768375629791,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 21
+        "run_id": 47
       }
     ],
     "c--yigal-scriptsmon--biome": [
       {
-        "start_time": 1768373835405,
-        "end_time": 1768373837585,
-        "reason": "c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1768375627383,
+        "end_time": 1768375631810,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 1,
-        "run_id": 21
+        "run_id": 47
       }
     ],
     "c--yigal-scriptsmon--build": [
       {
-        "start_time": 1768373834959,
-        "end_time": 1768373836540,
-        "reason": "c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1768375268612,
+        "end_time": 1768375270717,
+        "reason": "c:\\yigal\\scriptsmon\\src\\parser.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 9
+        "run_id": 30
       }
     ],
     "c--yigal-scriptsmon--test": [
       {
-        "start_time": 1768373837581,
-        "end_time": 1768373838195,
+        "start_time": 1768375666766,
+        "end_time": 1768375667794,
         "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
         "output": [],
         "exit_code": 0,
-        "run_id": 11
+        "run_id": 34
       }
     ]
   },
@@ -633,8 +633,8 @@
                     "rel": {
                       "str": "src",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
-                      "start": 209,
-                      "end": 214
+                      "start": 210,
+                      "end": 215
                     },
                     "full": "c:\\yigal\\scriptsmon\\client\\src"
                   },
@@ -642,8 +642,8 @@
                     "rel": {
                       "str": "package.json",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
-                      "start": 230,
-                      "end": 244
+                      "start": 231,
+                      "end": 245
                     },
                     "full": "c:\\yigal\\scriptsmon\\client\\package.json"
                   }
