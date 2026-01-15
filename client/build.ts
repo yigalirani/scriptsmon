@@ -2,7 +2,7 @@ import { build } from "esbuild";
 async function call_build(){
   try{
     await build({
-      entryPoints: ["src/index.tsx"],
+      entryPoints: ["src/index.ts"],
       outfile: "resources/dist/index.js",
       bundle: true,
       platform: "node",
