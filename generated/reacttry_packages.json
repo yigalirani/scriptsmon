@@ -1,0 +1,116 @@
+{
+  "ipty": "<skipped>",
+  "runs": {
+    "c--yigal-reacttry--build": [
+      {
+        "start_time": 1768453921763,
+        "end_time": 1768453922453,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 2
+      }
+    ],
+    "c--yigal-reacttry--server": [
+      {
+        "start_time": 1768452968050,
+        "reason": "user",
+        "output": [],
+        "run_id": 0
+      }
+    ]
+  },
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "node build.js",
+              "start": 173,
+              "end": 197,
+              "source_file": "c:\\yigal\\reacttry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "build",
+            "script": "node build.js",
+            "workspace_folder": "c:\\yigal\\reacttry",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-reacttry--build"
+          },
+          {
+            "pos": {
+              "str": "node build.js --watch",
+              "start": 203,
+              "end": 233,
+              "source_file": "c:\\yigal\\reacttry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "dev",
+            "script": "node build.js --watch",
+            "workspace_folder": "c:\\yigal\\reacttry",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-reacttry--dev"
+          },
+          {
+            "pos": {
+              "str": "server 80",
+              "start": 239,
+              "end": 259,
+              "source_file": "c:\\yigal\\reacttry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "server",
+            "script": "server 80",
+            "workspace_folder": "c:\\yigal\\reacttry",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-reacttry--server"
+          }
+        ],
+        "folders": [],
+        "name": "reacttry",
+        "workspace_folder": "c:\\yigal\\reacttry",
+        "id": "c--yigal-reacttry",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\reacttry\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\reacttry\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>"
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\reacttry"
+  ]
+}

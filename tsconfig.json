@@ -2,6 +2,7 @@
   "compilerOptions": {
     /* Language and Environment */
     "target": "ES2022",
+    "jsx": "react-jsx",
     /* Modules */
     "esModuleInterop": true,
     "module": "nodenext",

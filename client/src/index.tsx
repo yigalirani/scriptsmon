@@ -394,5 +394,19 @@ function start(){
   });
 }
 start()
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+function App(){
+  return <p>hello react</p>
+}
+/*
+const container=document.querySelector("#react")
+const root = createRoot(container!);
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode> 
+);*/
 const el = document.querySelector('.terms_container');
 console.log(el)
+ 

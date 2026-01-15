@@ -1,0 +1,97 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "webpack --mode production",
+              "start": 90,
+              "end": 126,
+              "source_file": "c:\\yigal\\reactstudy\\package.json"
+            },
+            "need_ctl": true,
+            "name": "build",
+            "script": "webpack --mode production",
+            "workspace_folder": "c:\\yigal\\reactstudy",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-reactstudy--build"
+          },
+          {
+            "pos": {
+              "str": "webpack --mode development",
+              "start": 132,
+              "end": 169,
+              "source_file": "c:\\yigal\\reactstudy\\package.json"
+            },
+            "need_ctl": true,
+            "name": "debug",
+            "script": "webpack --mode development",
+            "workspace_folder": "c:\\yigal\\reactstudy",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-reactstudy--debug"
+          },
+          {
+            "pos": {
+              "str": "esbuild ./src/index.js --bundle --outfile=dist/esmain.js --loader:.js=jsx --external:react-dom --external:react ",
+              "start": 175,
+              "end": 300,
+              "source_file": "c:\\yigal\\reactstudy\\package.json"
+            },
+            "need_ctl": true,
+            "name": "esbuild",
+            "script": "esbuild ./src/index.js --bundle --outfile=dist/esmain.js --loader:.js=jsx --external:react-dom --external:react ",
+            "workspace_folder": "c:\\yigal\\reactstudy",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-reactstudy--esbuild"
+          }
+        ],
+        "folders": [],
+        "name": "reactstudy",
+        "workspace_folder": "c:\\yigal\\reactstudy",
+        "id": "c--yigal-reactstudy",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\reactstudy\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\reactstudy\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>"
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\reactstudy"
+  ]
+}
