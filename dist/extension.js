@@ -6305,25 +6305,6 @@ function default_get(obj, k, maker) {
   }
   return obj[k];
 }
-var Repeater = class {
-  is_running = true;
-  loop = async (f) => {
-    while (this.is_running) {
-      try {
-        const result = await f();
-        console.log(result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-      await new Promise((resolve5) => setTimeout(resolve5, 2e3));
-    }
-  };
-  async repeat(f) {
-    const first = await f();
-    void this.loop(f);
-    return first;
-  }
-};
 
 // src/parser.ts
 function is_acorn_error(e) {
@@ -8430,6 +8411,23 @@ var Watcher = class {
 
 // src/monitor.ts
 var fs2 = await import("node:fs/promises");
+var Repeater = class {
+  is_running = true;
+  loop = async (f) => {
+    while (this.is_running) {
+      try {
+        await f();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      await new Promise((resolve5) => setTimeout(resolve5, 200));
+    }
+  };
+  async repeat(f) {
+    await f();
+    void this.loop(f);
+  }
+};
 function keep_only_last(arr) {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -8602,8 +8600,7 @@ var Monitor = class {
   };
   async dump_debug() {
     const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
-    const filename = `c:/yigal/scriptsmon/generated/${name}_packages.json`;
-    console.log(filename);
+    const filename = `c:/yigal/scriptsmon/generated2/${name}_packages.json`;
     const to_write = to_json(this, ["ipty", "watchers"]);
     await mkdir_write_file(filename, to_write, true);
   }

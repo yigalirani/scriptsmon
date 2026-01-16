@@ -1,86 +1,23 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon--build": [
+    "c--yigal-scriptsmon--ls": [
       {
-        "start_time": 1768605699193,
-        "end_time": 1768605700359,
-        "reason": "c:\\yigal\\scriptsmon\\src\\monitor.ts",
+        "start_time": 1768606558015,
+        "reason": "c:\\yigal\\scriptsmon\\generated2\\scriptsmon_packages.json",
         "output": [],
-        "exit_code": 0,
-        "run_id": 7
-      }
-    ],
-    "c--yigal-scriptsmon--tsc": [
-      {
-        "start_time": 1768606016784,
-        "end_time": 1768606019507,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
-        "output": [],
-        "exit_code": 2,
-        "run_id": 42
-      }
-    ],
-    "c--yigal-scriptsmon--eslint": [
-      {
-        "start_time": 1768606016870,
-        "end_time": 1768606022153,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 42
-      }
-    ],
-    "c--yigal-scriptsmon--oxlinttypeaware": [
-      {
-        "start_time": 1768606016961,
-        "end_time": 1768606019135,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 42
-      }
-    ],
-    "c--yigal-scriptsmon--oxlint": [
-      {
-        "start_time": 1768606017058,
-        "end_time": 1768606018835,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 42
-      }
-    ],
-    "c--yigal-scriptsmon--biome": [
-      {
-        "start_time": 1768606017177,
-        "end_time": 1768606019508,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 42
-      }
-    ],
-    "c--yigal-scriptsmon--test": [
-      {
-        "start_time": 1768605702639,
-        "end_time": 1768605703525,
-        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 4
-      }
-    ],
-    "c--yigal-scriptsmon-client--build": [
-      {
-        "start_time": 1768606016706,
-        "end_time": 1768606018299,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 34
+        "run_id": 13
       }
     ]
+  },
+  "watched": {
+    "c--yigal-scriptsmon--test": true,
+    "c--yigal-scriptsmon--build": true,
+    "c--yigal-scriptsmon--tsc": true,
+    "c--yigal-scriptsmon--eslint": true,
+    "c--yigal-scriptsmon--ls": true,
+    "c--yigal-scriptsmon--compile": true,
+    "c--yigal-scriptsmon--vscode-prepublish": true
   },
   "root": {
     "name": "root",
@@ -111,7 +48,7 @@
                 "full": "c:\\yigal\\scriptsmon\\dist\\test.js"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--test"
           },
           {
@@ -154,7 +91,7 @@
                 "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--build"
           },
           {
@@ -224,7 +161,7 @@
                 "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--tsc"
           },
           {
@@ -294,7 +231,7 @@
                 "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--eslint"
           },
           {
@@ -319,7 +256,7 @@
                 "full": "c:\\yigal\\scriptsmon"
               }
             ],
-            "watched": false,
+            "watched_default": false,
             "id": "c--yigal-scriptsmon--ls"
           },
           {
@@ -334,7 +271,7 @@
             "script": "npm run build & cd client & npm run build",
             "workspace_folder": "c:\\yigal\\scriptsmon",
             "effective_watch": [],
-            "watched": false,
+            "watched_default": false,
             "id": "c--yigal-scriptsmon--compile"
           },
           {
@@ -349,7 +286,7 @@
             "script": "npm run compile",
             "workspace_folder": "c:\\yigal\\scriptsmon",
             "effective_watch": [],
-            "watched": false,
+            "watched_default": false,
             "id": "c--yigal-scriptsmon--vscode-prepublish"
           },
           {
@@ -428,7 +365,7 @@
                 "full": "c:\\yigal\\scriptsmon\\.oxlintrc.json"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--oxlinttypeaware"
           },
           {
@@ -507,7 +444,7 @@
                 "full": "c:\\yigal\\scriptsmon\\.oxlintrc.json"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--oxlint"
           },
           {
@@ -586,7 +523,7 @@
                 "full": "c:\\yigal\\scriptsmon\\biome.json"
               }
             ],
-            "watched": true,
+            "watched_default": true,
             "id": "c--yigal-scriptsmon--biome"
           },
           {
@@ -601,7 +538,7 @@
             "script": "vsce package",
             "workspace_folder": "c:\\yigal\\scriptsmon",
             "effective_watch": [],
-            "watched": false,
+            "watched_default": false,
             "id": "c--yigal-scriptsmon--vsce"
           }
         ],
@@ -648,7 +585,7 @@
                     "full": "c:\\yigal\\scriptsmon\\client\\package.json"
                   }
                 ],
-                "watched": true,
+                "watched_default": true,
                 "id": "c--yigal-scriptsmon-client--build"
               }
             ],

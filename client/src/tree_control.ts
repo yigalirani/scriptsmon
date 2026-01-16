@@ -243,8 +243,8 @@ export class TreeControl<T>{
     }
     if (this.converted)
       f(this.converted)
-    update_child_html(document.body,".chk_checked .tree_checkbox",check_svg)
-    update_child_html(document.body,".chk_unchecked .tree_checkbox",'')
+    update_child_html(document.body,".chk_checked>.label_row .tree_checkbox",check_svg)
+    update_child_html(document.body,".chk_unchecked>.label_row .tree_checkbox",'')
   }
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){

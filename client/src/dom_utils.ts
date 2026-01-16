@@ -54,7 +54,7 @@ function setter_cache(setter:(el:HTMLElement,value:string)=>void){
     for (const child of el.querySelectorAll<HTMLElement>(selector)){
       const exists=el_to_html.get(child)
       if (exists===value)
-        return
+        continue
       el_to_html.set(child,value)
       setter(child,value)  
     } 

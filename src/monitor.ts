@@ -5,11 +5,31 @@ import  cloneDeep  from 'lodash.clonedeep'
 import * as path from 'node:path';
 const fs = await import("node:fs/promises");
 import {Watcher} from './watcher.js'
+
 import {
   //mkdir_write_file,
   sleep,
-  Repeater
 } from "@yigal/base_types";
+export class Repeater{
+  is_running:boolean=true
+  private loop=async (f:()=>MaybePromise<void>)=>{
+    while (this.is_running) {
+      try {
+        await f();
+        //console.log(result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+      // wait before next run
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }    
+  }
+  async repeat(f:()=>MaybePromise<void>){
+    await f();
+    void this.loop(f)
+  }
+}
 function keep_only_last<T>(arr: T[]): void {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -212,8 +232,8 @@ export class Monitor{
   }
   async dump_debug(){
     const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
-    const filename=`c:/yigal/scriptsmon/generated/${name}_packages.json`
-    console.log(filename)
+    const filename=`c:/yigal/scriptsmon/generated2/${name}_packages.json`
+    //console.log(filename)
     const to_write=to_json(this,["ipty","watchers"])
     await mkdir_write_file(filename,to_write,true)
   }
@@ -222,7 +242,7 @@ export class Monitor{
     if (changed[0]!==null)
       return changed[0]
     if (this.watcher.initial_or_changed(id))
-      return 'inital'
+      return 'inital' 
   }
   get_changed_runners(monitored_runners:Runner[]){
     const ans=[]

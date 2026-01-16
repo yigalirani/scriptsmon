@@ -6136,7 +6136,7 @@ function setter_cache(setter) {
     for (const child of el2.querySelectorAll(selector)) {
       const exists = el_to_html.get(child);
       if (exists === value)
-        return;
+        continue;
       el_to_html.set(child, value);
       setter(child, value);
     }
@@ -6458,8 +6458,8 @@ var TreeControl = class {
     };
     if (this.converted)
       f(this.converted);
-    update_child_html(document.body, ".chk_checked .tree_checkbox", check_svg);
-    update_child_html(document.body, ".chk_unchecked .tree_checkbox", "");
+    update_child_html(document.body, ".chk_checked>.label_row .tree_checkbox", check_svg);
+    update_child_html(document.body, ".chk_unchecked>.label_row .tree_checkbox", "");
   }
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
