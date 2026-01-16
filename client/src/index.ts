@@ -238,10 +238,8 @@ class TerminalPanel{
     for (const line of last_run.output)
       this.term.write(line)
     const stats=calc_stats_html(new_runner)
-    //if (stats!==this.last_stats)
-      update_child_html(this.el,'.stats>tbody',stats)
-    //this.last_stats=stats
-      update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
+    update_child_html(this.el,'.stats>tbody',stats)
+    update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
     
   }
 }

@@ -1,94 +1,84 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon-client--build": [
+    "c--yigal-scriptsmon--build": [
       {
-        "start_time": 1768459532791,
-        "end_time": 1768459533685,
-        "reason": "user",
+        "start_time": 1768581625278,
+        "end_time": 1768581626479,
+        "reason": "c:\\yigal\\scriptsmon\\src\\monitor.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 4
+        "run_id": 0
       }
     ],
     "c--yigal-scriptsmon--tsc": [
       {
-        "start_time": 1768459534895,
-        "end_time": 1768459536829,
-        "reason": "user",
+        "start_time": 1768589674313,
+        "end_time": 1768589676590,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 3
-      }
-    ],
-    "c--yigal-scriptsmon--oxlint": [
-      {
-        "start_time": 1768459541824,
-        "end_time": 1768459542448,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 2
-      }
-    ],
-    "c--yigal-scriptsmon--biome": [
-      {
-        "start_time": 1768459542447,
-        "end_time": 1768459543648,
-        "reason": "user",
-        "output": [],
-        "exit_code": 1,
-        "run_id": 4
+        "run_id": 33
       }
     ],
     "c--yigal-scriptsmon--eslint": [
       {
-        "start_time": 1768459535602,
-        "end_time": 1768459540423,
-        "reason": "user",
+        "start_time": 1768589674464,
+        "end_time": 1768589681063,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 2
+        "run_id": 33
       }
     ],
     "c--yigal-scriptsmon--oxlinttypeaware": [
       {
-        "start_time": 1768459541050,
-        "end_time": 1768459542289,
-        "reason": "user",
+        "start_time": 1768589674562,
+        "end_time": 1768589676226,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 1
+        "run_id": 33
       }
     ],
-    "c--yigal-scriptsmon--ls": [
+    "c--yigal-scriptsmon--oxlint": [
       {
-        "start_time": 1768459536307,
-        "end_time": 1768459537034,
-        "reason": "user",
+        "start_time": 1768589674647,
+        "end_time": 1768589676225,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 33
+      }
+    ],
+    "c--yigal-scriptsmon--biome": [
+      {
+        "start_time": 1768589674754,
+        "end_time": 1768589677060,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 33
+      }
+    ],
+    "c--yigal-scriptsmon--test": [
+      {
+        "start_time": 1768581627930,
+        "end_time": 1768581628749,
+        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
     ],
-    "c--yigal-scriptsmon--compile": [
+    "c--yigal-scriptsmon-client--build": [
       {
-        "start_time": 1768459538065,
-        "end_time": 1768459540057,
-        "reason": "user",
+        "start_time": 1768589674182,
+        "end_time": 1768589675619,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\tree_control.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 0
-      }
-    ],
-    "c--yigal-scriptsmon--vscode-prepublish": [
-      {
-        "start_time": 1768459540422,
-        "end_time": 1768459542188,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 1
+        "run_id": 32
       }
     ]
   },

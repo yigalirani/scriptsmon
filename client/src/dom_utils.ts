@@ -48,18 +48,22 @@ export function get_parent_by_classes(
   } 
   return null;
 }
-export function remove_class(el:HTMLElement,className:string){
-  el.querySelectorAll(`.${className}`).forEach(x => x.classList.remove(className))      
+function setter_cache(setter:(el:HTMLElement,value:string)=>void){
+  const el_to_html= new WeakMap<HTMLElement,string>()
+  return function(el:HTMLElement,selector:string,value:string){ 
+    for (const child of el.querySelectorAll<HTMLElement>(selector)){
+      const exists=el_to_html.get(child)
+      if (exists===value)
+        return
+      el_to_html.set(child,value)
+      setter(child,value)  
+    } 
+  }
 }
-const el_to_html= new WeakMap<HTMLElement,string>()
-export function update_child_html(el: HTMLElement, selector: string, html: string) {
-  const child = query_selector<HTMLElement>(el,selector)
-  const exists=el_to_html.get(child)
-  if (exists===html)
-    return
-  el_to_html.set(child,html)
-  child.innerHTML = html;
-}
+
+export const update_child_html=setter_cache((el:HTMLElement,value:string)=>{el.innerHTML=value})
+export const update_class_name=setter_cache((el:HTMLElement,value:string)=>{ el.className=value})
+
 export class CtrlTracker{
   pressed = false;
   constructor(){

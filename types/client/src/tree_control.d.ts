@@ -27,7 +27,12 @@ export declare class TreeControl<T> {
     icons: s2s;
     root: T | undefined;
     id_last_changed: Record<string, number>;
-    last_converted: TreeNode | undefined;
+    collapsed: Set<string>;
+    selected_id: string;
+    converted: TreeNode | undefined;
+    id_to_class: Record<string, string>;
+    calc_node_class(node: TreeNode): string;
+    apply_classes(): void;
     create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
     set_selected(el: HTMLElement): Promise<void>;
     command_clicked(evt: Event): boolean;

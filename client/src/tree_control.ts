@@ -1,5 +1,5 @@
 import type { s2t,s2s} from '@yigal/base_types'
-import {get_parent_by_class,create_element,divs,get_parent_by_classes,remove_class} from './dom_utils.js'
+import {get_parent_by_class,create_element,divs,get_parent_by_classes,update_class_name,update_child_html} from './dom_utils.js'
 type MaybePromise<T>=T|Promise<T>
 
 export interface TreeNode{
@@ -76,7 +76,7 @@ function index_folder(root:TreeNode){
   return ans
 }
 function calc_summary(node:TreeNode):string{
-  const ignore=['icon_version','icon','checkbox_state'] 
+  const ignore=['icon_version','icon','checkbox_state','className','description']
   function replacer(k:string,v:unknown){
     if (ignore.includes(k))
       return ''
@@ -93,7 +93,9 @@ function calc_changed(root:TreeNode,old_root:TreeNode|undefined){
   if (old_root==null)
     return ans
   const old_index=index_folder(old_root)
-  if (calc_summary(root)!==calc_summary(old_root)){
+  const summary=calc_summary(root)
+  const old_summary=calc_summary(old_root)
+  if (old_summary!==summary){
     return ans
   }
   ans.big=false
@@ -193,13 +195,12 @@ function element_for_down_arrow(selected:HTMLElement){
   console.log('node.beginElement()')
  }*/
 const check_svg=`<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/></svg>`
-function make_checkbox(node:TreeNode){
-  const {checkbox_state,default_checkbox_state}=node
-  if (checkbox_state==null)
-    return ''
-  const cls=(default_checkbox_state!==checkbox_state)?' diffrent':''
-  const check=checkbox_state?check_svg:''
-  return `<div id='checkbox_clicked' class="tree_checkbox ${cls}">${check}</div>`
+function toggle_set<T>(set:Set<T>,value:T){
+  if (set.has(value)) {
+    set.delete(value);
+  } else {
+    set.add(value);
+  }
 }
 
 export class TreeControl<T>{
@@ -209,22 +210,54 @@ export class TreeControl<T>{
   id_last_changed:Record<string,number>={}
   //selected:string|boolean=false
   //last_root:T|undefined
-  last_converted:TreeNode|undefined
+  collapsed=new Set<string>()
+  selected_id=''
+  converted:TreeNode|undefined
+  id_to_class:Record<string,string>={}
+  calc_node_class(node:TreeNode){
+    const ans=new Set<string>([`tree_${node.type}`])
+    const {checkbox_state,default_checkbox_state,id}=node
+    if (this.selected_id===id)
+      ans.add('selected')
+    if (checkbox_state===true)
+      ans.add('chk_visible')
+    if (default_checkbox_state!==checkbox_state)
+      ans.add('chk_different')
+    if (checkbox_state===true)
+      ans.add('chk_checked')
+    else
+      ans.add('chk_unchecked')
+    if (this.collapsed.has(id))
+      ans.add('collapsed')
+    return [...ans].join(' ')
+  }
+  apply_classes(){
+    const f=(a:TreeNode)=>{
+      const {id,children}=a
+      const new_class=this.calc_node_class(a)
+      if (this.id_to_class[id]!==new_class){
+        this.id_to_class[id]=new_class
+        update_class_name(document.body,`#${id}`,new_class)
+      }
+      children.map(f)
+    }
+    if (this.converted)
+      f(this.converted)
+    update_child_html(document.body,".chk_checked .tree_checkbox",check_svg)
+    update_child_html(document.body,".chk_unchecked .tree_checkbox",'')
+  }
   //collapsed_set:Set<string>=new Set()
   create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon,commands,className}=node
-    //const template = document.createElement("template")
-    const style=''//this.collapsed_set.has(id)?'style="display:none;"':''
-    const children=(type==='folder')?`<div class=children ${style}></div>`:''
+    const {type,id,description,label,icon,commands}=node
+    const children=(type==='folder')?`<div class=children></div>`:''
     const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
-    const checkbox=make_checkbox(node)
-    const {checkbox_state}=node
     this.mark_changed(id)
-    const check_class=checkbox_state===true?"checked":''
+    const node_class=this.calc_node_class(node)
     const ans= create_element(` 
-  <div  class="tree_${type} ${className??""} ${check_class}" id="${id}" >
-    <div  class="label_row {check_class}">${checkbox}
+  <div  class="${node_class}" id="${id}" >
+    <div  class="label_row">
+      <div id='checkbox_clicked' class="tree_checkbox"></div>
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}
@@ -237,7 +270,8 @@ export class TreeControl<T>{
   }
   //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
   async set_selected(el:HTMLElement){
-    el.classList.add('selected')
+    const {id}=el
+    this.selected_id=id
     await this.provider.selected(this.root!,el.id)
     //await this.on_selected_changed(el.id)
   }
@@ -266,6 +300,7 @@ export class TreeControl<T>{
   ){
     this.icons=parseIcons(this.provider.icons_html)
     setInterval(()=>{//todo: detect if parent is dismounted and exit this interval
+      this.apply_classes()
       for (const [id,time] of Object.entries(this.id_last_changed)){
         const selector=this.provider.animated.split(',').map(x=>`#${id} ${x}`).join(',')
         const element = parent.querySelectorAll<SVGElement>(selector);
@@ -288,11 +323,10 @@ export class TreeControl<T>{
       const clicked=get_parent_by_class(evt.target,'label_row')?.parentElement
       if (clicked==null)
         return
-      //this.selected=clicked.id
+      const {id}=clicked
+      this.selected_id=id
       if (!command_clicked&&clicked.classList.contains('tree_folder')) //if clicked command than don  change collpased status because dual action is annoing
-        clicked.classList.toggle('collapsed')
-      remove_class(parent,'selected')
-      void this.set_selected(clicked)
+        toggle_set(this.collapsed,id)
     })
     parent.addEventListener('keydown',(evt)=>{
       if (!(evt.target instanceof HTMLElement))
@@ -307,7 +341,6 @@ export class TreeControl<T>{
           const prev=element_for_up_arrow(selected)
           if (! (prev instanceof HTMLElement))
             return
-          remove_class(parent,'selected')   
           void this.set_selected(prev)         
          break
         }
@@ -315,19 +348,18 @@ export class TreeControl<T>{
           const prev=element_for_down_arrow(selected)
           if (prev==null)
             return
-          remove_class(parent,'selected')            
           void this.set_selected(prev)
           break
         }
         case 'ArrowRight':
-          selected.classList.remove('collapsed')
+          this.collapsed.delete(this.selected_id)
           break
         case 'ArrowLeft':
-          selected.classList.add('collapsed')
+          this.collapsed.add(this.selected_id)
           break
         case 'Enter':          
         case ' ':
-          selected.classList.toggle('collapsed')
+          toggle_set(this.collapsed,this.selected_id)
           break
       }
     })    
@@ -352,8 +384,8 @@ export class TreeControl<T>{
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
     this.root=root
-    const change=calc_changed(converted,this.last_converted)
-    this.last_converted=converted
+    const change=calc_changed(converted,this.converted)
+    this.converted=converted
     if (change.big){
       this.parent.innerHTML = '';
       this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation
@@ -380,7 +412,7 @@ export class TreeControl<T>{
       }
       existing_svg.outerHTML=new_svg
       console.log(`${id}: new svg`)
-      this.parent.querySelector<HTMLElement>(`#${id} .icon`)!.className=`icon background_${icon}`
+      update_class_name(this.parent,`#${id} .icon`,`icon background_${icon}`)
     }
     const combined=new Set([...change.icons, ...change.versions]);
     for (const id of combined){

@@ -6130,18 +6130,24 @@ function get_parent_by_classes(el2, className) {
   }
   return null;
 }
-function remove_class(el2, className) {
-  el2.querySelectorAll(`.${className}`).forEach((x) => x.classList.remove(className));
+function setter_cache(setter) {
+  const el_to_html = /* @__PURE__ */ new WeakMap();
+  return function(el2, selector, value) {
+    for (const child of el2.querySelectorAll(selector)) {
+      const exists = el_to_html.get(child);
+      if (exists === value)
+        return;
+      el_to_html.set(child, value);
+      setter(child, value);
+    }
+  };
 }
-var el_to_html = /* @__PURE__ */ new WeakMap();
-function update_child_html(el2, selector, html) {
-  const child = query_selector(el2, selector);
-  const exists = el_to_html.get(child);
-  if (exists === html)
-    return;
-  el_to_html.set(child, html);
-  child.innerHTML = html;
-}
+var update_child_html = setter_cache((el2, value) => {
+  el2.innerHTML = value;
+});
+var update_class_name = setter_cache((el2, value) => {
+  el2.className = value;
+});
 var CtrlTracker = class {
   pressed = false;
   constructor() {
@@ -6237,7 +6243,7 @@ function index_folder(root) {
   return ans;
 }
 function calc_summary(node) {
-  const ignore = ["icon_version", "icon", "checkbox_state"];
+  const ignore = ["icon_version", "icon", "checkbox_state", "className", "description"];
   function replacer(k, v) {
     if (ignore.includes(k))
       return "";
@@ -6254,7 +6260,9 @@ function calc_changed(root, old_root) {
   if (old_root == null)
     return ans;
   const old_index = index_folder(old_root);
-  if (calc_summary(root) !== calc_summary(old_root)) {
+  const summary = calc_summary(root);
+  const old_summary = calc_summary(old_root);
+  if (old_summary !== summary) {
     return ans;
   }
   ans.big = false;
@@ -6334,13 +6342,12 @@ function element_for_down_arrow(selected) {
   }
 }
 var check_svg = `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/></svg>`;
-function make_checkbox(node) {
-  const { checkbox_state, default_checkbox_state } = node;
-  if (checkbox_state == null)
-    return "";
-  const cls = default_checkbox_state !== checkbox_state ? " diffrent" : "";
-  const check = checkbox_state ? check_svg : "";
-  return `<div id='checkbox_clicked' class="tree_checkbox ${cls}">${check}</div>`;
+function toggle_set(set, value) {
+  if (set.has(value)) {
+    set.delete(value);
+  } else {
+    set.add(value);
+  }
 }
 var TreeControl = class {
   constructor(parent, provider2) {
@@ -6348,6 +6355,7 @@ var TreeControl = class {
     this.provider = provider2;
     this.icons = parseIcons(this.provider.icons_html);
     setInterval(() => {
+      this.apply_classes();
       for (const [id, time] of Object.entries(this.id_last_changed)) {
         const selector = this.provider.animated.split(",").map((x) => `#${id} ${x}`).join(",");
         const element = parent.querySelectorAll(selector);
@@ -6370,10 +6378,10 @@ var TreeControl = class {
       const clicked = get_parent_by_class(evt.target, "label_row")?.parentElement;
       if (clicked == null)
         return;
+      const { id } = clicked;
+      this.selected_id = id;
       if (!command_clicked && clicked.classList.contains("tree_folder"))
-        clicked.classList.toggle("collapsed");
-      remove_class(parent, "selected");
-      void this.set_selected(clicked);
+        toggle_set(this.collapsed, id);
     });
     parent.addEventListener("keydown", (evt) => {
       if (!(evt.target instanceof HTMLElement))
@@ -6388,7 +6396,6 @@ var TreeControl = class {
           const prev = element_for_up_arrow(selected);
           if (!(prev instanceof HTMLElement))
             return;
-          remove_class(parent, "selected");
           void this.set_selected(prev);
           break;
         }
@@ -6396,19 +6403,18 @@ var TreeControl = class {
           const prev = element_for_down_arrow(selected);
           if (prev == null)
             return;
-          remove_class(parent, "selected");
           void this.set_selected(prev);
           break;
         }
         case "ArrowRight":
-          selected.classList.remove("collapsed");
+          this.collapsed.delete(this.selected_id);
           break;
         case "ArrowLeft":
-          selected.classList.add("collapsed");
+          this.collapsed.add(this.selected_id);
           break;
         case "Enter":
         case " ":
-          selected.classList.toggle("collapsed");
+          toggle_set(this.collapsed, this.selected_id);
           break;
       }
     });
@@ -6419,21 +6425,54 @@ var TreeControl = class {
   id_last_changed = {};
   //selected:string|boolean=false
   //last_root:T|undefined
-  last_converted;
+  collapsed = /* @__PURE__ */ new Set();
+  selected_id = "";
+  converted;
+  id_to_class = {};
+  calc_node_class(node) {
+    const ans = /* @__PURE__ */ new Set([`tree_${node.type}`]);
+    const { checkbox_state, default_checkbox_state, id } = node;
+    if (this.selected_id === id)
+      ans.add("selected");
+    if (checkbox_state === true)
+      ans.add("chk_visible");
+    if (default_checkbox_state !== checkbox_state)
+      ans.add("chk_different");
+    if (checkbox_state === true)
+      ans.add("chk_checked");
+    else
+      ans.add("chk_unchecked");
+    if (this.collapsed.has(id))
+      ans.add("collapsed");
+    return [...ans].join(" ");
+  }
+  apply_classes() {
+    const f = (a) => {
+      const { id, children } = a;
+      const new_class = this.calc_node_class(a);
+      if (this.id_to_class[id] !== new_class) {
+        this.id_to_class[id] = new_class;
+        update_class_name(document.body, `#${id}`, new_class);
+      }
+      children.map(f);
+    };
+    if (this.converted)
+      f(this.converted);
+    update_child_html(document.body, ".chk_checked .tree_checkbox", check_svg);
+    update_child_html(document.body, ".chk_unchecked .tree_checkbox", "");
+  }
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
     const { icons } = this;
-    const { type, id, description, label, icon, commands, className } = node;
-    const style = "";
-    const children = type === "folder" ? `<div class=children ${style}></div>` : "";
+    const { type, id, description, label, icon, commands } = node;
+    const children = type === "folder" ? `<div class=children></div>` : "";
     const commands_icons = commands.map((cmd) => `<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join("");
-    const checkbox = make_checkbox(node);
-    const { checkbox_state } = node;
     this.mark_changed(id);
-    const check_class = checkbox_state === true ? "checked" : "";
+    const node_class = this.calc_node_class(node);
     const ans = create_element(` 
-  <div  class="tree_${type} ${className ?? ""} ${check_class}" id="${id}" >
-    <div  class="label_row {check_class}">${checkbox}
+  <div  class="${node_class}" id="${id}" >
+    <div  class="label_row">
+      <div id='checkbox_clicked' class="tree_checkbox"></div>
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({ label, description })}
@@ -6446,7 +6485,8 @@ var TreeControl = class {
   }
   //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
   async set_selected(el2) {
-    el2.classList.add("selected");
+    const { id } = el2;
+    this.selected_id = id;
     await this.provider.selected(this.root, el2.id);
   }
   command_clicked(evt) {
@@ -6486,8 +6526,8 @@ var TreeControl = class {
     this.base_uri = `${base_uri}/client/resources`;
     const converted = this.provider.convert(root);
     this.root = root;
-    const change = calc_changed(converted, this.last_converted);
-    this.last_converted = converted;
+    const change = calc_changed(converted, this.converted);
+    this.converted = converted;
     if (change.big) {
       this.parent.innerHTML = "";
       this.create_node(this.parent, converted, 0);
@@ -6514,7 +6554,7 @@ var TreeControl = class {
       }
       existing_svg.outerHTML = new_svg;
       console.log(`${id}: new svg`);
-      this.parent.querySelector(`#${id} .icon`).className = `icon background_${icon}`;
+      update_class_name(this.parent, `#${id} .icon`, `icon background_${icon}`);
     }
     const combined = /* @__PURE__ */ new Set([...change.icons, ...change.versions]);
     for (const id of combined) {
