@@ -296,7 +296,7 @@ span.term_title_watch{
 .chk_visible>.label_row>.tree_checkbox{
   display: flex;
 }
-.tree_checkbox.diffrent::before{
+.chk_visible.chk_different >.label_row>.tree_checkbox::before{
   content: "";
   position: absolute;
   left: -10px;
