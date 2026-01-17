@@ -323,10 +323,10 @@ span.term_title_watch{
   height: 14px;
   fill: var(--vscode-checkbox-foreground);
 }
-.background_done{
+.chk_checked .background_done{
   background-color: green;
 }
-.background_running{
+.chk_checked .background_running{
   background-color: purple;
   border: 0px solid #474747;  
 }
@@ -334,7 +334,7 @@ span.term_title_watch{
   background-color: blue;
   border: 0px solid #474747;  
 }
-.background_error{
+.chk_checked .background_error{
   background-color: red;
 }
 .icon.background_ready,.icon.background_folder{
