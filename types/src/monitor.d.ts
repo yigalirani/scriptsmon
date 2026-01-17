@@ -13,14 +13,14 @@ export interface RunnerReport {
     root: Folder;
     base_uri: string;
     runs: Runs;
-    watched: Record<string, boolean>;
+    monitored: Record<string, boolean>;
 }
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
 export declare class Monitor {
     workspace_folders: string[];
     ipty: Record<string, IPty>;
     runs: Runs;
-    watched: Record<string, boolean>;
+    monitored: Record<string, boolean>;
     root?: Folder;
     watcher: Watcher;
     repeater: Repeater;

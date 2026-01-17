@@ -45,7 +45,7 @@ export interface RunnerReport{
   root:Folder,
   base_uri:string,
   runs:Runs,
-  watched:Record<string,boolean>
+  monitored:Record<string,boolean>
 }
 
 async function read_file(filename:string){
@@ -75,7 +75,7 @@ export async function mkdir_write_file(filePath:string,data:string,cache=false){
 export class Monitor{
   ipty:Record<string,IPty>={}
   runs:Runs={} 
-  watched:Record<string,boolean>={}
+  monitored:Record<string,boolean>={}
   root?:Folder
   watcher=new Watcher()
   //monitored_runners:Runner[]=[]
@@ -115,7 +115,7 @@ export class Monitor{
       root:this.get_root(),
       base_uri,
       runs,
-      watched:this.watched
+      monitored:this.monitored
     }
   }
   async  stop({
@@ -262,7 +262,7 @@ export class Monitor{
       this.root=new_root
       this.watcher.start_watching() //based on add watcg from before
     }
-    const monitored_runners=this.find_runners(this.root!,(x)=>this.watched[x.id]===true)
+    const monitored_runners=this.find_runners(this.root!,(x)=>this.monitored[x.id]===true)
     const changed=this.get_changed_runners(monitored_runners)
     this.watcher.clear_changed()
     for (const x of changed)
@@ -285,8 +285,8 @@ export class Monitor{
   }
   toggle_watch_state(runner_id:string){
     //const runner=find_runner(this.get_root(),runner_id)
-    const exists=this.watched[runner_id]===true
-    this.watched[runner_id]=!exists
+    const exists=this.monitored[runner_id]===true
+    this.monitored[runner_id]=!exists
   }
   start_watching(){
     console.log('start_watching')

@@ -8462,7 +8462,7 @@ var Monitor = class {
   }
   ipty = {};
   runs = {};
-  watched = {};
+  monitored = {};
   root;
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
@@ -8498,7 +8498,7 @@ var Monitor = class {
       root: this.get_root(),
       base_uri,
       runs,
-      watched: this.watched
+      monitored: this.monitored
     };
   }
   async stop({
@@ -8628,7 +8628,7 @@ var Monitor = class {
       this.root = new_root;
       this.watcher.start_watching();
     }
-    const monitored_runners = this.find_runners(this.root, (x) => this.watched[x.id] === true);
+    const monitored_runners = this.find_runners(this.root, (x) => this.monitored[x.id] === true);
     const changed = this.get_changed_runners(monitored_runners);
     this.watcher.clear_changed();
     for (const x of changed)
@@ -8647,8 +8647,8 @@ var Monitor = class {
     await this.run_runner2({ runner, reason });
   }
   toggle_watch_state(runner_id) {
-    const exists = this.watched[runner_id] === true;
-    this.watched[runner_id] = !exists;
+    const exists = this.monitored[runner_id] === true;
+    this.monitored[runner_id] = !exists;
   }
   start_watching() {
     console.log("start_watching");

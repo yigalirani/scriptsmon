@@ -1,28 +1,39 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon--test": [
+    "c--yigal-scriptsmon-client--build": [
       {
-        "start_time": 1768643853779,
-        "end_time": 1768643857033,
-        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 2
-      }
-    ],
-    "c--yigal-scriptsmon--build": [
-      {
-        "start_time": 1768643853176,
-        "end_time": 1768643856991,
+        "start_time": 1768684050771,
+        "end_time": 1768684054864,
         "reason": "user",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
+    ],
+    "c--yigal-scriptsmon--test": [
+      {
+        "start_time": 1768684099902,
+        "end_time": 1768684104231,
+        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 6
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1768684094855,
+        "end_time": 1768684099903,
+        "reason": "c:\\yigal\\scriptsmon\\src\\monitor.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 2
+      }
     ]
   },
-  "watched": {
+  "monitored": {
+    "c--yigal-scriptsmon-client--build": true,
     "c--yigal-scriptsmon--test": true,
     "c--yigal-scriptsmon--build": true
   },
