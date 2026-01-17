@@ -7,11 +7,11 @@ const fs = await import("node:fs/promises");
 import {Watcher} from './watcher.js'
 
 import {
-  //mkdir_write_file,
+  type MaybePromise,
   sleep,
 } from "@yigal/base_types";
 export class Repeater{
-  is_running:boolean=true
+  is_running=true
   private loop=async (f:()=>MaybePromise<void>)=>{
     while (this.is_running) {
       try {
@@ -22,7 +22,7 @@ export class Repeater{
       }
 
       // wait before next run
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await sleep(200)
     }    
   }
   async repeat(f:()=>MaybePromise<void>){
@@ -35,10 +35,10 @@ function keep_only_last<T>(arr: T[]): void {
     arr.splice(0, arr.length - 1);
   }
 }  
-interface RunnerWithReason{
+/*interface RunnerWithReason{
   runner:Runner
   reason:string
-}
+}*/
 type Runs=Record<string,Run[]>
 export interface RunnerReport{
   command: "RunnerReport";
@@ -223,7 +223,7 @@ export class Monitor{
     this.watcher.add_watch("root",path.join(folder.workspace_folder,'package.json'))
     for (const runner of folder.runners){
       const {id,effective_watch}=runner
-      const watched=this.watched[id]===true
+      //const watched=this.watched[id]===true
       //if (runner.watched)
       for (const x of effective_watch)
           this.watcher.add_watch(id,x.full)
@@ -289,5 +289,6 @@ export class Monitor{
     this.watched[runner_id]=!exists
   }
   start_watching(){
+    console.log('start_watching')
   }
 }

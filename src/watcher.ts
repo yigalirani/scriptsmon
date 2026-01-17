@@ -36,7 +36,7 @@ export class Watcher{
     }
   }
   async stop_watching(){ //and clear the 
-    const promises=[...this.watchers].map( x=> x.close())
+    const promises=[...this.watchers].map(async x=> await x.close())
     this.watchers.clear()
     await Promise.all(promises)
   }  
@@ -48,7 +48,7 @@ export class Watcher{
     return changed!=null
   }
   get_changed(watch_id:string):string[]{//return list of paths that have changed
-    return [...(this.id_to_changed_path[watch_id]||new Set())]
+    return [...(this.id_to_changed_path[watch_id]??new Set())]
   }
   clear_changed(){
     this.id_to_changed_path={}

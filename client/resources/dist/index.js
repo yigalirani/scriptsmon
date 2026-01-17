@@ -6119,13 +6119,17 @@ function get_parent_by_class(el2, className) {
   }
   return null;
 }
+function has_classes(el2, classes) {
+  if (el2 == null)
+    return false;
+  return classes.some((c) => el2.classList.contains(c));
+}
 function get_parent_by_classes(el2, className) {
   const classes = Array.isArray(className) ? className : [className];
   let ans = el2;
   while (ans !== null) {
-    if (ans !== null && classes.some((c) => ans.classList.contains(c))) {
+    if (has_classes(ans, classes))
       return ans;
-    }
     ans = ans.parentElement;
   }
   return null;
@@ -6172,7 +6176,7 @@ function path_join(...segments) {
     const tokens = segment.split("/");
     for (const token of tokens) {
       if (token === "" || token === ".") continue;
-      if (token === ".." && parts.length && parts[parts.length - 1] !== "..") {
+      if (token === ".." && parts.length && parts.at(-1) !== "..") {
         parts.pop();
         continue;
       }
@@ -6202,7 +6206,7 @@ function parseIcons(html) {
     if (nameEl && contentEl) {
       const name = nameEl.textContent?.trim();
       const content = contentEl.outerHTML;
-      if (name) {
+      if (name != null) {
         result[name] = content;
       }
     }
@@ -12471,7 +12475,7 @@ function calc_stats_html(new_runner) {
     </tr>`).join("\n");
 }
 function calc_runner_status(report, runner) {
-  const runs = report.runs[runner.id] || [];
+  const runs = report.runs[runner.id] ?? [];
   if (runs.length === 0)
     return { version: 0, state: "ready" };
   const { end_time, run_id: version2, exit_code } = runs.at(-1);
@@ -12508,7 +12512,7 @@ var TerminalPanel = class {
     update_child_html(this.el, ".term_title_watch .value", html);
   }
   update_terminal(report, new_runner) {
-    const runs = report.runs[new_runner.id] || [];
+    const runs = report.runs[new_runner.id] ?? [];
     const { state } = calc_runner_status(report, new_runner);
     const last_run = runs.at(-1);
     if (last_run != null) {
@@ -12675,7 +12679,8 @@ function start() {
       case "set_selected":
         void provider.selected(report, message.selected);
         break;
-      case "updateContent":
+      default:
+        console.log(`unexpected message ${message.command}`);
         break;
     }
   });

@@ -33,6 +33,12 @@ export function get_parent_by_class(el:Element|null,className:string){
   }
   return null
 }
+function has_classes(el: HTMLElement | null,classes:string[]){
+  if (el==null)
+    return false
+  return classes.some(c => el.classList.contains(c))
+}
+
 export function get_parent_by_classes(
   el: HTMLElement,
   className: string | string[]
@@ -41,9 +47,8 @@ export function get_parent_by_classes(
   let ans: HTMLElement | null = el;
 
   while (ans !== null) {
-    if (ans !== null && classes.some(c => ans!.classList.contains(c))) {
+    if (has_classes(ans,classes))
       return ans;
-    }
     ans = ans.parentElement;
   } 
   return null;
@@ -93,7 +98,7 @@ export function path_join(...segments: string[]): string {
     for (const token of tokens) {
       if (token === "" || token === ".") continue;
 
-      if (token === ".." && parts.length && parts[parts.length - 1] !== "..") {
+      if (token === ".." && parts.length && parts.at(-1) !== "..") {
         parts.pop();
         continue;
       }

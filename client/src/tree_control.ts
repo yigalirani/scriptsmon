@@ -28,7 +28,7 @@ function parseIcons(html: string): Record<string, string> {
     if (nameEl && contentEl) {
       const name = nameEl.textContent?.trim();
       const content = contentEl.outerHTML
-      if (name) {
+      if (name!=null) {
         result[name] = content
       }
     }

@@ -8,7 +8,7 @@ import type {s2t} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker,path_join} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,FolderError, Run} from '../../src/data.js';
+import type { Folder,Runner,FolderError} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
 import type {RunnerReport} from '../../src/monitor.js';  
 import ICONS_HTML from '../resources/icons.html'
@@ -165,7 +165,7 @@ function calc_stats_html(new_runner:Runner){
     </tr>`).join('\n')
 }
 function calc_runner_status(report:RunnerReport ,runner:Runner){
-  const runs=report.runs[runner.id]||[]
+  const runs=report.runs[runner.id]??[]
   if (runs.length===0)
     return{version:0,state:'ready'}
   const {end_time,run_id:version,exit_code}=runs.at(-1)!
@@ -209,7 +209,7 @@ class TerminalPanel{
   update_terminal(report:RunnerReport,new_runner:Runner){
     // Update title bar with runner status (always update, even if no runs)
     //const {runs}=new_runner
-    const runs=report.runs[new_runner.id]||[]
+    const runs=report.runs[new_runner.id]??[]
     const {state} = calc_runner_status(report,new_runner)
     const last_run=runs.at(-1)
     if (last_run!=null){
@@ -385,9 +385,9 @@ function start(){
             //upda(document.body,'#selected', message.selected)
             void provider.selected(report!,message.selected)
             break
-          case 'updateContent':
-            //append(message.text||'<no message>')
-            break;
+          default:
+            console.log(`unexpected message ${message.command}`)
+            break
       }
   });
 }

@@ -1,23 +1,11 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-scriptsmon--ls": [
-      {
-        "start_time": 1768606558015,
-        "reason": "c:\\yigal\\scriptsmon\\generated2\\scriptsmon_packages.json",
-        "output": [],
-        "run_id": 13
-      }
-    ]
-  },
+  "runs": {},
   "watched": {
+    "c--yigal-scriptsmon-client--build": true,
     "c--yigal-scriptsmon--test": true,
-    "c--yigal-scriptsmon--build": true,
-    "c--yigal-scriptsmon--tsc": true,
-    "c--yigal-scriptsmon--eslint": true,
-    "c--yigal-scriptsmon--ls": true,
-    "c--yigal-scriptsmon--compile": true,
-    "c--yigal-scriptsmon--vscode-prepublish": true
+    "c--yigal-scriptsmon-client": true,
+    "c--yigal-scriptsmon": true
   },
   "root": {
     "name": "root",

@@ -5858,7 +5858,7 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
     const runner = (function() {
       const workspace_folder = path.dirname(source_file);
       const id = escape_id(`${workspace_folder} ${name}`);
-      const effective_watch_rel = watchers.watches[name] || [];
+      const effective_watch_rel = watchers.watches[name] ?? [];
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(workspace_folder, rel.str) }));
       const watched_default = watchers.autowatch_scripts.includes(name);
       const ans2 = {
@@ -5948,7 +5948,7 @@ async function read_package_json(workspace_folders) {
   const folders = [];
   const promises = [];
   for (const workspace_folder of workspace_folders) {
-    promises.push(read_one(workspace_folder, path.basename(workspace_folder), void 0));
+    promises.push(read_one(workspace_folder, path.basename(workspace_folder)));
   }
   for (const ret of await Promise.all(promises))
     if (ret != null)

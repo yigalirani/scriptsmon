@@ -1,5 +1,5 @@
-import { promises as fs } from "fs";
-import * as path from "path";
+import { promises as fs } from "node:fs";
+import * as path from "node:path";
 
 /**
  * Reads a directory and returns an HTML page that lists each file
@@ -48,6 +48,6 @@ export async function directoryToHtml(dirPath: string,outfile: string) {
   await fs.writeFile(outfile,all)
 }
 
-void directoryToHtml('./client/resources/icons','./client/resources/icons.html')
+await directoryToHtml('./client/resources/icons','./client/resources/icons.html')
 
 

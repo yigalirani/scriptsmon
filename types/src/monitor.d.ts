@@ -1,6 +1,7 @@
 import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import type { Run, Runner, Folder } from './data.js';
 import { Watcher } from './watcher.js';
+import { type MaybePromise } from "@yigal/base_types";
 export declare class Repeater {
     is_running: boolean;
     private loop;

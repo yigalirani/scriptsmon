@@ -6482,7 +6482,7 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
     const runner = (function() {
       const workspace_folder = path.dirname(source_file);
       const id = escape_id(`${workspace_folder} ${name}`);
-      const effective_watch_rel = watchers.watches[name] || [];
+      const effective_watch_rel = watchers.watches[name] ?? [];
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(workspace_folder, rel.str) }));
       const watched_default = watchers.autowatch_scripts.includes(name);
       const ans2 = {
@@ -6572,7 +6572,7 @@ async function read_package_json(workspace_folders) {
   const folders = [];
   const promises = [];
   for (const workspace_folder of workspace_folders) {
-    promises.push(read_one(workspace_folder, path.basename(workspace_folder), void 0));
+    promises.push(read_one(workspace_folder, path.basename(workspace_folder)));
   }
   for (const ret of await Promise.all(promises))
     if (ret != null)
@@ -8390,7 +8390,7 @@ var Watcher = class {
     }
   }
   async stop_watching() {
-    const promises = [...this.watchers].map((x) => x.close());
+    const promises = [...this.watchers].map(async (x) => await x.close());
     this.watchers.clear();
     await Promise.all(promises);
   }
@@ -8402,7 +8402,7 @@ var Watcher = class {
     return changed != null;
   }
   get_changed(watch_id) {
-    return [...this.id_to_changed_path[watch_id] || /* @__PURE__ */ new Set()];
+    return [...this.id_to_changed_path[watch_id] ?? /* @__PURE__ */ new Set()];
   }
   clear_changed() {
     this.id_to_changed_path = {};
@@ -8420,7 +8420,7 @@ var Repeater = class {
       } catch (error) {
         console.error("Error:", error);
       }
-      await new Promise((resolve5) => setTimeout(resolve5, 200));
+      await sleep(200);
     }
   };
   async repeat(f) {
@@ -8592,7 +8592,6 @@ var Monitor = class {
     this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"));
     for (const runner of folder.runners) {
       const { id, effective_watch } = runner;
-      const watched = this.watched[id] === true;
       for (const x of effective_watch)
         this.watcher.add_watch(id, x.full);
     }
@@ -8652,6 +8651,7 @@ var Monitor = class {
     this.watched[runner_id] = !exists;
   }
   start_watching() {
+    console.log("start_watching");
   }
 };
 
@@ -8667,8 +8667,8 @@ import {
   window as window3,
   commands
 } from "vscode";
-function getWebviewContent(context, webview) {
-  const htmlPath = path3.join(context.extensionPath, "client", "resources", "index.html");
+function get_webview_content(context, webview, html_filename) {
+  const htmlPath = path3.join(context.extensionPath, "client", "resources", html_filename);
   let html = fs3.readFileSync(htmlPath, "utf-8");
   const uri = webview.asWebviewUri(
     Uri.joinPath(context.extensionUri, "client", "resources")
@@ -8677,10 +8677,10 @@ function getWebviewContent(context, webview) {
   html = html.replaceAll("./", base);
   return html;
 }
-function define_webview({ context, id, html, f }) {
+function define_webview({ context, id, html_filename, f }) {
   console.log("define_webview");
   const provider = {
-    resolveWebviewView(webviewView, webview_context) {
+    resolveWebviewView(webviewView, _webview_context) {
       console.log("resolveWebviewView");
       webviewView.webview.options = {
         enableScripts: true,
@@ -8688,7 +8688,7 @@ function define_webview({ context, id, html, f }) {
           Uri.file(path3.join(context.extensionPath, "client/resources"))
         ]
       };
-      webviewView.webview.html = getWebviewContent(context, webviewView.webview);
+      webviewView.webview.html = get_webview_content(context, webviewView.webview, html_filename);
       if (f)
         void f(webviewView, context);
     }
@@ -8724,9 +8724,9 @@ async function open_file_row_col(pos) {
       new vscode.Range(position, position),
       vscode.TextEditorRevealType.InCenter
     );
-  } catch (_err) {
+  } catch (ex) {
     vscode.window.showErrorMessage(
-      `Failed to open file: ${pos.source_file}`
+      `Failed to open file: ${pos.source_file} ${get_error(ex).message}`
     );
   }
 }
@@ -8740,15 +8740,15 @@ async function open_file_start_end(pos) {
     });
     if (pos.start == null)
       return;
-    const selection = new vscode.Selection(document.positionAt(pos.start), document.positionAt(pos.end || pos.start));
+    const selection = new vscode.Selection(document.positionAt(pos.start), document.positionAt(pos.end ?? pos.start));
     editor.selection = selection;
     editor.revealRange(
       selection,
       vscode.TextEditorRevealType.InCenter
     );
-  } catch (_err) {
+  } catch (ex) {
     vscode.window.showErrorMessage(
-      `Failed to open file: ${pos.source_file}`
+      `Failed to open file: ${pos.source_file} ${get_error(ex)}.message`
     );
   }
 }
@@ -8804,7 +8804,7 @@ async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");
   const workspace_folders = (function() {
-    const ans = (vscode2.workspace.workspaceFolders || []).map((x) => x.uri.fsPath);
+    const ans = (vscode2.workspace.workspaceFolders ?? []).map((x) => x.uri.fsPath);
     if (ans.length === 0)
       return [String.raw`c:\yigal\scriptsmon`];
     return ans;
@@ -8815,7 +8815,7 @@ async function activate(context) {
   const monitor = new Monitor(workspace_folders);
   await monitor.run();
   const the_loop = make_loop_func(monitor);
-  define_webview({ context, id: "Scriptsmon.webview", html: "client/resources/index.html", f: the_loop });
+  define_webview({ context, id: "Scriptsmon.webview", html_filename: "index.html", f: the_loop });
   register_command(context, "Scriptsmon.startWatching", () => {
     monitor.start_watching();
     outputChannel.append("start watching");

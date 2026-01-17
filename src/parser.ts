@@ -234,7 +234,7 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
     const runner=function(){
       const workspace_folder=path.dirname(source_file)
       const id=escape_id(`${workspace_folder} ${name}`)
-      const effective_watch_rel=watchers.watches[name]||[]
+      const effective_watch_rel=watchers.watches[name]??[]
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(workspace_folder,rel.str)}))
       const watched_default=watchers.autowatch_scripts.includes(name)
       const ans:Runner= {
@@ -269,7 +269,7 @@ export async function read_package_json(
   workspace_folders: string[]
 ) {
   const folder_index: Record<string, Folder> = {}; //by full_pathname
-  async function read_one(workspace_folder: string,name:string,pos:Pos|undefined):Promise<Folder>{
+  async function read_one(workspace_folder: string,name:string,pos?:Pos):Promise<Folder>{
     const ans:Folder= {
         runners:[],
         folders:[],
@@ -328,7 +328,7 @@ export async function read_package_json(
   const promises=[]
   for (const workspace_folder of workspace_folders){
     //const full_pathname=path.resolve(pathname)
-    promises.push(read_one(workspace_folder,path.basename(workspace_folder),undefined))
+    promises.push(read_one(workspace_folder,path.basename(workspace_folder)))
   }
   for (const ret of await Promise.all(promises))
     if (ret!=null)
