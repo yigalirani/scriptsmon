@@ -6438,7 +6438,7 @@ var TreeControl = class {
     const { checkbox_state, default_checkbox_state, id } = node;
     if (this.selected_id === id)
       ans.add("selected");
-    if (checkbox_state === true)
+    if (default_checkbox_state != null)
       ans.add("chk_visible");
     if (default_checkbox_state !== checkbox_state)
       ans.add("chk_different");

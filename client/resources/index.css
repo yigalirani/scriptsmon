@@ -281,7 +281,7 @@ span.term_title_watch{
 .tree_checkbox {
   width: 16px;
   height: 16px;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
@@ -292,6 +292,9 @@ span.term_title_watch{
   /* Official VS Code Colors */
   background: var(--vscode-checkbox-background);
   border: 1px solid var(--vscode-checkbox-border);
+}
+.chk_visible>.label_row>.tree_checkbox{
+  display: flex;
 }
 .tree_checkbox.diffrent::before{
   content: "";

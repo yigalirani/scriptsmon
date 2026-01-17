@@ -2,10 +2,7 @@
   "ipty": "<skipped>",
   "runs": {},
   "watched": {
-    "c--yigal-scriptsmon-client--build": true,
-    "c--yigal-scriptsmon--test": true,
-    "c--yigal-scriptsmon-client": true,
-    "c--yigal-scriptsmon": true
+    "c--yigal-scriptsmon-client--build": false
   },
   "root": {
     "name": "root",
