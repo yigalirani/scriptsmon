@@ -56,6 +56,9 @@ export class Watcher{
       reason:'initial',
     }
   }
+  set_started(id:string){
+    this.started.add(id)
+  }
   get_reasons(monitored:Set<string>){ //id:string
     const ans=[]
     for (const id of monitored){

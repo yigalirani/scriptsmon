@@ -9,35 +9,11 @@ import {Watcher} from './watcher.js'
 import {
   type MaybePromise,
   sleep,
+  toggle_set,
+  Repeater
 } from "@yigal/base_types";
 
-function toggle_set<T>(set:Set<T>,value:T){
-  if (set.has(value)) {
-    set.delete(value);
-  } else {
-    set.add(value);
-  }
-}
-export class Repeater{
-  is_running=true
-  private loop=async (f:()=>MaybePromise<void>)=>{
-    while (this.is_running) {
-      try {
-        await f();
-        //console.log(result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
 
-      // wait before next run
-      await sleep(200)
-    }    
-  }
-  async repeat(f:()=>MaybePromise<void>){
-    await f();
-    void this.loop(f)
-  }
-}
 function keep_only_last<T>(arr: T[]): void {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -87,7 +63,7 @@ export class Monitor{
   root?:Folder
   watcher=new Watcher()
   //monitored_runners:Runner[]=[]
-  repeater=new Repeater()
+  repeater=new Repeater(200)
   constructor(
     public workspace_folders:string[]    
   ){}

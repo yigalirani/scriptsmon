@@ -11,3 +11,11 @@ export declare class CtrlTracker {
     constructor();
 }
 export declare function path_join(...segments: string[]): string;
+interface VSCodeApi {
+    postMessage(message: unknown): void;
+    getState(): unknown;
+    setState(state: unknown): void;
+}
+export declare const vscode: VSCodeApi;
+export declare const ctrl: CtrlTracker;
+export {};

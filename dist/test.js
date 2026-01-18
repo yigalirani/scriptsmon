@@ -5669,7 +5669,7 @@ async function run_tests(...tests) {
         if (match?.length === 2)
           return match[1];
       }
-      return;
+      return "function";
     })();
     try {
       const ret = f();

@@ -1,0 +1,60 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [],
+        "folders": [],
+        "name": "ben",
+        "workspace_folder": "c:\\ben",
+        "id": "c--ben",
+        "need_ctl": true,
+        "errors": [
+          {
+            "pos": {
+              "source_file": "c:\\ben\\package.json"
+            },
+            "id": "c--benerror",
+            "need_ctl": false,
+            "message": "ENOENT: no such file or directory, open 'c:\\ben\\package.json'"
+          }
+        ]
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\ben\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\ben\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>"
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\ben"
+  ]
+}

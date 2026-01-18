@@ -10,6 +10,7 @@ export declare class Watcher {
     stop_watching(): Promise<void>;
     initial_or_changed(watch_id: string): boolean;
     private get_reason;
+    set_started(id: string): void;
     get_reasons(monitored: Set<string>): {
         runner_id: string;
         reason: string;

@@ -269,11 +269,9 @@ export class TreeControl<T>{
     return ans
   }
   //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
-  private async set_selected(el:HTMLElement){
-    const {id}=el
+  private async set_selected(id:string){
     this.selected_id=id
-    await this.provider.selected(this.root!,el.id)
-    //await this.on_selected_changed(el.id)
+    await this.provider.selected(this.root!,id)
   }
   private command_clicked(evt:Event){
     if (evt.target==null)
@@ -324,9 +322,9 @@ export class TreeControl<T>{
       if (clicked==null)
         return
       const {id}=clicked
-      this.selected_id=id
       if (!command_clicked&&clicked.classList.contains('tree_folder')) //if clicked command than don  change collpased status because dual action is annoing
         toggle_set(this.collapsed,id)
+      void this.set_selected(id)
     })
     parent.addEventListener('keydown',(evt)=>{
       if (!(evt.target instanceof HTMLElement))
@@ -341,14 +339,14 @@ export class TreeControl<T>{
           const prev=element_for_up_arrow(selected)
           if (! (prev instanceof HTMLElement))
             return
-          void this.set_selected(prev)         
+          void this.set_selected(prev.id)         
          break
         }
         case 'ArrowDown':{
           const prev=element_for_down_arrow(selected)
           if (prev==null)
             return
-          void this.set_selected(prev)
+          void this.set_selected(prev.id)
           break
         }
         case 'ArrowRight':

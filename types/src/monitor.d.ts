@@ -1,12 +1,7 @@
 import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import type { Run, Runner, Folder } from './data.js';
 import { Watcher } from './watcher.js';
-import { type MaybePromise } from "@yigal/base_types";
-export declare class Repeater {
-    is_running: boolean;
-    private loop;
-    repeat(f: () => MaybePromise<void>): Promise<void>;
-}
+import { Repeater } from "@yigal/base_types";
 type Runs = Record<string, Run[]>;
 export interface RunnerReport {
     command: "RunnerReport";

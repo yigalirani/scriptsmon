@@ -117,3 +117,12 @@ export function path_join(...segments: string[]): string {
   if (absolute) return `/${ans}`;
   return ans || ".";
 }
+interface VSCodeApi {
+  postMessage(message: unknown): void;
+  getState(): unknown;
+  setState(state: unknown): void;
+}
+declare function acquireVsCodeApi(): VSCodeApi;
+export const vscode = acquireVsCodeApi();
+
+export const ctrl=new CtrlTracker()

@@ -6305,6 +6305,33 @@ function default_get(obj, k, maker) {
   }
   return obj[k];
 }
+var Repeater = class {
+  constructor(delay = 200) {
+    this.delay = delay;
+  }
+  is_running = true;
+  loop = async (f) => {
+    while (this.is_running) {
+      try {
+        await f();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      await sleep(200);
+    }
+  };
+  async repeat(f) {
+    await f();
+    void this.loop(f);
+  }
+};
+function toggle_set(set, value) {
+  if (set.has(value)) {
+    set.delete(value);
+  } else {
+    set.add(value);
+  }
+}
 
 // src/parser.ts
 function is_acorn_error(e) {
@@ -8405,7 +8432,7 @@ var Watcher = class {
   get_reason = (id) => {
     const all_changed = this.get_changed(id);
     const changed = all_changed[0];
-    if (changed !== null)
+    if (changed != null)
       return {
         runner_id: id,
         reason: `changed:${changed}`
@@ -8417,6 +8444,9 @@ var Watcher = class {
       reason: "initial"
     };
   };
+  set_started(id) {
+    this.started.add(id);
+  }
   get_reasons(monitored) {
     const ans = [];
     for (const id of monitored) {
@@ -8436,30 +8466,6 @@ var Watcher = class {
 
 // src/monitor.ts
 var fs2 = await import("node:fs/promises");
-function toggle_set(set, value) {
-  if (set.has(value)) {
-    set.delete(value);
-  } else {
-    set.add(value);
-  }
-}
-var Repeater = class {
-  is_running = true;
-  loop = async (f) => {
-    while (this.is_running) {
-      try {
-        await f();
-      } catch (error) {
-        console.error("Error:", error);
-      }
-      await sleep(200);
-    }
-  };
-  async repeat(f) {
-    await f();
-    void this.loop(f);
-  }
-};
 function keep_only_last(arr) {
   if (arr.length > 1) {
     arr.splice(0, arr.length - 1);
@@ -8498,7 +8504,7 @@ var Monitor = class {
   root;
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
-  repeater = new Repeater();
+  repeater = new Repeater(200);
   async run() {
     return await this.repeater.repeat(this.iter);
   }

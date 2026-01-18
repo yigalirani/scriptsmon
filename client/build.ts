@@ -7,11 +7,12 @@ async function call_build(){
       bundle: true,
       platform: "node",
       format: "esm",
-      sourcemap: true,
+      sourcemap: 'inline',
       minify: false,
         loader: {
         '.html': 'text',
       },
+      sourcesContent: true,  // ✅ helps DevTools      
     })
     console.log("Build complete");
   }catch(ex){
