@@ -8370,6 +8370,7 @@ function add(data2, id, value) {
   default_get(data2, id, new_set).add(value);
 }
 var Watcher = class {
+  started = /* @__PURE__ */ new Set();
   id_to_changed_path = {};
   //watch id to list of paths
   id_to_watching_path = {};
@@ -8401,6 +8402,30 @@ var Watcher = class {
     const changed = this.id_to_changed_path[watch_id];
     return changed != null;
   }
+  get_reason = (id) => {
+    const all_changed = this.get_changed(id);
+    const changed = all_changed[0];
+    if (changed !== null)
+      return {
+        runner_id: id,
+        reason: `changed:${changed}`
+      };
+    if (this.started.has(id))
+      return;
+    return {
+      runner_id: id,
+      reason: "initial"
+    };
+  };
+  get_reasons(monitored) {
+    const ans = [];
+    for (const id of monitored) {
+      const reason = this.get_reason(id);
+      if (reason != null)
+        ans.push(reason);
+    }
+    return ans;
+  }
   get_changed(watch_id) {
     return [...this.id_to_changed_path[watch_id] ?? /* @__PURE__ */ new Set()];
   }
@@ -8411,6 +8436,13 @@ var Watcher = class {
 
 // src/monitor.ts
 var fs2 = await import("node:fs/promises");
+function toggle_set(set, value) {
+  if (set.has(value)) {
+    set.delete(value);
+  } else {
+    set.add(value);
+  }
+}
 var Repeater = class {
   is_running = true;
   loop = async (f) => {
@@ -8462,7 +8494,7 @@ var Monitor = class {
   }
   ipty = {};
   runs = {};
-  monitored = {};
+  monitored = /* @__PURE__ */ new Set();
   root;
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
@@ -8498,7 +8530,7 @@ var Monitor = class {
       root: this.get_root(),
       base_uri,
       runs,
-      monitored: this.monitored
+      monitored: [...this.monitored]
     };
   }
   async stop({
@@ -8603,23 +8635,6 @@ var Monitor = class {
     const to_write = to_json(this, ["ipty", "watchers"]);
     await mkdir_write_file(filename, to_write, true);
   }
-  get_reason(id) {
-    const changed = this.watcher.get_changed(id);
-    if (changed[0] !== null)
-      return changed[0];
-    if (this.watcher.initial_or_changed(id))
-      return "inital";
-  }
-  get_changed_runners(monitored_runners) {
-    const ans = [];
-    for (const runner of monitored_runners) {
-      const { id } = runner;
-      const reason = this.get_reason(id);
-      if (reason != null)
-        ans.push({ runner_id: id, reason });
-    }
-    return ans;
-  }
   iter = async () => {
     if (this.watcher.initial_or_changed("root")) {
       await this.watcher.stop_watching();
@@ -8628,8 +8643,7 @@ var Monitor = class {
       this.root = new_root;
       this.watcher.start_watching();
     }
-    const monitored_runners = this.find_runners(this.root, (x) => this.monitored[x.id] === true);
-    const changed = this.get_changed_runners(monitored_runners);
+    const changed = this.watcher.get_reasons(this.monitored);
     this.watcher.clear_changed();
     for (const x of changed)
       void this.run_runner(x);
@@ -8647,8 +8661,7 @@ var Monitor = class {
     await this.run_runner2({ runner, reason });
   }
   toggle_watch_state(runner_id) {
-    const exists = this.monitored[runner_id] === true;
-    this.monitored[runner_id] = !exists;
+    toggle_set(this.monitored, runner_id);
   }
   start_watching() {
     console.log("start_watching");

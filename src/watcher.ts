@@ -1,14 +1,6 @@
 import * as chokidar from 'chokidar'; //{watch,FSWatcher}
 import {default_get} from '@yigal/base_types'
 
-/*interface OneWatcher{
-  fs_watcher:chokidar.FSWatcher|undefined
-  watch_id_set:Set<string>
-}
-function make_OneWatcher():OneWatcher{
-  return {fs_watcher:undefined,watch_id_set:new Set<string>}
-}
-  */
 function new_set(){
   return new Set<string>
 }
@@ -17,11 +9,11 @@ function add(data:Record<string,Set<string>>,id:string,value:string){
 }
 
 export class Watcher{
+  started=new Set<string>
   id_to_changed_path     : Record<string, Set<string> > = {}  //watch id to list of paths
   id_to_watching_path    : Record<string, Set<string>>  = {}  //watch id to list of paths
   watching_path_to_id    :Record<string,  Set<string>>  = {}
   watchers         = new Set< chokidar.FSWatcher> 
-
   add_watch(watch_id:string,path:string){//can have multiple watchers per k
     add(this.id_to_watching_path,watch_id,path)
     add(this.watching_path_to_id,path,watch_id)
@@ -47,43 +39,36 @@ export class Watcher{
     const changed=this.id_to_changed_path[watch_id]
     return changed!=null
   }
+  private get_reason=(id:string)=>{
+  //get_reason(id:string){
+    const all_changed=this.get_changed(id)
+    const changed=all_changed[0]
+    if (changed!==null)
+      return {
+          runner_id:id,
+          reason:`changed:${changed}`,
+          
+      }
+    if (this.started.has(id))
+      return
+    return {
+      runner_id:id,
+      reason:'initial',
+    }
+  }
+  get_reasons(monitored:Set<string>){ //id:string
+    const ans=[]
+    for (const id of monitored){
+      const reason=this.get_reason(id)
+      if (reason!=null)
+        ans.push(reason)
+    }
+    return ans
+  }
   get_changed(watch_id:string):string[]{//return list of paths that have changed
     return [...(this.id_to_changed_path[watch_id]??new Set())]
   }
   clear_changed(){
     this.id_to_changed_path={}
   }
-
-    
-
 }
-/*
-  watch_to_set(watched_dirs:Set<string>,changed_dirs:Set<string>){
-    for (const watched_dir of watched_dirs){
-      try{
-        console.log(`watching ${watched_dir}`)
-        chokidar.watch(watched_dir).on('change', (changed_file) =>{
-        //fsSync.watch(watched_dir,{},(eventType, changed_file) => {
-          changed_dirs.add(watched_dir)
-          console.log(`changed: *${watched_dir}/${changed_file} `)
-        }) 
-      }catch(ex){
-        console.warn(`file not found, ignoring ${watched_dir}: ${String(ex)}`)  
-      }
-    }
-  }
-  get_runners_by_changed_dirs(root:Folder,changed_dirs:Set<string>){
-    const ans:RunnerWithReason[]=[]
-    function f(node:Folder){
-      const {folders,runners}=node
-      folders.forEach(f);
-      for (const runner of runners){
-        if (runner.watched)
-          for (const {full} of runner.effective_watch)
-            if (changed_dirs.has(full))
-              ans.push({runner,reason:full})
-      }
-    }
-    f(root)
-    return Object.values(ans)
-  }*/

@@ -13,14 +13,14 @@ export interface RunnerReport {
     root: Folder;
     base_uri: string;
     runs: Runs;
-    monitored: Record<string, boolean>;
+    monitored: string[];
 }
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
 export declare class Monitor {
     workspace_folders: string[];
     ipty: Record<string, IPty>;
     runs: Runs;
-    monitored: Record<string, boolean>;
+    monitored: Set<string>;
     root?: Folder;
     watcher: Watcher;
     repeater: Repeater;
@@ -41,11 +41,6 @@ export declare class Monitor {
     calc_one_debug_name: (workspace_folder: string) => string;
     add_watch: (folder: Folder) => void;
     dump_debug(): Promise<void>;
-    get_reason(id: string): string | undefined;
-    get_changed_runners(monitored_runners: Runner[]): {
-        runner_id: string;
-        reason: string;
-    }[];
     iter: () => Promise<void>;
     get_root(): Folder;
     run_runner({ runner_id, reason }: {

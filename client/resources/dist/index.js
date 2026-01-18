@@ -12572,7 +12572,7 @@ function get_terminals(report, terminals) {
 function convert(report) {
   function convert_runner(runner) {
     const { script, id, name, watched_default } = runner;
-    const watched = report.monitored[id] === true;
+    const watched = report.monitored.includes(id);
     const { version: version2, state } = calc_runner_status(report, runner);
     const className = watched ? "watched" : void 0;
     return {

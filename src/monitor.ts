@@ -10,6 +10,14 @@ import {
   type MaybePromise,
   sleep,
 } from "@yigal/base_types";
+
+function toggle_set<T>(set:Set<T>,value:T){
+  if (set.has(value)) {
+    set.delete(value);
+  } else {
+    set.add(value);
+  }
+}
 export class Repeater{
   is_running=true
   private loop=async (f:()=>MaybePromise<void>)=>{
@@ -45,7 +53,7 @@ export interface RunnerReport{
   root:Folder,
   base_uri:string,
   runs:Runs,
-  monitored:Record<string,boolean>
+  monitored:string[]
 }
 
 async function read_file(filename:string){
@@ -75,7 +83,7 @@ export async function mkdir_write_file(filePath:string,data:string,cache=false){
 export class Monitor{
   ipty:Record<string,IPty>={}
   runs:Runs={} 
-  monitored:Record<string,boolean>={}
+  monitored=new Set<string>
   root?:Folder
   watcher=new Watcher()
   //monitored_runners:Runner[]=[]
@@ -115,7 +123,7 @@ export class Monitor{
       root:this.get_root(),
       base_uri,
       runs,
-      monitored:this.monitored
+      monitored:[...this.monitored]
     }
   }
   async  stop({
@@ -237,23 +245,6 @@ export class Monitor{
     const to_write=to_json(this,["ipty","watchers"])
     await mkdir_write_file(filename,to_write,true)
   }
-  get_reason(id:string){
-    const changed=this.watcher.get_changed(id)
-    if (changed[0]!==null)
-      return changed[0]
-    if (this.watcher.initial_or_changed(id))
-      return 'inital' 
-  }
-  get_changed_runners(monitored_runners:Runner[]){
-    const ans=[]
-    for (const runner of monitored_runners){
-      const {id}=runner
-      const reason=this.get_reason(id)
-      if (reason!=null)
-        ans.push({runner_id:id,reason})
-    }
-    return ans
-  }
   iter=async ()=>{
     if (this.watcher.initial_or_changed('root')){
       await this.watcher.stop_watching() //does not clear the changed 
@@ -262,8 +253,7 @@ export class Monitor{
       this.root=new_root
       this.watcher.start_watching() //based on add watcg from before
     }
-    const monitored_runners=this.find_runners(this.root!,(x)=>this.monitored[x.id]===true)
-    const changed=this.get_changed_runners(monitored_runners)
+    const changed=this.watcher.get_reasons(this.monitored)
     this.watcher.clear_changed()
     for (const x of changed)
       void this.run_runner(x)
@@ -285,8 +275,7 @@ export class Monitor{
   }
   toggle_watch_state(runner_id:string){
     //const runner=find_runner(this.get_root(),runner_id)
-    const exists=this.monitored[runner_id]===true
-    this.monitored[runner_id]=!exists
+    toggle_set(this.monitored,runner_id)
   }
   start_watching(){
     console.log('start_watching')
