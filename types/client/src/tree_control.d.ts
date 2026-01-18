@@ -1,4 +1,3 @@
-import type { s2s } from '@yigal/base_types';
 type MaybePromise<T> = T | Promise<T>;
 export interface TreeNode {
     type: 'item' | 'folder';
@@ -21,24 +20,24 @@ export interface TreeDataProvider<T> {
     animated: string;
 }
 export declare class TreeControl<T> {
-    parent: HTMLElement;
-    provider: TreeDataProvider<T>;
-    base_uri: string;
-    icons: s2s;
-    root: T | undefined;
-    id_last_changed: Record<string, number>;
-    collapsed: Set<string>;
-    selected_id: string;
-    converted: TreeNode | undefined;
-    id_to_class: Record<string, string>;
-    calc_node_class(node: TreeNode): string;
-    apply_classes(): void;
-    create_node_element(node: TreeNode, margin: number, parent?: HTMLElement): HTMLElement;
-    set_selected(el: HTMLElement): Promise<void>;
-    command_clicked(evt: Event): boolean;
-    mark_changed(id: string): void;
+    private parent;
+    private provider;
+    private base_uri;
+    private icons;
+    private root;
+    private id_last_changed;
+    private collapsed;
+    private selected_id;
+    private converted;
+    private id_to_class;
+    private calc_node_class;
+    private apply_classes;
+    private create_node_element;
+    private set_selected;
+    private command_clicked;
+    private mark_changed;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
-    create_node(parent: HTMLElement, node: TreeNode, depth: number): void;
+    private create_node;
     render(root: T, base_uri: string): void;
 }
 export {};

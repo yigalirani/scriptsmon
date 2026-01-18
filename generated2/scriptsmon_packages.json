@@ -1,18 +1,7 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-scriptsmon--build": [
-      {
-        "start_time": 1768732382708,
-        "reason": "changed:undefined",
-        "output": [],
-        "run_id": 32
-      }
-    ]
-  },
-  "monitored": [
-    "c--yigal-scriptsmon--build"
-  ],
+  "runs": {},
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",

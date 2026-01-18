@@ -204,17 +204,17 @@ function toggle_set<T>(set:Set<T>,value:T){
 }
 
 export class TreeControl<T>{
-  public base_uri=''
-  icons:s2s
-  root:T|undefined
-  id_last_changed:Record<string,number>={}
+  private base_uri=''
+  private icons:s2s
+  private root:T|undefined
+  private id_last_changed:Record<string,number>={}
   //selected:string|boolean=false
   //last_root:T|undefined
-  collapsed=new Set<string>()
-  selected_id=''
-  converted:TreeNode|undefined
-  id_to_class:Record<string,string>={}
-  calc_node_class(node:TreeNode){
+  private collapsed=new Set<string>()
+  private selected_id=''
+  private converted:TreeNode|undefined
+  private id_to_class:Record<string,string>={}
+  private calc_node_class(node:TreeNode){
     const ans=new Set<string>([`tree_${node.type}`])
     const {checkbox_state,default_checkbox_state,id}=node
     if (this.selected_id===id)
@@ -231,23 +231,23 @@ export class TreeControl<T>{
       ans.add('collapsed')
     return [...ans].join(' ')
   }
-  apply_classes(){
+  private apply_classes(){
     const f=(a:TreeNode)=>{
       const {id,children}=a
       const new_class=this.calc_node_class(a)
       if (this.id_to_class[id]!==new_class){
         this.id_to_class[id]=new_class
-        update_class_name(document.body,`#${id}`,new_class)
+        update_class_name(this.parent,`#${id}`,new_class)
       }
       children.map(f)
     }
     if (this.converted)
       f(this.converted)
-    update_child_html(document.body,".chk_checked>.label_row .tree_checkbox",check_svg)
-    update_child_html(document.body,".chk_unchecked>.label_row .tree_checkbox",'')
+    update_child_html(this.parent,".chk_checked>.label_row .tree_checkbox",check_svg)
+    update_child_html(this.parent,".chk_unchecked>.label_row .tree_checkbox",'')
   }
   //collapsed_set:Set<string>=new Set()
-  create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
+  private create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
     const {type,id,description,label,icon,commands}=node
     const children=(type==='folder')?`<div class=children></div>`:''
@@ -269,13 +269,13 @@ export class TreeControl<T>{
     return ans
   }
   //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
-  async set_selected(el:HTMLElement){
+  private async set_selected(el:HTMLElement){
     const {id}=el
     this.selected_id=id
     await this.provider.selected(this.root!,el.id)
     //await this.on_selected_changed(el.id)
   }
-  command_clicked(evt:Event){
+  private command_clicked(evt:Event){
     if (evt.target==null)
       return false
     const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','tree_checkbox'])
@@ -291,12 +291,12 @@ export class TreeControl<T>{
     void this.provider.command(this.root,id,command)
     return true
   }
-  mark_changed(id:string){
+  private mark_changed(id:string){
     this.id_last_changed[id]=Date.now()
   }
   constructor(
-    public parent:HTMLElement,
-    public provider:TreeDataProvider<T>
+    private parent:HTMLElement,
+    private provider:TreeDataProvider<T>
   ){
     this.icons=parseIcons(this.provider.icons_html)
     setInterval(()=>{//todo: detect if parent is dismounted and exit this interval
@@ -364,7 +364,7 @@ export class TreeControl<T>{
       }
     })    
   }
-  create_node(parent:HTMLElement,node:TreeNode,depth:number){ //todo: compare to last by id to add change animation?
+  private create_node(parent:HTMLElement,node:TreeNode,depth:number){ //todo: compare to last by id to add change animation?
     const children_el=(()=>{
       if (depth===0)
         return create_element('<div class=children></div>',parent)

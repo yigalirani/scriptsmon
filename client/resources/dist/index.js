@@ -6456,14 +6456,14 @@ var TreeControl = class {
       const new_class = this.calc_node_class(a);
       if (this.id_to_class[id] !== new_class) {
         this.id_to_class[id] = new_class;
-        update_class_name(document.body, `#${id}`, new_class);
+        update_class_name(this.parent, `#${id}`, new_class);
       }
       children.map(f);
     };
     if (this.converted)
       f(this.converted);
-    update_child_html(document.body, ".chk_checked>.label_row .tree_checkbox", check_svg);
-    update_child_html(document.body, ".chk_unchecked>.label_row .tree_checkbox", "");
+    update_child_html(this.parent, ".chk_checked>.label_row .tree_checkbox", check_svg);
+    update_child_html(this.parent, ".chk_unchecked>.label_row .tree_checkbox", "");
   }
   //collapsed_set:Set<string>=new Set()
   create_node_element(node, margin, parent) {
