@@ -43,7 +43,7 @@ export class Watcher{
   //get_reason(id:string){
     const all_changed=this.get_changed(id)
     const changed=all_changed[0]
-    if (changed!==null)
+    if (changed!=null)
       return {
           runner_id:id,
           reason:`changed:${changed}`,

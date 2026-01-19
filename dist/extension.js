@@ -8567,6 +8567,7 @@ var Monitor = class {
       const { workspace_folder, name } = runner;
       const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
       const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
+      this.watcher.set_started(runner.id);
       const child = spawn(shell, shellArgs, {
         // name: 'xterm-color',
         cols: 200,
