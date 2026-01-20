@@ -1,4 +1,4 @@
-type MaybePromise<T> = T | Promise<T>;
+import { type MaybePromise } from '@yigal/base_types';
 export interface TreeNode {
     type: 'item' | 'folder';
     label: string;
@@ -40,4 +40,3 @@ export declare class TreeControl<T> {
     private create_node;
     render(root: T, base_uri: string): void;
 }
-export {};

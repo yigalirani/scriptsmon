@@ -1,0 +1,60 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [],
+        "folders": [],
+        "name": "calculator",
+        "workspace_folder": "c:\\yigal\\calculator",
+        "id": "c--yigal-calculator",
+        "need_ctl": true,
+        "errors": [
+          {
+            "pos": {
+              "source_file": "c:\\yigal\\calculator\\package.json"
+            },
+            "id": "c--yigal-calculatorerror",
+            "need_ctl": false,
+            "message": "ENOENT: no such file or directory, open 'c:\\yigal\\calculator\\package.json'"
+          }
+        ]
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\calculator\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\calculator\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>"
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\calculator"
+  ]
+}

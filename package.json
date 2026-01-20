@@ -21,43 +21,40 @@
         "biome": "biome lint",
         "vsce":"vsce package"
     },
-    "workspaces": [
+    "workspaces": [ 
         "client"
     ],
     "activationEvents": [
       "onStartupFinished"
     ],
     "scriptsmon": {
-        "autowatch": {
-            "$build": [
-                "src",
-                "package.json",
-                "./bin/run_build.ts"
-            ],
-            "$lint": [
-                "$build",
-                "client/src",
-                "tsconfig.json",
-                "eslint.config.mjs"
-            ],
-            "eslint": "$lint",
-            "test": "./dist/test.js",
-            "build": "$build",
-            "tsc": "$lint",
-            "oxlint,oxlinttypeaware": [
-                "$lint",
-                ".oxlintrc.json"
-            ],
-            "biome": [
-                "$lint",
-                "biome.json"
-            ]
-        },
-        "watch": {
-            "ls": [
-                "."
-            ]
-        }
+      "$build": [
+        "src",
+        "package.json",
+        "./bin/run_build.ts"
+      ],
+      "$lint": [
+        "$build",
+        "client/src",
+        "tsconfig.json",
+        "eslint.config.mjs"
+      ],
+      "eslint": "$lint",
+      "test": "./dist/test.js",
+      "build": "$build",
+      "tsc": "$lint",
+      "oxlint,oxlinttypeaware": [
+        "$lint",
+        ".oxlintrc.json"
+      ],
+      "biome": [
+        "$lint",
+        "biome.json"
+      ],
+      "lss": [
+        "."
+      ],
+      "#recomended-reverse":["ls"]
     },
     "keywords": [],
     "contributes": {

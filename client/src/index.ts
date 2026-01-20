@@ -11,7 +11,7 @@ import {make_terminals} from './terminals.js'
 
 function convert(report:RunnerReport):TreeNode{
   function convert_runner(runner:Runner):TreeNode{
-      const {script,id,name,watched_default}=runner
+      const {script,id,name,effective_watch}=runner
       const watched=report.monitored.includes(id)
       const {version,state}=calc_runner_status(report,runner)
       const className=(watched?'watched':undefined)
@@ -27,7 +27,7 @@ function convert(report:RunnerReport):TreeNode{
         version,
         className,
         checkbox_state: watched,
-        default_checkbox_state: watched_default        
+        default_checkbox_state: effective_watch.length>0||undefined
     }
   }
   function convert_error(root:FolderError):TreeNode{

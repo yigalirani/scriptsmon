@@ -1,7 +1,5 @@
-import type { s2t,s2s} from '@yigal/base_types'
+import  { type s2t,type s2s,toggle_set,type MaybePromise} from '@yigal/base_types'
 import {get_parent_by_class,create_element,divs,get_parent_by_classes,update_class_name,update_child_html} from './dom_utils.js'
-type MaybePromise<T>=T|Promise<T>
-
 export interface TreeNode{
   type                   : 'item'|'folder'   //is this needed?
   label                  : string,
@@ -37,7 +35,14 @@ function parseIcons(html: string): Record<string, string> {
   console.log({iconnames})
   return result;
 }
+interface Toggle{
+  name:string
+  on:string
+  off:string
+  none:string
+}
 export interface TreeDataProvider<T>{
+  //toggle:Array<Toggle>
   convert: (root:T)=>TreeNode
   command:(root:T,id:string,command:string)=>MaybePromise<void>
   selected:(root:T,id:string)=>MaybePromise<void>
@@ -175,41 +180,13 @@ function element_for_down_arrow(selected:HTMLElement){
       return ans
     cur=parent
   }
-  //return get_next_selected(selected)
-  //return a
-  //if (ans==null)
-  //  return get_parent_by_class(selected,'tree_folder')
 }
-/*function getBaseName(path: string): string {
-  // Extract last path segment
-  const fileName = path.split(/[/\\]/).pop() || "";
-  // Remove extension (last dot and everything after)
-  const lastDot = fileName.lastIndexOf(".");
-  return lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
-}*/
-/*function is_html_element(el:Node|null){
-    return el instanceof HTMLElement||el instanceof SVGElement
-  }
- function begin_element(node:SVGAnimateElement){
-  node.beginElement()
-  console.log('node.beginElement()')
- }*/
 const check_svg=`<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/></svg>`
-function toggle_set<T>(set:Set<T>,value:T){
-  if (set.has(value)) {
-    set.delete(value);
-  } else {
-    set.add(value);
-  }
-}
-
 export class TreeControl<T>{
   private base_uri=''
   private icons:s2s
   private root:T|undefined
   private id_last_changed:Record<string,number>={}
-  //selected:string|boolean=false
-  //last_root:T|undefined
   private collapsed=new Set<string>()
   private selected_id=''
   private converted:TreeNode|undefined
