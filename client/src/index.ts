@@ -10,7 +10,6 @@ import ICONS_HTML from '../resources/icons.html'
 import {make_terminals} from './terminals.js'
 
 function convert(report:RunnerReport):TreeNode{
-  let counter=0
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch}=runner
       const watched=function(){
@@ -19,9 +18,7 @@ function convert(report:RunnerReport):TreeNode{
         return report.monitored.includes(id)
       }()
       const {version,state}=calc_runner_status(report,runner)
-      //const className=(watched?'watched':undefined)
-      counter++
-      const selector=[false,undefined,true][counter%3]
+      //const className=(watched?'watched':undefined
       return {
         type:'item',
         id,
@@ -33,7 +30,7 @@ function convert(report:RunnerReport):TreeNode{
         icon_version:
         version,
         className:undefined,
-        toggles: {watched,selector},
+        toggles: {watched},
         //default_checkbox_state: effective_watch.length>0||undefined
     }
   }
@@ -75,7 +72,7 @@ function convert(report:RunnerReport):TreeNode{
 
 function make_provider(terminals:ReturnType<typeof make_terminals>):TreeDataProvider<RunnerReport>{
   return {
-    toggle_order:['selector','watched'],
+    toggle_order:['watched'],
     convert,
     command(root,id,command_name,){
       post_message({
