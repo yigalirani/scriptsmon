@@ -10,24 +10,31 @@ import ICONS_HTML from '../resources/icons.html'
 import {make_terminals} from './terminals.js'
 
 function convert(report:RunnerReport):TreeNode{
+  let counter=0
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch}=runner
-      const watched=report.monitored.includes(id)
+      const watched=function(){
+        if (effective_watch.length===0)
+          return
+        return report.monitored.includes(id)
+      }()
       const {version,state}=calc_runner_status(report,runner)
-      const className=(watched?'watched':undefined)
+      //const className=(watched?'watched':undefined)
+      counter++
+      const selector=[false,undefined,true][counter%3]
       return {
         type:'item',
         id,
         label:name,
-        commands:['play','debug'],
+        commands:['play','debug'], 
         children:[],
         description:script,
         icon:state,
         icon_version:
         version,
-        className,
-        checkbox_state: watched,
-        default_checkbox_state: effective_watch.length>0||undefined
+        className:undefined,
+        toggles: {watched,selector},
+        //default_checkbox_state: effective_watch.length>0||undefined
     }
   }
   function convert_error(root:FolderError):TreeNode{
@@ -41,9 +48,7 @@ function convert(report:RunnerReport):TreeNode{
         icon_version:1,
         commands:[],
         className:"warning",
-        checkbox_state: undefined,
-        default_checkbox_state: undefined    
-       
+        toggles: {},
     }
 
   }  
@@ -62,15 +67,15 @@ function convert(report:RunnerReport):TreeNode{
         icon,
         icon_version:0,
         className:undefined,
-        checkbox_state: undefined,
-        default_checkbox_state: undefined            
-    }
+        toggles: {}
+      }
   }
   return convert_folder(report.root)
 }
 
 function make_provider(terminals:ReturnType<typeof make_terminals>):TreeDataProvider<RunnerReport>{
   return {
+    toggle_order:['selector','watched'],
     convert,
     command(root,id,command_name,){
       post_message({

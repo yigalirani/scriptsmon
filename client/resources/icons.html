@@ -11,7 +11,7 @@
   <button id=animatebutton>animate</button>
   <button id=animatebutton_the_done>animatebutton_the_done</button>
   <div class="icon">error
-    <svg class=error width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="red">
+    <svg class=error width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="red">
       <!-- Circle -->
       <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="transparent" />
       <!-- X -->
@@ -118,14 +118,30 @@
     </svg>
   </div>
 
-  <div class="icon">undefined
+
+  <div class="icon">selector_undefined
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-      <circle cx="8" cy="8" r="6.5" stroke="white" stroke-width="1" />
-      <path d="M8 4.25c1.19 0 2.1.77 2.1 1.86 0 .86-.47 1.32-1.05 1.8-.52.42-.78.69-.78 1.27v.22"
-        stroke="var(--icon-color)" stroke-width="1" stroke-linecap="round" />
-      <circle cx="8" cy="11.4" r="0.75" fill="currentColor" />
-    </svg>
-  </div>
+      <path d="M 0 0 H 16 V 16 H0 V0"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="2,4"/>
+      </svg>
+  </div> 
+
+  <div class="icon">selector_false
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+      <path d="M 0 0 H 16 V 16 H0 V0"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+  </div>   
+
+  <div class="icon">selector_true
+    <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 16 16">
+      <path d="M 0 0 H 16 V 16 H0 V0"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path stroke="currentColor" d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/>
+      </svg>
+
+  </div>   
+
 
 </body>
 <script src="./icons.js"></script>

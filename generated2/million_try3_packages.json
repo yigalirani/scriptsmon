@@ -1,0 +1,608 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "biome lint",
+              "start": 231,
+              "end": 259,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "biome",
+            "script": "biome lint",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "main/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 543,
+                  "end": 553
+                },
+                "full": "c:\\yigal\\million_try3\\main\\src"
+              },
+              {
+                "rel": {
+                  "str": "converter/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 563,
+                  "end": 578
+                },
+                "full": "c:\\yigal\\million_try3\\converter\\src"
+              },
+              {
+                "rel": {
+                  "str": "filesrvr/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 588,
+                  "end": 602
+                },
+                "full": "c:\\yigal\\million_try3\\filesrvr\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 612,
+                  "end": 626
+                },
+                "full": "c:\\yigal\\million_try3\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 636,
+                  "end": 651
+                },
+                "full": "c:\\yigal\\million_try3\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.settings.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 661,
+                  "end": 685
+                },
+                "full": "c:\\yigal\\million_try3\\tsconfig.settings.json"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 721,
+                  "end": 733
+                },
+                "full": "c:\\yigal\\million_try3\\biome.json"
+              }
+            ],
+            "id": "c--yigal-million_try3--biome"
+          },
+          {
+            "pos": {
+              "str": "eslint . --color",
+              "start": 265,
+              "end": 299,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "eslint . --color",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "main/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 543,
+                  "end": 553
+                },
+                "full": "c:\\yigal\\million_try3\\main\\src"
+              },
+              {
+                "rel": {
+                  "str": "converter/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 563,
+                  "end": 578
+                },
+                "full": "c:\\yigal\\million_try3\\converter\\src"
+              },
+              {
+                "rel": {
+                  "str": "filesrvr/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 588,
+                  "end": 602
+                },
+                "full": "c:\\yigal\\million_try3\\filesrvr\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 612,
+                  "end": 626
+                },
+                "full": "c:\\yigal\\million_try3\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 636,
+                  "end": 651
+                },
+                "full": "c:\\yigal\\million_try3\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.settings.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 661,
+                  "end": 685
+                },
+                "full": "c:\\yigal\\million_try3\\tsconfig.settings.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 803,
+                  "end": 822
+                },
+                "full": "c:\\yigal\\million_try3\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-million_try3--eslint"
+          },
+          {
+            "pos": {
+              "str": "eslint .",
+              "start": 305,
+              "end": 331,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint_plain",
+            "script": "eslint .",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [],
+            "id": "c--yigal-million_try3--eslint_plain"
+          },
+          {
+            "pos": {
+              "str": "oxlint --type-aware",
+              "start": 337,
+              "end": 374,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint",
+            "script": "oxlint --type-aware",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "main/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 543,
+                  "end": 553
+                },
+                "full": "c:\\yigal\\million_try3\\main\\src"
+              },
+              {
+                "rel": {
+                  "str": "converter/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 563,
+                  "end": 578
+                },
+                "full": "c:\\yigal\\million_try3\\converter\\src"
+              },
+              {
+                "rel": {
+                  "str": "filesrvr/src",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 588,
+                  "end": 602
+                },
+                "full": "c:\\yigal\\million_try3\\filesrvr\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 612,
+                  "end": 626
+                },
+                "full": "c:\\yigal\\million_try3\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 636,
+                  "end": 651
+                },
+                "full": "c:\\yigal\\million_try3\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.settings.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 661,
+                  "end": 685
+                },
+                "full": "c:\\yigal\\million_try3\\tsconfig.settings.json"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\million_try3\\package.json",
+                  "start": 760,
+                  "end": 776
+                },
+                "full": "c:\\yigal\\million_try3\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-million_try3--oxlint"
+          },
+          {
+            "pos": {
+              "str": "oxlint",
+              "start": 380,
+              "end": 404,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint_plain",
+            "script": "oxlint",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [],
+            "id": "c--yigal-million_try3--oxlint_plain"
+          },
+          {
+            "pos": {
+              "str": "oxlint --type-aware --print-config",
+              "start": 410,
+              "end": 462,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint_config",
+            "script": "oxlint --type-aware --print-config",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [],
+            "id": "c--yigal-million_try3--oxlint_config"
+          },
+          {
+            "pos": {
+              "str": "tsc --build",
+              "start": 468,
+              "end": 497,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsc",
+            "script": "tsc --build",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [],
+            "id": "c--yigal-million_try3--tsc"
+          }
+        ],
+        "folders": [
+          {
+            "runners": [
+              {
+                "pos": {
+                  "str": "node build.mjs",
+                  "start": 132,
+                  "end": 157,
+                  "source_file": "c:\\yigal\\million_try3\\converter\\package.json"
+                },
+                "need_ctl": true,
+                "name": "build",
+                "script": "node build.mjs",
+                "workspace_folder": "c:\\yigal\\million_try3\\converter",
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "src",
+                      "source_file": "c:\\yigal\\million_try3\\converter\\package.json",
+                      "start": 193,
+                      "end": 198
+                    },
+                    "full": "c:\\yigal\\million_try3\\converter\\src"
+                  },
+                  {
+                    "rel": {
+                      "str": "build.mjs",
+                      "source_file": "c:\\yigal\\million_try3\\converter\\package.json",
+                      "start": 199,
+                      "end": 210
+                    },
+                    "full": "c:\\yigal\\million_try3\\converter\\build.mjs"
+                  },
+                  {
+                    "rel": {
+                      "str": "package.json",
+                      "source_file": "c:\\yigal\\million_try3\\converter\\package.json",
+                      "start": 211,
+                      "end": 225
+                    },
+                    "full": "c:\\yigal\\million_try3\\converter\\package.json"
+                  }
+                ],
+                "id": "c--yigal-million_try3-converter--build"
+              }
+            ],
+            "folders": [],
+            "name": "converter",
+            "workspace_folder": "c:\\yigal\\million_try3\\converter",
+            "id": "c--yigal-million_try3-converter",
+            "pos": {
+              "str": "converter",
+              "source_file": "c:\\yigal\\million_try3\\package.json",
+              "start": 167,
+              "end": 178
+            },
+            "need_ctl": true,
+            "errors": []
+          },
+          {
+            "runners": [
+              {
+                "pos": {
+                  "str": "node --watch-path ../converter/dist/index.js --watch-path src build.ts",
+                  "start": 71,
+                  "end": 158,
+                  "source_file": "c:\\yigal\\million_try3\\main\\package.json"
+                },
+                "need_ctl": true,
+                "name": "watch_build",
+                "script": "node --watch-path ../converter/dist/index.js --watch-path src build.ts",
+                "workspace_folder": "c:\\yigal\\million_try3\\main",
+                "effective_watch": [],
+                "id": "c--yigal-million_try3-main--watch_build"
+              }
+            ],
+            "folders": [],
+            "name": "main",
+            "workspace_folder": "c:\\yigal\\million_try3\\main",
+            "id": "c--yigal-million_try3-main",
+            "pos": {
+              "str": "main",
+              "source_file": "c:\\yigal\\million_try3\\package.json",
+              "start": 184,
+              "end": 190
+            },
+            "need_ctl": true,
+            "errors": []
+          },
+          {
+            "runners": [
+              {
+                "pos": {
+                  "str": "node build.mjs",
+                  "start": 135,
+                  "end": 160,
+                  "source_file": "c:\\yigal\\million_try3\\filesrvr\\package.json"
+                },
+                "need_ctl": true,
+                "name": "build",
+                "script": "node build.mjs",
+                "workspace_folder": "c:\\yigal\\million_try3\\filesrvr",
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "src",
+                      "source_file": "c:\\yigal\\million_try3\\filesrvr\\package.json",
+                      "start": 234,
+                      "end": 239
+                    },
+                    "full": "c:\\yigal\\million_try3\\filesrvr\\src"
+                  },
+                  {
+                    "rel": {
+                      "str": "build.mjs",
+                      "source_file": "c:\\yigal\\million_try3\\filesrvr\\package.json",
+                      "start": 240,
+                      "end": 251
+                    },
+                    "full": "c:\\yigal\\million_try3\\filesrvr\\build.mjs"
+                  }
+                ],
+                "id": "c--yigal-million_try3-filesrvr--build"
+              },
+              {
+                "pos": {
+                  "str": "node dist/index.js",
+                  "start": 166,
+                  "end": 195,
+                  "source_file": "c:\\yigal\\million_try3\\filesrvr\\package.json"
+                },
+                "need_ctl": true,
+                "name": "run",
+                "script": "node dist/index.js",
+                "workspace_folder": "c:\\yigal\\million_try3\\filesrvr",
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "dist/index.js",
+                      "source_file": "c:\\yigal\\million_try3\\filesrvr\\package.json",
+                      "start": 270,
+                      "end": 285
+                    },
+                    "full": "c:\\yigal\\million_try3\\filesrvr\\dist\\index.js"
+                  }
+                ],
+                "id": "c--yigal-million_try3-filesrvr--run"
+              }
+            ],
+            "folders": [],
+            "name": "filesrvr",
+            "workspace_folder": "c:\\yigal\\million_try3\\filesrvr",
+            "id": "c--yigal-million_try3-filesrvr",
+            "pos": {
+              "str": "filesrvr",
+              "source_file": "c:\\yigal\\million_try3\\package.json",
+              "start": 196,
+              "end": 206
+            },
+            "need_ctl": true,
+            "errors": []
+          }
+        ],
+        "name": "million_try3",
+        "workspace_folder": "c:\\yigal\\million_try3",
+        "id": "c--yigal-million_try3",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\million_try3\\package.json",
+        "c:\\yigal\\million_try3\\converter\\package.json",
+        "c:\\yigal\\million_try3\\main\\package.json",
+        "c:\\yigal\\million_try3\\filesrvr\\package.json"
+      ],
+      "c--yigal-million_try3--biome": [
+        "c:\\yigal\\million_try3\\main\\src",
+        "c:\\yigal\\million_try3\\converter\\src",
+        "c:\\yigal\\million_try3\\filesrvr\\src",
+        "c:\\yigal\\million_try3\\package.json",
+        "c:\\yigal\\million_try3\\tsconfig.json",
+        "c:\\yigal\\million_try3\\tsconfig.settings.json",
+        "c:\\yigal\\million_try3\\biome.json"
+      ],
+      "c--yigal-million_try3--eslint": [
+        "c:\\yigal\\million_try3\\main\\src",
+        "c:\\yigal\\million_try3\\converter\\src",
+        "c:\\yigal\\million_try3\\filesrvr\\src",
+        "c:\\yigal\\million_try3\\package.json",
+        "c:\\yigal\\million_try3\\tsconfig.json",
+        "c:\\yigal\\million_try3\\tsconfig.settings.json",
+        "c:\\yigal\\million_try3\\eslint.config.mjs"
+      ],
+      "c--yigal-million_try3--oxlint": [
+        "c:\\yigal\\million_try3\\main\\src",
+        "c:\\yigal\\million_try3\\converter\\src",
+        "c:\\yigal\\million_try3\\filesrvr\\src",
+        "c:\\yigal\\million_try3\\package.json",
+        "c:\\yigal\\million_try3\\tsconfig.json",
+        "c:\\yigal\\million_try3\\tsconfig.settings.json",
+        "c:\\yigal\\million_try3\\.oxlintrc.json"
+      ],
+      "c--yigal-million_try3-converter--build": [
+        "c:\\yigal\\million_try3\\converter\\src",
+        "c:\\yigal\\million_try3\\converter\\build.mjs",
+        "c:\\yigal\\million_try3\\converter\\package.json"
+      ],
+      "c--yigal-million_try3-filesrvr--build": [
+        "c:\\yigal\\million_try3\\filesrvr\\src",
+        "c:\\yigal\\million_try3\\filesrvr\\build.mjs"
+      ],
+      "c--yigal-million_try3-filesrvr--run": [
+        "c:\\yigal\\million_try3\\filesrvr\\dist\\index.js"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\million_try3\\package.json": [
+        "root",
+        "c--yigal-million_try3--biome",
+        "c--yigal-million_try3--eslint",
+        "c--yigal-million_try3--oxlint"
+      ],
+      "c:\\yigal\\million_try3\\main\\src": [
+        "c--yigal-million_try3--biome",
+        "c--yigal-million_try3--eslint",
+        "c--yigal-million_try3--oxlint"
+      ],
+      "c:\\yigal\\million_try3\\converter\\src": [
+        "c--yigal-million_try3--biome",
+        "c--yigal-million_try3--eslint",
+        "c--yigal-million_try3--oxlint",
+        "c--yigal-million_try3-converter--build"
+      ],
+      "c:\\yigal\\million_try3\\filesrvr\\src": [
+        "c--yigal-million_try3--biome",
+        "c--yigal-million_try3--eslint",
+        "c--yigal-million_try3--oxlint",
+        "c--yigal-million_try3-filesrvr--build"
+      ],
+      "c:\\yigal\\million_try3\\tsconfig.json": [
+        "c--yigal-million_try3--biome",
+        "c--yigal-million_try3--eslint",
+        "c--yigal-million_try3--oxlint"
+      ],
+      "c:\\yigal\\million_try3\\tsconfig.settings.json": [
+        "c--yigal-million_try3--biome",
+        "c--yigal-million_try3--eslint",
+        "c--yigal-million_try3--oxlint"
+      ],
+      "c:\\yigal\\million_try3\\biome.json": [
+        "c--yigal-million_try3--biome"
+      ],
+      "c:\\yigal\\million_try3\\eslint.config.mjs": [
+        "c--yigal-million_try3--eslint"
+      ],
+      "c:\\yigal\\million_try3\\.oxlintrc.json": [
+        "c--yigal-million_try3--oxlint"
+      ],
+      "c:\\yigal\\million_try3\\converter\\package.json": [
+        "root",
+        "c--yigal-million_try3-converter--build"
+      ],
+      "c:\\yigal\\million_try3\\converter\\build.mjs": [
+        "c--yigal-million_try3-converter--build"
+      ],
+      "c:\\yigal\\million_try3\\main\\package.json": [
+        "root"
+      ],
+      "c:\\yigal\\million_try3\\filesrvr\\package.json": [
+        "root"
+      ],
+      "c:\\yigal\\million_try3\\filesrvr\\build.mjs": [
+        "c--yigal-million_try3-filesrvr--build"
+      ],
+      "c:\\yigal\\million_try3\\filesrvr\\dist\\index.js": [
+        "c--yigal-million_try3-filesrvr--run"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\million_try3"
+  ]
+}

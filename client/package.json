@@ -5,13 +5,13 @@
         "build": "node build.ts"
     },
     "scriptsmon": {
-        "autowatch": {
-            "build": [
-              "build.ts", 
-              "src",
-              "package.json"
-            ]
-        }
+      "autowatch": {
+        "build": [
+          "build.ts", 
+          "src",
+          "package.json"
+        ]
+      }
     },
     "devDependencies": {
         "@types/chrome": "^0.0.277",

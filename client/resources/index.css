@@ -263,6 +263,11 @@ span.term_title_watch{
   width: 16px;
   height: 16px;
 }
+.toggles_icons  svg{
+  width: 16px;
+  height: 16px;
+}
+
 
 .icon{
   background-color: transparent;

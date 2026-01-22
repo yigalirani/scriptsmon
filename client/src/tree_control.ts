@@ -9,9 +9,10 @@ export interface TreeNode{
   description           ?: string
   commands               : string[]          //hard codded commmand: checkbox clicked
   children               : TreeNode[]
-  icon_version           : number
-  checkbox_state         : boolean|undefined
-  default_checkbox_state : boolean|undefined
+  icon_version           : number,
+  toggles                : Record<string,boolean|undefined>
+  //checkbox_state         : boolean|undefined
+  //default_checkbox_state : boolean|undefined
 }
 function parseIcons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
@@ -35,14 +36,9 @@ function parseIcons(html: string): Record<string, string> {
   console.log({iconnames})
   return result;
 }
-interface Toggle{
-  name:string
-  on:string
-  off:string
-  none:string
-}
+
 export interface TreeDataProvider<T>{
-  //toggle:Array<Toggle>
+  toggle_order:Array<string>
   convert: (root:T)=>TreeNode
   command:(root:T,id:string,command:string)=>MaybePromise<void>
   selected:(root:T,id:string)=>MaybePromise<void>
@@ -190,20 +186,15 @@ export class TreeControl<T>{
   private collapsed=new Set<string>()
   private selected_id=''
   private converted:TreeNode|undefined
-  private id_to_class:Record<string,string>={}
   private calc_node_class(node:TreeNode){
-    const ans=new Set<string>([`tree_${node.type}`])
-    const {checkbox_state,default_checkbox_state,id}=node
+    const {id,type,toggles}=node    
+    const ans=new Set<string>([`tree_${type}`])
+    for (const k of this.provider.toggle_order){
+      const cls=`${k}_${toggles[k]}`
+      ans.add(cls)
+    } 
     if (this.selected_id===id)
       ans.add('selected')
-    if (default_checkbox_state!=null)
-      ans.add('chk_visible')
-    if (default_checkbox_state!==checkbox_state)
-      ans.add('chk_different')
-    if (checkbox_state===true)
-      ans.add('chk_checked')
-    else
-      ans.add('chk_unchecked')
     if (this.collapsed.has(id))
       ans.add('collapsed')
     return [...ans].join(' ')
@@ -212,29 +203,37 @@ export class TreeControl<T>{
     const f=(a:TreeNode)=>{
       const {id,children}=a
       const new_class=this.calc_node_class(a)
-      if (this.id_to_class[id]!==new_class){
-        this.id_to_class[id]=new_class
-        update_class_name(this.parent,`#${id}`,new_class)
-      }
+      update_class_name(this.parent,`#${id}`,new_class)
       children.map(f)
     }
     if (this.converted)
       f(this.converted)
-    update_child_html(this.parent,".chk_checked>.label_row .tree_checkbox",check_svg)
-    update_child_html(this.parent,".chk_unchecked>.label_row .tree_checkbox",'')
+    /*
+    loop over toggle_order and to update
+    **/
+    for (const toggle of  this.provider.toggle_order){
+      for (const state of [true,false,undefined]){
+        const selector=`.${toggle}_${state}>.label_row #${toggle}.toggle_icon`
+        const icon_name=`${toggle}_${state}`
+        update_child_html(this.parent,selector,this.icons[icon_name]??'')
+      }
+    }
+    //update_child_html(this.parent,".label_row .tree_checkbox",check_svg)
+    //update_child_html(this.parent,".chk_unchecked>.label_row .tree_checkbox",'')
   }
   //collapsed_set:Set<string>=new Set()
   private create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
     const {type,id,description,label,icon,commands}=node
     const children=(type==='folder')?`<div class=children></div>`:''
-    const  commands_icons=commands.map(cmd=>`<div class=command_icon id=${cmd}>${icons[cmd]}</div>`).join('')
+    const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
+    const  toggles_icons=this.provider.toggle_order.map(x=>`<div class="toggle_icon" id=${x}></div>`).join('')
     this.mark_changed(id)
     const node_class=this.calc_node_class(node)
     const ans= create_element(` 
   <div  class="${node_class}" id="${id}" >
     <div  class="label_row">
-      <div id='checkbox_clicked' class="tree_checkbox"></div>
+      ${divs({toggles_icons})}
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,description})}
@@ -276,7 +275,7 @@ export class TreeControl<T>{
     this.icons=parseIcons(this.provider.icons_html)
     setInterval(()=>{//todo: detect if parent is dismounted and exit this interval
       this.apply_classes()
-      for (const [id,time] of Object.entries(this.id_last_changed)){
+      for (const [id,time] of Object.entries(this.id_last_changed)){ //animate
         const selector=this.provider.animated.split(',').map(x=>`#${id} ${x}`).join(',')
         const element = parent.querySelectorAll<SVGElement>(selector);
         for ( const anim of element){ 

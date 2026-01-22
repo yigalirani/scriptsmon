@@ -85,8 +85,8 @@ export  async function activate(context: vscode.ExtensionContext) {
     const ans= (vscode.workspace.workspaceFolders??[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
 //      return ['c:/yigal/myfastifyapp']
-      return [String.raw`c:\yigal\scriptsmon`]
-      //return ['c:/yigal/million_try3']
+      //return [String.raw`c:\yigal\scriptsmon`]
+      return [String.raw`c:\yigal\million_try3`]
       return ans
   }()
   if (workspace_folders==null) 

@@ -166,6 +166,26 @@ interface Watchers{
   watches:s2t<Lstr[]>,
   autowatch_scripts:string[]  
 }
+function collect_vars(ast:Expression|undefined,source_file:string){
+  const vars:s2t<Lstr[]>={}
+  const scripts=new Set<string>   
+  //const ans={vars,scripts}
+  if (ast==null)
+    return vars
+  if (ast.type!=='ObjectExpression')
+    return vars
+  for (const propast of ast.properties){
+    const {key,value}=read_prop_any(propast)
+    const ar=get_array(value,source_file)
+    if (vars[key]!==undefined)
+      throw new AstException(`duplicate value: ${key}`,propast)
+    for (const subk of key.split(',')){ //so multiple scripts can easily have the save watched
+      scripts.add(subk)
+      vars[subk]=ar
+    }
+  }
+  return vars
+}
 function parse_watchers(
   ast: Expression,
   source_file:string
@@ -177,32 +197,12 @@ function parse_watchers(
       autowatch_scripts:[]
     }
   }
-  const autowatch=find_prop(scriptsmon,'autowatch')
-  const watch=find_prop(scriptsmon,'watch')
-  const vars:s2t<Lstr[]>={}
-  const scripts=new Set<string>
-  function collect_vars(ast:Expression|undefined){
-    if (ast==null)
-      return
-    if (ast.type!=='ObjectExpression')
-      return    
-    for (const propast of ast.properties){
-      const {key,value}=read_prop_any(propast)
-      const ar=get_array(value,source_file)
-      if (vars[key]!==undefined)
-        throw new AstException(`duplicate value: ${key}`,propast)
-      for (const subk of key.split(',')){ //so multiple scripts can easily have the save watched
-        scripts.add(subk)
-        vars[subk]=ar
-      }
-    }
-  }
-  collect_vars(autowatch)
-  const autowatch_scripts=[...scripts]
-  collect_vars(watch)
+  //const autowatch=find_prop(scriptsmon,'autowatch')
+  //const watch=find_prop(scriptsmon,'watch')
+  const vars=collect_vars(scriptsmon,source_file)
   return {
     watches:resolve_vars(vars,ast),
-    autowatch_scripts
+    autowatch_scripts:[]
   }
 }
 function parse_scripts2(
@@ -267,7 +267,7 @@ function calc_pos(ex:Error){
 }
 export async function read_package_json(
   workspace_folders: string[]
-) {
+):Promise<Folder> {
   const folder_index: Record<string, Folder> = {}; //by full_pathname
   async function read_one(workspace_folder: string,name:string,pos?:Pos):Promise<Folder>{
     const ans:Folder= {
@@ -346,36 +346,7 @@ export async function read_package_json(
   }
   return root
 }
-
-/*function prep_to_json(v:unknown){
-  const seen=new WeakSet()
-  function f(v:unknown){
-    if (v==null||is_atom(v))
-      return v
-    if (seen.has(
-  if (v instanceof Set)
-    return [...v].map(prep_to_json)
-}
-export function to_json(x:unknown,skip_keys:string[]=[]){
-  function set_replacer(k:string,v:unknown){
-    if (typeof v === "function")
-      return '<function>'
-
-    if (skip_keys.includes(k))
-      return '<skipped>'
-    if (v instanceof Set)
-      return [...v] as unknown
-
-    if (v!=null&&!Array.isArray(v) && !is_object(v) &&!is_atom(v))
-      return '<unhnown type>'    
-    if 
-    return v 
-  }  
-  const ans=JSON.stringify(x,set_replacer,2).replace(/\\n/g, '\n');
-  return ans
-}
-*/
-export function no_cycles(x:unknown){
+function no_cycles(x:unknown){
    const ws=new WeakSet
    function f(v:unknown):unknown{
     if (typeof v === "function")

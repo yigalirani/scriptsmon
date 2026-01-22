@@ -5796,6 +5796,25 @@ function resolve_vars(vars, ast) {
   }
   return ans;
 }
+function collect_vars(ast, source_file) {
+  const vars = {};
+  const scripts = /* @__PURE__ */ new Set();
+  if (ast == null)
+    return vars;
+  if (ast.type !== "ObjectExpression")
+    return vars;
+  for (const propast of ast.properties) {
+    const { key, value } = read_prop_any(propast);
+    const ar = get_array(value, source_file);
+    if (vars[key] !== void 0)
+      throw new AstException(`duplicate value: ${key}`, propast);
+    for (const subk of key.split(",")) {
+      scripts.add(subk);
+      vars[subk] = ar;
+    }
+  }
+  return vars;
+}
 function parse_watchers(ast, source_file) {
   const scriptsmon = find_prop(ast, "scriptsmon");
   if (scriptsmon == null) {
@@ -5804,32 +5823,10 @@ function parse_watchers(ast, source_file) {
       autowatch_scripts: []
     };
   }
-  const autowatch = find_prop(scriptsmon, "autowatch");
-  const watch = find_prop(scriptsmon, "watch");
-  const vars = {};
-  const scripts = /* @__PURE__ */ new Set();
-  function collect_vars(ast2) {
-    if (ast2 == null)
-      return;
-    if (ast2.type !== "ObjectExpression")
-      return;
-    for (const propast of ast2.properties) {
-      const { key, value } = read_prop_any(propast);
-      const ar = get_array(value, source_file);
-      if (vars[key] !== void 0)
-        throw new AstException(`duplicate value: ${key}`, propast);
-      for (const subk of key.split(",")) {
-        scripts.add(subk);
-        vars[subk] = ar;
-      }
-    }
-  }
-  collect_vars(autowatch);
-  const autowatch_scripts = [...scripts];
-  collect_vars(watch);
+  const vars = collect_vars(scriptsmon, source_file);
   return {
     watches: resolve_vars(vars, ast),
-    autowatch_scripts
+    autowatch_scripts: []
   };
 }
 function parse_scripts2(ast, source_file) {
@@ -5860,7 +5857,6 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
       const id = escape_id(`${workspace_folder} ${name}`);
       const effective_watch_rel = watchers.watches[name] ?? [];
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(workspace_folder, rel.str) }));
-      const watched_default = watchers.autowatch_scripts.includes(name);
       const ans2 = {
         //ntype:'runner',
         pos: script,
@@ -5869,7 +5865,7 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
         script: script.str,
         workspace_folder,
         effective_watch,
-        watched_default,
+        //watched_default,
         id
         //watched:false
       };
