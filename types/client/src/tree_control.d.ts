@@ -9,7 +9,7 @@ export interface TreeNode {
     commands: string[];
     children: TreeNode[];
     icon_version: number;
-    toggles: Record<string, boolean | undefined>;
+    toggles: Record<string, boolean | "missing">;
     tags: string[];
 }
 export interface TreeDataProvider<T> {

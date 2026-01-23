@@ -267,6 +267,24 @@ span.term_title_watch{
   width: 16px;
   height: 16px;
 }
+.toggles_icons{
+  position: absolute;
+}
+
+.watched_true > .label_row #watched svg{
+  color: darkorange;
+}
+.watched_false > .label_row #watched{
+  color: gray;
+}
+.watched_false > .label_row #watched:hover{
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+.watched_undefined > .label_row path{
+  fill:lightyellow
+}
 
 
 .icon{
@@ -379,4 +397,7 @@ span.term_title_watch{
     display         : inline;
     border          : 1px solid #440c8a;
     color           : black;
+}
+.toggles_icon{
+    width: 16px;
 }

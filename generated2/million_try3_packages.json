@@ -1,10 +1,30 @@
 {
   "ipty": "<skipped>",
   "runs": {
+    "c--yigal-million_try3--eslint": [
+      {
+        "start_time": 1769202778197,
+        "end_time": 1769202781552,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 2,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3-converter--build": [
+      {
+        "start_time": 1769202788993,
+        "end_time": 1769202791916,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
     "c--yigal-million_try3-filesrvr--build": [
       {
-        "start_time": 1769188344026,
-        "end_time": 1769188347318,
+        "start_time": 1769202853238,
+        "end_time": 1769202855572,
         "reason": "initial",
         "output": [],
         "exit_code": 0,
@@ -13,16 +33,16 @@
     ],
     "c--yigal-million_try3-filesrvr--run": [
       {
-        "start_time": 1769188352659,
+        "start_time": 1769202853956,
         "reason": "initial",
         "output": [],
         "run_id": 0
       }
     ],
-    "c--yigal-million_try3--biome": [
+    "c--yigal-million_try3--oxlint": [
       {
-        "start_time": 1769188353773,
-        "end_time": 1769188356332,
+        "start_time": 1769202866238,
+        "end_time": 1769202868508,
         "reason": "initial",
         "output": [],
         "exit_code": 0,
@@ -31,9 +51,11 @@
     ]
   },
   "monitored": [
+    "c--yigal-million_try3--eslint",
+    "c--yigal-million_try3-converter--build",
     "c--yigal-million_try3-filesrvr--build",
     "c--yigal-million_try3-filesrvr--run",
-    "c--yigal-million_try3--biome"
+    "c--yigal-million_try3--oxlint"
   ],
   "root": {
     "name": "root",
@@ -539,9 +561,11 @@
   },
   "watcher": {
     "started": [
+      "c--yigal-million_try3--eslint",
+      "c--yigal-million_try3-converter--build",
       "c--yigal-million_try3-filesrvr--build",
       "c--yigal-million_try3-filesrvr--run",
-      "c--yigal-million_try3--biome"
+      "c--yigal-million_try3--oxlint"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {

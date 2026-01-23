@@ -10,7 +10,7 @@ export interface TreeNode{
   commands               : string[]          //hard codded commmand: checkbox clicked
   children               : TreeNode[]
   icon_version           : number,
-  toggles                : Record<string,boolean|undefined>
+  toggles                : Record<string,boolean|"missing">
   tags:                  string[]
   //checkbox_state         : boolean|undefined
   //default_checkbox_state : boolean|undefined
