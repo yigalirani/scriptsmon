@@ -44,6 +44,7 @@ export interface Runner extends RunnerBase{
   //growing
   //watched_default: boolean
   effective_watch: Filename[]
+  tags:string[]
 }
 export interface FolderError extends RunnerBase{
   //ntype         : 'folder_error'

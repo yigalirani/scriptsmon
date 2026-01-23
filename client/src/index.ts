@@ -11,7 +11,7 @@ import {make_terminals} from './terminals.js'
 
 function convert(report:RunnerReport):TreeNode{
   function convert_runner(runner:Runner):TreeNode{
-      const {script,id,name,effective_watch}=runner
+      const {script,id,name,effective_watch,tags}=runner
       const watched=function(){
         if (effective_watch.length===0)
           return
@@ -31,6 +31,7 @@ function convert(report:RunnerReport):TreeNode{
         version,
         className:undefined,
         toggles: {watched},
+        tags
         //default_checkbox_state: effective_watch.length>0||undefined
     }
   }
@@ -46,6 +47,7 @@ function convert(report:RunnerReport):TreeNode{
         commands:[],
         className:"warning",
         toggles: {},
+        tags:[]
     }
 
   }  
@@ -64,7 +66,8 @@ function convert(report:RunnerReport):TreeNode{
         icon,
         icon_version:0,
         className:undefined,
-        toggles: {}
+        toggles: {},
+        tags:[]
       }
   }
   return convert_folder(report.root)

@@ -5694,6 +5694,13 @@ Summary:  all ${passed} passed`);
     console.log(`
 Summary:  ${failed} failed, ${passed} passed`);
 }
+function default_get(obj, k, maker) {
+  const exists = obj[k];
+  if (exists == null) {
+    obj[k] = maker();
+  }
+  return obj[k];
+}
 
 // src/parser.ts
 function is_acorn_error(e) {
@@ -5815,18 +5822,34 @@ function collect_vars(ast, source_file) {
   }
   return vars;
 }
+function make_empty_array() {
+  return [];
+}
 function parse_watchers(ast, source_file) {
   const scriptsmon = find_prop(ast, "scriptsmon");
   if (scriptsmon == null) {
     return {
       watches: {},
-      autowatch_scripts: []
+      tags: {}
     };
   }
   const vars = collect_vars(scriptsmon, source_file);
+  const watches = resolve_vars(vars, ast);
+  const tags = (function() {
+    const ans = {};
+    for (const [k, ar] of Object.entries(watches)) {
+      if (k.startsWith("#")) {
+        const tag = k.slice(1);
+        for (const script of ar) {
+          default_get(ans, script.str, make_empty_array).push(tag);
+        }
+      }
+    }
+    return ans;
+  })();
   return {
-    watches: resolve_vars(vars, ast),
-    autowatch_scripts: []
+    watches,
+    tags
   };
 }
 function parse_scripts2(ast, source_file) {
@@ -5857,6 +5880,7 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
       const id = escape_id(`${workspace_folder} ${name}`);
       const effective_watch_rel = watchers.watches[name] ?? [];
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(workspace_folder, rel.str) }));
+      const tags = watchers.tags[name] || [];
       const ans2 = {
         //ntype:'runner',
         pos: script,
@@ -5866,7 +5890,8 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
         workspace_folder,
         effective_watch,
         //watched_default,
-        id
+        id,
+        tags
         //watched:false
       };
       return ans2;

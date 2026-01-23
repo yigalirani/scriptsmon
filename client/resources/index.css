@@ -27,7 +27,7 @@ h1 {
     margin: 0 auto;
     display: flex;
     flex-direction: row;
-    width:300px;
+    width:500px;
 }
 .terms_container{
   flex:1;
@@ -369,4 +369,14 @@ span.term_title_watch{
 .term_title_duration .ms {
   color: #888;        /* subtle gray */
   font-size: 0.9em;   /* optional */
+}
+.tag{
+    margin-left     : 5px;
+    margin-right    : 5px;
+    padding-left    : 2px;
+    padding-right   : 2px;
+    background-color: #4d54e2;
+    display         : inline;
+    border          : 1px solid #440c8a;
+    color           : black;
 }

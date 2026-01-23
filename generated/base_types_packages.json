@@ -1,72 +1,24 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-base_types--run_eslint": [
+    "c--yigal-base_types--tsc": [
       {
-        "start_time": 1768759591824,
-        "end_time": 1768759594995,
+        "start_time": 1769183681288,
+        "end_time": 1769183683121,
         "reason": "user",
         "output": [],
         "exit_code": 0,
-        "run_id": 12
-      }
-    ],
-    "c--yigal-base_types--eslint": [
-      {
-        "start_time": 1768764657308,
-        "end_time": 1768764661073,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 12
-      }
-    ],
-    "c--yigal-base_types--watch_tsc": [
-      {
-        "start_time": 1768760356704,
-        "reason": "user",
-        "output": [],
         "run_id": 0
       }
     ],
     "c--yigal-base_types--build": [
       {
-        "start_time": 1768764661732,
-        "end_time": 1768764662280,
+        "start_time": 1769183686883,
+        "end_time": 1769183687509,
         "reason": "user",
         "output": [],
         "exit_code": 0,
-        "run_id": 19
-      }
-    ],
-    "c--yigal-base_types--tsc": [
-      {
-        "start_time": 1768764663466,
-        "end_time": 1768764663982,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 10
-      }
-    ],
-    "c--yigal-base_types--biome": [
-      {
-        "start_time": 1768763290000,
-        "end_time": 1768763290714,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 2
-      }
-    ],
-    "c--yigal-base_types--test": [
-      {
-        "start_time": 1768764655125,
-        "end_time": 1768764657628,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 9
+        "run_id": 0
       }
     ]
   },

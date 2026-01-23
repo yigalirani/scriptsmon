@@ -9,7 +9,9 @@ import {
   pk,
   get_error,
   is_object,
-  is_atom
+  is_atom,
+  objects_only,
+  default_get
 } from "@yigal/base_types";
 interface AcornSyntaxError extends SyntaxError {
   pos: number;        // same as raisedAt
@@ -164,7 +166,7 @@ function resolve_vars(vars:s2t<Lstr[]>,ast:Expression){
 }
 interface Watchers{
   watches:s2t<Lstr[]>,
-  autowatch_scripts:string[]  
+  tags:Record<string,string[]>
 }
 function collect_vars(ast:Expression|undefined,source_file:string){
   const vars:s2t<Lstr[]>={}
@@ -186,6 +188,9 @@ function collect_vars(ast:Expression|undefined,source_file:string){
   }
   return vars
 }
+function make_empty_array(){
+  return []
+}
 function parse_watchers(
   ast: Expression,
   source_file:string
@@ -194,15 +199,36 @@ function parse_watchers(
   if (scriptsmon==null){
     return {
       watches:{},
-      autowatch_scripts:[]
+      tags:{}
     }
   }
   //const autowatch=find_prop(scriptsmon,'autowatch')
   //const watch=find_prop(scriptsmon,'watch')
   const vars=collect_vars(scriptsmon,source_file)
+  const watches=resolve_vars(vars,ast)
+  const tags=function(){
+    const ans:Record<string,string[]>={}
+    //loop over all name, for those who start with #, loop over the result and add to ans
+    for (const [k,ar] of Object.entries(watches)){
+      if (k.startsWith('#')){
+        const tag=k.slice(1)
+        for (const script of ar){
+          default_get(ans,script.str,make_empty_array).push(tag)
+        }
+        //continue
+      }
+      /*if (ar.length!==0){
+        default_get(ans,k,make_empty_array).push("watchable")
+      }
+      else{
+        default_get(ans ,k,make_empty_array).push("nonwatchable")
+      }*/
+    }
+    return ans
+  }()
   return {
-    watches:resolve_vars(vars,ast),
-    autowatch_scripts:[]
+    watches,
+    tags
   }
 }
 function parse_scripts2(
@@ -237,6 +263,7 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
       const effective_watch_rel=watchers.watches[name]??[]
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(workspace_folder,rel.str)}))
       //const watched_default=watchers.autowatch_scripts.includes(name)
+      const tags=watchers.tags[name]||[]
       const ans:Runner= {
         //ntype:'runner',
         pos: script,
@@ -247,6 +274,7 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
         effective_watch,
         //watched_default,
         id,
+        tags
         //watched:false
       } 
       return ans

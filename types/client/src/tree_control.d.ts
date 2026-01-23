@@ -10,6 +10,7 @@ export interface TreeNode {
     children: TreeNode[];
     icon_version: number;
     toggles: Record<string, boolean | undefined>;
+    tags: string[];
 }
 export interface TreeDataProvider<T> {
     toggle_order: Array<string>;

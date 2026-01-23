@@ -37,6 +37,7 @@ export interface Runner extends RunnerBase {
     workspace_folder: string;
     script: string;
     effective_watch: Filename[];
+    tags: string[];
 }
 export interface FolderError extends RunnerBase {
     message: string;

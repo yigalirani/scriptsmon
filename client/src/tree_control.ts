@@ -11,6 +11,7 @@ export interface TreeNode{
   children               : TreeNode[]
   icon_version           : number,
   toggles                : Record<string,boolean|undefined>
+  tags:                  string[]
   //checkbox_state         : boolean|undefined
   //default_checkbox_state : boolean|undefined
 }
@@ -224,19 +225,20 @@ export class TreeControl<T>{
   //collapsed_set:Set<string>=new Set()
   private create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon,commands}=node
+    const {type,id,description,label,icon,commands,tags}=node
     const children=(type==='folder')?`<div class=children></div>`:''
     const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
     const  toggles_icons=this.provider.toggle_order.map(x=>`<div class="toggle_icon" id=${x}></div>`).join('')
     this.mark_changed(id)
     const node_class=this.calc_node_class(node)
+    const vtags=tags.map(x=>`<div class=tag>${x}</div>`).join('')
     const ans= create_element(` 
   <div  class="${node_class}" id="${id}" >
     <div  class="label_row">
       ${divs({toggles_icons})}
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon background_${icon}">${icons[icon]}</div>
-        ${divs({label,description})}
+        ${divs({label,vtags,description})}
       </div>
       ${divs({commands_icons})}
     </div>
