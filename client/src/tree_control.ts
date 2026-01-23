@@ -254,7 +254,7 @@ export class TreeControl<T>{
   private command_clicked(evt:Event){
     if (evt.target==null)
       return false
-    const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','tree_checkbox'])
+    const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','toggle_icon'])
     if (command_icon==null)
       return false
     const command=command_icon.id

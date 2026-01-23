@@ -8819,7 +8819,7 @@ function make_loop_func(monitor) {
           }
           case "command_clicked": {
             const { command_name, id: runner_id } = message;
-            if (command_name === "checkbox_clicked") {
+            if (command_name === "watched") {
               monitor.toggle_watch_state(runner_id);
               return;
             }

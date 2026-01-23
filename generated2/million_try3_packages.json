@@ -3,16 +3,38 @@
   "runs": {
     "c--yigal-million_try3--biome": [
       {
-        "start_time": 1769184290800,
-        "end_time": 1769184293241,
+        "start_time": 1769187930869,
+        "end_time": 1769187934344,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3-filesrvr--run": [
+      {
+        "start_time": 1769187973409,
         "reason": "user",
+        "output": [],
+        "run_id": 4
+      }
+    ],
+    "c--yigal-million_try3-filesrvr--build": [
+      {
+        "start_time": 1769187935672,
+        "end_time": 1769187938539,
+        "reason": "initial",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
     ]
   },
-  "monitored": [],
+  "monitored": [
+    "c--yigal-million_try3--biome",
+    "c--yigal-million_try3-filesrvr--run",
+    "c--yigal-million_try3-filesrvr--build"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -517,7 +539,9 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-million_try3--biome"
+      "c--yigal-million_try3--biome",
+      "c--yigal-million_try3-filesrvr--run",
+      "c--yigal-million_try3-filesrvr--build"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
