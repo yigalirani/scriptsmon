@@ -7,9 +7,9 @@ html,body {
     height: 100%;
     display: flex;
     flex-direction: row;
-       overflow: hidden;
+    overflow: hidden;
     width: 100%;
-    background-color: black;
+
 }
 
 
@@ -163,7 +163,6 @@ span.term_title_watch{
 .term{
   flex:1;
   background-color: rgb(29, 55, 64);
-  overflow: auto;
 }
 .stats td{
   border: 2px solid inherit;

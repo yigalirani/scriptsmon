@@ -1,20 +1,7 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-million_try3--ls": [
-      {
-        "start_time": 1769266285483,
-        "end_time": 1769266285916,
-        "reason": "initial",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ]
-  },
-  "monitored": [
-    "c--yigal-million_try3--ls"
-  ],
+  "runs": {},
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -680,9 +667,7 @@
     "errors": []
   },
   "watcher": {
-    "started": [
-      "c--yigal-million_try3--ls"
-    ],
+    "started": [],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [
@@ -736,6 +721,9 @@
         "c:\\yigal\\million_try3\\tsconfig.json",
         "c:\\yigal\\million_try3\\tsconfig.settings.json"
       ],
+      "c--yigal-million_try3--ls": [
+        "c:\\yigal\\million_try3"
+      ],
       "c--yigal-million_try3-converter--build": [
         "c:\\yigal\\million_try3\\converter\\src",
         "c:\\yigal\\million_try3\\converter\\build.mjs",
@@ -751,9 +739,6 @@
       ],
       "c--yigal-million_try3-filesrvr--run": [
         "c:\\yigal\\million_try3\\filesrvr\\dist\\index.js"
-      ],
-      "c--yigal-million_try3--ls": [
-        "c:\\yigal\\million_try3"
       ]
     },
     "watching_path_to_id": {
@@ -816,6 +801,9 @@
       "c:\\yigal\\million_try3\\.oxlintrc.json": [
         "c--yigal-million_try3--oxlint"
       ],
+      "c:\\yigal\\million_try3": [
+        "c--yigal-million_try3--ls"
+      ],
       "c:\\yigal\\million_try3\\converter\\package.json": [
         "root",
         "c--yigal-million_try3-converter--build"
@@ -837,9 +825,6 @@
       ],
       "c:\\yigal\\million_try3\\filesrvr\\dist\\index.js": [
         "c--yigal-million_try3-filesrvr--run"
-      ],
-      "c:\\yigal\\million_try3": [
-        "c--yigal-million_try3--ls"
       ]
     },
     "watchers": "<skipped>",
