@@ -78,7 +78,7 @@ function index_folder(root:TreeNode){
   return ans
 }
 function calc_summary(node:TreeNode):string{
-  const ignore=['icon_version','icon','toggles','className','description']
+  const ignore=['icon_version','icon','toggles','className']
   function replacer(k:string,v:unknown){
     if (ignore.includes(k))
       return ''
