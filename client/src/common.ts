@@ -1,12 +1,7 @@
 import type {WebviewMessage} from '../../src/extension.js'
-import type {s2t} from '@yigal/base_types'
-import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
-import {query_selector,create_element,get_parent_by_class,update_child_html,CtrlTracker,path_join,vscode} from './dom_utils.js'
-import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,State} from '../../src/data.js';
-import * as parser from '../../src/parser.js';
+import {vscode} from './dom_utils.js'
+import type { Runner,State} from '../../src/data.js';
 import type {RunnerReport} from '../../src/monitor.js';  
-import ICONS_HTML from '../resources/icons.html'
 
 
 export interface FileLocation {

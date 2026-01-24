@@ -23,7 +23,6 @@ export interface TreeDataProvider<T> {
 export declare class TreeControl<T> {
     private parent;
     private provider;
-    private base_uri;
     private icons;
     private root;
     private id_last_changed;
@@ -38,5 +37,5 @@ export declare class TreeControl<T> {
     private mark_changed;
     constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
     private create_node;
-    render(root: T, base_uri: string): void;
+    render(root: T, _base_uri: string): void;
 }

@@ -10,7 +10,6 @@ import {
   get_error,
   is_object,
   is_atom,
-  objects_only,
   default_get
 } from "@yigal/base_types";
 interface AcornSyntaxError extends SyntaxError {
@@ -263,7 +262,7 @@ function scriptsmon_to_runners(source_file:string,watchers:Watchers,scripts:s2t<
       const effective_watch_rel=watchers.watches[name]??[]
       const effective_watch:Filename[]=effective_watch_rel.map(rel=>({rel,full:path.join(workspace_folder,rel.str)}))
       //const watched_default=watchers.autowatch_scripts.includes(name)
-      const tags=watchers.tags[name]||[]
+      const tags=watchers.tags[name]??[]
       const ans:Runner= {
         //ntype:'runner',
         pos: script,

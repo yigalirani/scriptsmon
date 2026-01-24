@@ -6524,7 +6524,7 @@ function scriptsmon_to_runners(source_file, watchers, scripts) {
       const id = escape_id(`${workspace_folder} ${name}`);
       const effective_watch_rel = watchers.watches[name] ?? [];
       const effective_watch = effective_watch_rel.map((rel) => ({ rel, full: path.join(workspace_folder, rel.str) }));
-      const tags = watchers.tags[name] || [];
+      const tags = watchers.tags[name] ?? [];
       const ans2 = {
         //ntype:'runner',
         pos: script,

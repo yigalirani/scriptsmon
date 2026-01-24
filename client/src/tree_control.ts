@@ -178,9 +178,7 @@ function element_for_down_arrow(selected:HTMLElement){
     cur=parent
   }
 }
-const check_svg=`<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5535 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"/></svg>`
 export class TreeControl<T>{
-  private base_uri=''
   private icons:s2s
   private root:T|undefined
   private id_last_changed:Record<string,number>={}
@@ -354,9 +352,7 @@ export class TreeControl<T>{
       this.create_node(children_el as HTMLElement,x,depth+1)
     }
   }
-  render(root:T,base_uri:string){
-    /*convert, comapre and if there is a diffrence rebuilt the content of the parent*/
-    this.base_uri=`${base_uri}/client/resources`
+  render(root:T,_base_uri:string){
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
     this.root=root

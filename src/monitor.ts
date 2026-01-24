@@ -7,7 +7,6 @@ const fs = await import("node:fs/promises");
 import {Watcher} from './watcher.js'
 
 import {
-  type MaybePromise,
   sleep,
   toggle_set,
   Repeater
