@@ -27,15 +27,30 @@ svg{
   animation-play-state: paused !important
 }
 .running{
-  animation: running_animation 2s linear infinite;
+  animation: running_animation 2s ease-in infinite;
+  transform-origin: center;
+}
+.running2{
+  animation: running_animation2 2s  linear infinite;
   transform-origin: center;
 }
 @keyframes running_animation {
   from {
     transform: rotate(0deg);
+    color:darkorange;
   }
   to {
     transform: rotate(360deg);
+    color:white;
+  }
+}
+@keyframes running_animation2 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+    
   }
 }
 
