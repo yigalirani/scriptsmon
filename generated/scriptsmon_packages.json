@@ -1,81 +1,61 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon-client--build": [
-      {
-        "start_time": 1769261459274,
-        "end_time": 1769261460803,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 9
-      }
-    ],
-    "c--yigal-scriptsmon--tsc": [
-      {
-        "start_time": 1769261459343,
-        "end_time": 1769261461863,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 8
-      }
-    ],
-    "c--yigal-scriptsmon--eslint": [
-      {
-        "start_time": 1769261459428,
-        "end_time": 1769261464127,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 8
-      }
-    ],
-    "c--yigal-scriptsmon--oxlinttypeaware": [
-      {
-        "start_time": 1769261459502,
-        "end_time": 1769261461414,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 7
-      }
-    ],
-    "c--yigal-scriptsmon--oxlint": [
-      {
-        "start_time": 1769261459574,
-        "end_time": 1769261461066,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 7
-      }
-    ],
-    "c--yigal-scriptsmon--biome": [
-      {
-        "start_time": 1769261459652,
-        "end_time": 1769261461863,
-        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 7
-      }
-    ],
     "c--yigal-scriptsmon--build": [
       {
-        "start_time": 1769257920896,
-        "end_time": 1769257922031,
-        "reason": "c:\\yigal\\scriptsmon\\src\\data.ts",
+        "start_time": 1769262692109,
+        "end_time": 1769262693568,
+        "reason": "c:\\yigal\\scriptsmon\\package.json",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
     ],
-    "c--yigal-scriptsmon--test": [
+    "c--yigal-scriptsmon--tsc": [
       {
-        "start_time": 1769257923414,
-        "end_time": 1769257924154,
-        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
+        "start_time": 1769262692167,
+        "end_time": 1769262694433,
+        "reason": "c:\\yigal\\scriptsmon\\package.json",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-scriptsmon--eslint": [
+      {
+        "start_time": 1769262692233,
+        "end_time": 1769262696312,
+        "reason": "c:\\yigal\\scriptsmon\\package.json",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-scriptsmon--oxlinttypeaware": [
+      {
+        "start_time": 1769262692307,
+        "end_time": 1769262694227,
+        "reason": "c:\\yigal\\scriptsmon\\package.json",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1769262692376,
+        "end_time": 1769262693774,
+        "reason": "c:\\yigal\\scriptsmon\\package.json",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-scriptsmon--biome": [
+      {
+        "start_time": 1769262692459,
+        "end_time": 1769262694658,
+        "reason": "c:\\yigal\\scriptsmon\\package.json",
         "output": [],
         "exit_code": 0,
         "run_id": 0
@@ -100,18 +80,8 @@
             "name": "test",
             "script": "node ./dist/test.js",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "./dist/test.js",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1189,
-                  "end": 1205
-                },
-                "full": "c:\\yigal\\scriptsmon\\dist\\test.js"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--test"
           },
           {
@@ -125,36 +95,8 @@
             "name": "build",
             "script": "node ./bin/run_build.ts",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 884,
-                  "end": 889
-                },
-                "full": "c:\\yigal\\scriptsmon\\src"
-              },
-              {
-                "rel": {
-                  "str": "package.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 907,
-                  "end": 921
-                },
-                "full": "c:\\yigal\\scriptsmon\\package.json"
-              },
-              {
-                "rel": {
-                  "str": "./bin/run_build.ts",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 939,
-                  "end": 959
-                },
-                "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--build"
           },
           {
@@ -168,63 +110,8 @@
             "name": "tsc",
             "script": "tsc",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 884,
-                  "end": 889
-                },
-                "full": "c:\\yigal\\scriptsmon\\src"
-              },
-              {
-                "rel": {
-                  "str": "package.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 907,
-                  "end": 921
-                },
-                "full": "c:\\yigal\\scriptsmon\\package.json"
-              },
-              {
-                "rel": {
-                  "str": "./bin/run_build.ts",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 939,
-                  "end": 959
-                },
-                "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
-              },
-              {
-                "rel": {
-                  "str": "client/src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1040,
-                  "end": 1052
-                },
-                "full": "c:\\yigal\\scriptsmon\\client\\src"
-              },
-              {
-                "rel": {
-                  "str": "tsconfig.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1070,
-                  "end": 1085
-                },
-                "full": "c:\\yigal\\scriptsmon\\tsconfig.json"
-              },
-              {
-                "rel": {
-                  "str": "eslint.config.mjs",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1103,
-                  "end": 1122
-                },
-                "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--tsc"
           },
           {
@@ -238,63 +125,8 @@
             "name": "eslint",
             "script": "eslint . --color ",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 884,
-                  "end": 889
-                },
-                "full": "c:\\yigal\\scriptsmon\\src"
-              },
-              {
-                "rel": {
-                  "str": "package.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 907,
-                  "end": 921
-                },
-                "full": "c:\\yigal\\scriptsmon\\package.json"
-              },
-              {
-                "rel": {
-                  "str": "./bin/run_build.ts",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 939,
-                  "end": 959
-                },
-                "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
-              },
-              {
-                "rel": {
-                  "str": "client/src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1040,
-                  "end": 1052
-                },
-                "full": "c:\\yigal\\scriptsmon\\client\\src"
-              },
-              {
-                "rel": {
-                  "str": "tsconfig.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1070,
-                  "end": 1085
-                },
-                "full": "c:\\yigal\\scriptsmon\\tsconfig.json"
-              },
-              {
-                "rel": {
-                  "str": "eslint.config.mjs",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1103,
-                  "end": 1122
-                },
-                "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--eslint"
           },
           {
@@ -308,17 +140,7 @@
             "name": "ls",
             "script": "ls -la  --color=always",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": ".",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1536,
-                  "end": 1539
-                },
-                "full": "c:\\yigal\\scriptsmon"
-              }
-            ],
+            "effective_watch": [],
             "watched": false,
             "id": "c--yigal-scriptsmon--ls"
           },
@@ -363,72 +185,8 @@
             "name": "oxlinttypeaware",
             "script": "oxlint . --type-aware",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 884,
-                  "end": 889
-                },
-                "full": "c:\\yigal\\scriptsmon\\src"
-              },
-              {
-                "rel": {
-                  "str": "package.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 907,
-                  "end": 921
-                },
-                "full": "c:\\yigal\\scriptsmon\\package.json"
-              },
-              {
-                "rel": {
-                  "str": "./bin/run_build.ts",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 939,
-                  "end": 959
-                },
-                "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
-              },
-              {
-                "rel": {
-                  "str": "client/src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1040,
-                  "end": 1052
-                },
-                "full": "c:\\yigal\\scriptsmon\\client\\src"
-              },
-              {
-                "rel": {
-                  "str": "tsconfig.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1070,
-                  "end": 1085
-                },
-                "full": "c:\\yigal\\scriptsmon\\tsconfig.json"
-              },
-              {
-                "rel": {
-                  "str": "eslint.config.mjs",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1103,
-                  "end": 1122
-                },
-                "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
-              },
-              {
-                "rel": {
-                  "str": ".oxlintrc.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1347,
-                  "end": 1363
-                },
-                "full": "c:\\yigal\\scriptsmon\\.oxlintrc.json"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--oxlinttypeaware"
           },
           {
@@ -442,72 +200,8 @@
             "name": "oxlint",
             "script": "oxlint ",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 884,
-                  "end": 889
-                },
-                "full": "c:\\yigal\\scriptsmon\\src"
-              },
-              {
-                "rel": {
-                  "str": "package.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 907,
-                  "end": 921
-                },
-                "full": "c:\\yigal\\scriptsmon\\package.json"
-              },
-              {
-                "rel": {
-                  "str": "./bin/run_build.ts",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 939,
-                  "end": 959
-                },
-                "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
-              },
-              {
-                "rel": {
-                  "str": "client/src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1040,
-                  "end": 1052
-                },
-                "full": "c:\\yigal\\scriptsmon\\client\\src"
-              },
-              {
-                "rel": {
-                  "str": "tsconfig.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1070,
-                  "end": 1085
-                },
-                "full": "c:\\yigal\\scriptsmon\\tsconfig.json"
-              },
-              {
-                "rel": {
-                  "str": "eslint.config.mjs",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1103,
-                  "end": 1122
-                },
-                "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
-              },
-              {
-                "rel": {
-                  "str": ".oxlintrc.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1347,
-                  "end": 1363
-                },
-                "full": "c:\\yigal\\scriptsmon\\.oxlintrc.json"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--oxlint"
           },
           {
@@ -521,72 +215,8 @@
             "name": "biome",
             "script": "biome lint",
             "workspace_folder": "c:\\yigal\\scriptsmon",
-            "effective_watch": [
-              {
-                "rel": {
-                  "str": "src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 884,
-                  "end": 889
-                },
-                "full": "c:\\yigal\\scriptsmon\\src"
-              },
-              {
-                "rel": {
-                  "str": "package.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 907,
-                  "end": 921
-                },
-                "full": "c:\\yigal\\scriptsmon\\package.json"
-              },
-              {
-                "rel": {
-                  "str": "./bin/run_build.ts",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 939,
-                  "end": 959
-                },
-                "full": "c:\\yigal\\scriptsmon\\bin\\run_build.ts"
-              },
-              {
-                "rel": {
-                  "str": "client/src",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1040,
-                  "end": 1052
-                },
-                "full": "c:\\yigal\\scriptsmon\\client\\src"
-              },
-              {
-                "rel": {
-                  "str": "tsconfig.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1070,
-                  "end": 1085
-                },
-                "full": "c:\\yigal\\scriptsmon\\tsconfig.json"
-              },
-              {
-                "rel": {
-                  "str": "eslint.config.mjs",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1103,
-                  "end": 1122
-                },
-                "full": "c:\\yigal\\scriptsmon\\eslint.config.mjs"
-              },
-              {
-                "rel": {
-                  "str": "biome.json",
-                  "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1443,
-                  "end": 1455
-                },
-                "full": "c:\\yigal\\scriptsmon\\biome.json"
-              }
-            ],
-            "watched": true,
+            "effective_watch": [],
+            "watched": false,
             "id": "c--yigal-scriptsmon--biome"
           },
           {

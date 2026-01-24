@@ -28,36 +28,32 @@
       "onStartupFinished"
     ],
     "scriptsmon": {
-        "autowatch": {
-            "$build": [
-                "src",
-                "package.json",
-                "./bin/run_build.ts"
-            ],
-            "$lint": [
-                "$build",
-                "client/src",
-                "tsconfig.json",
-                "eslint.config.mjs"
-            ],
-            "eslint": "$lint",
-            "test": "./dist/test.js",
-            "build": "$build",
-            "tsc": "$lint",
-            "oxlint,oxlinttypeaware": [
-                "$lint",
-                ".oxlintrc.json"
-            ],
-            "biome": [
-                "$lint",
-                "biome.json"
-            ]
-        },
-        "watch": {
-            "ls": [
-                "."
-            ]
-        }
+        "$build": [
+            "src",
+            "package.json",
+            "./bin/run_build.ts"
+        ],
+        "$lint": [
+            "$build",
+            "client/src",
+            "tsconfig.json",
+            "eslint.config.mjs"
+        ],
+        "eslint": "$lint",
+        "test": "./dist/test.js",
+        "build": "$build",
+        "tsc": "$lint",
+        "oxlint,oxlinttypeaware": [
+            "$lint",
+            ".oxlintrc.json"
+        ],
+        "biome": [
+            "$lint",
+            "biome.json"
+        ],
+        "ls": ["."],
+        "#dev":["eslint","tsc","oxlinttypeaware","biome"]
+
     },
     "keywords": [],
     "contributes": {
