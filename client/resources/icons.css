@@ -30,18 +30,17 @@ svg{
   animation: running_animation 2s ease-in infinite;
   transform-origin: center;
 }
-.running2{
+.longrunning{
   animation: running_animation2 2s  linear infinite;
   transform-origin: center;
 }
 @keyframes running_animation {
   from {
-    transform: rotate(0deg);
-    color:darkorange;
+    transform: rotate(0deg) scale(2);
+
   }
   to {
-    transform: rotate(360deg);
-    color:white;
+    transform: rotate(360deg) scale(1);
   }
 }
 @keyframes running_animation2 {

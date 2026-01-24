@@ -1,7 +1,29 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-million_try3-filesrvr--run": [
+      {
+        "start_time": 1769261557472,
+        "reason": "changed:c:\\yigal\\million_try3\\filesrvr\\dist\\index.js",
+        "output": [],
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3-filesrvr--build": [
+      {
+        "start_time": 1769261556806,
+        "end_time": 1769261560086,
+        "reason": "changed:c:\\yigal\\million_try3\\filesrvr\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 5
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-million_try3-filesrvr--run",
+    "c--yigal-million_try3-filesrvr--build"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -505,7 +527,10 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-million_try3-filesrvr--run",
+      "c--yigal-million_try3-filesrvr--build"
+    ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [

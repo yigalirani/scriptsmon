@@ -1,6 +1,87 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
+  "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1769261459274,
+        "end_time": 1769261460803,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 9
+      }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1769261459343,
+        "end_time": 1769261461863,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 8
+      }
+    ],
+    "c--yigal-scriptsmon--eslint": [
+      {
+        "start_time": 1769261459428,
+        "end_time": 1769261464127,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 8
+      }
+    ],
+    "c--yigal-scriptsmon--oxlinttypeaware": [
+      {
+        "start_time": 1769261459502,
+        "end_time": 1769261461414,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 7
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1769261459574,
+        "end_time": 1769261461066,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 7
+      }
+    ],
+    "c--yigal-scriptsmon--biome": [
+      {
+        "start_time": 1769261459652,
+        "end_time": 1769261461863,
+        "reason": "c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 7
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1769257920896,
+        "end_time": 1769257922031,
+        "reason": "c:\\yigal\\scriptsmon\\src\\data.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-scriptsmon--test": [
+      {
+        "start_time": 1769257923414,
+        "end_time": 1769257924154,
+        "reason": "c:\\yigal\\scriptsmon\\dist\\test.js",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ]
+  },
   "root": {
     "name": "root",
     "id": "root",

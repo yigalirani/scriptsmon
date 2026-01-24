@@ -19,4 +19,4 @@ function spin_loop(){
     document.body.querySelector('#stat').innerHTML=`${animationDelay} ${anim_count}`
   }, 100);
 }
-spin_loop() //not suppesed to moved without it except the upcomming running2
+spin_loop() //not suppesed to moved without it except the upcomming longrunning
