@@ -350,7 +350,7 @@ span.term_title_watch{
   background-color: green;
 }
 .watched_true .background_running{
-  background-color: purple;
+  background-color: darkorange;
   border: 0px solid #474747;  
 }
 .value.background_ready{

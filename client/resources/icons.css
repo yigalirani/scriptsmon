@@ -22,7 +22,9 @@ html{
 svg{
   width: 128px;
   height: 128px;
-  animation-play-state: paused;
+}
+.animated{
+  animation-play-state: paused !important
 }
 .running{
   animation: running_animation 2s linear infinite;
@@ -37,9 +39,8 @@ svg{
   }
 }
 
-.done .check  {
+.done .check.animated {
   animation: done_animation 2s forwards ease;
-  animation-play-state: paused;
 }
 @keyframes done_animation {
   from { 
@@ -50,10 +51,9 @@ svg{
   }
 }
 
-.error .check  {
+.error .check.animated {
   transform-origin: 8px 8px; /* center of the X */  
   animation: error_animation 2s forwards ease;
-  animation-play-state: paused;
 }
 @keyframes error_animation {
   from { 

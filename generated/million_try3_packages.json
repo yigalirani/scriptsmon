@@ -1,17 +1,6 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-million_try3-converter--build": [
-      {
-        "start_time": 1768945069529,
-        "end_time": 1768945071608,
-        "reason": "user",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ]
-  },
+  "runs": {},
   "root": {
     "name": "root",
     "id": "root",
@@ -123,6 +112,21 @@
             "effective_watch": [],
             "watched": false,
             "id": "c--yigal-million_try3--tsc"
+          },
+          {
+            "pos": {
+              "str": "ls -la",
+              "start": 503,
+              "end": 527,
+              "source_file": "c:\\yigal\\million_try3\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ls",
+            "script": "ls -la",
+            "workspace_folder": "c:\\yigal\\million_try3",
+            "effective_watch": [],
+            "watched": false,
+            "id": "c--yigal-million_try3--ls"
           }
         ],
         "folders": [

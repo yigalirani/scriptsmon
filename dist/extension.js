@@ -8805,7 +8805,7 @@ function make_loop_func(monitor) {
     }
     setInterval(() => {
       send_report(monitor.get_root());
-    }, 100);
+    }, 1e3);
     view.webview.onDidReceiveMessage(
       (message) => {
         switch (message.command) {
