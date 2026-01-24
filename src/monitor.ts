@@ -51,7 +51,7 @@ export async function mkdir_write_file(filePath:string,data:string,cache=false){
     }                                                           
 
     await fs.writeFile(filePath,data);
-    console.log(`File '${filePath}' has been written successfully.`);
+    //console.log(`File '${filePath}' has been written successfully.`);
   } catch (err){
     console.error('Error writing file',err)
   }

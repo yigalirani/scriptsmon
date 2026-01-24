@@ -8503,7 +8503,6 @@ async function mkdir_write_file(filePath, data2, cache = false) {
         return;
     }
     await fs2.writeFile(filePath, data2);
-    console.log(`File '${filePath}' has been written successfully.`);
   } catch (err) {
     console.error("Error writing file", err);
   }

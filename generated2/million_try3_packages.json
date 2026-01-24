@@ -1,7 +1,20 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-million_try3--ls": [
+      {
+        "start_time": 1769266285483,
+        "end_time": 1769266285916,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-million_try3--ls"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -667,7 +680,9 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-million_try3--ls"
+    ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [

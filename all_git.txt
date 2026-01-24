@@ -8,7 +8,7 @@ e4eb803 fixed warnings
 6dcb820 first calc_summary to ignore more fields, refactored, spply_classed, setter_cache,calc_node_class,less direct dom manipulation
 12d0712 reverted
 c77431f started convertion to react
-2894bbb fixed initial_or_changed, added check class
+2894bbb fixed initial_or_changed, added check class 
 bec6315 toggle watch works with some bugs
 f9195fc toggle wathch stats almost works
 e70b6d8 checkbox for watched and watched_default. no processing of click yet
