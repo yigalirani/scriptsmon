@@ -1,12 +1,6 @@
 html,body {
-    font-family: var(--vscode-font-family);
-    color: var(--vscode-foreground);
-    background-color: var(--vscode-panel-background);
-
-    margin: 0;
     height: 100%;
     display: flex;
-    flex-direction: row;
     overflow: hidden;
     width: 100%;
 
@@ -163,6 +157,7 @@ span.term_title_watch{
 .term{
   flex:1;
   background-color: rgb(29, 55, 64);
+   min-height: 0;
 }
 .stats td{
   border: 2px solid inherit;
@@ -238,8 +233,7 @@ span.term_title_watch{
 
 }
 #the_tree{
-  overflow: scroll;
-  resize: horizontal;
+  overflow: auto;
 }
 .commands_icons{
   margin-left: auto;
@@ -268,6 +262,9 @@ span.term_title_watch{
 }
 .toggles_icons{
   position: absolute;
+  min-width: 18px;
+  height: 100%;
+  border-right: 1px dotted darkgray;
 }
 
 .watched_true > .label_row #watched svg{

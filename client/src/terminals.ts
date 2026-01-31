@@ -1,6 +1,7 @@
 
 import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join} from './dom_utils.js'
 import type { Folder,Runner} from '../../src/data.js';
 import type {RunnerReport} from '../../src/monitor.js';  
@@ -163,11 +164,23 @@ class TerminalPanel{
     runner:Runner
   ){
     this.el=create_terminal_element(parent,runner)
-    this.term=new Terminal({cols:200})
+    this.term=new Terminal({cols:200,rows:200})
+
+    const fitAddon = new FitAddon();
+    this.term.loadAddon(fitAddon);
+    function call_fit(){
+      fitAddon.fit()
+      console.log('fit')
+    }
+
+
+
     addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
-    if (term_container instanceof HTMLElement)
-      this.term.open(term_container);
+    if (term_container instanceof HTMLElement){
+      this.term.open(term_container)
+      setInterval(call_fit, 1000);
+    }
     query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
     this.show_watch(runner)
     query_selector(this.el, '.term_title_status .value').textContent='ready'

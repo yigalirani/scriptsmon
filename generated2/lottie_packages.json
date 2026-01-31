@@ -1,0 +1,64 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [],
+        "folders": [],
+        "name": "lottie",
+        "workspace_folder": "c:\\yigal\\lottie",
+        "id": "c--yigal-lottie",
+        "need_ctl": true,
+        "errors": [
+          {
+            "pos": {
+              "source_file": "c:\\yigal\\lottie\\package.json"
+            },
+            "id": "c--yigal-lottieerror",
+            "need_ctl": false,
+            "message": "ENOENT: no such file or directory, open 'c:\\yigal\\lottie\\package.json'"
+          }
+        ]
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\lottie\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\lottie\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\lottie"
+  ]
+}

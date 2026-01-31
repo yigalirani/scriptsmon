@@ -1,0 +1,638 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "tsc",
+              "start": 262,
+              "end": 274,
+              "source_file": "c:\\yigal\\xterm_try\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsc",
+            "script": "tsc",
+            "workspace_folder": "c:\\yigal\\xterm_try",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\xterm_try\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\xterm_try\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 707,
+                  "end": 727
+                },
+                "full": "c:\\yigal\\xterm_try\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 792,
+                  "end": 804
+                },
+                "full": "c:\\yigal\\xterm_try\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 818,
+                  "end": 833
+                },
+                "full": "c:\\yigal\\xterm_try\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 847,
+                  "end": 866
+                },
+                "full": "c:\\yigal\\xterm_try\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-xterm_try--tsc",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "eslint . --color --max-warnings=0",
+              "start": 284,
+              "end": 329,
+              "source_file": "c:\\yigal\\xterm_try\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "eslint . --color --max-warnings=0",
+            "workspace_folder": "c:\\yigal\\xterm_try",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\xterm_try\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\xterm_try\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 707,
+                  "end": 727
+                },
+                "full": "c:\\yigal\\xterm_try\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 792,
+                  "end": 804
+                },
+                "full": "c:\\yigal\\xterm_try\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 818,
+                  "end": 833
+                },
+                "full": "c:\\yigal\\xterm_try\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 847,
+                  "end": 866
+                },
+                "full": "c:\\yigal\\xterm_try\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-xterm_try--eslint",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "oxlint . --type-aware",
+              "start": 339,
+              "end": 381,
+              "source_file": "c:\\yigal\\xterm_try\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlinttypeaware",
+            "script": "oxlint . --type-aware",
+            "workspace_folder": "c:\\yigal\\xterm_try",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\xterm_try\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\xterm_try\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 707,
+                  "end": 727
+                },
+                "full": "c:\\yigal\\xterm_try\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 792,
+                  "end": 804
+                },
+                "full": "c:\\yigal\\xterm_try\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 818,
+                  "end": 833
+                },
+                "full": "c:\\yigal\\xterm_try\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 847,
+                  "end": 866
+                },
+                "full": "c:\\yigal\\xterm_try\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 1059,
+                  "end": 1075
+                },
+                "full": "c:\\yigal\\xterm_try\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-xterm_try--oxlinttypeaware",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "oxlint ",
+              "start": 391,
+              "end": 410,
+              "source_file": "c:\\yigal\\xterm_try\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint",
+            "script": "oxlint ",
+            "workspace_folder": "c:\\yigal\\xterm_try",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\xterm_try\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\xterm_try\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 707,
+                  "end": 727
+                },
+                "full": "c:\\yigal\\xterm_try\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 792,
+                  "end": 804
+                },
+                "full": "c:\\yigal\\xterm_try\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 818,
+                  "end": 833
+                },
+                "full": "c:\\yigal\\xterm_try\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 847,
+                  "end": 866
+                },
+                "full": "c:\\yigal\\xterm_try\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 1059,
+                  "end": 1075
+                },
+                "full": "c:\\yigal\\xterm_try\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-xterm_try--oxlint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "biome lint",
+              "start": 420,
+              "end": 441,
+              "source_file": "c:\\yigal\\xterm_try\\package.json"
+            },
+            "need_ctl": true,
+            "name": "biome",
+            "script": "biome lint",
+            "workspace_folder": "c:\\yigal\\xterm_try",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\xterm_try\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\xterm_try\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 707,
+                  "end": 727
+                },
+                "full": "c:\\yigal\\xterm_try\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 792,
+                  "end": 804
+                },
+                "full": "c:\\yigal\\xterm_try\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 818,
+                  "end": 833
+                },
+                "full": "c:\\yigal\\xterm_try\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 847,
+                  "end": 866
+                },
+                "full": "c:\\yigal\\xterm_try\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 1139,
+                  "end": 1151
+                },
+                "full": "c:\\yigal\\xterm_try\\biome.json"
+              }
+            ],
+            "id": "c--yigal-xterm_try--biome",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "npx  http-server client/resources",
+              "start": 451,
+              "end": 495,
+              "source_file": "c:\\yigal\\xterm_try\\package.json"
+            },
+            "need_ctl": true,
+            "name": "server",
+            "script": "npx  http-server client/resources",
+            "workspace_folder": "c:\\yigal\\xterm_try",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "client/resources",
+                  "source_file": "c:\\yigal\\xterm_try\\package.json",
+                  "start": 1223,
+                  "end": 1241
+                },
+                "full": "c:\\yigal\\xterm_try\\client\\resources"
+              }
+            ],
+            "id": "c--yigal-xterm_try--server",
+            "tags": []
+          }
+        ],
+        "folders": [
+          {
+            "runners": [
+              {
+                "pos": {
+                  "str": "node build.ts",
+                  "start": 71,
+                  "end": 95,
+                  "source_file": "c:\\yigal\\xterm_try\\client\\package.json"
+                },
+                "need_ctl": true,
+                "name": "build",
+                "script": "node build.ts",
+                "workspace_folder": "c:\\yigal\\xterm_try\\client",
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "build.ts",
+                      "source_file": "c:\\yigal\\xterm_try\\client\\package.json",
+                      "start": 148,
+                      "end": 158
+                    },
+                    "full": "c:\\yigal\\xterm_try\\client\\build.ts"
+                  },
+                  {
+                    "rel": {
+                      "str": "src",
+                      "source_file": "c:\\yigal\\xterm_try\\client\\package.json",
+                      "start": 169,
+                      "end": 174
+                    },
+                    "full": "c:\\yigal\\xterm_try\\client\\src"
+                  },
+                  {
+                    "rel": {
+                      "str": "package.json",
+                      "source_file": "c:\\yigal\\xterm_try\\client\\package.json",
+                      "start": 184,
+                      "end": 198
+                    },
+                    "full": "c:\\yigal\\xterm_try\\client\\package.json"
+                  }
+                ],
+                "id": "c--yigal-xterm_try-client--build",
+                "tags": [
+                  "dev"
+                ]
+              }
+            ],
+            "folders": [],
+            "name": "client",
+            "workspace_folder": "c:\\yigal\\xterm_try\\client",
+            "id": "c--yigal-xterm_try-client",
+            "pos": {
+              "str": "client",
+              "source_file": "c:\\yigal\\xterm_try\\package.json",
+              "start": 531,
+              "end": 539
+            },
+            "need_ctl": true,
+            "errors": []
+          }
+        ],
+        "name": "xterm_try",
+        "workspace_folder": "c:\\yigal\\xterm_try",
+        "id": "c--yigal-xterm_try",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\xterm_try\\package.json",
+        "c:\\yigal\\xterm_try\\client\\package.json"
+      ],
+      "c--yigal-xterm_try--tsc": [
+        "c:\\yigal\\xterm_try\\src",
+        "c:\\yigal\\xterm_try\\package.json",
+        "c:\\yigal\\xterm_try\\bin\\run_build.ts",
+        "c:\\yigal\\xterm_try\\client\\src",
+        "c:\\yigal\\xterm_try\\tsconfig.json",
+        "c:\\yigal\\xterm_try\\eslint.config.mjs"
+      ],
+      "c--yigal-xterm_try--eslint": [
+        "c:\\yigal\\xterm_try\\src",
+        "c:\\yigal\\xterm_try\\package.json",
+        "c:\\yigal\\xterm_try\\bin\\run_build.ts",
+        "c:\\yigal\\xterm_try\\client\\src",
+        "c:\\yigal\\xterm_try\\tsconfig.json",
+        "c:\\yigal\\xterm_try\\eslint.config.mjs"
+      ],
+      "c--yigal-xterm_try--oxlinttypeaware": [
+        "c:\\yigal\\xterm_try\\src",
+        "c:\\yigal\\xterm_try\\package.json",
+        "c:\\yigal\\xterm_try\\bin\\run_build.ts",
+        "c:\\yigal\\xterm_try\\client\\src",
+        "c:\\yigal\\xterm_try\\tsconfig.json",
+        "c:\\yigal\\xterm_try\\eslint.config.mjs",
+        "c:\\yigal\\xterm_try\\.oxlintrc.json"
+      ],
+      "c--yigal-xterm_try--oxlint": [
+        "c:\\yigal\\xterm_try\\src",
+        "c:\\yigal\\xterm_try\\package.json",
+        "c:\\yigal\\xterm_try\\bin\\run_build.ts",
+        "c:\\yigal\\xterm_try\\client\\src",
+        "c:\\yigal\\xterm_try\\tsconfig.json",
+        "c:\\yigal\\xterm_try\\eslint.config.mjs",
+        "c:\\yigal\\xterm_try\\.oxlintrc.json"
+      ],
+      "c--yigal-xterm_try--biome": [
+        "c:\\yigal\\xterm_try\\src",
+        "c:\\yigal\\xterm_try\\package.json",
+        "c:\\yigal\\xterm_try\\bin\\run_build.ts",
+        "c:\\yigal\\xterm_try\\client\\src",
+        "c:\\yigal\\xterm_try\\tsconfig.json",
+        "c:\\yigal\\xterm_try\\eslint.config.mjs",
+        "c:\\yigal\\xterm_try\\biome.json"
+      ],
+      "c--yigal-xterm_try--server": [
+        "c:\\yigal\\xterm_try\\client\\resources"
+      ],
+      "c--yigal-xterm_try-client--build": [
+        "c:\\yigal\\xterm_try\\client\\build.ts",
+        "c:\\yigal\\xterm_try\\client\\src",
+        "c:\\yigal\\xterm_try\\client\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\xterm_try\\package.json": [
+        "root",
+        "c--yigal-xterm_try--tsc",
+        "c--yigal-xterm_try--eslint",
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint",
+        "c--yigal-xterm_try--biome"
+      ],
+      "c:\\yigal\\xterm_try\\src": [
+        "c--yigal-xterm_try--tsc",
+        "c--yigal-xterm_try--eslint",
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint",
+        "c--yigal-xterm_try--biome"
+      ],
+      "c:\\yigal\\xterm_try\\bin\\run_build.ts": [
+        "c--yigal-xterm_try--tsc",
+        "c--yigal-xterm_try--eslint",
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint",
+        "c--yigal-xterm_try--biome"
+      ],
+      "c:\\yigal\\xterm_try\\client\\src": [
+        "c--yigal-xterm_try--tsc",
+        "c--yigal-xterm_try--eslint",
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint",
+        "c--yigal-xterm_try--biome",
+        "c--yigal-xterm_try-client--build"
+      ],
+      "c:\\yigal\\xterm_try\\tsconfig.json": [
+        "c--yigal-xterm_try--tsc",
+        "c--yigal-xterm_try--eslint",
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint",
+        "c--yigal-xterm_try--biome"
+      ],
+      "c:\\yigal\\xterm_try\\eslint.config.mjs": [
+        "c--yigal-xterm_try--tsc",
+        "c--yigal-xterm_try--eslint",
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint",
+        "c--yigal-xterm_try--biome"
+      ],
+      "c:\\yigal\\xterm_try\\.oxlintrc.json": [
+        "c--yigal-xterm_try--oxlinttypeaware",
+        "c--yigal-xterm_try--oxlint"
+      ],
+      "c:\\yigal\\xterm_try\\biome.json": [
+        "c--yigal-xterm_try--biome"
+      ],
+      "c:\\yigal\\xterm_try\\client\\resources": [
+        "c--yigal-xterm_try--server"
+      ],
+      "c:\\yigal\\xterm_try\\client\\package.json": [
+        "root",
+        "c--yigal-xterm_try-client--build"
+      ],
+      "c:\\yigal\\xterm_try\\client\\build.ts": [
+        "c--yigal-xterm_try-client--build"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\xterm_try"
+  ]
+}

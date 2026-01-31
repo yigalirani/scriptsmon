@@ -1,0 +1,734 @@
+{
+  "ipty": "<skipped>",
+  "runs": {
+    "c--yigal-lottie_web-client--build": [
+      {
+        "start_time": 1769744132931,
+        "end_time": 1769744137534,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 28
+      }
+    ],
+    "c--yigal-lottie_web--tsc": [
+      {
+        "start_time": 1769744133051,
+        "end_time": 1769744136944,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 2,
+        "run_id": 23
+      }
+    ],
+    "c--yigal-lottie_web--eslint": [
+      {
+        "start_time": 1769744133194,
+        "end_time": 1769744143994,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 22
+      }
+    ],
+    "c--yigal-lottie_web--oxlinttypeaware": [
+      {
+        "start_time": 1769744133356,
+        "end_time": 1769744137167,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 22
+      }
+    ],
+    "c--yigal-lottie_web--oxlint": [
+      {
+        "start_time": 1769744133512,
+        "end_time": 1769744135762,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 22
+      }
+    ],
+    "c--yigal-lottie_web--biome": [
+      {
+        "start_time": 1769744133722,
+        "end_time": 1769744135577,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 22
+      }
+    ],
+    "c--yigal-lottie_web--server": [
+      {
+        "start_time": 1769744211889,
+        "reason": "changed:c:\\yigal\\lottie_web\\client\\resources\\index.css",
+        "output": [],
+        "run_id": 39
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-lottie_web-client--build",
+    "c--yigal-lottie_web--tsc",
+    "c--yigal-lottie_web--eslint",
+    "c--yigal-lottie_web--oxlinttypeaware",
+    "c--yigal-lottie_web--oxlint",
+    "c--yigal-lottie_web--biome"
+  ],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "tsc",
+              "start": 262,
+              "end": 274,
+              "source_file": "c:\\yigal\\lottie_web\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsc",
+            "script": "tsc",
+            "workspace_folder": "c:\\yigal\\lottie_web",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\lottie_web\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\lottie_web\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "build.ts",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 707,
+                  "end": 717
+                },
+                "full": "c:\\yigal\\lottie_web\\build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 782,
+                  "end": 794
+                },
+                "full": "c:\\yigal\\lottie_web\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 808,
+                  "end": 823
+                },
+                "full": "c:\\yigal\\lottie_web\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 837,
+                  "end": 856
+                },
+                "full": "c:\\yigal\\lottie_web\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-lottie_web--tsc",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "eslint . --color --max-warnings=0",
+              "start": 284,
+              "end": 329,
+              "source_file": "c:\\yigal\\lottie_web\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "eslint . --color --max-warnings=0",
+            "workspace_folder": "c:\\yigal\\lottie_web",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\lottie_web\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\lottie_web\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "build.ts",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 707,
+                  "end": 717
+                },
+                "full": "c:\\yigal\\lottie_web\\build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 782,
+                  "end": 794
+                },
+                "full": "c:\\yigal\\lottie_web\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 808,
+                  "end": 823
+                },
+                "full": "c:\\yigal\\lottie_web\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 837,
+                  "end": 856
+                },
+                "full": "c:\\yigal\\lottie_web\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-lottie_web--eslint",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "oxlint . --type-aware",
+              "start": 339,
+              "end": 381,
+              "source_file": "c:\\yigal\\lottie_web\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlinttypeaware",
+            "script": "oxlint . --type-aware",
+            "workspace_folder": "c:\\yigal\\lottie_web",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\lottie_web\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\lottie_web\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "build.ts",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 707,
+                  "end": 717
+                },
+                "full": "c:\\yigal\\lottie_web\\build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 782,
+                  "end": 794
+                },
+                "full": "c:\\yigal\\lottie_web\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 808,
+                  "end": 823
+                },
+                "full": "c:\\yigal\\lottie_web\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 837,
+                  "end": 856
+                },
+                "full": "c:\\yigal\\lottie_web\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 1049,
+                  "end": 1065
+                },
+                "full": "c:\\yigal\\lottie_web\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-lottie_web--oxlinttypeaware",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "oxlint ",
+              "start": 391,
+              "end": 410,
+              "source_file": "c:\\yigal\\lottie_web\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint",
+            "script": "oxlint ",
+            "workspace_folder": "c:\\yigal\\lottie_web",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\lottie_web\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\lottie_web\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "build.ts",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 707,
+                  "end": 717
+                },
+                "full": "c:\\yigal\\lottie_web\\build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 782,
+                  "end": 794
+                },
+                "full": "c:\\yigal\\lottie_web\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 808,
+                  "end": 823
+                },
+                "full": "c:\\yigal\\lottie_web\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 837,
+                  "end": 856
+                },
+                "full": "c:\\yigal\\lottie_web\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 1049,
+                  "end": 1065
+                },
+                "full": "c:\\yigal\\lottie_web\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-lottie_web--oxlint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "biome lint",
+              "start": 420,
+              "end": 441,
+              "source_file": "c:\\yigal\\lottie_web\\package.json"
+            },
+            "need_ctl": true,
+            "name": "biome",
+            "script": "biome lint",
+            "workspace_folder": "c:\\yigal\\lottie_web",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 660,
+                  "end": 665
+                },
+                "full": "c:\\yigal\\lottie_web\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 679,
+                  "end": 693
+                },
+                "full": "c:\\yigal\\lottie_web\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "build.ts",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 707,
+                  "end": 717
+                },
+                "full": "c:\\yigal\\lottie_web\\build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 782,
+                  "end": 794
+                },
+                "full": "c:\\yigal\\lottie_web\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 808,
+                  "end": 823
+                },
+                "full": "c:\\yigal\\lottie_web\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 837,
+                  "end": 856
+                },
+                "full": "c:\\yigal\\lottie_web\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 1129,
+                  "end": 1141
+                },
+                "full": "c:\\yigal\\lottie_web\\biome.json"
+              }
+            ],
+            "id": "c--yigal-lottie_web--biome",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "npx  http-server client/resources",
+              "start": 451,
+              "end": 495,
+              "source_file": "c:\\yigal\\lottie_web\\package.json"
+            },
+            "need_ctl": true,
+            "name": "server",
+            "script": "npx  http-server client/resources",
+            "workspace_folder": "c:\\yigal\\lottie_web",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "client/resources",
+                  "source_file": "c:\\yigal\\lottie_web\\package.json",
+                  "start": 1213,
+                  "end": 1231
+                },
+                "full": "c:\\yigal\\lottie_web\\client\\resources"
+              }
+            ],
+            "id": "c--yigal-lottie_web--server",
+            "tags": []
+          }
+        ],
+        "folders": [
+          {
+            "runners": [
+              {
+                "pos": {
+                  "str": "node build.ts",
+                  "start": 71,
+                  "end": 95,
+                  "source_file": "c:\\yigal\\lottie_web\\client\\package.json"
+                },
+                "need_ctl": true,
+                "name": "build",
+                "script": "node build.ts",
+                "workspace_folder": "c:\\yigal\\lottie_web\\client",
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "build.ts",
+                      "source_file": "c:\\yigal\\lottie_web\\client\\package.json",
+                      "start": 154,
+                      "end": 164
+                    },
+                    "full": "c:\\yigal\\lottie_web\\client\\build.ts"
+                  },
+                  {
+                    "rel": {
+                      "str": "src",
+                      "source_file": "c:\\yigal\\lottie_web\\client\\package.json",
+                      "start": 178,
+                      "end": 183
+                    },
+                    "full": "c:\\yigal\\lottie_web\\client\\src"
+                  },
+                  {
+                    "rel": {
+                      "str": "package.json",
+                      "source_file": "c:\\yigal\\lottie_web\\client\\package.json",
+                      "start": 197,
+                      "end": 211
+                    },
+                    "full": "c:\\yigal\\lottie_web\\client\\package.json"
+                  }
+                ],
+                "id": "c--yigal-lottie_web-client--build",
+                "tags": [
+                  "dev"
+                ]
+              }
+            ],
+            "folders": [],
+            "name": "client",
+            "workspace_folder": "c:\\yigal\\lottie_web\\client",
+            "id": "c--yigal-lottie_web-client",
+            "pos": {
+              "str": "client",
+              "source_file": "c:\\yigal\\lottie_web\\package.json",
+              "start": 531,
+              "end": 539
+            },
+            "need_ctl": true,
+            "errors": []
+          }
+        ],
+        "name": "lottie_web",
+        "workspace_folder": "c:\\yigal\\lottie_web",
+        "id": "c--yigal-lottie_web",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [
+      "c--yigal-lottie_web-client--build",
+      "c--yigal-lottie_web--tsc",
+      "c--yigal-lottie_web--eslint",
+      "c--yigal-lottie_web--oxlinttypeaware",
+      "c--yigal-lottie_web--oxlint",
+      "c--yigal-lottie_web--biome",
+      "c--yigal-lottie_web--server"
+    ],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\lottie_web\\package.json",
+        "c:\\yigal\\lottie_web\\client\\package.json"
+      ],
+      "c--yigal-lottie_web--tsc": [
+        "c:\\yigal\\lottie_web\\src",
+        "c:\\yigal\\lottie_web\\package.json",
+        "c:\\yigal\\lottie_web\\bin\\run_build.ts",
+        "c:\\yigal\\lottie_web\\client\\src",
+        "c:\\yigal\\lottie_web\\tsconfig.json",
+        "c:\\yigal\\lottie_web\\eslint.config.mjs",
+        "c:\\yigal\\lottie_web\\build.ts"
+      ],
+      "c--yigal-lottie_web--eslint": [
+        "c:\\yigal\\lottie_web\\src",
+        "c:\\yigal\\lottie_web\\package.json",
+        "c:\\yigal\\lottie_web\\bin\\run_build.ts",
+        "c:\\yigal\\lottie_web\\client\\src",
+        "c:\\yigal\\lottie_web\\tsconfig.json",
+        "c:\\yigal\\lottie_web\\eslint.config.mjs",
+        "c:\\yigal\\lottie_web\\build.ts"
+      ],
+      "c--yigal-lottie_web--oxlinttypeaware": [
+        "c:\\yigal\\lottie_web\\src",
+        "c:\\yigal\\lottie_web\\package.json",
+        "c:\\yigal\\lottie_web\\bin\\run_build.ts",
+        "c:\\yigal\\lottie_web\\client\\src",
+        "c:\\yigal\\lottie_web\\tsconfig.json",
+        "c:\\yigal\\lottie_web\\eslint.config.mjs",
+        "c:\\yigal\\lottie_web\\.oxlintrc.json",
+        "c:\\yigal\\lottie_web\\build.ts"
+      ],
+      "c--yigal-lottie_web--oxlint": [
+        "c:\\yigal\\lottie_web\\src",
+        "c:\\yigal\\lottie_web\\package.json",
+        "c:\\yigal\\lottie_web\\bin\\run_build.ts",
+        "c:\\yigal\\lottie_web\\client\\src",
+        "c:\\yigal\\lottie_web\\tsconfig.json",
+        "c:\\yigal\\lottie_web\\eslint.config.mjs",
+        "c:\\yigal\\lottie_web\\.oxlintrc.json",
+        "c:\\yigal\\lottie_web\\build.ts"
+      ],
+      "c--yigal-lottie_web--biome": [
+        "c:\\yigal\\lottie_web\\src",
+        "c:\\yigal\\lottie_web\\package.json",
+        "c:\\yigal\\lottie_web\\bin\\run_build.ts",
+        "c:\\yigal\\lottie_web\\client\\src",
+        "c:\\yigal\\lottie_web\\tsconfig.json",
+        "c:\\yigal\\lottie_web\\eslint.config.mjs",
+        "c:\\yigal\\lottie_web\\biome.json",
+        "c:\\yigal\\lottie_web\\build.ts"
+      ],
+      "c--yigal-lottie_web--server": [
+        "c:\\yigal\\lottie_web\\client\\resources"
+      ],
+      "c--yigal-lottie_web-client--build": [
+        "c:\\yigal\\lottie_web\\client\\build.ts",
+        "c:\\yigal\\lottie_web\\client\\src",
+        "c:\\yigal\\lottie_web\\client\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\lottie_web\\package.json": [
+        "root",
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome"
+      ],
+      "c:\\yigal\\lottie_web\\src": [
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome"
+      ],
+      "c:\\yigal\\lottie_web\\bin\\run_build.ts": [
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome"
+      ],
+      "c:\\yigal\\lottie_web\\client\\src": [
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome",
+        "c--yigal-lottie_web-client--build"
+      ],
+      "c:\\yigal\\lottie_web\\tsconfig.json": [
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome"
+      ],
+      "c:\\yigal\\lottie_web\\eslint.config.mjs": [
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome"
+      ],
+      "c:\\yigal\\lottie_web\\.oxlintrc.json": [
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint"
+      ],
+      "c:\\yigal\\lottie_web\\biome.json": [
+        "c--yigal-lottie_web--biome"
+      ],
+      "c:\\yigal\\lottie_web\\client\\resources": [
+        "c--yigal-lottie_web--server"
+      ],
+      "c:\\yigal\\lottie_web\\client\\package.json": [
+        "root",
+        "c--yigal-lottie_web-client--build"
+      ],
+      "c:\\yigal\\lottie_web\\client\\build.ts": [
+        "c--yigal-lottie_web-client--build"
+      ],
+      "c:\\yigal\\lottie_web\\build.ts": [
+        "c--yigal-lottie_web--tsc",
+        "c--yigal-lottie_web--eslint",
+        "c--yigal-lottie_web--oxlinttypeaware",
+        "c--yigal-lottie_web--oxlint",
+        "c--yigal-lottie_web--biome"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\lottie_web"
+  ]
+}

@@ -1,10 +1,70 @@
 {
   "ipty": "<skipped>",
   "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1769845829159,
+        "end_time": 1769845830015,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1769845770388,
+        "end_time": 1769845770968,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1769845829243,
+        "end_time": 1769845830952,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-scriptsmon--eslint": [
+      {
+        "start_time": 1769845829307,
+        "end_time": 1769845833268,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-scriptsmon--oxlinttypeaware": [
+      {
+        "start_time": 1769845829377,
+        "end_time": 1769845830305,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1769845829453,
+        "end_time": 1769845830042,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
     "c--yigal-scriptsmon--ls": [
       {
-        "start_time": 1769294639896,
-        "end_time": 1769294640278,
+        "start_time": 1769845799560,
+        "end_time": 1769845800066,
         "reason": "user",
         "output": [],
         "exit_code": 0,
@@ -12,7 +72,14 @@
       }
     ]
   },
-  "monitored": [],
+  "monitored": [
+    "c--yigal-scriptsmon-client--build",
+    "c--yigal-scriptsmon--build",
+    "c--yigal-scriptsmon--tsc",
+    "c--yigal-scriptsmon--eslint",
+    "c--yigal-scriptsmon--oxlinttypeaware",
+    "c--yigal-scriptsmon--oxlint"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -248,8 +315,8 @@
                 "rel": {
                   "str": ".",
                   "source_file": "c:\\yigal\\scriptsmon\\package.json",
-                  "start": 1387,
-                  "end": 1390
+                  "start": 1400,
+                  "end": 1403
                 },
                 "full": "c:\\yigal\\scriptsmon"
               }
@@ -620,6 +687,12 @@
   },
   "watcher": {
     "started": [
+      "c--yigal-scriptsmon-client--build",
+      "c--yigal-scriptsmon--build",
+      "c--yigal-scriptsmon--tsc",
+      "c--yigal-scriptsmon--eslint",
+      "c--yigal-scriptsmon--oxlinttypeaware",
+      "c--yigal-scriptsmon--oxlint",
       "c--yigal-scriptsmon--ls"
     ],
     "id_to_changed_path": {},

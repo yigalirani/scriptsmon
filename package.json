@@ -51,9 +51,15 @@
             "$lint",
             "biome.json"
         ],
-        "ls": ["."],
-        "#dev":["eslint","tsc","oxlinttypeaware","biome"]
-
+        "ls": [
+            "."
+        ],
+        "#dev": [
+            "eslint",
+            "tsc",
+            "oxlinttypeaware",
+            "biome"
+        ]
     },
     "keywords": [],
     "contributes": {
