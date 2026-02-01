@@ -10,15 +10,18 @@ function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
 ): void {
-  const pattern = /([a-zA-Z0-9_\-./\\]+):(\d+):(\d+)/g;
+  const pattern = /([a-zA-Z0-9_\-.\/\\]+)(:\d+)?(:\d+)?/g;
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1);
+
       if (!line) {
+        console.log('provideLinks',y,"!text")    
         callback([]);
         return;
       }
       const text = line.translateToString(true);
+      console.log('provideLinks',y,text)      
       const links: ILink[] = [];
       let match: RegExpExecArray | null;
       while (true) {
@@ -170,7 +173,7 @@ class TerminalPanel{
     this.term.loadAddon(fitAddon);
     function call_fit(){
       fitAddon.fit()
-      console.log('fit')
+      //console.log('fit')
     }
 
 

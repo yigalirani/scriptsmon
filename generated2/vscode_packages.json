@@ -1,0 +1,956 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "echo Please run any of the test scripts from the scripts folder.",
+              "start": 280,
+              "end": 354,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test",
+            "script": "echo Please run any of the test scripts from the scripts folder.",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--test",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npx playwright install && node test/unit/browser/index.js",
+              "start": 361,
+              "end": 436,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test-browser",
+            "script": "npx playwright install && node test/unit/browser/index.js",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--test-browser",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node test/unit/browser/index.js",
+              "start": 443,
+              "end": 503,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test-browser-no-install",
+            "script": "node test/unit/browser/index.js",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--test-browser-no-install",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "mocha test/unit/node/index.js --delay --ui=tdd --timeout=5000 --exit",
+              "start": 510,
+              "end": 593,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test-node",
+            "script": "mocha test/unit/node/index.js --delay --ui=tdd --timeout=5000 --exit",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--test-node",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "vscode-test",
+              "start": 600,
+              "end": 631,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test-extension",
+            "script": "vscode-test",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--test-extension",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd build && npm run test",
+              "start": 638,
+              "end": 686,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test-build-scripts",
+            "script": "cd build && npm run test",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--test-build-scripts",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/npm/preinstall.ts",
+              "start": 693,
+              "end": 737,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "preinstall",
+            "script": "node build/npm/preinstall.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--preinstall",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/npm/postinstall.ts",
+              "start": 744,
+              "end": 790,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "postinstall",
+            "script": "node build/npm/postinstall.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--postinstall",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp compile",
+              "start": 797,
+              "end": 830,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "compile",
+            "script": "npm run gulp compile",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--compile",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "tsgo --project ./src/tsconfig.json --noEmit --skipLibCheck",
+              "start": 837,
+              "end": 924,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "compile-check-ts-native",
+            "script": "tsgo --project ./src/tsconfig.json --noEmit --skipLibCheck",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--compile-check-ts-native",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm-run-all2 -lp watch-client watch-extensions",
+              "start": 931,
+              "end": 988,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch",
+            "script": "npm-run-all2 -lp watch-client watch-extensions",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon npm run watch",
+              "start": 995,
+              "end": 1027,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watchd",
+            "script": "deemon npm run watch",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watchd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon npm run watch-web",
+              "start": 1034,
+              "end": 1074,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-webd",
+            "script": "deemon npm run watch-web",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-webd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon --kill npm run watch",
+              "start": 1081,
+              "end": 1125,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "kill-watchd",
+            "script": "deemon --kill npm run watch",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--kill-watchd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon --kill npm run watch-web",
+              "start": 1132,
+              "end": 1184,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "kill-watch-webd",
+            "script": "deemon --kill npm run watch-web",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--kill-watch-webd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon --restart npm run watch",
+              "start": 1191,
+              "end": 1241,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "restart-watchd",
+            "script": "deemon --restart npm run watch",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--restart-watchd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon --restart npm run watch-web",
+              "start": 1248,
+              "end": 1306,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "restart-watch-webd",
+            "script": "deemon --restart npm run watch-web",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--restart-watch-webd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp watch-client",
+              "start": 1313,
+              "end": 1356,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-client",
+            "script": "npm run gulp watch-client",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-client",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon npm run watch-client",
+              "start": 1363,
+              "end": 1409,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-clientd",
+            "script": "deemon npm run watch-client",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-clientd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon --kill npm run watch-client",
+              "start": 1416,
+              "end": 1474,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "kill-watch-clientd",
+            "script": "deemon --kill npm run watch-client",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--kill-watch-clientd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp watch-extensions watch-extension-media",
+              "start": 1481,
+              "end": 1554,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-extensions",
+            "script": "npm run gulp watch-extensions watch-extension-media",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-extensions",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon npm run watch-extensions",
+              "start": 1561,
+              "end": 1615,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-extensionsd",
+            "script": "deemon npm run watch-extensions",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-extensionsd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "deemon --kill npm run watch-extensions",
+              "start": 1622,
+              "end": 1688,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "kill-watch-extensionsd",
+            "script": "deemon --kill npm run watch-extensions",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--kill-watch-extensionsd",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --experimental-strip-types build/hygiene.ts",
+              "start": 1695,
+              "end": 1758,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "precommit",
+            "script": "node --experimental-strip-types build/hygiene.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--precommit",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --max-old-space-size=8192 ./node_modules/gulp/bin/gulp.js",
+              "start": 1765,
+              "end": 1837,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "gulp",
+            "script": "node --max-old-space-size=8192 ./node_modules/gulp/bin/gulp.js",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--gulp",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/lib/electron.ts",
+              "start": 1844,
+              "end": 1884,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "electron",
+            "script": "node build/lib/electron.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--electron",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "7z",
+              "start": 1891,
+              "end": 1901,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "7z",
+            "script": "7z",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--7z",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/npm/update-all-grammars.ts",
+              "start": 1908,
+              "end": 1966,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "update-grammars",
+            "script": "node build/npm/update-all-grammars.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--update-grammars",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/npm/update-localization-extension.ts",
+              "start": 1973,
+              "end": 2055,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "update-localization-extension",
+            "script": "node build/npm/update-localization-extension.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--update-localization-extension",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/npm/mixin-telemetry-docs.ts",
+              "start": 2062,
+              "end": 2126,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "mixin-telemetry-docs",
+            "script": "node build/npm/mixin-telemetry-docs.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--mixin-telemetry-docs",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/lib/preLaunch.ts && cd test/smoke && npm run compile && node test/index.js",
+              "start": 2133,
+              "end": 2233,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "smoketest",
+            "script": "node build/lib/preLaunch.ts && cd test/smoke && npm run compile && node test/index.js",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--smoketest",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd test/smoke && node test/index.js",
+              "start": 2240,
+              "end": 2301,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "smoketest-no-compile",
+            "script": "cd test/smoke && node test/index.js",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--smoketest-no-compile",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/lib/builtInExtensions.ts",
+              "start": 2308,
+              "end": 2376,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "download-builtin-extensions",
+            "script": "node build/lib/builtInExtensions.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--download-builtin-extensions",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/lib/builtInExtensionsCG.ts",
+              "start": 2383,
+              "end": 2456,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "download-builtin-extensions-cg",
+            "script": "node build/lib/builtInExtensionsCG.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--download-builtin-extensions-cg",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "tsgo --project src/tsconfig.monaco.json --noEmit",
+              "start": 2463,
+              "end": 2537,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "monaco-compile-check",
+            "script": "tsgo --project src/tsconfig.monaco.json --noEmit",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--monaco-compile-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node node_modules/tsec/bin/tsec -p src/tsconfig.tsec.json",
+              "start": 2544,
+              "end": 2625,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsec-compile-check",
+            "script": "node node_modules/tsec/bin/tsec -p src/tsconfig.tsec.json",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--tsec-compile-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "tsgo --project src/tsconfig.vscode-dts.json && tsgo --project src/tsconfig.vscode-proposed-dts.json",
+              "start": 2632,
+              "end": 2761,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "vscode-dts-compile-check",
+            "script": "tsgo --project src/tsconfig.vscode-dts.json && tsgo --project src/tsconfig.vscode-proposed-dts.json",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--vscode-dts-compile-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/checker/layersChecker.ts && tsgo --project build/checker/tsconfig.browser.json && tsgo --project build/checker/tsconfig.worker.json && tsgo --project build/checker/tsconfig.node.json && tsgo --project build/checker/tsconfig.electron-browser.json && tsgo --project build/checker/tsconfig.electron-main.json && tsgo --project build/checker/tsconfig.electron-utility.json",
+              "start": 2768,
+              "end": 3171,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "valid-layers-check",
+            "script": "node build/checker/layersChecker.ts && tsgo --project build/checker/tsconfig.browser.json && tsgo --project build/checker/tsconfig.worker.json && tsgo --project build/checker/tsconfig.node.json && tsgo --project build/checker/tsconfig.electron-browser.json && tsgo --project build/checker/tsconfig.electron-main.json && tsgo --project build/checker/tsconfig.electron-utility.json",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--valid-layers-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/lib/propertyInitOrderChecker.ts && tsgo --project src/tsconfig.defineClassFields.json",
+              "start": 3178,
+              "end": 3305,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "define-class-fields-check",
+            "script": "node build/lib/propertyInitOrderChecker.ts && tsgo --project src/tsconfig.defineClassFields.json",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--define-class-fields-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/npm/update-distro.ts",
+              "start": 3312,
+              "end": 3362,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "update-distro",
+            "script": "node build/npm/update-distro.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--update-distro",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "echo 'npm run web' is replaced by './scripts/code-server' or './scripts/code-web'",
+              "start": 3369,
+              "end": 3459,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "web",
+            "script": "echo 'npm run web' is replaced by './scripts/code-server' or './scripts/code-web'",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--web",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp compile-cli",
+              "start": 3466,
+              "end": 3507,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "compile-cli",
+            "script": "npm run gulp compile-cli",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--compile-cli",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp compile-web",
+              "start": 3514,
+              "end": 3555,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "compile-web",
+            "script": "npm run gulp compile-web",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--compile-web",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp watch-web",
+              "start": 3562,
+              "end": 3599,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-web",
+            "script": "npm run gulp watch-web",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-web",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp watch-cli",
+              "start": 3606,
+              "end": 3643,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch-cli",
+            "script": "npm run gulp watch-cli",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--watch-cli",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/eslint.ts",
+              "start": 3650,
+              "end": 3682,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "node build/eslint.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--eslint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node build/stylelint.ts",
+              "start": 3689,
+              "end": 3727,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "stylelint",
+            "script": "node build/stylelint.ts",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--stylelint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm exec playwright install",
+              "start": 3734,
+              "end": 3785,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "playwright-install",
+            "script": "npm exec playwright install",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--playwright-install",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp compile-build-with-mangling",
+              "start": 3792,
+              "end": 3851,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "compile-build",
+            "script": "npm run gulp compile-build-with-mangling",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--compile-build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp compile-extensions-build",
+              "start": 3858,
+              "end": 3925,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "compile-extensions-build",
+            "script": "npm run gulp compile-extensions-build",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--compile-extensions-build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp minify-vscode",
+              "start": 3932,
+              "end": 3977,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "minify-vscode",
+            "script": "npm run gulp minify-vscode",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--minify-vscode",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp minify-vscode-reh",
+              "start": 3984,
+              "end": 4037,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "minify-vscode-reh",
+            "script": "npm run gulp minify-vscode-reh",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--minify-vscode-reh",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp minify-vscode-reh-web",
+              "start": 4044,
+              "end": 4105,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "minify-vscode-reh-web",
+            "script": "npm run gulp minify-vscode-reh-web",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--minify-vscode-reh-web",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp hygiene",
+              "start": 4112,
+              "end": 4145,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "hygiene",
+            "script": "npm run gulp hygiene",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--hygiene",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp core-ci",
+              "start": 4152,
+              "end": 4185,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "core-ci",
+            "script": "npm run gulp core-ci",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--core-ci",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp core-ci-pr",
+              "start": 4192,
+              "end": 4231,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "core-ci-pr",
+            "script": "npm run gulp core-ci-pr",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--core-ci-pr",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp extensions-ci",
+              "start": 4238,
+              "end": 4283,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "extensions-ci",
+            "script": "npm run gulp extensions-ci",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--extensions-ci",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm run gulp extensions-ci-pr",
+              "start": 4290,
+              "end": 4341,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "extensions-ci-pr",
+            "script": "npm run gulp extensions-ci-pr",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--extensions-ci-pr",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/code-perf.js",
+              "start": 4348,
+              "end": 4383,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "perf",
+            "script": "node scripts/code-perf.js",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--perf",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm install -D typescript@next && npm install -D @typescript/native-preview && (cd build && npm run typecheck)",
+              "start": 4390,
+              "end": 4529,
+              "source_file": "c:\\3dparty\\vscode\\package.json"
+            },
+            "need_ctl": true,
+            "name": "update-build-ts-version",
+            "script": "npm install -D typescript@next && npm install -D @typescript/native-preview && (cd build && npm run typecheck)",
+            "workspace_folder": "c:\\3dparty\\vscode",
+            "effective_watch": [],
+            "id": "c--3dparty-vscode--update-build-ts-version",
+            "tags": []
+          }
+        ],
+        "folders": [],
+        "name": "vscode",
+        "workspace_folder": "c:\\3dparty\\vscode",
+        "id": "c--3dparty-vscode",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\3dparty\\vscode\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\3dparty\\vscode\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\3dparty\\vscode"
+  ]
+}

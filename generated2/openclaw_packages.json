@@ -1,0 +1,1061 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "cd apps/android && ./gradlew :app:assembleDebug",
+              "start": 1884,
+              "end": 1953,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "android:assemble",
+            "script": "cd apps/android && ./gradlew :app:assembleDebug",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--android-assemble",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd apps/android && ./gradlew :app:installDebug",
+              "start": 1959,
+              "end": 2026,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "android:install",
+            "script": "cd apps/android && ./gradlew :app:installDebug",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--android-install",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd apps/android && ./gradlew :app:installDebug && adb shell am start -n ai.openclaw.android/.MainActivity",
+              "start": 2032,
+              "end": 2154,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "android:run",
+            "script": "cd apps/android && ./gradlew :app:installDebug && adb shell am start -n ai.openclaw.android/.MainActivity",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--android-run",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd apps/android && ./gradlew :app:testDebugUnitTest",
+              "start": 2160,
+              "end": 2229,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "android:test",
+            "script": "cd apps/android && ./gradlew :app:testDebugUnitTest",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--android-test",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm canvas:a2ui:bundle && tsc -p tsconfig.json --noEmit false && node --import tsx scripts/canvas-a2ui-copy.ts && node --import tsx scripts/copy-hook-metadata.ts && node --import tsx scripts/write-build-info.ts",
+              "start": 2235,
+              "end": 2457,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "build",
+            "script": "pnpm canvas:a2ui:bundle && tsc -p tsconfig.json --noEmit false && node --import tsx scripts/canvas-a2ui-copy.ts && node --import tsx scripts/copy-hook-metadata.ts && node --import tsx scripts/write-build-info.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/bundle-a2ui.sh",
+              "start": 2463,
+              "end": 2514,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "canvas:a2ui:bundle",
+            "script": "bash scripts/bundle-a2ui.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--canvas-a2ui-bundle",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --import tsx scripts/check-ts-max-loc.ts --max 500",
+              "start": 2520,
+              "end": 2590,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "check:loc",
+            "script": "node --import tsx scripts/check-ts-max-loc.ts --max 500",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--check-loc",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/run-node.mjs",
+              "start": 2596,
+              "end": 2630,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "dev",
+            "script": "node scripts/run-node.mjs",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--dev",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/build-docs-list.mjs",
+              "start": 2636,
+              "end": 2682,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "docs:bin",
+            "script": "node scripts/build-docs-list.mjs",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--docs-bin",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd docs && pnpm dlx --reporter append-only mint broken-links",
+              "start": 2688,
+              "end": 2764,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "docs:build",
+            "script": "cd docs && pnpm dlx --reporter append-only mint broken-links",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--docs-build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd docs && mint dev",
+              "start": 2770,
+              "end": 2803,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "docs:dev",
+            "script": "cd docs && mint dev",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--docs-dev",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/docs-list.js",
+              "start": 2809,
+              "end": 2849,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "docs:list",
+            "script": "node scripts/docs-list.js",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--docs-list",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "oxfmt --check",
+              "start": 2855,
+              "end": 2880,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "format",
+            "script": "oxfmt --check",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--format",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm format && pnpm format:swift",
+              "start": 2886,
+              "end": 2934,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "format:all",
+            "script": "pnpm format && pnpm format:swift",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--format-all",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "oxfmt --write",
+              "start": 2940,
+              "end": 2969,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "format:fix",
+            "script": "oxfmt --write",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--format-fix",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "swiftformat --lint --config .swiftformat apps/macos/Sources apps/ios/Sources apps/shared/OpenClawKit/Sources",
+              "start": 2975,
+              "end": 3101,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "format:swift",
+            "script": "swiftformat --lint --config .swiftformat apps/macos/Sources apps/ios/Sources apps/shared/OpenClawKit/Sources",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--format-swift",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "OPENCLAW_SKIP_CHANNELS=1 CLAWDBOT_SKIP_CHANNELS=1 node scripts/run-node.mjs --dev gateway",
+              "start": 3107,
+              "end": 3213,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "gateway:dev",
+            "script": "OPENCLAW_SKIP_CHANNELS=1 CLAWDBOT_SKIP_CHANNELS=1 node scripts/run-node.mjs --dev gateway",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--gateway-dev",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "OPENCLAW_SKIP_CHANNELS=1 CLAWDBOT_SKIP_CHANNELS=1 node scripts/run-node.mjs --dev gateway --reset",
+              "start": 3219,
+              "end": 3339,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "gateway:dev:reset",
+            "script": "OPENCLAW_SKIP_CHANNELS=1 CLAWDBOT_SKIP_CHANNELS=1 node scripts/run-node.mjs --dev gateway --reset",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--gateway-dev-reset",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/watch-node.mjs gateway --force",
+              "start": 3345,
+              "end": 3407,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "gateway:watch",
+            "script": "node scripts/watch-node.mjs gateway --force",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--gateway-watch",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash -lc 'cd apps/ios && xcodegen generate && xcodebuild -project OpenClaw.xcodeproj -scheme OpenClaw -destination \"${IOS_DEST:-platform=iOS Simulator,name=iPhone 17}\" -configuration Debug build'",
+              "start": 3413,
+              "end": 3625,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ios:build",
+            "script": "bash -lc 'cd apps/ios && xcodegen generate && xcodebuild -project OpenClaw.xcodeproj -scheme OpenClaw -destination \"${IOS_DEST:-platform=iOS Simulator,name=iPhone 17}\" -configuration Debug build'",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ios-build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd apps/ios && xcodegen generate",
+              "start": 3631,
+              "end": 3676,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ios:gen",
+            "script": "cd apps/ios && xcodegen generate",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ios-gen",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "cd apps/ios && xcodegen generate && open OpenClaw.xcodeproj",
+              "start": 3682,
+              "end": 3755,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ios:open",
+            "script": "cd apps/ios && xcodegen generate && open OpenClaw.xcodeproj",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ios-open",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash -lc 'cd apps/ios && xcodegen generate && xcodebuild -project OpenClaw.xcodeproj -scheme OpenClaw -destination \"${IOS_DEST:-platform=iOS Simulator,name=iPhone 17}\" -configuration Debug build && xcrun simctl boot \"${IOS_SIM:-iPhone 17}\" || true && xcrun simctl launch booted ai.openclaw.ios'",
+              "start": 3761,
+              "end": 4072,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ios:run",
+            "script": "bash -lc 'cd apps/ios && xcodegen generate && xcodebuild -project OpenClaw.xcodeproj -scheme OpenClaw -destination \"${IOS_DEST:-platform=iOS Simulator,name=iPhone 17}\" -configuration Debug build && xcrun simctl boot \"${IOS_SIM:-iPhone 17}\" || true && xcrun simctl launch booted ai.openclaw.ios'",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ios-run",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "oxlint --type-aware",
+              "start": 4078,
+              "end": 4107,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "lint",
+            "script": "oxlint --type-aware",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--lint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm lint && pnpm lint:swift",
+              "start": 4113,
+              "end": 4155,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "lint:all",
+            "script": "pnpm lint && pnpm lint:swift",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--lint-all",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "oxlint --type-aware --fix && pnpm format:fix",
+              "start": 4161,
+              "end": 4219,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "lint:fix",
+            "script": "oxlint --type-aware --fix && pnpm format:fix",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--lint-fix",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "swiftlint lint --config .swiftlint.yml && (cd apps/ios && swiftlint lint --config .swiftlint.yml)",
+              "start": 4225,
+              "end": 4338,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "lint:swift",
+            "script": "swiftlint lint --config .swiftlint.yml && (cd apps/ios && swiftlint lint --config .swiftlint.yml)",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--lint-swift",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "open dist/OpenClaw.app",
+              "start": 4344,
+              "end": 4380,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "mac:open",
+            "script": "open dist/OpenClaw.app",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--mac-open",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/package-mac-app.sh",
+              "start": 4386,
+              "end": 4434,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "mac:package",
+            "script": "bash scripts/package-mac-app.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--mac-package",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/restart-mac.sh",
+              "start": 4440,
+              "end": 4484,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "mac:restart",
+            "script": "bash scripts/restart-mac.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--mac-restart",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/run-node.mjs agent --mode rpc --json",
+              "start": 4490,
+              "end": 4556,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "moltbot:rpc",
+            "script": "node scripts/run-node.mjs agent --mode rpc --json",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--moltbot-rpc",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/run-node.mjs",
+              "start": 4562,
+              "end": 4601,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "openclaw",
+            "script": "node scripts/run-node.mjs",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--openclaw",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/run-node.mjs agent --mode rpc --json",
+              "start": 4607,
+              "end": 4674,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "openclaw:rpc",
+            "script": "node scripts/run-node.mjs agent --mode rpc --json",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--openclaw-rpc",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --import tsx scripts/sync-plugin-versions.ts",
+              "start": 4680,
+              "end": 4747,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "plugins:sync",
+            "script": "node --import tsx scripts/sync-plugin-versions.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--plugins-sync",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/postinstall.js",
+              "start": 4753,
+              "end": 4797,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "postinstall",
+            "script": "node scripts/postinstall.js",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--postinstall",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm build && pnpm ui:build",
+              "start": 4803,
+              "end": 4843,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "prepack",
+            "script": "pnpm build && pnpm ui:build",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--prepack",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm protocol:gen && pnpm protocol:gen:swift && git diff --exit-code -- dist/protocol.schema.json apps/macos/Sources/OpenClawProtocol/GatewayModels.swift",
+              "start": 4849,
+              "end": 5022,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "protocol:check",
+            "script": "pnpm protocol:gen && pnpm protocol:gen:swift && git diff --exit-code -- dist/protocol.schema.json apps/macos/Sources/OpenClawProtocol/GatewayModels.swift",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--protocol-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --import tsx scripts/protocol-gen.ts",
+              "start": 5028,
+              "end": 5087,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "protocol:gen",
+            "script": "node --import tsx scripts/protocol-gen.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--protocol-gen",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --import tsx scripts/protocol-gen-swift.ts",
+              "start": 5093,
+              "end": 5164,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "protocol:gen:swift",
+            "script": "node --import tsx scripts/protocol-gen-swift.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--protocol-gen-swift",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --import tsx scripts/release-check.ts",
+              "start": 5170,
+              "end": 5231,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "release:check",
+            "script": "node --import tsx scripts/release-check.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--release-check",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/run-node.mjs",
+              "start": 5237,
+              "end": 5273,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "start",
+            "script": "node scripts/run-node.mjs",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--start",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/test-parallel.mjs",
+              "start": 5279,
+              "end": 5319,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test",
+            "script": "node scripts/test-parallel.mjs",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm lint && pnpm build && pnpm test && pnpm test:e2e && pnpm test:live && pnpm test:docker:all",
+              "start": 5325,
+              "end": 5434,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:all",
+            "script": "pnpm lint && pnpm build && pnpm test && pnpm test:e2e && pnpm test:live && pnpm test:docker:all",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-all",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "vitest run --coverage",
+              "start": 5440,
+              "end": 5480,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:coverage",
+            "script": "vitest run --coverage",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-coverage",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm test:docker:live-models && pnpm test:docker:live-gateway && pnpm test:docker:onboard && pnpm test:docker:gateway-network && pnpm test:docker:qr && pnpm test:docker:doctor-switch && pnpm test:docker:plugins && pnpm test:docker:cleanup",
+              "start": 5486,
+              "end": 5745,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:all",
+            "script": "pnpm test:docker:live-models && pnpm test:docker:live-gateway && pnpm test:docker:onboard && pnpm test:docker:gateway-network && pnpm test:docker:qr && pnpm test:docker:doctor-switch && pnpm test:docker:plugins && pnpm test:docker:cleanup",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-all",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/test-cleanup-docker.sh",
+              "start": 5751,
+              "end": 5811,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:cleanup",
+            "script": "bash scripts/test-cleanup-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-cleanup",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/e2e/doctor-install-switch-docker.sh",
+              "start": 5817,
+              "end": 5896,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:doctor-switch",
+            "script": "bash scripts/e2e/doctor-install-switch-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-doctor-switch",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/e2e/gateway-network-docker.sh",
+              "start": 5902,
+              "end": 5977,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:gateway-network",
+            "script": "bash scripts/e2e/gateway-network-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-gateway-network",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/test-live-gateway-models-docker.sh",
+              "start": 5983,
+              "end": 6060,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:live-gateway",
+            "script": "bash scripts/test-live-gateway-models-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-live-gateway",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/test-live-models-docker.sh",
+              "start": 6066,
+              "end": 6134,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:live-models",
+            "script": "bash scripts/test-live-models-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-live-models",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/e2e/onboard-docker.sh",
+              "start": 6140,
+              "end": 6199,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:onboard",
+            "script": "bash scripts/e2e/onboard-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-onboard",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/e2e/plugins-docker.sh",
+              "start": 6205,
+              "end": 6264,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:plugins",
+            "script": "bash scripts/e2e/plugins-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-plugins",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/e2e/qr-import-docker.sh",
+              "start": 6270,
+              "end": 6326,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:docker:qr",
+            "script": "bash scripts/e2e/qr-import-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-docker-qr",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "vitest run --config vitest.e2e.config.ts",
+              "start": 6332,
+              "end": 6386,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:e2e",
+            "script": "vitest run --config vitest.e2e.config.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-e2e",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node --import tsx scripts/test-force.ts",
+              "start": 6392,
+              "end": 6447,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:force",
+            "script": "node --import tsx scripts/test-force.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-force",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/test-install-sh-e2e-docker.sh",
+              "start": 6453,
+              "end": 6517,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:install:e2e",
+            "script": "bash scripts/test-install-sh-e2e-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-install-e2e",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "OPENCLAW_E2E_MODELS=anthropic CLAWDBOT_E2E_MODELS=anthropic bash scripts/test-install-sh-e2e-docker.sh",
+              "start": 6523,
+              "end": 6657,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:install:e2e:anthropic",
+            "script": "OPENCLAW_E2E_MODELS=anthropic CLAWDBOT_E2E_MODELS=anthropic bash scripts/test-install-sh-e2e-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-install-e2e-anthropic",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "OPENCLAW_E2E_MODELS=openai CLAWDBOT_E2E_MODELS=openai bash scripts/test-install-sh-e2e-docker.sh",
+              "start": 6663,
+              "end": 6788,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:install:e2e:openai",
+            "script": "OPENCLAW_E2E_MODELS=openai CLAWDBOT_E2E_MODELS=openai bash scripts/test-install-sh-e2e-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-install-e2e-openai",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "bash scripts/test-install-sh-docker.sh",
+              "start": 6794,
+              "end": 6856,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:install:smoke",
+            "script": "bash scripts/test-install-sh-docker.sh",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-install-smoke",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "OPENCLAW_LIVE_TEST=1 CLAWDBOT_LIVE_TEST=1 vitest run --config vitest.live.config.ts",
+              "start": 6862,
+              "end": 6960,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:live",
+            "script": "OPENCLAW_LIVE_TEST=1 CLAWDBOT_LIVE_TEST=1 vitest run --config vitest.live.config.ts",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-live",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "pnpm --dir ui test",
+              "start": 6966,
+              "end": 6997,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:ui",
+            "script": "pnpm --dir ui test",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-ui",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "vitest",
+              "start": 7003,
+              "end": 7025,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test:watch",
+            "script": "vitest",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--test-watch",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/run-node.mjs tui",
+              "start": 7031,
+              "end": 7069,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tui",
+            "script": "node scripts/run-node.mjs tui",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--tui",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "OPENCLAW_PROFILE=dev CLAWDBOT_PROFILE=dev node scripts/run-node.mjs --dev tui",
+              "start": 7075,
+              "end": 7165,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tui:dev",
+            "script": "OPENCLAW_PROFILE=dev CLAWDBOT_PROFILE=dev node scripts/run-node.mjs --dev tui",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--tui-dev",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/ui.js build",
+              "start": 7171,
+              "end": 7209,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ui:build",
+            "script": "node scripts/ui.js build",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ui-build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/ui.js dev",
+              "start": 7215,
+              "end": 7249,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ui:dev",
+            "script": "node scripts/ui.js dev",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ui-dev",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "node scripts/ui.js install",
+              "start": 7255,
+              "end": 7297,
+              "source_file": "c:\\3dparty\\openclaw\\package.json"
+            },
+            "need_ctl": true,
+            "name": "ui:install",
+            "script": "node scripts/ui.js install",
+            "workspace_folder": "c:\\3dparty\\openclaw",
+            "effective_watch": [],
+            "id": "c--3dparty-openclaw--ui-install",
+            "tags": []
+          }
+        ],
+        "folders": [],
+        "name": "openclaw",
+        "workspace_folder": "c:\\3dparty\\openclaw",
+        "id": "c--3dparty-openclaw",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\3dparty\\openclaw\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\3dparty\\openclaw\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\3dparty\\openclaw"
+  ]
+}

@@ -283,7 +283,7 @@ export class TreeControl<T>{
           if (timeOffset>2)
             continue
           const animation_delay=`-${timeOffset}s`
-          console.log(id,animation_delay)          
+          //console.log(id,animation_delay)          
           anim.style.animationDelay = animation_delay;
         } 
       } 

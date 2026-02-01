@@ -1,0 +1,676 @@
+{
+  "ipty": "<skipped>",
+  "runs": {
+    "c--yigal-ttstry--eslint": [
+      {
+        "start_time": 1769916529678,
+        "end_time": 1769916532872,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-ttstry--oxlint": [
+      {
+        "start_time": 1769916537257,
+        "end_time": 1769916537645,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-ttstry--oxlinttypeaware": [
+      {
+        "start_time": 1769931575104,
+        "end_time": 1769931578249,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-ttstry--eslint",
+    "c--yigal-ttstry--oxlint"
+  ],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "tsc",
+              "start": 262,
+              "end": 274,
+              "source_file": "c:\\yigal\\ttstry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsc",
+            "script": "tsc",
+            "workspace_folder": "c:\\yigal\\ttstry",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 661,
+                  "end": 666
+                },
+                "full": "c:\\yigal\\ttstry\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 680,
+                  "end": 694
+                },
+                "full": "c:\\yigal\\ttstry\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 708,
+                  "end": 728
+                },
+                "full": "c:\\yigal\\ttstry\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 793,
+                  "end": 805
+                },
+                "full": "c:\\yigal\\ttstry\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 819,
+                  "end": 834
+                },
+                "full": "c:\\yigal\\ttstry\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 848,
+                  "end": 867
+                },
+                "full": "c:\\yigal\\ttstry\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-ttstry--tsc",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "eslint . --color --max-warnings=0",
+              "start": 284,
+              "end": 329,
+              "source_file": "c:\\yigal\\ttstry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "eslint . --color --max-warnings=0",
+            "workspace_folder": "c:\\yigal\\ttstry",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 661,
+                  "end": 666
+                },
+                "full": "c:\\yigal\\ttstry\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 680,
+                  "end": 694
+                },
+                "full": "c:\\yigal\\ttstry\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 708,
+                  "end": 728
+                },
+                "full": "c:\\yigal\\ttstry\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 793,
+                  "end": 805
+                },
+                "full": "c:\\yigal\\ttstry\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 819,
+                  "end": 834
+                },
+                "full": "c:\\yigal\\ttstry\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 848,
+                  "end": 867
+                },
+                "full": "c:\\yigal\\ttstry\\eslint.config.mjs"
+              }
+            ],
+            "id": "c--yigal-ttstry--eslint",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "oxlint . --type-aware",
+              "start": 339,
+              "end": 381,
+              "source_file": "c:\\yigal\\ttstry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlinttypeaware",
+            "script": "oxlint . --type-aware",
+            "workspace_folder": "c:\\yigal\\ttstry",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 661,
+                  "end": 666
+                },
+                "full": "c:\\yigal\\ttstry\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 680,
+                  "end": 694
+                },
+                "full": "c:\\yigal\\ttstry\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 708,
+                  "end": 728
+                },
+                "full": "c:\\yigal\\ttstry\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 793,
+                  "end": 805
+                },
+                "full": "c:\\yigal\\ttstry\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 819,
+                  "end": 834
+                },
+                "full": "c:\\yigal\\ttstry\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 848,
+                  "end": 867
+                },
+                "full": "c:\\yigal\\ttstry\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 1060,
+                  "end": 1076
+                },
+                "full": "c:\\yigal\\ttstry\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-ttstry--oxlinttypeaware",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "oxlint ",
+              "start": 391,
+              "end": 410,
+              "source_file": "c:\\yigal\\ttstry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "oxlint",
+            "script": "oxlint ",
+            "workspace_folder": "c:\\yigal\\ttstry",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 661,
+                  "end": 666
+                },
+                "full": "c:\\yigal\\ttstry\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 680,
+                  "end": 694
+                },
+                "full": "c:\\yigal\\ttstry\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 708,
+                  "end": 728
+                },
+                "full": "c:\\yigal\\ttstry\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 793,
+                  "end": 805
+                },
+                "full": "c:\\yigal\\ttstry\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 819,
+                  "end": 834
+                },
+                "full": "c:\\yigal\\ttstry\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 848,
+                  "end": 867
+                },
+                "full": "c:\\yigal\\ttstry\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": ".oxlintrc.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 1060,
+                  "end": 1076
+                },
+                "full": "c:\\yigal\\ttstry\\.oxlintrc.json"
+              }
+            ],
+            "id": "c--yigal-ttstry--oxlint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "biome lint",
+              "start": 420,
+              "end": 441,
+              "source_file": "c:\\yigal\\ttstry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "biome",
+            "script": "biome lint",
+            "workspace_folder": "c:\\yigal\\ttstry",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 661,
+                  "end": 666
+                },
+                "full": "c:\\yigal\\ttstry\\src"
+              },
+              {
+                "rel": {
+                  "str": "package.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 680,
+                  "end": 694
+                },
+                "full": "c:\\yigal\\ttstry\\package.json"
+              },
+              {
+                "rel": {
+                  "str": "./bin/run_build.ts",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 708,
+                  "end": 728
+                },
+                "full": "c:\\yigal\\ttstry\\bin\\run_build.ts"
+              },
+              {
+                "rel": {
+                  "str": "client/src",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 793,
+                  "end": 805
+                },
+                "full": "c:\\yigal\\ttstry\\client\\src"
+              },
+              {
+                "rel": {
+                  "str": "tsconfig.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 819,
+                  "end": 834
+                },
+                "full": "c:\\yigal\\ttstry\\tsconfig.json"
+              },
+              {
+                "rel": {
+                  "str": "eslint.config.mjs",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 848,
+                  "end": 867
+                },
+                "full": "c:\\yigal\\ttstry\\eslint.config.mjs"
+              },
+              {
+                "rel": {
+                  "str": "biome.json",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 1140,
+                  "end": 1152
+                },
+                "full": "c:\\yigal\\ttstry\\biome.json"
+              }
+            ],
+            "id": "c--yigal-ttstry--biome",
+            "tags": [
+              "dev"
+            ]
+          },
+          {
+            "pos": {
+              "str": "npx  http-server client/resources",
+              "start": 451,
+              "end": 496,
+              "source_file": "c:\\yigal\\ttstry\\package.json"
+            },
+            "need_ctl": true,
+            "name": "server",
+            "script": "npx  http-server client/resources",
+            "workspace_folder": "c:\\yigal\\ttstry",
+            "effective_watch": [
+              {
+                "rel": {
+                  "str": "client/resources",
+                  "source_file": "c:\\yigal\\ttstry\\package.json",
+                  "start": 1225,
+                  "end": 1243
+                },
+                "full": "c:\\yigal\\ttstry\\client\\resources"
+              }
+            ],
+            "id": "c--yigal-ttstry--server",
+            "tags": []
+          }
+        ],
+        "folders": [
+          {
+            "runners": [
+              {
+                "pos": {
+                  "str": "node build.ts",
+                  "start": 71,
+                  "end": 95,
+                  "source_file": "c:\\yigal\\ttstry\\client\\package.json"
+                },
+                "need_ctl": true,
+                "name": "build",
+                "script": "node build.ts",
+                "workspace_folder": "c:\\yigal\\ttstry\\client",
+                "effective_watch": [
+                  {
+                    "rel": {
+                      "str": "build.ts",
+                      "source_file": "c:\\yigal\\ttstry\\client\\package.json",
+                      "start": 148,
+                      "end": 158
+                    },
+                    "full": "c:\\yigal\\ttstry\\client\\build.ts"
+                  },
+                  {
+                    "rel": {
+                      "str": "src",
+                      "source_file": "c:\\yigal\\ttstry\\client\\package.json",
+                      "start": 169,
+                      "end": 174
+                    },
+                    "full": "c:\\yigal\\ttstry\\client\\src"
+                  },
+                  {
+                    "rel": {
+                      "str": "package.json",
+                      "source_file": "c:\\yigal\\ttstry\\client\\package.json",
+                      "start": 184,
+                      "end": 198
+                    },
+                    "full": "c:\\yigal\\ttstry\\client\\package.json"
+                  }
+                ],
+                "id": "c--yigal-ttstry-client--build",
+                "tags": [
+                  "dev"
+                ]
+              }
+            ],
+            "folders": [],
+            "name": "client",
+            "workspace_folder": "c:\\yigal\\ttstry\\client",
+            "id": "c--yigal-ttstry-client",
+            "pos": {
+              "str": "client",
+              "source_file": "c:\\yigal\\ttstry\\package.json",
+              "start": 532,
+              "end": 540
+            },
+            "need_ctl": true,
+            "errors": []
+          }
+        ],
+        "name": "ttstry",
+        "workspace_folder": "c:\\yigal\\ttstry",
+        "id": "c--yigal-ttstry",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [
+      "c--yigal-ttstry--eslint",
+      "c--yigal-ttstry--oxlint",
+      "c--yigal-ttstry--oxlinttypeaware"
+    ],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\ttstry\\package.json",
+        "c:\\yigal\\ttstry\\client\\package.json"
+      ],
+      "c--yigal-ttstry--tsc": [
+        "c:\\yigal\\ttstry\\src",
+        "c:\\yigal\\ttstry\\package.json",
+        "c:\\yigal\\ttstry\\bin\\run_build.ts",
+        "c:\\yigal\\ttstry\\client\\src",
+        "c:\\yigal\\ttstry\\tsconfig.json",
+        "c:\\yigal\\ttstry\\eslint.config.mjs"
+      ],
+      "c--yigal-ttstry--eslint": [
+        "c:\\yigal\\ttstry\\src",
+        "c:\\yigal\\ttstry\\package.json",
+        "c:\\yigal\\ttstry\\bin\\run_build.ts",
+        "c:\\yigal\\ttstry\\client\\src",
+        "c:\\yigal\\ttstry\\tsconfig.json",
+        "c:\\yigal\\ttstry\\eslint.config.mjs"
+      ],
+      "c--yigal-ttstry--oxlinttypeaware": [
+        "c:\\yigal\\ttstry\\src",
+        "c:\\yigal\\ttstry\\package.json",
+        "c:\\yigal\\ttstry\\bin\\run_build.ts",
+        "c:\\yigal\\ttstry\\client\\src",
+        "c:\\yigal\\ttstry\\tsconfig.json",
+        "c:\\yigal\\ttstry\\eslint.config.mjs",
+        "c:\\yigal\\ttstry\\.oxlintrc.json"
+      ],
+      "c--yigal-ttstry--oxlint": [
+        "c:\\yigal\\ttstry\\src",
+        "c:\\yigal\\ttstry\\package.json",
+        "c:\\yigal\\ttstry\\bin\\run_build.ts",
+        "c:\\yigal\\ttstry\\client\\src",
+        "c:\\yigal\\ttstry\\tsconfig.json",
+        "c:\\yigal\\ttstry\\eslint.config.mjs",
+        "c:\\yigal\\ttstry\\.oxlintrc.json"
+      ],
+      "c--yigal-ttstry--biome": [
+        "c:\\yigal\\ttstry\\src",
+        "c:\\yigal\\ttstry\\package.json",
+        "c:\\yigal\\ttstry\\bin\\run_build.ts",
+        "c:\\yigal\\ttstry\\client\\src",
+        "c:\\yigal\\ttstry\\tsconfig.json",
+        "c:\\yigal\\ttstry\\eslint.config.mjs",
+        "c:\\yigal\\ttstry\\biome.json"
+      ],
+      "c--yigal-ttstry--server": [
+        "c:\\yigal\\ttstry\\client\\resources"
+      ],
+      "c--yigal-ttstry-client--build": [
+        "c:\\yigal\\ttstry\\client\\build.ts",
+        "c:\\yigal\\ttstry\\client\\src",
+        "c:\\yigal\\ttstry\\client\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\ttstry\\package.json": [
+        "root",
+        "c--yigal-ttstry--tsc",
+        "c--yigal-ttstry--eslint",
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint",
+        "c--yigal-ttstry--biome"
+      ],
+      "c:\\yigal\\ttstry\\src": [
+        "c--yigal-ttstry--tsc",
+        "c--yigal-ttstry--eslint",
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint",
+        "c--yigal-ttstry--biome"
+      ],
+      "c:\\yigal\\ttstry\\bin\\run_build.ts": [
+        "c--yigal-ttstry--tsc",
+        "c--yigal-ttstry--eslint",
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint",
+        "c--yigal-ttstry--biome"
+      ],
+      "c:\\yigal\\ttstry\\client\\src": [
+        "c--yigal-ttstry--tsc",
+        "c--yigal-ttstry--eslint",
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint",
+        "c--yigal-ttstry--biome",
+        "c--yigal-ttstry-client--build"
+      ],
+      "c:\\yigal\\ttstry\\tsconfig.json": [
+        "c--yigal-ttstry--tsc",
+        "c--yigal-ttstry--eslint",
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint",
+        "c--yigal-ttstry--biome"
+      ],
+      "c:\\yigal\\ttstry\\eslint.config.mjs": [
+        "c--yigal-ttstry--tsc",
+        "c--yigal-ttstry--eslint",
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint",
+        "c--yigal-ttstry--biome"
+      ],
+      "c:\\yigal\\ttstry\\.oxlintrc.json": [
+        "c--yigal-ttstry--oxlinttypeaware",
+        "c--yigal-ttstry--oxlint"
+      ],
+      "c:\\yigal\\ttstry\\biome.json": [
+        "c--yigal-ttstry--biome"
+      ],
+      "c:\\yigal\\ttstry\\client\\resources": [
+        "c--yigal-ttstry--server"
+      ],
+      "c:\\yigal\\ttstry\\client\\package.json": [
+        "root",
+        "c--yigal-ttstry-client--build"
+      ],
+      "c:\\yigal\\ttstry\\client\\build.ts": [
+        "c--yigal-ttstry-client--build"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\ttstry"
+  ]
+}
