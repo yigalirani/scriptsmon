@@ -1,25 +1,5 @@
-import { type MaybePromise } from '@yigal/base_types';
-export interface TreeNode {
-    type: 'item' | 'folder';
-    label: string;
-    id: string;
-    icon: string;
-    className: string | undefined;
-    description?: string;
-    commands: string[];
-    children: TreeNode[];
-    icon_version: number;
-    toggles: Record<string, boolean | "missing">;
-    tags: string[];
-}
-export interface TreeDataProvider {
-    toggle_order: Array<string>;
-    convert: (root: unknown) => TreeNode;
-    command: (root: unknown, id: string, command: string) => MaybePromise<void>;
-    selected: (root: unknown, id: string) => MaybePromise<void>;
-    icons_html: string;
-    animated: string;
-}
+import { type TreeNode, type TreeDataProvider } from './tree_internals.js';
+export type { TreeDataProvider, TreeNode };
 export declare class TreeControl {
     private parent;
     private provider;
