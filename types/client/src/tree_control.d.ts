@@ -12,15 +12,15 @@ export interface TreeNode {
     toggles: Record<string, boolean | "missing">;
     tags: string[];
 }
-export interface TreeDataProvider<T> {
+export interface TreeDataProvider {
     toggle_order: Array<string>;
-    convert: (root: T) => TreeNode;
-    command: (root: T, id: string, command: string) => MaybePromise<void>;
-    selected: (root: T, id: string) => MaybePromise<void>;
+    convert: (root: unknown) => TreeNode;
+    command: (root: unknown, id: string, command: string) => MaybePromise<void>;
+    selected: (root: unknown, id: string) => MaybePromise<void>;
     icons_html: string;
     animated: string;
 }
-export declare class TreeControl<T> {
+export declare class TreeControl {
     private parent;
     private provider;
     private icons;
@@ -35,7 +35,7 @@ export declare class TreeControl<T> {
     private set_selected;
     private command_clicked;
     private mark_changed;
-    constructor(parent: HTMLElement, provider: TreeDataProvider<T>);
+    constructor(parent: HTMLElement, provider: TreeDataProvider);
     private create_node;
-    render(root: T, _base_uri: string): void;
+    render(root: unknown, _base_uri: string): void;
 }

@@ -10,7 +10,7 @@ function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
 ): void {
-  const pattern = /([a-zA-Z0-9_\-.\/\\]+)(:\d+)?(:\d+)?/g;
+  const pattern = /([a-zA-Z0-9_\-./\\]+)(:\d+)?(:\d+)?/g;
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1);

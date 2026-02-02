@@ -9,7 +9,8 @@ import {post_message,calc_runner_status} from './common.js'
 import ICONS_HTML from '../resources/icons.html'
 import {make_terminals} from './terminals.js'
 
-function convert(report:RunnerReport):TreeNode{
+function convert(_report:unknown):TreeNode{
+  const report=_report as RunnerReport //deliberatly makes less strok typen
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch,tags}=runner
       const watched=function(){
@@ -73,7 +74,7 @@ function convert(report:RunnerReport):TreeNode{
   return convert_folder(report.root)
 }
 
-function make_provider(terminals:ReturnType<typeof make_terminals>):TreeDataProvider<RunnerReport>{
+function make_provider(terminals:ReturnType<typeof make_terminals>):TreeDataProvider{
   return {
     toggle_order:['watched'],
     convert,
@@ -88,7 +89,7 @@ function make_provider(terminals:ReturnType<typeof make_terminals>):TreeDataProv
     animated:'.running,.done .check,.error .check',
     selected(report,id){
       terminals.set_selected(id)
-      const base=parser.find_base(report.root,id)
+      const base=parser.find_base((report as RunnerReport).root,id)
       if (base==null||base.pos==null)
         return
       if (base.need_ctl&&!ctrl.pressed)

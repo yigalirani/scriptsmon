@@ -10,7 +10,7 @@
     "types": "types/src/extension.d.ts",
     "scripts": {
         "test": "node ./dist/test.js",
-        "build": "node ./bin/run_build.ts",
+        "build": "node build.ts",
         "tsc": "tsc",
         "eslint": "eslint . --color --max-warnings=0",
         "ls": "ls -la  --color=always",
@@ -31,7 +31,7 @@
         "$build": [
             "src",
             "package.json",
-            "./bin/run_build.ts"
+            "build.ts"
         ],
         "$lint": [
             "$build",

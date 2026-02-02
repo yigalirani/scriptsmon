@@ -8839,7 +8839,7 @@ async function activate(context) {
   const workspace_folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders ?? []).map((x) => x.uri.fsPath);
     if (ans.length === 0)
-      return [String.raw`c:\yigal\million_try3`];
+      return [String.raw`c:\yigal\scriptsmon`];
     return ans;
   })();
   if (workspace_folders == null)

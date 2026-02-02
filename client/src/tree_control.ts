@@ -38,11 +38,11 @@ function parseIcons(html: string): Record<string, string> {
   return result;
 }
 
-export interface TreeDataProvider<T>{
+export interface TreeDataProvider{
   toggle_order:Array<string>
-  convert: (root:T)=>TreeNode
-  command:(root:T,id:string,command:string)=>MaybePromise<void>
-  selected:(root:T,id:string)=>MaybePromise<void>
+  convert: (root:unknown)=>TreeNode
+  command:(root:unknown,id:string,command:string)=>MaybePromise<void>
+  selected:(root:unknown,id:string)=>MaybePromise<void>
   icons_html:string
   animated:string
 }
@@ -178,9 +178,9 @@ function element_for_down_arrow(selected:HTMLElement){
     cur=parent
   }
 }
-export class TreeControl<T>{
+export class TreeControl{
   private icons:s2s
-  private root:T|undefined
+  private root:unknown
   private id_last_changed:Record<string,number>={}
   private collapsed=new Set<string>()
   private selected_id=''
@@ -247,7 +247,7 @@ export class TreeControl<T>{
   //on_selected_changed:(a:string)=>MaybePromise<void>=(a:string)=>undefined
   private async set_selected(id:string){
     this.selected_id=id
-    await this.provider.selected(this.root!,id)
+    await this.provider.selected(this.root,id)
   }
   private command_clicked(evt:Event){
     if (evt.target==null)
@@ -270,7 +270,7 @@ export class TreeControl<T>{
   }
   constructor(
     private parent:HTMLElement,
-    private provider:TreeDataProvider<T>
+    private provider:TreeDataProvider
   ){
     this.icons=parseIcons(this.provider.icons_html)
     setInterval(()=>{//todo: detect if parent is dismounted and exit this interval
@@ -352,7 +352,7 @@ export class TreeControl<T>{
       this.create_node(children_el as HTMLElement,x,depth+1)
     }
   }
-  render(root:T,_base_uri:string){
+  render(root:unknown,_base_uri:string){
     const converted=this.provider.convert(root)
     //const is_equal=isEqual(converted,this.last_converted)
     this.root=root
