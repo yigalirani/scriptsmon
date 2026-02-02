@@ -221,30 +221,24 @@ class TerminalPanel{
     update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
   }
 }
-class Terminals{
-  terminals:s2t<TerminalPanel>={}
-  constructor(
-    public parent:HTMLElement
-  ){}
-  get_terminal(runner:Runner){
-    const ans=default_get(this.terminals,runner.id,()=> new TerminalPanel(this.parent, runner))
-    return ans
-  }
-}
-function get_terminals(report:RunnerReport,terminals:Terminals){
-  function f(folder:Folder){
-    for (const runner of folder.runners)
-      terminals.get_terminal(runner)?.update_terminal(report,runner)
-    folder.folders.forEach(f) 
-  }
-  f(report.root)
-}
+
 export function make_terminals(){
   console.log('start')
-  const terminals=new Terminals(query_selector<HTMLElement>(document.body,'.terms_container'))
+  const parent=query_selector<HTMLElement>(document.body,'.terms_container')
+  const terminals:s2t<TerminalPanel>={} 
+  function get_terminal(runner:Runner){
+    const ans=default_get(terminals,runner.id,()=> new TerminalPanel(parent, runner))
+    return ans
+  }
+
   return {
-    render(message:RunnerReport){
-      get_terminals(message,terminals)      
+    render(report:RunnerReport){
+      function f(folder:Folder){
+        for (const runner of folder.runners)
+          get_terminal(runner)?.update_terminal(report,runner)
+        folder.folders.forEach(f) 
+      }
+      f(report.root)    
     },
     set_selected(id:string){
       for (const panel of document.querySelectorAll('.term_panel')){ //todo: make a genr
