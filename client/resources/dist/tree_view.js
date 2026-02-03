@@ -1,18 +1,6 @@
 // src/dom_utils.ts
-function query_selector(el2, selector) {
-  const ans = el2.querySelector(selector);
-  if (ans == null)
-    throw new Error("selector not found or not expected type");
-  return ans;
-}
-function create_element(html, parent) {
-  const template = document.createElement("template");
-  template.innerHTML = html.trim();
-  const ans = template.content.firstElementChild;
-  if (parent != null)
-    parent.appendChild(ans);
-  return ans;
-}
+
+
 function divs(vals) {
   const ans = [];
   for (const [k, v] of Object.entries(vals))

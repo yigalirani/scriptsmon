@@ -18,33 +18,11 @@ export interface TreeNode{
 export interface TreeDataProvider{
   toggle_order:Array<string>
   convert: (root:unknown)=>TreeNode
-  command:(root:unknown,id:string,command:string)=>MaybePromise<void>
+  command:(root:unknown,id:string,command_name:string)=>MaybePromise<void>
   selected:(root:unknown,id:string)=>MaybePromise<void>
   icons_html:string
-  animated:string
 }
-export function parseIcons(html: string): Record<string, string> {
-  const result: Record<string, string> = {};
-  // Parse the HTML string into a Document
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  // Select all divs with class "icon"
-  const icons = doc.querySelectorAll<HTMLDivElement>('.icon');
-  icons.forEach(icon => {
-    const nameEl = icon.childNodes[0]
-    const contentEl = icon.querySelector<SVGElement>('svg');
-    if (nameEl && contentEl) {
-      const name = nameEl.textContent?.trim();
-      const content = contentEl.outerHTML
-      if (name!=null) {
-        result[name] = content
-      }
-    }
-  });
-  const iconnames=Object.keys(result)
-  console.log({iconnames})
-  return result;
-}
+
 function get_prev_selected(selected:HTMLElement){
   if (selected==null)
     return null // i like undefined better but want to have the 
@@ -85,34 +63,12 @@ function calc_summary(node:TreeNode):string{
   }
   return JSON.stringify(node,replacer,2)//⚠ Error (TS2769)
 }
-export function calc_changed(root:TreeNode,old_root:TreeNode|undefined){
-  const versions=new Set<string>()
-  const icons=new Set<string>()
-  const big=true // a change that requires drawing the tree from scratch. rarely happens, obnly whewn user update theus project.json
-  const new_index=index_folder(root)
-  const ans={versions,icons,big,new_index}
+export function need_full_render(root:TreeNode,old_root:TreeNode|undefined){
   if (old_root==null)
-    return ans
-  const old_index=index_folder(old_root)
+    return true
   const summary=calc_summary(root)
   const old_summary=calc_summary(old_root)
-  if (old_summary!==summary){
-    return ans
-  }
-  ans.big=false
-  function f(node:TreeNode){
-    const {id,children}=node                                                                                                                                                                                                                                                                   
-    const old_node=old_index[id]
-    if (old_node==null)
-      throw new Error('old node not found')
-    if (node.icon!==old_node.icon)
-      icons.add(id)
-    if (node.icon_version!==old_node.icon_version)
-      versions.add(id)
-    children.map(f)
-  }
-  f(root)
-  return ans
+  return (old_summary!==summary)
 }
 function get_children(selected:HTMLElement){
   if (selected.classList.contains('collapsed'))
