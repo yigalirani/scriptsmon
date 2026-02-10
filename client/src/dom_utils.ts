@@ -124,8 +124,5 @@ interface VSCodeApi {
 }
 declare function acquireVsCodeApi(): VSCodeApi;
 export const vscode = acquireVsCodeApi();
-export interface Component{
-  on_interval:()=>void
-  on_data:(data:unknown)=>void
-}
+
 export const ctrl=new CtrlTracker()

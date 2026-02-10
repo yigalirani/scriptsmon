@@ -1,15 +1,20 @@
 import  { type s2s,toggle_set} from '@yigal/base_types'
-import {get_parent_by_class,create_element,divs,get_parent_by_classes,update_class_name,update_child_html,type Component} from './dom_utils.js'
+import {get_parent_by_class,create_element,divs,get_parent_by_classes,update_class_name,update_child_html} from './dom_utils.js'
 import {
   type TreeNode,
   type TreeDataProvider,
   element_for_up_arrow,
   element_for_down_arrow,
-  need_full_render
+  calc_changed  
 }from './tree_internals.js'
+import {
+    parseIcons
+}from './icons.js'
 export type {TreeDataProvider,TreeNode}
-export class TreeControl implements Component{
+export class TreeControl{
+  private icons:s2s
   private root:unknown
+  private id_last_changed:Record<string,number>={}
   private collapsed=new Set<string>()
   private selected_id=''
   private converted:TreeNode|undefined
@@ -26,7 +31,7 @@ export class TreeControl implements Component{
       ans.add('collapsed')
     return [...ans].join(' ')
   }
-  on_interval(){
+  private apply_classes(){
     const f=(a:TreeNode)=>{
       const {id,children}=a
       const new_class=this.calc_node_class(a)
@@ -35,6 +40,9 @@ export class TreeControl implements Component{
     }
     if (this.converted)
       f(this.converted)
+    /*
+    loop over toggle_order and to update
+    **/
     for (const toggle of  this.provider.toggle_order){
       for (const state of [true,false,undefined]){
         const selector=`.${toggle}_${state}>.label_row #${toggle}.toggle_icon`
@@ -52,6 +60,7 @@ export class TreeControl implements Component{
     const children=(type==='folder')?`<div class=children></div>`:''
     const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
     const  toggles_icons=this.provider.toggle_order.map(x=>`<div class="toggle_icon" id=${x}></div>`).join('')
+    this.mark_changed(id)
     const node_class=this.calc_node_class(node)
     const vtags=tags.map(x=>`<div class=tag>${x}</div>`).join('')
     const ans= create_element(` 
@@ -59,7 +68,7 @@ export class TreeControl implements Component{
     <div  class="label_row">
       ${divs({toggles_icons})}
       <div  class=shifter style='margin-left:${margin}px'>
-        <div class="icon background ${icon}">${icons[icon]}</div>
+        <div class="icon background_${icon}">${icons[icon]}</div>
         ${divs({label,vtags,description})}
       </div>
       ${divs({commands_icons})}
@@ -89,12 +98,29 @@ export class TreeControl implements Component{
     void this.provider.command(this.root,id,command)
     return true
   }
-
+  private mark_changed(id:string){
+    this.id_last_changed[id]=Date.now()
+  }
   constructor(
     private parent:HTMLElement,
-    private provider:TreeDataProvider,
-    private icons:s2s
+    private provider:TreeDataProvider
   ){
+    this.icons=parseIcons(this.provider.icons_html)
+    setInterval(()=>{//todo: detect if parent is dismounted and exit this interval
+      this.apply_classes()
+      for (const [id,time] of Object.entries(this.id_last_changed)){ //animate
+        const selector=this.provider.animated.split(',').map(x=>`#${id} ${x}`).join(',')
+        const element = parent.querySelectorAll<SVGElement>(selector);
+        for ( const anim of element){ 
+          const timeOffset=(Date.now()-time)/1000
+          if (timeOffset>2)
+            continue
+          const animation_delay=`-${timeOffset}s`
+          //console.log(id,animation_delay)          
+          anim.style.animationDelay = animation_delay;
+        } 
+      } 
+    },100)
     parent.addEventListener('click',(evt)=>{
       if (!(evt.target instanceof Element))
         return
@@ -159,15 +185,43 @@ export class TreeControl implements Component{
       this.create_node(children_el as HTMLElement,x,depth+1)
     }
   }
-  private big_render(converted:TreeNode){
-    this.parent.innerHTML = '';
-    this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation    
-  }
-  on_data(root:unknown){
+  render(root:unknown,_base_uri:string){
     const converted=this.provider.convert(root)
+    //const is_equal=isEqual(converted,this.last_converted)
     this.root=root
-    if (need_full_render(converted,this.converted))
-      this.big_render(converted)
+    const change=calc_changed(converted,this.converted)
     this.converted=converted
+    if (change.big){
+      this.parent.innerHTML = '';
+      this.create_node(this.parent,converted,0) //todo pass the last converted so can do change/cate animation
+      return
+    }
+    for (const id of change.icons){
+      const existing_svg=this.parent.querySelector<SVGElement>(`#${id} .icon svg`)
+      if (existing_svg==null){
+        console.warn(`cant find old svg for ${id}`)
+        continue
+      }
+      if (id==null){
+        console.warn('id is null')
+        continue
+      }
+      const new_index=change.new_index[id]
+      if (new_index==null)
+        continue
+      const icon=new_index.icon
+      const new_svg=this.icons[icon]
+      if (new_svg==null){
+        console.warn('new_svg is null')
+        continue
+      }
+      existing_svg.outerHTML=new_svg
+      console.log(`${id}: new svg`)
+      update_class_name(this.parent,`#${id} .icon`,`icon background_${icon}`)
+    }
+    const combined=new Set([...change.icons, ...change.versions]);
+    for (const id of combined){
+      this.mark_changed(id)
+    }
   }
 }

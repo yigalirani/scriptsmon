@@ -17,9 +17,5 @@ interface VSCodeApi {
     setState(state: unknown): void;
 }
 export declare const vscode: VSCodeApi;
-export interface Component {
-    on_interval: () => void;
-    on_data: (data: unknown) => void;
-}
 export declare const ctrl: CtrlTracker;
 export {};

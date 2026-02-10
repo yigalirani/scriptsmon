@@ -1,0 +1,64 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [],
+        "folders": [],
+        "name": "clone",
+        "workspace_folder": "\\\\wsl.localhost\\Ubuntu\\home\\yigal\\clone",
+        "id": "--wsl.localhost-Ubuntu-home-yigal-clone",
+        "need_ctl": true,
+        "errors": [
+          {
+            "pos": {
+              "source_file": "\\\\wsl.localhost\\Ubuntu\\home\\yigal\\clone\\package.json"
+            },
+            "id": "--wsl.localhost-Ubuntu-home-yigal-cloneerror",
+            "need_ctl": false,
+            "message": "ENOENT: no such file or directory, open '\\\\wsl.localhost\\Ubuntu\\home\\yigal\\clone\\package.json'"
+          }
+        ]
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "\\\\wsl.localhost\\Ubuntu\\home\\yigal\\clone\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "\\\\wsl.localhost\\Ubuntu\\home\\yigal\\clone\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "\\\\wsl.localhost\\Ubuntu\\home\\yigal\\clone"
+  ]
+}

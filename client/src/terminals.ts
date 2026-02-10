@@ -2,7 +2,7 @@
 import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
-import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
+import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join} from './dom_utils.js'
 import type { Folder,Runner} from '../../src/data.js';
 import type {RunnerReport} from '../../src/monitor.js';  
 import  {type FileLocation,post_message,calc_runner_status} from './common.js'
@@ -153,8 +153,7 @@ function calc_stats_html(new_runner:Runner){
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
-  term
-  fitAddon
+  term:Terminal
   onLink =(location: FileLocation)=>{
     console.log(location)
   }
@@ -163,10 +162,6 @@ class TerminalPanel{
     const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join('')
     update_child_html(this.el,'.term_title_watch .value',html)
   }
-  call_fit(){
-    this.fitAddon.fit()
-      //console.log('fit')
-    }
   constructor(
     public parent:HTMLElement,
     runner:Runner
@@ -174,14 +169,20 @@ class TerminalPanel{
     this.el=create_terminal_element(parent,runner)
     this.term=new Terminal({cols:200,rows:200})
 
-    this.fitAddon = new FitAddon();
-    this.term.loadAddon(this.fitAddon);
+    const fitAddon = new FitAddon();
+    this.term.loadAddon(fitAddon);
+    function call_fit(){
+      fitAddon.fit()
+      //console.log('fit')
+    }
+
 
 
     addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement){
       this.term.open(term_container)
+      setInterval(call_fit, 1000);
     }
     query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
     this.show_watch(runner)
@@ -221,30 +222,30 @@ class TerminalPanel{
   }
 }
 
-export class Terminals implements Component{
-  terminals:s2t<TerminalPanel>={} 
-  get_terminal(runner:Runner){
-    const parent=query_selector<HTMLElement>(document.body,'.terms_container')
-    const ans=default_get(this.terminals,runner.id,()=> new TerminalPanel(parent, runner))
+export function make_terminals(){
+  console.log('start')
+  const parent=query_selector<HTMLElement>(document.body,'.terms_container')
+  const terminals:s2t<TerminalPanel>={} 
+  function get_terminal(runner:Runner){
+    const ans=default_get(terminals,runner.id,()=> new TerminalPanel(parent, runner))
     return ans
   }
-  on_interval(){
-    console.log('on_interval')
-  }
-  on_data(data:unknown){
-    const report=data as RunnerReport
-    const f=(folder:Folder)=>{
-      for (const runner of folder.runners)
-        this.get_terminal(runner)?.update_terminal(report,runner)
-      folder.folders.forEach(f) 
-    }
-    f(report.root)    
-  }
-  set_selected(id:string){
-    for (const panel of document.querySelectorAll('.term_panel')){ //todo: make a genr
-      if (!(panel instanceof HTMLElement))
-        continue
-      panel.style.display=(panel.id===id)?'flex':'none'
+
+  return {
+    render(report:RunnerReport){
+      function f(folder:Folder){
+        for (const runner of folder.runners)
+          get_terminal(runner)?.update_terminal(report,runner)
+        folder.folders.forEach(f) 
+      }
+      f(report.root)    
+    },
+    set_selected(id:string){
+      for (const panel of document.querySelectorAll('.term_panel')){ //todo: make a genr
+        if (!(panel instanceof HTMLElement))
+          continue
+        panel.style.display=(panel.id===id)?'flex':'none'
+      }    
     }
   }
 }
