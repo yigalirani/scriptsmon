@@ -229,7 +229,7 @@ export class Terminals implements Component{
     return ans
   }
   on_interval(){
-    console.log('on_interval')
+    //console.log('on_interval')
   }
   on_data(data:unknown){
     const report=data as RunnerReport

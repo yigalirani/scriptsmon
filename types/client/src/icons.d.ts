@@ -1,15 +1,11 @@
-export declare function parseIcons(html: string): Record<string, string>;
-interface IconVersion {
-    icon: string;
-    version: number;
-}
-export declare class Icons {
-    icons_html: string;
+import type { TreeNode } from './tree_internals.js';
+export declare function parse_icons(html: string): Record<string, string>;
+export declare class IconsAnimator {
     icons: Record<string, string>;
-    id_changed: Record<string, number>;
-    icon_versions: Record<string, IconVersion>;
-    constructor(icons_html: string);
-    set_icon_version(id: string, icon: string, version: number): void;
-    animate(): void;
+    private id_changed;
+    private icon_versions;
+    constructor(icons: Record<string, string>);
+    private set_icon_version;
+    private update_icons;
+    animate(tree_node: TreeNode): void;
 }
-export {};

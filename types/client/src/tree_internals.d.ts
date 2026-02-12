@@ -1,4 +1,4 @@
-import type { s2t, MaybePromise } from '@yigal/base_types';
+import type { MaybePromise } from '@yigal/base_types';
 export interface TreeNode {
     type: 'item' | 'folder';
     label: string;
@@ -14,17 +14,10 @@ export interface TreeNode {
 }
 export interface TreeDataProvider {
     toggle_order: Array<string>;
-    convert: (root: unknown) => TreeNode;
-    command: (root: unknown, id: string, command: string) => MaybePromise<void>;
-    selected: (root: unknown, id: string) => MaybePromise<void>;
+    command: (id: string, command_name: string) => MaybePromise<void>;
+    selected: (id: string) => MaybePromise<void>;
     icons_html: string;
-    animated: string;
 }
-export declare function calc_changed(root: TreeNode, old_root: TreeNode | undefined): {
-    versions: Set<string>;
-    icons: Set<string>;
-    big: boolean;
-    new_index: s2t<TreeNode>;
-};
+export declare function need_full_render(root: TreeNode, old_root: TreeNode | undefined): boolean;
 export declare function element_for_up_arrow(selected: HTMLElement): HTMLElement | null;
 export declare function element_for_down_arrow(selected: HTMLElement): HTMLElement | null;

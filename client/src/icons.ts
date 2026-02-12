@@ -1,4 +1,5 @@
 import type {TreeNode} from './tree_internals.js'
+import {update_child_html} from './dom_utils.js'
 export function parse_icons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
   // Parse the HTML string into a Document
@@ -39,9 +40,11 @@ export class IconsAnimator{
     this.icon_versions[id]={icon,version}
   }
   private update_icons(tree_node:TreeNode){
-    const f=(node:TreeNode)=>{
+    const f=(node:TreeNode)=>{ 
       const {id,icon,icon_version}=node
-      this.set_icon_version(id,icon,icon_version)
+      this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
+      const selector=`#${id}>.label_row .icon`
+      update_child_html(document.body,selector,this.icons[icon]??'')
       node.children.map(f)
     }
     f(tree_node)
@@ -58,7 +61,7 @@ export class IconsAnimator{
         if (timeOffset>2)
           continue
         const animation_delay=`-${timeOffset}s`
-        //console.log(id,animation_delay)          
+        console.log(id,animation_delay)          
         anim.style.animationDelay = animation_delay;
       }
     }
