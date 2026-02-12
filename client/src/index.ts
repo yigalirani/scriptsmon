@@ -7,9 +7,10 @@ import * as parser from '../../src/parser.js';
 import type {RunnerReport} from '../../src/monitor.js';  
 import {post_message,calc_runner_status} from './common.js'
 import ICONS_HTML from '../resources/icons.html'
-import {make_terminals} from './terminals.js'
+import {Terminals} from './terminals.js'
+import {IconsAnimator,parse_icons} from './icons.js'
 
-function convert(_report:unknown):TreeNode{
+function the_convert(_report:unknown):TreeNode{
   const report=_report as RunnerReport //deliberatly makes less strok typen
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch,tags}=runner
@@ -74,54 +75,64 @@ function convert(_report:unknown):TreeNode{
   return convert_folder(report.root)
 }
 
-function make_provider(terminals:ReturnType<typeof make_terminals>):TreeDataProvider{
-  return {
-    toggle_order:['watched'],
-    convert,
-    command(root,id,command_name,){
-      post_message({
-        command: "command_clicked",
-        id,
-        command_name
-      })
-    },
-    icons_html:ICONS_HTML, 
-    animated:'.running,.done .check,.error .check',
-    selected(report,id){
-      terminals.set_selected(id)
-      const base=parser.find_base((report as RunnerReport).root,id)
-      if (base==null||base.pos==null)
-        return
-      if (base.need_ctl&&!ctrl.pressed)
-        return
-      const {pos}=base
-      post_message({
-        command: "command_open_file_pos",
-        pos
-      })
-    }
+class TheTreeProvider implements TreeDataProvider{
+  constructor(public terminals:Terminals){}
+  toggle_order=['watched']
+  //convert=the_convert
+  report:RunnerReport|undefined
+  command(id:string,command_name:string){//Parameter 'command_name' implicitly has an 'any' type.ts(7006) why
+    post_message({
+      command: "command_clicked",
+      id,
+      command_name
+    })
+  }
+  icons_html=ICONS_HTML
+  selected(id:string){
+    this.terminals.set_selected(id)
+    const base=parser.find_base(this.report!.root,id)
+    if (base==null||base.pos==null)
+      return
+    if (base.need_ctl&&!ctrl.pressed)
+      return
+    const {pos}=base
+    post_message({
+      command: "command_open_file_pos",
+      pos
+    })
   }
 }
+
 function start(){
   console.log('start')
-  const terminals=make_terminals()
-  let base_uri=''
-  const provider=make_provider(terminals)
-  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider) //no error, whay
-  let report:RunnerReport|undefined
+  const terminals=new Terminals()
+  // /let base_uri=''
+  const provider=new TheTreeProvider(terminals)
+  const icons=parse_icons(ICONS_HTML)
+  const icons_animator=new IconsAnimator(icons)
+  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider,icons) //no error, whay
+ 
+  function on_interval(){
+    tree.on_interval()
+    terminals.on_interval()
+  }
+  setInterval(on_interval,100)
   window.addEventListener('message',  (event:MessageEvent<WebviewMessage>) => {
       const message = event.data;
       switch (message.command) {
           case 'RunnerReport':{
-            terminals.render(message)
-            report=message
-            base_uri=message.base_uri
-            tree.render(message,base_uri)
+            provider.report=message            
+            terminals.on_data(message)
+            const tree_node=the_convert(message)
+            //base_uri=message.base_uri
+            tree.on_data(tree_node)
+            icons_animator.animate(tree_node)
+            
             break
           }
           case 'set_selected':
             //upda(document.body,'#selected', message.selected)
-            void provider.selected(report!,message.selected)
+            provider.selected(message.selected)
             break
           default:
             console.log(`unexpected message ${message.command}`)

@@ -1,7 +1,20 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1770871526379,
+        "end_time": 1770871526938,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\tree_internals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 2
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-scriptsmon-client--build"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -608,7 +621,9 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-scriptsmon-client--build"
+    ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [
