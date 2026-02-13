@@ -65,6 +65,5 @@ export class IconsAnimator{
         anim.style.animationDelay = animation_delay;
       }
     }
-    this.id_changed={}
   }
 }
