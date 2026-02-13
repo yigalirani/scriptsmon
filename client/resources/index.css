@@ -342,10 +342,10 @@ span.term_title_watch{
   height: 14px;
   fill: var(--vscode-checkbox-foreground);
 }
-.watched_true .background_done{
+.watched_true .background .done{
   background-color: green;
 }
-.watched_true .background_running,.watched_true .background_longrunning{
+.watched_true .background .running,.watched_true .background_longrunning{
   background-color: darkorange;
   border: 0px solid #474747;  
 }
@@ -353,7 +353,7 @@ span.term_title_watch{
   background-color: blue;
   border: 0px solid #474747;  
 }
-.watched_true .background_error{
+.watched_true .background .error{
   background-color: red;
 }
 .icon.background_ready,.icon.background_folder{

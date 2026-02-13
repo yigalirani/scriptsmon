@@ -1,20 +1,10 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon-client--build": [
-      {
-        "start_time": 1770989268193,
-        "end_time": 1770989269589,
-        "reason": "initial",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
     "c--yigal-scriptsmon--test": [
       {
-        "start_time": 1770989279444,
-        "end_time": 1770989279994,
+        "start_time": 1771004351016,
+        "end_time": 1771004352674,
         "reason": "initial",
         "output": [],
         "exit_code": 0,
@@ -23,7 +13,6 @@
     ]
   },
   "monitored": [
-    "c--yigal-scriptsmon-client--build",
     "c--yigal-scriptsmon--test"
   ],
   "root": {
@@ -633,7 +622,6 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-scriptsmon-client--build",
       "c--yigal-scriptsmon--test"
     ],
     "id_to_changed_path": {},
