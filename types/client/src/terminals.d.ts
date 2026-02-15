@@ -12,7 +12,7 @@ declare class TerminalPanel {
     term: Terminal;
     fitAddon: FitAddon;
     onLink: (location: FileLocation) => void;
-    show_watch(runner: Runner): void;
+    show_watch_old(runner: Runner): void;
     call_fit(): void;
     constructor(parent: HTMLElement, runner: Runner);
     update_terminal(report: RunnerReport, new_runner: Runner): void;

@@ -147,7 +147,7 @@ span.term_title_watch{
 .stats_container{
   overflow: scroll;
   width:300px;
-  display: none;
+  display: block;
 
  }
 .stats{
@@ -396,4 +396,14 @@ span.term_title_watch{
 }
 .toggles_icon{
     width: 16px;
+}
+.left_stats{
+  min-width:200px;
+}
+.left_stats .title{
+  font-weight: bold;
+  text-align: center;  
+}
+.left_stats .description{
+  text-align: center;  
 }

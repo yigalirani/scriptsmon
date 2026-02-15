@@ -69,15 +69,7 @@ function formatElapsedTime(ms: number): string {
       : `${pad2(minutes)}:${pad2(seconds)}`;
   return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
 }
-function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
-  const {id}=runner
-  const ret=parent.querySelector<HTMLElement>(`#${id}`)
-  if (ret!=null)
-    return ret //todo check that it is HTMLElement
-  const ans=create_element(  `
-<div class="term_panel" id="${id}" style="display: none;">
-  <div class="term_wrapper">
-    <div class="term_title_bar">
+   /*<div class="term_title_bar">
       <div class ="row_title_bar">
       <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
         <div class="term_title_watch"><div class=title>watch</div><div class=value></div></div>
@@ -88,15 +80,29 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         <div class="term_title_duration"><div class=title></div><div class=value></div></div>
         <div class="term_title_runid"><div class=title></div><div class=value></div></div>
       </div>
-    </div>
-  <div class=term>
-    </div>
-  </div>
-  <div class=stats_container>
+    </div>*/ 
+function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
+  const {id}=runner
+  const ret=parent.querySelector<HTMLElement>(`#${id}`)
+  if (ret!=null)
+    return ret //todo check that it is HTMLElement
+  const ans=create_element(  `
+<div class="term_panel" id="${id}" style="display: none;">
+   <div class=left_stats>
+   left_stats
+  </div>  
+
+   <div class=stats_container>
     <table class=stats>
       <tr><td></td></tr>
     </table>
-  </div>
+  </div>  
+  
+  <div class=term></div>
+
+
+
+
 </div>
   `,parent)
   ans.addEventListener('click',event=>{
@@ -150,6 +156,13 @@ function calc_stats_html(new_runner:Runner){
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
+
+function calc_left_html(report:RunnerReport,runner:Runner){
+  return `
+  <div class=title>${runner.name}</div>
+  <div class=description>${runner.script}</div>
+  `
+}
 class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
@@ -158,7 +171,7 @@ class TerminalPanel{
   onLink =(location: FileLocation)=>{
     console.log(location)
   }
-  show_watch(runner:Runner){
+  show_watch_old(runner:Runner){
     update_child_html(this.el, '.term_title_script .value',runner.script)
     const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join('')
     update_child_html(this.el,'.term_title_watch .value',html)
@@ -183,12 +196,15 @@ class TerminalPanel{
     if (term_container instanceof HTMLElement){
       this.term.open(term_container)
     }
-    query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
-    this.show_watch(runner)
-    query_selector(this.el, '.term_title_status .value').textContent='ready'
+    //query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
+    //this.show_watch(runner)
+    //query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
   update_terminal(report:RunnerReport,new_runner:Runner){
     const runs=report.runs[new_runner.id]??[]
+    const left_html=calc_left_html(report,new_runner)
+    update_child_html(this.el,'.left_stats',left_html)
+
     const {state} = calc_runner_status(report,new_runner)
     const last_run=runs.at(-1)
     if (last_run!=null){
@@ -203,10 +219,10 @@ class TerminalPanel{
       const new_time=formatElapsedTime(effective_end_time-start_time)
       update_child_html(this.el,'.term_title_duration .value',new_time)
     }
-    const statusEl = query_selector(this.el, '.term_title_status .value')
-    statusEl.textContent = state
-    statusEl.className = `value background_${state}`
-    this.show_watch(new_runner)
+    //const statusEl = query_selector(this.el, '.term_title_status .value')
+    //statusEl.textContent = state
+    //statusEl.className = `value background_${state}`
+    //this.show_watch(new_runner)
     if (last_run==null)
       return
     const {run_id}=last_run
@@ -215,9 +231,10 @@ class TerminalPanel{
     this.last_run_id=last_run.run_id
     for (const line of last_run.output)
       this.term.write(line)
-    const stats=calc_stats_html(new_runner)
-    update_child_html(this.el,'.stats>tbody',stats)
-    update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
+    //onst stats=calc_stats_html(new_runner)
+    //update_child_html(this.el,'.stats>tbody',stats)
+
+    //.update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
   }
 }
 
