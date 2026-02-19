@@ -56,10 +56,10 @@ button:hover {
 }
 .term_panel{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
      overflow: hidden;
   flex: 1;
-  height: 100%;
+  width: 100%;
      
 }
 .term_wrapper{
@@ -70,7 +70,6 @@ button:hover {
 }
 .term_title_bar{
   display: flex;
-  align-items: left;
   padding: 4px 8px;
   background-color: var(--vscode-titleBar-activeBackground, #2d2d30);
   color: var(--vscode-titleBar-activeForeground, #cccccc);
@@ -78,13 +77,9 @@ button:hover {
   font-size: 12px;
   gap: 8px;
   flex-wrap: wrap;
-  flex-direction: column;
 }
 .term_title_bar  div{
-  display: flex;
-}
-.term_title_bar  span{
-  display: flex;
+  display: inner;
 }
 .term_title_bar .title{
   margin-right: 10px;
@@ -119,6 +114,9 @@ button:hover {
 
 span.term_title_watch{
   flex-basis: 100%;
+}
+.term_title_status{
+  display: inline;
 }
 .term_title_status.status_ready{
   background-color: var(--vscode-button-secondaryBackground, #3c3c3c);

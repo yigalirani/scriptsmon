@@ -1,5 +1,5 @@
-import {Monitor,type RunnerReport} from './monitor.js'
-import type {Folder} from './data.js'
+import {Monitor} from './monitor.js'
+import type {Folder,RunnerReport} from './data.js'
 import * as vscode from 'vscode';
 import {
   type WebviewFunc,

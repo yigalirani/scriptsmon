@@ -4,7 +4,7 @@ import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
 import type { Folder,Run,Runner,RunnerReport} from '../../src/data.js';
-import  {type FileLocation,post_message,calc_runner_status} from './common.js'
+import  {type FileLocation,post_message,calc_runner_status,calc_last_run} from './common.js'
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
@@ -87,21 +87,8 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
     return ret //todo check that it is HTMLElement
   const ans=create_element(  `
 <div class="term_panel" id="${id}" style="display: none;">
-   <div class=left_stats>
-   left_stats
-  </div>  
-
-   <div class=stats_container>
-    <table class=stats>
-      <tr><td></td></tr>
-    </table>
-  </div>  
-  
+  <div class="term_title_bar">title bar</div>
   <div class=term></div>
-
-
-
-
 </div>
   `,parent)
   ans.addEventListener('click',event=>{
@@ -155,13 +142,26 @@ function calc_stats_html(new_runner:Runner){
       <td><span class=value>${k} = </span>${v}</td>
     </tr>`).join('\n')
 }
+function calc_elapsed_html(report:RunnerReport,runner:Runner){
+  const last_run=calc_last_run(report,runner)
+  if (last_run==null)
+    return ''
+  const {start_time,end_time}=last_run
+  const effective_end_time=function(){
+    if (end_time==null){
+      const ans=Date.now()
+      return ans
+    }
+    return end_time
+  }()
+  const new_time=formatElapsedTime(effective_end_time-start_time)
+  return new_time
+}
 
-function calc_left_html(report:RunnerReport,runner:Runner,last_run?:Run){
-  
-  return `
-  <div class=title>${runner.name}</div>
-  <div class=description>${runner.script}</div>
-  `
+function calc_title_html(report:RunnerReport,runner:Runner){
+  const {state}=calc_runner_status(report,runner)
+  const elapsed=calc_elapsed_html(report,runner)
+  return `<div class="term_title_status status_${state}">${state}</div> <div class=term_title_duration>${elapsed}<div>`
 }
 class TerminalPanel{
   last_run_id:number|undefined
@@ -179,7 +179,7 @@ class TerminalPanel{
   call_fit=()=>{
     this.fitAddon.fit()
       //console.log('fit')
-    }
+    } 
   constructor(
     public parent:HTMLElement,
     runner:Runner
@@ -203,28 +203,14 @@ class TerminalPanel{
   }
   update_terminal(report:RunnerReport,new_runner:Runner){
     const runs=report.runs[new_runner.id]??[]
-    const last_run=runs.at(-1)!   
-    const left_html=calc_left_html(report,new_runner,last_run)
-    update_child_html(this.el,'.left_stats',left_html)
-
-    const {state} = calc_runner_status(report,new_runner,last_run)
-
-    if (last_run!=null){
-      const {start_time,end_time}=last_run
-      const effective_end_time=function(){
-        if (end_time==null){
-          const ans=Date.now()
-          return ans
-        }
-        return end_time
-      }()
-      const new_time=formatElapsedTime(effective_end_time-start_time)
-      update_child_html(this.el,'.term_title_duration .value',new_time)
-    }
+    const title_bar=calc_title_html(report,new_runner)
+    update_child_html(this.el,'.term_title_bar',title_bar)
+    
     //const statusEl = query_selector(this.el, '.term_title_status .value')
     //statusEl.textContent = state
     //statusEl.className = `value background_${state}`
     //this.show_watch(new_runner)
+    const last_run=calc_last_run(report,new_runner)
     if (last_run==null)
       return
     const {run_id}=last_run

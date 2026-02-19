@@ -1,4 +1,4 @@
-import { type RunnerReport } from './monitor.js';
+import type { RunnerReport } from './data.js';
 import * as vscode from 'vscode';
 import { type CommandOpenFileRowCol, type CommandOpenFilePos } from './vscode_utils.js';
 export interface WebviewMessageSimple {
