@@ -49,3 +49,11 @@ export interface Folder extends RunnerBase {
     runners: Array<Runner>;
     errors: Array<FolderError>;
 }
+export type Runs = Record<string, Run[]>;
+export interface RunnerReport {
+    command: "RunnerReport";
+    root: Folder;
+    base_uri: string;
+    runs: Runs;
+    monitored: string[];
+}

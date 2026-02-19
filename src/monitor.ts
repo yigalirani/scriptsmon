@@ -1,5 +1,5 @@
 import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import type {Run,Runner,Folder} from './data.js'
+import type {Run,Runner,Folder,Runs,RunnerReport} from './data.js'
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import * as path from 'node:path';
@@ -22,14 +22,7 @@ function keep_only_last<T>(arr: T[]): void {
   runner:Runner
   reason:string
 }*/
-type Runs=Record<string,Run[]>
-export interface RunnerReport{
-  command: "RunnerReport";
-  root:Folder,
-  base_uri:string,
-  runs:Runs,
-  monitored:string[]
-}
+
 
 async function read_file(filename:string){
   try{

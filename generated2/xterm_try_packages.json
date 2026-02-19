@@ -1,7 +1,69 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-xterm_try-client--build": [
+      {
+        "start_time": 1771337585870,
+        "end_time": 1771337586563,
+        "reason": "changed:c:\\yigal\\xterm_try\\client\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 3
+      }
+    ],
+    "c--yigal-xterm_try--server": [
+      {
+        "start_time": 1771337586625,
+        "reason": "changed:c:\\yigal\\xterm_try\\client\\resources\\dist\\index.js",
+        "output": [],
+        "run_id": 3
+      }
+    ],
+    "c--yigal-xterm_try--biome": [
+      {
+        "start_time": 1771337353206,
+        "end_time": 1771337354328,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--oxlint": [
+      {
+        "start_time": 1771337357443,
+        "end_time": 1771337357979,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--eslint": [
+      {
+        "start_time": 1771337359457,
+        "end_time": 1771337364187,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--tsc": [
+      {
+        "start_time": 1771337364152,
+        "end_time": 1771337365517,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-xterm_try-client--build",
+    "c--yigal-xterm_try--server"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -495,7 +557,14 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-xterm_try-client--build",
+      "c--yigal-xterm_try--server",
+      "c--yigal-xterm_try--biome",
+      "c--yigal-xterm_try--oxlint",
+      "c--yigal-xterm_try--eslint",
+      "c--yigal-xterm_try--tsc"
+    ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [

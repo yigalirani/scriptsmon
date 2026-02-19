@@ -1,15 +1,7 @@
 import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import type { Run, Runner, Folder } from './data.js';
+import type { Run, Runner, Folder, Runs, RunnerReport } from './data.js';
 import { Watcher } from './watcher.js';
 import { Repeater } from "@yigal/base_types";
-type Runs = Record<string, Run[]>;
-export interface RunnerReport {
-    command: "RunnerReport";
-    root: Folder;
-    base_uri: string;
-    runs: Runs;
-    monitored: string[];
-}
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
 export declare class Monitor {
     workspace_folders: string[];
@@ -45,4 +37,3 @@ export declare class Monitor {
     toggle_watch_state(runner_id: string): void;
     start_watching(): void;
 }
-export {};

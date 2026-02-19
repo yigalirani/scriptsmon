@@ -3,8 +3,7 @@ import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
-import type { Folder,Runner} from '../../src/data.js';
-import type {RunnerReport} from '../../src/monitor.js';  
+import type { Folder,Run,Runner,RunnerReport} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_runner_status} from './common.js'
 function addFileLocationLinkDetection(
   terminal: Terminal,
@@ -157,7 +156,8 @@ function calc_stats_html(new_runner:Runner){
     </tr>`).join('\n')
 }
 
-function calc_left_html(report:RunnerReport,runner:Runner){
+function calc_left_html(report:RunnerReport,runner:Runner,last_run?:Run){
+  
   return `
   <div class=title>${runner.name}</div>
   <div class=description>${runner.script}</div>
@@ -176,7 +176,7 @@ class TerminalPanel{
     const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join('')
     update_child_html(this.el,'.term_title_watch .value',html)
   }
-  call_fit(){
+  call_fit=()=>{
     this.fitAddon.fit()
       //console.log('fit')
     }
@@ -189,6 +189,7 @@ class TerminalPanel{
 
     this.fitAddon = new FitAddon();
     this.term.loadAddon(this.fitAddon);
+    setInterval(this.call_fit,1000)
 
 
     addFileLocationLinkDetection(this.term,runner.workspace_folder)
@@ -202,11 +203,12 @@ class TerminalPanel{
   }
   update_terminal(report:RunnerReport,new_runner:Runner){
     const runs=report.runs[new_runner.id]??[]
-    const left_html=calc_left_html(report,new_runner)
+    const last_run=runs.at(-1)!   
+    const left_html=calc_left_html(report,new_runner,last_run)
     update_child_html(this.el,'.left_stats',left_html)
 
-    const {state} = calc_runner_status(report,new_runner)
-    const last_run=runs.at(-1)
+    const {state} = calc_runner_status(report,new_runner,last_run)
+
     if (last_run!=null){
       const {start_time,end_time}=last_run
       const effective_end_time=function(){
@@ -258,7 +260,7 @@ export class Terminals implements Component{
     f(report.root)    
   }
   set_selected(id:string){
-    for (const panel of document.querySelectorAll('.term_panel')){ //todo: make a genr
+    for (const panel of document.querySelectorAll('.terms_container > *')){ //todo: make a genr
       if (!(panel instanceof HTMLElement))
         continue
       panel.style.display=(panel.id===id)?'flex':'none'

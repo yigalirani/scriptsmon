@@ -2,9 +2,8 @@
 import type {WebviewMessage} from '../../src/extension.js'
 import {query_selector,ctrl} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,FolderError} from '../../src/data.js';
+import type { Folder,Runner,FolderError,RunnerReport} from '../../src/data.js';
 import * as parser from '../../src/parser.js';
-import type {RunnerReport} from '../../src/monitor.js';  
 import {post_message,calc_runner_status} from './common.js'
 import ICONS_HTML from '../resources/icons.html'
 import {Terminals} from './terminals.js'
