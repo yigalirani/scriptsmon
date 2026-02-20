@@ -59,7 +59,7 @@ export class TreeControl{
     <div  class="label_row">
       ${divs({toggles_icons})}
       <div  class=shifter style='margin-left:${margin}px'>
-        <div class="icon background ${icon}">${icons[icon]}</div>
+        <div class="icon background ${icon}"> </div>
         ${divs({label,vtags,description})}
       </div>
       ${divs({commands_icons})}

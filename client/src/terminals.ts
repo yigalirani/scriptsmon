@@ -162,7 +162,7 @@ function calc_title_html(report:RunnerReport,runner:Runner){
   const {state}=calc_runner_status(report,runner)
   const effective_state=state.replace('longrunning','running') //because longrunning is just a trick to animate the icons better
   const elapsed=calc_elapsed_html(report,runner)
-  return `<div class="term_title_status status_${effective_state}">${effective_state}</div> <div class=term_title_duration>${elapsed}<div>`
+  return `<div class="icon background"><svg></svg></div><div class="term_title_status status_${effective_state}">${effective_state}</div> <div class=term_title_duration>${elapsed}<div>`
 }
 class TerminalPanel{
   last_run_id:number|undefined

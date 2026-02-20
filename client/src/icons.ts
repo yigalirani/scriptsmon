@@ -43,7 +43,7 @@ export class IconsAnimator{
     const f=(node:TreeNode)=>{ 
       const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
-      const selector=`#${id}>.label_row .icon`
+      const selector=`#${id}>.label_row .icon,#${id} .term_title_bar .icon`
       update_child_html(document.body,selector,this.icons[icon]??'')
       node.children.map(f)
     }
