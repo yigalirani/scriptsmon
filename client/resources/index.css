@@ -128,9 +128,12 @@ span.term_title_watch{
   color: var(--vscode-button-secondaryForeground, #cccccc);
 }
 .term_title_status.status_running{
-  background-color: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #ffffff);
-  animation: pulse 2s ease-in-out infinite;
+  background-color:#0e639c;
+  color:  #ffffff;
+}
+.term_title_status.status_ready{
+  background-color:#0e639c;
+  color:  #ffffff;
 }
 .term_title_status.status_done{
   background-color: #4caf50;

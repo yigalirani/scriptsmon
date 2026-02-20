@@ -1,42 +1,46 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-million_try3-converter--build": [
+    "c--yigal-million_try3-filesrvr--run": [
       {
-        "start_time": 1771593757745,
-        "end_time": 1771593758932,
-        "reason": "initial",
+        "start_time": 1771595398557,
+        "reason": "user",
+        "output": [],
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3-filesrvr--build": [
+      {
+        "start_time": 1771595406685,
+        "end_time": 1771595407323,
+        "reason": "user",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
     ],
-    "c--yigal-million_try3--find": [
+    "c--yigal-million_try3--biome": [
       {
-        "start_time": 1771593763615,
-        "end_time": 1771593765413,
-        "reason": "initial",
+        "start_time": 1771595412249,
+        "end_time": 1771595413053,
+        "reason": "user",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
     ],
-    "c--yigal-million_try3--ls": [
+    "c--yigal-million_try3--eslint": [
       {
-        "start_time": 1771593783755,
-        "end_time": 1771593784358,
-        "reason": "initial",
+        "start_time": 1771595420246,
+        "end_time": 1771595423581,
+        "reason": "user",
         "output": [],
-        "exit_code": 0,
+        "exit_code": 2,
         "run_id": 0
       }
     ]
   },
-  "monitored": [
-    "c--yigal-million_try3-converter--build",
-    "c--yigal-million_try3--find",
-    "c--yigal-million_try3--ls"
-  ],
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -737,9 +741,10 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-million_try3-converter--build",
-      "c--yigal-million_try3--find",
-      "c--yigal-million_try3--ls"
+      "c--yigal-million_try3-filesrvr--run",
+      "c--yigal-million_try3-filesrvr--build",
+      "c--yigal-million_try3--biome",
+      "c--yigal-million_try3--eslint"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
