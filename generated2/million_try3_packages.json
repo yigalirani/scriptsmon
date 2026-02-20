@@ -3,28 +3,39 @@
   "runs": {
     "c--yigal-million_try3-converter--build": [
       {
-        "start_time": 1771509742738,
-        "end_time": 1771509743968,
+        "start_time": 1771593757745,
+        "end_time": 1771593758932,
         "reason": "initial",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
     ],
-    "c--yigal-million_try3--eslint": [
+    "c--yigal-million_try3--find": [
       {
-        "start_time": 1771509755357,
-        "end_time": 1771509758497,
+        "start_time": 1771593763615,
+        "end_time": 1771593765413,
         "reason": "initial",
         "output": [],
-        "exit_code": 2,
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3--ls": [
+      {
+        "start_time": 1771593783755,
+        "end_time": 1771593784358,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
         "run_id": 0
       }
     ]
   },
   "monitored": [
     "c--yigal-million_try3-converter--build",
-    "c--yigal-million_try3--eslint"
+    "c--yigal-million_try3--find",
+    "c--yigal-million_try3--ls"
   ],
   "root": {
     "name": "root",
@@ -727,7 +738,8 @@
   "watcher": {
     "started": [
       "c--yigal-million_try3-converter--build",
-      "c--yigal-million_try3--eslint"
+      "c--yigal-million_try3--find",
+      "c--yigal-million_try3--ls"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {

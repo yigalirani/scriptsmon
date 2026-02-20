@@ -26,6 +26,7 @@ h1 {
 .terms_container{
   flex:1;
   overflow: hidden;
+  display: flex;
 }
 .controlpanel{
   padding: 30px;
@@ -117,6 +118,10 @@ span.term_title_watch{
 }
 .term_title_status{
   display: inline;
+  padding: 2px;
+  border-radius: 4px;
+  min-width: 50px;
+  text-align: center;
 }
 .term_title_status.status_ready{
   background-color: var(--vscode-button-secondaryBackground, #3c3c3c);

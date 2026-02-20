@@ -1,0 +1,71 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "find  ..",
+              "start": 21,
+              "end": 41,
+              "source_file": "c:\\yigal\\scriptsmon\\test\\package.json"
+            },
+            "need_ctl": true,
+            "name": "testit",
+            "script": "find  ..",
+            "workspace_folder": "c:\\yigal\\scriptsmon\\test",
+            "effective_watch": [],
+            "id": "c--yigal-scriptsmon-test--testit",
+            "tags": []
+          }
+        ],
+        "folders": [],
+        "name": "test",
+        "workspace_folder": "c:\\yigal\\scriptsmon\\test",
+        "id": "c--yigal-scriptsmon-test",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\scriptsmon\\test\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\scriptsmon\\test\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\scriptsmon\\test"
+  ]
+}

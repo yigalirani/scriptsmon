@@ -1,21 +1,21 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon-client--build": [
-      {
-        "start_time": 1771511181885,
-        "end_time": 1771511182892,
-        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\BC4996C.tmp",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 14
-      }
-    ],
     "c--yigal-scriptsmon--build": [
       {
-        "start_time": 1771507985733,
-        "end_time": 1771507986317,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\extension.ts",
+        "start_time": 1771593690155,
+        "end_time": 1771593690685,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\BC49A3A.tmp",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1771593739142,
+        "end_time": 1771593739792,
+        "reason": "user",
         "output": [],
         "exit_code": 0,
         "run_id": 2
@@ -23,18 +23,18 @@
     ],
     "c--yigal-scriptsmon--tsc": [
       {
-        "start_time": 1771511181952,
-        "end_time": 1771511183852,
-        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\BC4996C.tmp",
+        "start_time": 1771593690220,
+        "end_time": 1771593691691,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\BC49A3A.tmp",
         "output": [],
         "exit_code": 0,
-        "run_id": 16
+        "run_id": 2
       }
     ]
   },
   "monitored": [
-    "c--yigal-scriptsmon-client--build",
     "c--yigal-scriptsmon--build",
+    "c--yigal-scriptsmon-client--build",
     "c--yigal-scriptsmon--tsc"
   ],
   "root": {
@@ -644,8 +644,8 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-scriptsmon-client--build",
       "c--yigal-scriptsmon--build",
+      "c--yigal-scriptsmon-client--build",
       "c--yigal-scriptsmon--tsc"
     ],
     "id_to_changed_path": {},
