@@ -131,6 +131,10 @@ span.term_title_watch{
   background-color:#0e639c;
   color:  #ffffff;
 }
+.term_title_status.status_stopped{
+  background-color:#a20790;
+  color:  #ffffff;
+}
 .term_title_status.status_ready{
   background-color:#0e639c;
   color:  #ffffff;
@@ -351,12 +355,17 @@ span.term_title_watch{
 /*.watched_true */.background .done{
   background-color: green;
 }
+
 /*.watched_true */ .background .running,.watched_true .background_longrunning{
   background-color: darkorange;
   border: 0px solid #474747;  
 }
 .value.background_ready{
   background-color: blue;
+  border: 0px solid #474747;  
+}
+.background .stopped{
+  background-color:#a20790;
   border: 0px solid #474747;  
 }
 /*.watched_true */ .background .error{

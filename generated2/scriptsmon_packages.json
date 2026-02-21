@@ -3,12 +3,12 @@
   "runs": {
     "c--yigal-scriptsmon-client--build": [
       {
-        "start_time": 1771664306606,
-        "end_time": 1771664307260,
-        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\common.ts",
+        "start_time": 1771665287233,
+        "end_time": 1771665287936,
+        "reason": "user",
         "output": [],
         "exit_code": 0,
-        "run_id": 1
+        "run_id": 3
       }
     ],
     "c--yigal-scriptsmon--build": [

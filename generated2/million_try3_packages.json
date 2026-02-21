@@ -3,8 +3,38 @@
   "runs": {
     "c--yigal-million_try3-filesrvr--run": [
       {
-        "start_time": 1771664330946,
-        "end_time": 1771664333617,
+        "start_time": 1771665550060,
+        "end_time": 1771665551972,
+        "reason": "user",
+        "output": [],
+        "stopped": true,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3-main--build": [
+      {
+        "start_time": 1771665561110,
+        "end_time": 1771665563237,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3--eslint_plain": [
+      {
+        "start_time": 1771665581713,
+        "end_time": 1771665582669,
+        "reason": "user",
+        "output": [],
+        "stopped": true,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-million_try3--oxlint": [
+      {
+        "start_time": 1771665587504,
+        "end_time": 1771665588420,
         "reason": "user",
         "output": [],
         "stopped": true,
@@ -713,7 +743,10 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-million_try3-filesrvr--run"
+      "c--yigal-million_try3-filesrvr--run",
+      "c--yigal-million_try3-main--build",
+      "c--yigal-million_try3--eslint_plain",
+      "c--yigal-million_try3--oxlint"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
