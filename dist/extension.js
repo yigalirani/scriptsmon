@@ -8674,6 +8674,12 @@ var Monitor = class {
       throw new Error("Monitor not initialied succsfuly");
     return this.root;
   }
+  async stop_runner({ runner_id }) {
+    const runner = find_runner(this.get_root(), runner_id);
+    if (runner == null)
+      throw new Error(`runnwe is not found:${runner_id}`);
+    await this.stop({ runner });
+  }
   async run_runner({ runner_id, reason }) {
     const runner = find_runner(this.get_root(), runner_id);
     if (runner == null)
@@ -8820,6 +8826,10 @@ function make_loop_func(monitor) {
             const { command_name, id: runner_id } = message;
             if (command_name === "watched") {
               monitor.toggle_watch_state(runner_id);
+              return;
+            }
+            if (command_name === "stop") {
+              void monitor.stop_runner({ runner_id });
               return;
             }
             void monitor.run_runner({ runner_id, reason: "user" });

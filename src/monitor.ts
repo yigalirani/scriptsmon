@@ -233,6 +233,13 @@ export class Monitor{
       throw new Error("Monitor not initialied succsfuly")
     return this.root    
   }
+  async stop_runner({runner_id}:{runner_id:string}){
+    const runner=find_runner(this.get_root(),runner_id)
+    if (runner==null)
+      throw new Error(`runnwe is not found:${runner_id}`)
+
+    await this.stop({runner})
+  }
   async run_runner({runner_id,reason}:{
     runner_id:string
     reason:string

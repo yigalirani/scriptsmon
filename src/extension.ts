@@ -65,6 +65,10 @@ function make_loop_func(monitor:Monitor){
               monitor.toggle_watch_state(runner_id)
               return
             }
+           if (command_name==='stop'){
+              void monitor.stop_runner({runner_id})
+              return
+            }            
             void monitor.run_runner({runner_id,reason:'user'})
             break          
           }

@@ -30,6 +30,9 @@ export declare class Monitor {
     dump_debug(): Promise<void>;
     iter: () => Promise<void>;
     get_root(): Folder;
+    stop_runner({ runner_id }: {
+        runner_id: string;
+    }): Promise<void>;
     run_runner({ runner_id, reason }: {
         runner_id: string;
         reason: string;
