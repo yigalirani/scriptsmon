@@ -1,52 +1,18 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-million_try3-converter--build": [
-      {
-        "start_time": 1771661374084,
-        "end_time": 1771661375725,
-        "reason": "initial",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
-    "c--yigal-million_try3-main--build": [
-      {
-        "start_time": 1771661376714,
-        "end_time": 1771661379488,
-        "reason": "changed:c:\\yigal\\million_try3\\converter\\dist\\index.js",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 1
-      }
-    ],
-    "c--yigal-million_try3-filesrvr--build": [
-      {
-        "start_time": 1771661376045,
-        "end_time": 1771661377065,
-        "reason": "initial",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
     "c--yigal-million_try3-filesrvr--run": [
       {
-        "start_time": 1771661477274,
-        "end_time": 1771661482814,
+        "start_time": 1771664330946,
+        "end_time": 1771664333617,
         "reason": "user",
         "output": [],
-        "run_id": 5
+        "stopped": true,
+        "run_id": 0
       }
     ]
   },
-  "monitored": [
-    "c--yigal-million_try3-converter--build",
-    "c--yigal-million_try3-main--build",
-    "c--yigal-million_try3-filesrvr--build",
-    "c--yigal-million_try3-filesrvr--run"
-  ],
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -747,9 +713,6 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-million_try3-converter--build",
-      "c--yigal-million_try3-main--build",
-      "c--yigal-million_try3-filesrvr--build",
       "c--yigal-million_try3-filesrvr--run"
     ],
     "id_to_changed_path": {},

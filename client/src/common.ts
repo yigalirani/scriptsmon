@@ -22,12 +22,15 @@ export function calc_runner_status(report:RunnerReport ,runner:Runner):{
   const last_run=calc_last_run(report,runner)
   if (last_run==null)
     return{version:0,state:'ready'}
-  const {end_time,run_id:version,exit_code,start_time}=last_run
+  const {end_time,run_id:version,exit_code,start_time,stopped}=last_run
   if (end_time==null){
     if (Date.now()-start_time<2000)
       return {version,state:'running'}
     return {version,state:'longrunning'}
   }
+  if (stopped)
+    return {version,state:'stopped'}
+
   if (exit_code===0)
     return {version,state:'done'}
   return {version,state:'error'}

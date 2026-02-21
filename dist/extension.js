@@ -8618,8 +8618,11 @@ var Monitor = class {
         console.log({ exitCode, signal });
         run.end_time = Date.now();
         run.exit_code = exitCode;
-        if (signal != null)
+        if (signal != null || exitCode == null && signal == null) {
           run.stopped = true;
+          run.output.push("stopped");
+          run.stopped = true;
+        }
         resolve5(null);
       });
     });
