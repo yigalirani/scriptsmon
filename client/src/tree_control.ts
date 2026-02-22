@@ -48,7 +48,7 @@ export class TreeControl{
   //collapsed_set:Set<string>=new Set()
   private create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
     const {icons}=this
-    const {type,id,description,label,icon,commands,tags}=node
+    const {type,id,description,label,commands,tags}=node
     const children=(type==='folder')?`<div class=children></div>`:''
     const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
     const  toggles_icons=this.provider.toggle_order.map(x=>`<div class="toggle_icon" id=${x}></div>`).join('')
@@ -59,7 +59,7 @@ export class TreeControl{
     <div  class="label_row">
       ${divs({toggles_icons})}
       <div  class=shifter style='margin-left:${margin}px'>
-        <div class="icon background ${icon}"> </div>
+        <div class="icon"> </div>
         ${divs({label,vtags,description})}
       </div>
       ${divs({commands_icons})}

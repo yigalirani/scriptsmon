@@ -352,23 +352,24 @@ span.term_title_watch{
   height: 14px;
   fill: var(--vscode-checkbox-foreground);
 }
-/*.watched_true */.background .done{
+.done{
   background-color: green;
 }
 
-/*.watched_true */ .background .running,.watched_true .background_longrunning{
+.running{
   background-color: darkorange;
   border: 0px solid #474747;  
+  
 }
 .value.background_ready{
   background-color: blue;
   border: 0px solid #474747;  
 }
-.background .stopped{
+.stopped{
   background-color:#a20790;
   border: 0px solid #474747;  
 }
-/*.watched_true */ .background .error{
+.error{
   background-color: red;
 }
 .icon.background_ready,.icon.background_folder{

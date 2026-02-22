@@ -1,5 +1,5 @@
 import type {TreeNode} from './tree_internals.js'
-import {update_child_html} from './dom_utils.js'
+import {update_child_html,update_class_name} from './dom_utils.js'
 export function parse_icons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
   // Parse the HTML string into a Document
@@ -27,6 +27,14 @@ interface IconVersion{
   icon:string,
   version:number
 }
+function calc_box_shadow(icon:string,timeOffset:number){
+  if (icon==='done'){
+    const t=2-Math.max(2-timeOffset,0)
+    const px=t * (2 - t)*8
+    return `0px 0px ${px}px ${px}px green`
+  }
+  return ''
+}
 export class IconsAnimator{
   //icons
   private id_changed:Record<string,number>={}
@@ -43,8 +51,11 @@ export class IconsAnimator{
     const f=(node:TreeNode)=>{ 
       const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
-      const selector=`#${id}>.label_row .icon,#${id} .term_title_bar .icon`
-      update_child_html(document.body,selector,this.icons[icon]??'')
+      update_child_html(document.body,`#${id}>.label_row .icon`,this.icons[icon]??'')
+      update_class_name(document.body,`#${id}>.label_row .icon`,`icon ${icon}`)
+      update_child_html(document.body,`#${id} .term_title_bar .icon`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`)
+      update_class_name(document.body,`#${id} .term_title_bar .icon`,`icon ${icon}`)
+      
       node.children.map(f)
     }
     f(tree_node)
@@ -54,15 +65,15 @@ export class IconsAnimator{
     this.update_icons(tree_node)
     const now=Date.now()
     for (const [id,time] of Object.entries(this.id_changed)){ //animate
-      const selector=`#${id} .animated`   
-      const element = document.querySelectorAll<SVGElement>(selector);
-      for ( const anim of element){ 
+      const selector=`#${id} .icon`   
+      const elements = document.querySelectorAll<SVGElement>(selector);
+      for ( const el of elements){ 
         const timeOffset=(now-time)/1000
-        if (timeOffset>2)
+        if (timeOffset>4)
           continue
-        const animation_delay=`-${timeOffset}s`
-        console.log(id,animation_delay)          
-        anim.style.animationDelay = animation_delay;
+        const {icon}=this.icon_versions[id]!
+
+        el.style.boxShadow=calc_box_shadow(icon,timeOffset)
       }
     }
   }

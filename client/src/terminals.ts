@@ -87,7 +87,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
     return ret //todo check that it is HTMLElement
   const ans=create_element(  `
 <div class="term_panel" id="${id}" style="display: none;">
-  <div class="term_title_bar">title bar</div>
+  <div class="term_title_bar"><div class=icon></div><div class="term_title_bar2"></div></div>
   <div class=term></div>
 </div>
   `,parent)
@@ -159,10 +159,8 @@ function calc_elapsed_html(report:RunnerReport,runner:Runner){
 }
 
 function calc_title_html(report:RunnerReport,runner:Runner){
-  const {state}=calc_runner_status(report,runner)
-  const effective_state=state.replace('longrunning','running') //because longrunning is just a trick to animate the icons better
   const elapsed=calc_elapsed_html(report,runner)
-  return `<div class="icon background"><svg></svg></div><div class="term_title_status status_${effective_state}">${effective_state}</div> <div class=term_title_duration>${elapsed}<div>`
+  return `<div class=term_title_duration>${elapsed}<div>`
 }
 class TerminalPanel{
   last_run_id:number|undefined
@@ -203,9 +201,8 @@ class TerminalPanel{
     //query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
   update_terminal(report:RunnerReport,new_runner:Runner){
-    const runs=report.runs[new_runner.id]??[]
     const title_bar=calc_title_html(report,new_runner)
-    update_child_html(this.el,'.term_title_bar',title_bar)
+    update_child_html(this.el,'.term_title_bar2',title_bar)
     
     //const statusEl = query_selector(this.el, '.term_title_status .value')
     //statusEl.textContent = state
