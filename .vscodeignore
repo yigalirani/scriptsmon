@@ -20,6 +20,9 @@ base_types/
 types/
 generated/  
 bin/
+generated2
+test
+client/src
 
 # 4. Dependency Management
 # 1. Ignore all node_modules first

@@ -1,13 +1,14 @@
 {
     "name": "Scriptsmon",
     "publisher":"yigal",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "",
     "license": "ISC",
     "author": "",
     "type": "module",
     "main": "dist/extension.js",
     "types": "types/src/extension.d.ts",
+    "repository": "https://github.com/yigalirani/scriptsmon.git",
     "scripts": {
         "test": "node ./dist/test.js",
         "build": "node build.ts",
