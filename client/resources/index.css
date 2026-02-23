@@ -366,7 +366,7 @@ span.term_title_watch{
   border: 0px solid #474747;  
 }
 .stopped{
-  background-color:#a20790;
+  background-color:purple;
   border: 0px solid #474747;  
 }
 .error{

@@ -1,19 +1,114 @@
 {
   "ipty": "<skipped>",
   "runs": {
+    "c--yigal-million_try3-filesrvr--run": [
+      {
+        "start_time": 1771843621441,
+        "reason": "changed:c:\\yigal\\million_try3\\filesrvr\\dist\\index.js",
+        "output": [],
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3-filesrvr--build": [
+      {
+        "start_time": 1771843620646,
+        "end_time": 1771843621222,
+        "reason": "user",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-million_try3-main--build": [
+      {
+        "start_time": 1771843710003,
+        "end_time": 1771843712594,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\dist\\index.js",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 7
+      }
+    ],
     "c--yigal-million_try3-converter--build": [
       {
-        "start_time": 1771778302196,
-        "end_time": 1771778303527,
-        "reason": "user",
+        "start_time": 1771843708149,
+        "end_time": 1771843710005,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\src\\index.ts",
         "output": [],
         "exit_code": 0,
         "run_id": 6
       }
+    ],
+    "c--yigal-million_try3--biome": [
+      {
+        "start_time": 1771843708246,
+        "end_time": 1771843709078,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3--eslint": [
+      {
+        "start_time": 1771843708365,
+        "end_time": 1771843711959,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\src\\index.ts",
+        "output": [],
+        "exit_code": 2,
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3--eslint_plain": [
+      {
+        "start_time": 1771843708437,
+        "end_time": 1771843711769,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\src\\index.ts",
+        "output": [],
+        "exit_code": 2,
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3--oxlint": [
+      {
+        "start_time": 1771843708511,
+        "end_time": 1771843710065,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3--tsc": [
+      {
+        "start_time": 1771843708587,
+        "end_time": 1771843710732,
+        "reason": "changed:c:\\yigal\\million_try3\\converter\\src\\index.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 6
+      }
+    ],
+    "c--yigal-million_try3--find": [
+      {
+        "start_time": 1771843671517,
+        "end_time": 1771843673030,
+        "reason": "changed:c:\\yigal\\million_try3\\main\\html\\dist\\root.js",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 23
+      }
     ]
   },
   "monitored": [
-    "c--yigal-million_try3-converter--build"
+    "c--yigal-million_try3-filesrvr--run",
+    "c--yigal-million_try3-main--build",
+    "c--yigal-million_try3-converter--build",
+    "c--yigal-million_try3--biome",
+    "c--yigal-million_try3--eslint",
+    "c--yigal-million_try3--eslint_plain",
+    "c--yigal-million_try3--oxlint",
+    "c--yigal-million_try3--tsc"
   ],
   "root": {
     "name": "root",
@@ -715,7 +810,16 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-million_try3-converter--build"
+      "c--yigal-million_try3-filesrvr--run",
+      "c--yigal-million_try3-filesrvr--build",
+      "c--yigal-million_try3-main--build",
+      "c--yigal-million_try3-converter--build",
+      "c--yigal-million_try3--biome",
+      "c--yigal-million_try3--eslint",
+      "c--yigal-million_try3--eslint_plain",
+      "c--yigal-million_try3--oxlint",
+      "c--yigal-million_try3--tsc",
+      "c--yigal-million_try3--find"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {

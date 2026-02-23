@@ -27,12 +27,31 @@ interface IconVersion{
   icon:string,
   version:number
 }
+function deceleratingMap(x:number) { //ai genrated lol
+  // 1. Constrain input and normalize to 0.0 - 1.0 range
+  const t = Math.min(Math.max(x / 2, 0), 1);
+
+  // 2. Apply Quadratic Ease-Out formula
+  // This starts fast and slows down as it approaches 1
+  const easeOut = 1 - (1 - t) * (1 - t);
+
+  // 3. Map to output range (10 to 0)
+  // When easeOut is 0, result is 10. When easeOut is 1, result is 0.
+  return 10 - (easeOut * 10);
+}
 function calc_box_shadow(icon:string,timeOffset:number){
-  if (icon==='done'){
-    const t=2-Math.max(2-timeOffset,0)
-    const px=t * (2 - t)*8
-    return `0px 0px ${px}px ${px}px green`
+  function f(color:string){
+    const px=deceleratingMap(timeOffset)
+    return `0px 0px ${px}px ${px}px ${color}`
   }
+  if (icon==='done')
+    return f('rgba(0, 255, 0,.5)')
+  if (icon==='error')
+    return f('rgba(255, 0, 0, .5)')
+  if (icon==='running')
+    return f('rgba(255, 140, 0, 0.5)')
+  if (icon==='stopped')
+    return f('rgba(128, 0, 128, 0.5)')
   return ''
 }
 export class IconsAnimator{
