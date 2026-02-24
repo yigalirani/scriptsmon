@@ -1,16 +1,82 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-xterm_try--server": [
+    "c--yigal-xterm_try-client--build": [
       {
-        "start_time": 1771592910885,
+        "start_time": 1771923391026,
+        "end_time": 1771923391919,
         "reason": "initial",
         "output": [],
+        "exit_code": 0,
         "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--tsc": [
+      {
+        "start_time": 1771923391717,
+        "end_time": 1771923393040,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--eslint": [
+      {
+        "start_time": 1771923392218,
+        "end_time": 1771923396528,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--oxlinttypeaware": [
+      {
+        "start_time": 1771923392718,
+        "end_time": 1771923394810,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--oxlint": [
+      {
+        "start_time": 1771923393203,
+        "end_time": 1771923393744,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--biome": [
+      {
+        "start_time": 1771923393734,
+        "end_time": 1771923394930,
+        "reason": "initial",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-xterm_try--server": [
+      {
+        "start_time": 1771923484498,
+        "reason": "changed:c:\\yigal\\xterm_try\\client\\resources\\index.html",
+        "output": [],
+        "run_id": 5
       }
     ]
   },
   "monitored": [
+    "c--yigal-xterm_try-client--build",
+    "c--yigal-xterm_try--tsc",
+    "c--yigal-xterm_try--eslint",
+    "c--yigal-xterm_try--oxlinttypeaware",
+    "c--yigal-xterm_try--oxlint",
+    "c--yigal-xterm_try--biome",
     "c--yigal-xterm_try--server"
   ],
   "root": {
@@ -507,6 +573,12 @@
   },
   "watcher": {
     "started": [
+      "c--yigal-xterm_try-client--build",
+      "c--yigal-xterm_try--tsc",
+      "c--yigal-xterm_try--eslint",
+      "c--yigal-xterm_try--oxlinttypeaware",
+      "c--yigal-xterm_try--oxlint",
+      "c--yigal-xterm_try--biome",
       "c--yigal-xterm_try--server"
     ],
     "id_to_changed_path": {},

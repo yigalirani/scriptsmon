@@ -1,0 +1,146 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [
+          {
+            "pos": {
+              "str": "echo \"Error: no test specified\" && exit 1",
+              "start": 397,
+              "end": 450,
+              "source_file": "c:\\yigal\\springmass.js\\package.json"
+            },
+            "need_ctl": true,
+            "name": "test",
+            "script": "echo \"Error: no test specified\" && exit 1",
+            "workspace_folder": "c:\\yigal\\springmass.js",
+            "effective_watch": [],
+            "id": "c--yigal-springmass.js--test",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "esbuild src/springmass.ts --bundle --watch --sourcemap --outdir=dist",
+              "start": 456,
+              "end": 535,
+              "source_file": "c:\\yigal\\springmass.js\\package.json"
+            },
+            "need_ctl": true,
+            "name": "build",
+            "script": "esbuild src/springmass.ts --bundle --watch --sourcemap --outdir=dist",
+            "workspace_folder": "c:\\yigal\\springmass.js",
+            "effective_watch": [],
+            "id": "c--yigal-springmass.js--build",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npx eslint . --format visualstudio",
+              "start": 541,
+              "end": 587,
+              "source_file": "c:\\yigal\\springmass.js\\package.json"
+            },
+            "need_ctl": true,
+            "name": "eslint",
+            "script": "npx eslint . --format visualstudio",
+            "workspace_folder": "c:\\yigal\\springmass.js",
+            "effective_watch": [],
+            "id": "c--yigal-springmass.js--eslint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "tsc --noEmit",
+              "start": 593,
+              "end": 614,
+              "source_file": "c:\\yigal\\springmass.js\\package.json"
+            },
+            "need_ctl": true,
+            "name": "tsc",
+            "script": "tsc --noEmit",
+            "workspace_folder": "c:\\yigal\\springmass.js",
+            "effective_watch": [],
+            "id": "c--yigal-springmass.js--tsc",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm-watch eslint",
+              "start": 620,
+              "end": 654,
+              "source_file": "c:\\yigal\\springmass.js\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch_eslint",
+            "script": "npm-watch eslint",
+            "workspace_folder": "c:\\yigal\\springmass.js",
+            "effective_watch": [],
+            "id": "c--yigal-springmass.js--watch_eslint",
+            "tags": []
+          },
+          {
+            "pos": {
+              "str": "npm-watch tsc",
+              "start": 660,
+              "end": 688,
+              "source_file": "c:\\yigal\\springmass.js\\package.json"
+            },
+            "need_ctl": true,
+            "name": "watch_tsc",
+            "script": "npm-watch tsc",
+            "workspace_folder": "c:\\yigal\\springmass.js",
+            "effective_watch": [],
+            "id": "c--yigal-springmass.js--watch_tsc",
+            "tags": []
+          }
+        ],
+        "folders": [],
+        "name": "springmass.js",
+        "workspace_folder": "c:\\yigal\\springmass.js",
+        "id": "c--yigal-springmass.js",
+        "need_ctl": true,
+        "errors": []
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_changed_path": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\springmass.js\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        "root"
+      ],
+      "c:\\yigal\\springmass.js\\package.json": [
+        "root"
+      ]
+    },
+    "watchers": "<skipped>",
+    "get_reason": "<function>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\springmass.js"
+  ]
+}
