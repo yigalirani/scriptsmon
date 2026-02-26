@@ -8620,8 +8620,6 @@ var Monitor = class {
         run.exit_code = exitCode;
         if (signal != null || exitCode == null && signal == null) {
           run.stopped = true;
-          run.output.push("stopped");
-          run.stopped = true;
         }
         resolve5(null);
       });
@@ -8682,6 +8680,8 @@ var Monitor = class {
     if (runner == null)
       throw new Error(`runnwe is not found:${runner_id}`);
     await this.stop({ runner });
+    const runs = this.get_runner_runs(runner);
+    runs.at(-1).output.push("stopped");
   }
   async run_runner({ runner_id, reason }) {
     const runner = find_runner(this.get_root(), runner_id);

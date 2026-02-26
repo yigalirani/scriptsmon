@@ -176,8 +176,6 @@ export class Monitor{
       run.exit_code=exitCode
       if (signal!=null || exitCode==null && signal==null){
         run.stopped=true
-        run.output.push('stopped')
-        run.stopped=true
       }
       resolve(null);
     });
@@ -242,6 +240,8 @@ export class Monitor{
       throw new Error(`runnwe is not found:${runner_id}`)
 
     await this.stop({runner})
+    const runs=this.get_runner_runs(runner)
+    runs.at(-1)!.output.push('stopped')
   }
   async run_runner({runner_id,reason}:{
     runner_id:string
