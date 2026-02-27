@@ -158,7 +158,7 @@ export class Monitor{
         Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
         exit_code: undefined,
         stopped  : undefined,
-        run_id
+        run_id 
       }
     
     this.get_runner_runs(runner).push(run)

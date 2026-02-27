@@ -157,10 +157,21 @@ function calc_elapsed_html(report:RunnerReport,runner:Runner){
   const new_time=formatElapsedTime(effective_end_time-start_time)
   return new_time
 }
-
+function calc_reason_html(report:RunnerReport,runner:Runner){
+  const last_run=calc_last_run(report,runner)
+  if (last_run==null)
+    return ''
+  const {reason}=last_run
+  const prefix='changed:'
+  if (!reason.startsWith(prefix))
+    return ''
+  const display_reason=reason.slice(prefix.length)
+  return `<div class=term_title_reason title="${display_reason}">${display_reason}</div>`
+}
 function calc_title_html(report:RunnerReport,runner:Runner){
   const elapsed=calc_elapsed_html(report,runner)
-  return `<div class=term_title_duration>${elapsed}<div>`
+  const reason_html=calc_reason_html(report,runner)
+  return `<div class=term_title_duration>${elapsed}</div>${reason_html}`
 }
 class TerminalPanel{
   last_run_id:number|undefined
