@@ -6420,6 +6420,9 @@ function make_unique(ar) {
       ans[b.str] = b;
   return Object.values(ans);
 }
+function strip_$(a) {
+  return { ...a, str: a.str.slice(1) };
+}
 function resolve_vars(vars, ast) {
   function resolve5(a) {
     const visiting = /* @__PURE__ */ new Set();
@@ -6428,6 +6431,7 @@ function resolve_vars(vars, ast) {
         return make_unique(a2.map(f));
       if (!a2.str.startsWith("$"))
         return [a2];
+      a2 = strip_$(a2);
       if (visiting.has(a2.str))
         throw new AstException(`${a2.str}:circular reference`, ast);
       visiting.add(a2.str);

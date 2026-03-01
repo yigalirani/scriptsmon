@@ -1,64 +1,7 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-base_types--biome": [
-      {
-        "start_time": 1771871859652,
-        "end_time": 1771871860539,
-        "reason": "changed:c:\\yigal\\base_types\\src\\index.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 16
-      }
-    ],
-    "c--yigal-base_types--eslint": [
-      {
-        "start_time": 1771871859794,
-        "end_time": 1771871866452,
-        "reason": "changed:c:\\yigal\\base_types\\src\\index.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 16
-      }
-    ],
-    "c--yigal-base_types--test": [
-      {
-        "start_time": 1771871861084,
-        "end_time": 1771871863857,
-        "reason": "changed:c:\\yigal\\base_types\\dist\\test.js",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 14
-      }
-    ],
-    "c--yigal-base_types--build": [
-      {
-        "start_time": 1771871859923,
-        "end_time": 1771871860832,
-        "reason": "changed:c:\\yigal\\base_types\\src\\index.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 16
-      }
-    ],
-    "c--yigal-base_types--tsc": [
-      {
-        "start_time": 1771871860064,
-        "end_time": 1771871862482,
-        "reason": "changed:c:\\yigal\\base_types\\src\\index.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 16
-      }
-    ]
-  },
-  "monitored": [
-    "c--yigal-base_types--biome",
-    "c--yigal-base_types--eslint",
-    "c--yigal-base_types--test",
-    "c--yigal-base_types--build",
-    "c--yigal-base_types--tsc"
-  ],
+  "runs": {},
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -82,8 +25,8 @@
                 "rel": {
                   "str": "src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 443,
-                  "end": 448
+                  "start": 442,
+                  "end": 447
                 },
                 "full": "c:\\yigal\\base_types\\src"
               },
@@ -91,8 +34,8 @@
                 "rel": {
                   "str": "package.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 458,
-                  "end": 472
+                  "start": 457,
+                  "end": 471
                 },
                 "full": "c:\\yigal\\base_types\\package.json"
               },
@@ -100,8 +43,8 @@
                 "rel": {
                   "str": "build.ts",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 482,
-                  "end": 492
+                  "start": 481,
+                  "end": 491
                 },
                 "full": "c:\\yigal\\base_types\\build.ts"
               },
@@ -109,8 +52,8 @@
                 "rel": {
                   "str": "client/src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 541,
-                  "end": 553
+                  "start": 539,
+                  "end": 551
                 },
                 "full": "c:\\yigal\\base_types\\client\\src"
               },
@@ -118,8 +61,8 @@
                 "rel": {
                   "str": "tsconfig.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 563,
-                  "end": 578
+                  "start": 561,
+                  "end": 576
                 },
                 "full": "c:\\yigal\\base_types\\tsconfig.json"
               },
@@ -127,8 +70,8 @@
                 "rel": {
                   "str": "eslint.config.mjs",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 588,
-                  "end": 607
+                  "start": 586,
+                  "end": 605
                 },
                 "full": "c:\\yigal\\base_types\\eslint.config.mjs"
               },
@@ -136,8 +79,8 @@
                 "rel": {
                   "str": "biome.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 662,
-                  "end": 674
+                  "start": 660,
+                  "end": 672
                 },
                 "full": "c:\\yigal\\base_types\\biome.json"
               }
@@ -161,8 +104,8 @@
                 "rel": {
                   "str": "src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 443,
-                  "end": 448
+                  "start": 442,
+                  "end": 447
                 },
                 "full": "c:\\yigal\\base_types\\src"
               },
@@ -170,8 +113,8 @@
                 "rel": {
                   "str": "package.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 458,
-                  "end": 472
+                  "start": 457,
+                  "end": 471
                 },
                 "full": "c:\\yigal\\base_types\\package.json"
               },
@@ -179,8 +122,8 @@
                 "rel": {
                   "str": "build.ts",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 482,
-                  "end": 492
+                  "start": 481,
+                  "end": 491
                 },
                 "full": "c:\\yigal\\base_types\\build.ts"
               },
@@ -188,8 +131,8 @@
                 "rel": {
                   "str": "client/src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 541,
-                  "end": 553
+                  "start": 539,
+                  "end": 551
                 },
                 "full": "c:\\yigal\\base_types\\client\\src"
               },
@@ -197,8 +140,8 @@
                 "rel": {
                   "str": "tsconfig.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 563,
-                  "end": 578
+                  "start": 561,
+                  "end": 576
                 },
                 "full": "c:\\yigal\\base_types\\tsconfig.json"
               },
@@ -206,8 +149,8 @@
                 "rel": {
                   "str": "eslint.config.mjs",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 588,
-                  "end": 607
+                  "start": 586,
+                  "end": 605
                 },
                 "full": "c:\\yigal\\base_types\\eslint.config.mjs"
               }
@@ -231,8 +174,8 @@
                 "rel": {
                   "str": "dist/test.js",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 710,
-                  "end": 724
+                  "start": 686,
+                  "end": 700
                 },
                 "full": "c:\\yigal\\base_types\\dist\\test.js"
               }
@@ -256,8 +199,8 @@
                 "rel": {
                   "str": "src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 443,
-                  "end": 448
+                  "start": 442,
+                  "end": 447
                 },
                 "full": "c:\\yigal\\base_types\\src"
               },
@@ -265,8 +208,8 @@
                 "rel": {
                   "str": "package.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 458,
-                  "end": 472
+                  "start": 457,
+                  "end": 471
                 },
                 "full": "c:\\yigal\\base_types\\package.json"
               },
@@ -274,8 +217,8 @@
                 "rel": {
                   "str": "build.ts",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 482,
-                  "end": 492
+                  "start": 481,
+                  "end": 491
                 },
                 "full": "c:\\yigal\\base_types\\build.ts"
               }
@@ -299,8 +242,8 @@
                 "rel": {
                   "str": "src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 443,
-                  "end": 448
+                  "start": 442,
+                  "end": 447
                 },
                 "full": "c:\\yigal\\base_types\\src"
               },
@@ -308,8 +251,8 @@
                 "rel": {
                   "str": "package.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 458,
-                  "end": 472
+                  "start": 457,
+                  "end": 471
                 },
                 "full": "c:\\yigal\\base_types\\package.json"
               },
@@ -317,8 +260,8 @@
                 "rel": {
                   "str": "build.ts",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 482,
-                  "end": 492
+                  "start": 481,
+                  "end": 491
                 },
                 "full": "c:\\yigal\\base_types\\build.ts"
               },
@@ -326,8 +269,8 @@
                 "rel": {
                   "str": "client/src",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 541,
-                  "end": 553
+                  "start": 539,
+                  "end": 551
                 },
                 "full": "c:\\yigal\\base_types\\client\\src"
               },
@@ -335,8 +278,8 @@
                 "rel": {
                   "str": "tsconfig.json",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 563,
-                  "end": 578
+                  "start": 561,
+                  "end": 576
                 },
                 "full": "c:\\yigal\\base_types\\tsconfig.json"
               },
@@ -344,8 +287,8 @@
                 "rel": {
                   "str": "eslint.config.mjs",
                   "source_file": "c:\\yigal\\base_types\\package.json",
-                  "start": 588,
-                  "end": 607
+                  "start": 586,
+                  "end": 605
                 },
                 "full": "c:\\yigal\\base_types\\eslint.config.mjs"
               }
@@ -367,13 +310,7 @@
     "errors": []
   },
   "watcher": {
-    "started": [
-      "c--yigal-base_types--biome",
-      "c--yigal-base_types--eslint",
-      "c--yigal-base_types--test",
-      "c--yigal-base_types--build",
-      "c--yigal-base_types--tsc"
-    ],
+    "started": [],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [

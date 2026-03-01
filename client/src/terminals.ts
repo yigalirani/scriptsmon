@@ -168,10 +168,17 @@ function calc_reason_html(report:RunnerReport,runner:Runner){
   const display_reason=reason.slice(prefix.length)
   return `<div class=term_title_reason title="${display_reason}">${display_reason}</div>`
 }
+function calc_watching(report:RunnerReport,runner:Runner){
+  const sep=`<span class=sep> • </span>`
+  const ans=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
+  return `<div class=term_title_watch>${ans}<div>`
+}
 function calc_title_html(report:RunnerReport,runner:Runner){
+  const watching=calc_watching(report,runner)
   const elapsed=calc_elapsed_html(report,runner)
   const reason_html=calc_reason_html(report,runner)
-  return `<div class=term_title_duration>${elapsed}</div>${reason_html}`
+
+  return `<div class=term_title_duration>${elapsed}</div>${reason_html}${watching}`
 }
 class TerminalPanel{
   last_run_id:number|undefined
@@ -183,7 +190,7 @@ class TerminalPanel{
   }
   show_watch_old(runner:Runner){
     update_child_html(this.el, '.term_title_script .value',runner.script)
-    const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join('')
+    const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(', ')
     update_child_html(this.el,'.term_title_watch .value',html)
   }
   call_fit=()=>{

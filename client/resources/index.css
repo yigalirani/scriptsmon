@@ -423,3 +423,7 @@ span.term_title_watch{
 .left_stats .description{
   text-align: center;  
 }
+.term_title_watch{
+  display: flex;
+  flex-direction: row;
+}

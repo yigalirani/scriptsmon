@@ -136,6 +136,9 @@ function make_unique(ar:Lstr[][]):Lstr[]{
       ans[b.str]=b
   return Object.values(ans)
 }
+function strip_$(a:Lstr){
+  return {...a,str:a.str.slice(1)}
+}
 function resolve_vars(vars:s2t<Lstr[]>,ast:Expression){
     function resolve(a:Lstr|Lstr[]){
       const visiting=new Set<string>
@@ -144,6 +147,7 @@ function resolve_vars(vars:s2t<Lstr[]>,ast:Expression){
           return make_unique(a.map(f))
         if (!a.str.startsWith('$'))
           return [a]
+        a=strip_$(a)
         if (visiting.has(a.str))
           throw new AstException(`${a.str}:circular reference`,ast)
         visiting.add(a.str)
