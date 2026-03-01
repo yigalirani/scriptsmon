@@ -8855,6 +8855,7 @@ async function activate(context) {
   const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");
   const workspace_folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders ?? []).map((x) => x.uri.fsPath);
+    return [String.raw`c:\yigal\million_try3`];
     if (ans.length === 0)
       return [String.raw`c:\yigal\scriptsmon`];
     return ans;

@@ -166,19 +166,24 @@ function calc_reason_html(report:RunnerReport,runner:Runner){
   if (!reason.startsWith(prefix))
     return ''
   const display_reason=reason.slice(prefix.length)
-  return `<div class=term_title_reason title="${display_reason}">${display_reason}</div>`
+  return display_reason
 }
 function calc_watching(report:RunnerReport,runner:Runner){
   const sep=`<span class=sep> • </span>`
-  const ans=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
-  return `<div class=term_title_watch>${ans}<div>`
+  return runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
 }
 function calc_title_html(report:RunnerReport,runner:Runner){
   const watching=calc_watching(report,runner)
   const elapsed=calc_elapsed_html(report,runner)
   const reason_html=calc_reason_html(report,runner)
+  const reason_line=reason_html&&`<tr><td>Changed:</td><td><div>${reason_html}</div></td></tr>`
 
-  return `<div class=term_title_duration>${elapsed}</div>${reason_html}${watching}`
+  return `<div class=term_title_duration>${elapsed}</div>
+  <table>
+  <tr><td>Watching:</td><td><div>${watching}</div></td></tr> 
+  ${reason_line}
+  
+  </table>`
 }
 class TerminalPanel{
   last_run_id:number|undefined

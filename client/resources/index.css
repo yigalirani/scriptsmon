@@ -77,17 +77,33 @@ button:hover {
   border-bottom: 1px solid var(--vscode-panel-border, #3e3e42);
   font-size: 12px;
   gap: 8px;
-  flex-wrap: wrap;
 }
-.term_title_bar  div{
-  display: inner;
-}
+
 .term_title_bar .title{
   margin-right: 10px;
   font-weight: bold;
 }
 .term_title_bar .value{
   margin-right: 10px;
+}
+.term_title_bar2{
+  display: flex;
+  overflow: hidden;
+  gap:12px;
+}
+.term_title_bar2 td div{
+  display: flex;
+}
+.term_title_bar2 table{
+  white-space: nowrap;
+  border-collapse: collapse;
+}
+.term_title_bar2 tr td:first-child{
+  font-weight: bold;
+  color: #875eba;  
+}
+.term_title_bar2 tr td{
+
 }
 .term_title_dir .value,
 .term_title_watch .value,
@@ -425,5 +441,8 @@ span.term_title_watch{
 }
 .term_title_watch{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+}
+.sep{
+  color: #875eba;
 }
