@@ -1,30 +1,52 @@
 {
   "ipty": "<skipped>",
   "runs": {
-    "c--yigal-scriptsmon--build": [
-      {
-        "start_time": 1772446771645,
-        "end_time": 1772446772381,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\vscode_utils.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 7
-      }
-    ],
     "c--yigal-scriptsmon-client--build": [
       {
-        "start_time": 1772446306372,
-        "end_time": 1772446307348,
+        "start_time": 1772455814132,
+        "end_time": 1772455815755,
         "reason": "initial",
         "output": [],
         "exit_code": 0,
         "run_id": 0
       }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1772460930533,
+        "end_time": 1772460932373,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\watcher.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 19
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1772460930592,
+        "end_time": 1772460931257,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\watcher.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 8
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1772460930673,
+        "end_time": 1772460931460,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\watcher.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
     ]
   },
   "monitored": [
-    "c--yigal-scriptsmon--build",
-    "c--yigal-scriptsmon-client--build"
+    "c--yigal-scriptsmon-client--build",
+    "c--yigal-scriptsmon--tsc",
+    "c--yigal-scriptsmon--oxlint",
+    "c--yigal-scriptsmon--build"
   ],
   "root": {
     "name": "root",
@@ -578,8 +600,10 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-scriptsmon--build",
-      "c--yigal-scriptsmon-client--build"
+      "c--yigal-scriptsmon-client--build",
+      "c--yigal-scriptsmon--tsc",
+      "c--yigal-scriptsmon--oxlint",
+      "c--yigal-scriptsmon--build"
     ],
     "id_to_changed_path": {},
     "id_to_watching_path": {

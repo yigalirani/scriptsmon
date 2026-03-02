@@ -1,6 +1,6 @@
 import * as chokidar from 'chokidar'; //{watch,FSWatcher}
 import {default_get} from '@yigal/base_types'
-import { Filename,type FullReason } from './data.js';
+import { Filename,type FullReason,type Reason } from './data.js';
 
 function new_set<T>(){
   return new Set<T>
@@ -12,6 +12,7 @@ interface IdRel{
   watch_id:string,
   rel:string
 }
+const reasons:Reason[]=['add','remove','change']
 export class Watcher{
   started=new Set<string>
   id_to_reason     : Record<string, FullReason > = {}  //watch id to listfirst detected reason, no need to show all reason because the ui cant show more than one
@@ -23,22 +24,25 @@ export class Watcher{
     add(this.id_to_watching_path,watch_id,path)
     add(this.watching_path_to_id,path,{watch_id,rel})
   }
+  add_change=(ids:Set<IdRel>,reason:Reason,full_filename:string)=>{
+    for (const idel of ids){
+      const{watch_id,rel}=idel          
+      const full_reason:FullReason={
+        reason,
+        full_filename,
+        rel
+      }
+      this.id_to_reason[watch_id]=full_reason //path can be file within watching_path
+    }    
+  }
   start_watching(){
     for (const [watching_path,ids] of Object.entries(this.watching_path_to_id)){
-      const watcher=chokidar.watch(watching_path).on('change', (path) => {
-  
-        for (const idel of ids){
-          const{watch_id,rel}=idel          
-          const full_reason:FullReason={
-            reason:'changed',
-            full_filename:path,
-            rel
-          }          
-
-          this.id_to_reason[watch_id]=full_reason //path can be file within watching_path
-        }
-      })
-      this.watchers.add(watcher)
+      //console.log('add watch',watching_path)
+        const watcher=chokidar.watch(watching_path).on('all', (event,full_filename) => {
+          console.log(event,full_filename)
+          this.add_change(ids,'change',full_filename)
+        })
+        this.watchers.add(watcher)
     }
   }
   async stop_watching(){ //and clear the 

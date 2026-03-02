@@ -17,7 +17,7 @@ export interface Filename {
     rel: Lstr;
     full: string;
 }
-export type Reason = 'changed' | 'initial' | 'deleted' | 'added' | 'user';
+export type Reason = 'change' | 'initial' | 'remove' | 'add' | 'user';
 export interface FullReason {
     reason: Reason;
     full_filename?: string;

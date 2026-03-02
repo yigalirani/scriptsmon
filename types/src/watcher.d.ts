@@ -1,5 +1,5 @@
 import * as chokidar from 'chokidar';
-import { type FullReason } from './data.js';
+import { type FullReason, type Reason } from './data.js';
 interface IdRel {
     watch_id: string;
     rel: string;
@@ -11,6 +11,7 @@ export declare class Watcher {
     watching_path_to_id: Record<string, Set<IdRel>>;
     watchers: Set<chokidar.FSWatcher>;
     add_watch(watch_id: string, path: string, rel: string): void;
+    add_change: (ids: Set<IdRel>, reason: Reason, full_filename: string) => void;
     start_watching(): void;
     stop_watching(): Promise<void>;
     initial_or_changed(watch_id: string): boolean;

@@ -8426,18 +8426,22 @@ var Watcher = class {
     add(this.id_to_watching_path, watch_id, path4);
     add(this.watching_path_to_id, path4, { watch_id, rel });
   }
+  add_change = (ids, reason, full_filename) => {
+    for (const idel of ids) {
+      const { watch_id, rel } = idel;
+      const full_reason = {
+        reason,
+        full_filename,
+        rel
+      };
+      this.id_to_reason[watch_id] = full_reason;
+    }
+  };
   start_watching() {
     for (const [watching_path, ids] of Object.entries(this.watching_path_to_id)) {
-      const watcher = watch(watching_path).on("change", (path4) => {
-        for (const idel of ids) {
-          const { watch_id, rel } = idel;
-          const full_reason = {
-            reason: "changed",
-            full_filename: path4,
-            rel
-          };
-          this.id_to_reason[watch_id] = full_reason;
-        }
+      const watcher = watch(watching_path).on("all", (event, full_filename) => {
+        console.log(event, full_filename);
+        this.add_change(ids, "change", full_filename);
       });
       this.watchers.add(watcher);
     }
