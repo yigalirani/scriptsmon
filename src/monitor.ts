@@ -1,5 +1,5 @@
 import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import type {Run,Runner,Folder,Runs,RunnerReport} from './data.js'
+import type {Run,Runner,Folder,Runs,RunnerReport,Reason,Filename,FullReason} from './data.js'
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import * as path from 'node:path';
@@ -118,10 +118,10 @@ export class Monitor{
   }
   async run_runner2({ //this is not async function on purpuse
     runner,
-    reason,
+    full_reason,
   }: {
     runner: Runner;
-    reason:string
+    full_reason:FullReason
   }) {
     await this.stop({runner})
     await new Promise((resolve, _reject) => { 
@@ -153,7 +153,7 @@ export class Monitor{
       const run:Run={
         start_time: Date.now(),
         end_time  : undefined,    //initialy is undefined then changes to number and stops changing
-        reason,
+        full_reason,
         output   : [],
         Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
         exit_code: undefined,
@@ -243,14 +243,14 @@ export class Monitor{
     const runs=this.get_runner_runs(runner)
     runs.at(-1)!.output.push('stopped')
   }
-  async run_runner({runner_id,reason}:{
+  async run_runner({runner_id,full_reason}:{
     runner_id:string
-    reason:string
+    full_reason:FullReason
   }){
     const runner=find_runner(this.get_root(),runner_id)
     if (runner==null)
       throw new Error(`runnwe is not found:${runner_id}`)
-    await this.run_runner2({runner,reason})
+    await this.run_runner2({runner,full_reason})
   }
   toggle_watch_state(runner_id:string){
     //const runner=find_runner(this.get_root(),runner_id)

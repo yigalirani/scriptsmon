@@ -1,5 +1,5 @@
 import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import type { Run, Runner, Folder, Runs, RunnerReport } from './data.js';
+import type { Run, Runner, Folder, Runs, RunnerReport, FullReason } from './data.js';
 import { Watcher } from './watcher.js';
 import { Repeater } from "@yigal/base_types";
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
@@ -22,7 +22,7 @@ export declare class Monitor {
     run_runner2({ //this is not async function on purpuse
     runner, reason, }: {
         runner: Runner;
-        reason: string;
+        full_reason: FullReason;
     }): Promise<void>;
     find_runners(root: Folder, filter: (x: Runner) => boolean): Runner[];
     calc_one_debug_name: (workspace_folder: string) => string;
@@ -33,9 +33,9 @@ export declare class Monitor {
     stop_runner({ runner_id }: {
         runner_id: string;
     }): Promise<void>;
-    run_runner({ runner_id, reason }: {
+    run_runner({ runner_id, full_reason }: {
         runner_id: string;
-        reason: string;
+        full_reason: FullReason;
     }): Promise<void>;
     toggle_watch_state(runner_id: string): void;
     start_watching(): void;

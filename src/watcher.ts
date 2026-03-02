@@ -1,5 +1,6 @@
 import * as chokidar from 'chokidar'; //{watch,FSWatcher}
 import {default_get} from '@yigal/base_types'
+import { Filename,type FullReason } from './data.js';
 
 function new_set(){
   return new Set<string>
@@ -39,6 +40,7 @@ export class Watcher{
     const changed=this.id_to_changed_path[watch_id]
     return changed!=null
   }
+ 
   private get_reason=(id:string)=>{
   //get_reason(id:string){
     const all_changed=this.get_changed(id)
@@ -46,14 +48,20 @@ export class Watcher{
     if (changed!=null)
       return {
           runner_id:id,
-          reason:`changed:${changed}`,
+          full_reason:{
+            reason:'changed',
+            reason_filename:changed,
+          }
           
       }
     if (this.started.has(id))
       return
     return {
       runner_id:id,
-      reason:'initial',
+      full_reason:{
+        reason:'initial',
+        reason_filename:undefined
+      }
     }
   }
   set_started(id:string){

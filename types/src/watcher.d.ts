@@ -11,10 +11,19 @@ export declare class Watcher {
     initial_or_changed(watch_id: string): boolean;
     private get_reason;
     set_started(id: string): void;
-    get_reasons(monitored: Set<string>): {
+    get_reasons(monitored: Set<string>): ({
         runner_id: string;
-        reason: string;
-    }[];
+        full_reason: {
+            reason: string;
+            reason_filename: string;
+        };
+    } | {
+        runner_id: string;
+        full_reason: {
+            reason: string;
+            reason_filename: undefined;
+        };
+    })[];
     get_changed(watch_id: string): string[];
     clear_changed(): void;
 }

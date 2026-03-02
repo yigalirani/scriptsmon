@@ -8453,13 +8453,19 @@ var Watcher = class {
     if (changed != null)
       return {
         runner_id: id,
-        reason: `changed:${changed}`
+        full_reason: {
+          reason: "changed",
+          reason_filename: changed
+        }
       };
     if (this.started.has(id))
       return;
     return {
       runner_id: id,
-      reason: "initial"
+      full_reason: {
+        reason: "initial",
+        reason_filename: void 0
+      }
     };
   };
   set_started(id) {
@@ -8604,7 +8610,7 @@ var Monitor = class {
         start_time: Date.now(),
         end_time: void 0,
         //initialy is undefined then changes to number and stops changing
-        reason,
+        full_reason,
         output: [],
         Err: void 0,
         //initialy is undefined then maybe changes to error and stop changing
@@ -8687,11 +8693,11 @@ var Monitor = class {
     const runs = this.get_runner_runs(runner);
     runs.at(-1).output.push("stopped");
   }
-  async run_runner({ runner_id, reason }) {
+  async run_runner({ runner_id, full_reason: full_reason2 }) {
     const runner = find_runner(this.get_root(), runner_id);
     if (runner == null)
       throw new Error(`runnwe is not found:${runner_id}`);
-    await this.run_runner2({ runner, reason });
+    await this.run_runner2({ runner, full_reason: full_reason2 });
   }
   toggle_watch_state(runner_id) {
     toggle_set(this.monitored, runner_id);
@@ -8855,7 +8861,6 @@ async function activate(context) {
   const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");
   const workspace_folders = (function() {
     const ans = (vscode2.workspace.workspaceFolders ?? []).map((x) => x.uri.fsPath);
-    return [String.raw`c:\yigal\million_try3`];
     if (ans.length === 0)
       return [String.raw`c:\yigal\scriptsmon`];
     return ans;

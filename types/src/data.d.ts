@@ -10,22 +10,27 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     watched?: string[];
 };
 export type State = "ready" | "done" | "error" | "running" | "stopped";
-export interface Run {
-    start_time: number;
-    end_time: number | undefined;
-    reason: string;
-    output: string[];
-    Err: Error | undefined;
-    exit_code: number | undefined;
-    stopped: undefined | true;
-    run_id: number;
-}
 export interface Lstr extends Pos {
     str: string;
 }
 export interface Filename {
     rel: Lstr;
     full: string;
+}
+export type Reason = 'changed' | 'initial' | 'deleted' | 'added';
+export interface FullReason {
+    reason: Reason;
+    reason_filename: Filename | undefined;
+}
+export interface Run {
+    start_time: number;
+    end_time: number | undefined;
+    full_reason: FullReason;
+    output: string[];
+    Err: Error | undefined;
+    exit_code: number | undefined;
+    stopped: undefined | true;
+    run_id: number;
 }
 export interface RunnerBase {
     pos: Pos | undefined;
