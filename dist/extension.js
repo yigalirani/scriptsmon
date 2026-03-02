@@ -8422,20 +8422,22 @@ var Watcher = class {
   //watch id to list of paths
   watching_path_to_id = {};
   watchers = /* @__PURE__ */ new Set();
-  add_watch(watch_id, path4) {
+  add_watch(watch_id, path4, rel) {
     add(this.id_to_watching_path, watch_id, path4);
-    add(this.watching_path_to_id, path4, watch_id);
+    add(this.watching_path_to_id, path4, { watch_id, rel });
   }
   start_watching() {
     for (const [watching_path, ids] of Object.entries(this.watching_path_to_id)) {
       const watcher = watch(watching_path).on("change", (path4) => {
-        const full_reason = {
-          reason: "changed",
-          full_filename: path4,
-          rel: watching_path
-        };
-        for (const id of ids)
-          this.id_to_reason[id] = full_reason;
+        for (const idel of ids) {
+          const { watch_id, rel } = idel;
+          const full_reason = {
+            reason: "changed",
+            full_filename: path4,
+            rel
+          };
+          this.id_to_reason[watch_id] = full_reason;
+        }
       });
       this.watchers.add(watcher);
     }
@@ -8643,11 +8645,11 @@ var Monitor = class {
     return ans;
   };
   add_watch = (folder) => {
-    this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"));
+    this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"), "package.json");
     for (const runner of folder.runners) {
       const { id, effective_watch } = runner;
       for (const x of effective_watch)
-        this.watcher.add_watch(id, x.full);
+        this.watcher.add_watch(id, x.full, x.rel.str);
     }
     folder.folders.map(this.add_watch);
   };

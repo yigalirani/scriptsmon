@@ -198,13 +198,13 @@ export class Monitor{
     return ans
   }
   add_watch=(folder:Folder)=>{
-    this.watcher.add_watch("root",path.join(folder.workspace_folder,'package.json'))
+    this.watcher.add_watch("root",path.join(folder.workspace_folder,'package.json'),'package.json')
     for (const runner of folder.runners){
       const {id,effective_watch}=runner
       //const watched=this.watched[id]===true
       //if (runner.watched)
       for (const x of effective_watch)
-          this.watcher.add_watch(id,x.full)
+          this.watcher.add_watch(id,x.full,x.rel.str)
     }    
     folder.folders.map(this.add_watch)
   }

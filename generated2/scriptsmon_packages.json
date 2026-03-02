@@ -13,22 +13,22 @@
     ],
     "c--yigal-scriptsmon--build": [
       {
-        "start_time": 1772439725412,
-        "end_time": 1772439726113,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\data.ts",
+        "start_time": 1772442817753,
+        "end_time": 1772442818361,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\watcher.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 26
+        "run_id": 44
       }
     ],
     "c--yigal-scriptsmon--tsc": [
       {
-        "start_time": 1772439725520,
-        "end_time": 1772439727101,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\data.ts",
+        "start_time": 1772442817853,
+        "end_time": 1772442819491,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\watcher.ts",
         "output": [],
         "exit_code": 0,
-        "run_id": 33
+        "run_id": 51
       }
     ]
   },
