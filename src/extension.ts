@@ -69,7 +69,7 @@ function make_loop_func(monitor:Monitor){
               void monitor.stop_runner({runner_id})
               return
             }            
-            void monitor.run_runner({runner_id,reason:'user'})
+            void monitor.run_runner({runner_id,full_reason:{reason:'user'}})
             break          
           }
         }

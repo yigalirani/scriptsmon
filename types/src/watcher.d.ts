@@ -1,7 +1,8 @@
 import * as chokidar from 'chokidar';
+import { type FullReason } from './data.js';
 export declare class Watcher {
     started: Set<string>;
-    id_to_changed_path: Record<string, Set<string>>;
+    id_to_reason: Record<string, FullReason>;
     id_to_watching_path: Record<string, Set<string>>;
     watching_path_to_id: Record<string, Set<string>>;
     watchers: Set<chokidar.FSWatcher>;
@@ -9,21 +10,11 @@ export declare class Watcher {
     start_watching(): void;
     stop_watching(): Promise<void>;
     initial_or_changed(watch_id: string): boolean;
-    private get_reason;
     set_started(id: string): void;
-    get_reasons(monitored: Set<string>): ({
+    get_reasons(monitored: Set<string>): {
+        full_reason: FullReason;
         runner_id: string;
-        full_reason: {
-            reason: string;
-            reason_filename: string;
-        };
-    } | {
-        runner_id: string;
-        full_reason: {
-            reason: string;
-            reason_filename: undefined;
-        };
-    })[];
-    get_changed(watch_id: string): string[];
+    }[];
+    get_reason(watch_id: string): FullReason | undefined;
     clear_changed(): void;
 }

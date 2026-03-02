@@ -19,10 +19,11 @@ export interface Filename{
   rel:Lstr
   full:string
 }
-export type Reason='changed'|'initial'|'deleted'|'added'
+export type Reason='changed'|'initial'|'deleted'|'added'|'user'
 export interface FullReason{
   reason:Reason,
-  reason_filename:Filename|undefined,    
+  full_filename?:string,
+  rel?:string
 }
 export interface Run{
   start_time: number

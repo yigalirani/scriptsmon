@@ -1,7 +1,42 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1772439291987,
+        "end_time": 1772439292924,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 8
+      }
+    ],
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1772439725412,
+        "end_time": 1772439726113,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\data.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 26
+      }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1772439725520,
+        "end_time": 1772439727101,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\data.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 33
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-scriptsmon-client--build",
+    "c--yigal-scriptsmon--build",
+    "c--yigal-scriptsmon--tsc"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -553,7 +588,11 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-scriptsmon-client--build",
+      "c--yigal-scriptsmon--build",
+      "c--yigal-scriptsmon--tsc"
+    ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [

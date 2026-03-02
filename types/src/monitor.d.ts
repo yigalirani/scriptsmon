@@ -20,7 +20,7 @@ export declare class Monitor {
         runner: Runner;
     }): Promise<void>;
     run_runner2({ //this is not async function on purpuse
-    runner, reason, }: {
+    runner, full_reason, }: {
         runner: Runner;
         full_reason: FullReason;
     }): Promise<void>;

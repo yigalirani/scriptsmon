@@ -3,7 +3,7 @@ import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
-import type { Folder,Run,Runner,RunnerReport} from '../../src/data.js';
+import type { Folder,Run,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_runner_status,calc_last_run} from './common.js'
 function addFileLocationLinkDetection(
   terminal: Terminal,
@@ -157,16 +157,16 @@ function calc_elapsed_html(report:RunnerReport,runner:Runner){
   const new_time=formatElapsedTime(effective_end_time-start_time)
   return new_time
 }
-function calc_reason_html(report:RunnerReport,runner:Runner){
+const ignore_reasons:Reason[]=['initial','user']
+function calc_reason_tr(report:RunnerReport,runner:Runner){
   const last_run=calc_last_run(report,runner)
   if (last_run==null)
     return ''
-  const {reason}=last_run
-  const prefix='changed:'
-  if (!reason.startsWith(prefix))
+  const {full_reason}=last_run
+  const {reason,full_filename}=full_reason
+  if (ignore_reasons.includes(reason))
     return ''
-  const display_reason=reason.slice(prefix.length)
-  return display_reason
+  return `<tr><td>${reason}:</td><td><div>${full_filename}</div></td></tr>`
 }
 function calc_watching(report:RunnerReport,runner:Runner){
   const sep=`<span class=sep> • </span>`
@@ -175,13 +175,11 @@ function calc_watching(report:RunnerReport,runner:Runner){
 function calc_title_html(report:RunnerReport,runner:Runner){
   const watching=calc_watching(report,runner)
   const elapsed=calc_elapsed_html(report,runner)
-  const reason_html=calc_reason_html(report,runner)
-  const reason_line=reason_html&&`<tr><td>Changed:</td><td><div>${reason_html}</div></td></tr>`
 
   return `<div class=term_title_duration>${elapsed}</div>
   <table>
   <tr><td>Watching:</td><td><div>${watching}</div></td></tr> 
-  ${reason_line}
+  ${calc_reason_tr(report,runner)}
   
   </table>`
 }

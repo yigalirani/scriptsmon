@@ -8416,8 +8416,8 @@ function add(data2, id, value) {
 }
 var Watcher = class {
   started = /* @__PURE__ */ new Set();
-  id_to_changed_path = {};
-  //watch id to list of paths
+  id_to_reason = {};
+  //watch id to listfirst detected reason, no need to show all reason because the ui cant show more than one
   id_to_watching_path = {};
   //watch id to list of paths
   watching_path_to_id = {};
@@ -8429,8 +8429,13 @@ var Watcher = class {
   start_watching() {
     for (const [watching_path, ids] of Object.entries(this.watching_path_to_id)) {
       const watcher = watch(watching_path).on("change", (path4) => {
+        const full_reason = {
+          reason: "changed",
+          full_filename: path4,
+          rel: watching_path
+        };
         for (const id of ids)
-          add(this.id_to_changed_path, id, path4);
+          this.id_to_reason[id] = full_reason;
       });
       this.watchers.add(watcher);
     }
@@ -8444,47 +8449,33 @@ var Watcher = class {
     const exists = this.id_to_watching_path[watch_id];
     if (exists == null)
       return true;
-    const changed = this.id_to_changed_path[watch_id];
+    const changed = this.id_to_reason[watch_id];
     return changed != null;
   }
-  get_reason = (id) => {
-    const all_changed = this.get_changed(id);
-    const changed = all_changed[0];
-    if (changed != null)
-      return {
-        runner_id: id,
-        full_reason: {
-          reason: "changed",
-          reason_filename: changed
-        }
-      };
-    if (this.started.has(id))
-      return;
-    return {
-      runner_id: id,
-      full_reason: {
-        reason: "initial",
-        reason_filename: void 0
-      }
-    };
-  };
   set_started(id) {
     this.started.add(id);
   }
   get_reasons(monitored) {
     const ans = [];
-    for (const id of monitored) {
-      const reason = this.get_reason(id);
-      if (reason != null)
-        ans.push(reason);
+    for (const runner_id of monitored) {
+      const full_reason = this.get_reason(runner_id);
+      if (full_reason != null)
+        ans.push({ full_reason, runner_id });
     }
     return ans;
   }
-  get_changed(watch_id) {
-    return [...this.id_to_changed_path[watch_id] ?? /* @__PURE__ */ new Set()];
+  get_reason(watch_id) {
+    const ans = this.id_to_reason[watch_id];
+    if (ans != null)
+      return ans;
+    if (this.started.has(watch_id))
+      return;
+    return {
+      reason: "initial"
+    };
   }
   clear_changed() {
-    this.id_to_changed_path = {};
+    this.id_to_reason = {};
   }
 };
 
@@ -8582,7 +8573,7 @@ var Monitor = class {
   async run_runner2({
     //this is not async function on purpuse
     runner,
-    reason
+    full_reason
   }) {
     await this.stop({ runner });
     await new Promise((resolve5, _reject) => {
@@ -8693,11 +8684,11 @@ var Monitor = class {
     const runs = this.get_runner_runs(runner);
     runs.at(-1).output.push("stopped");
   }
-  async run_runner({ runner_id, full_reason: full_reason2 }) {
+  async run_runner({ runner_id, full_reason }) {
     const runner = find_runner(this.get_root(), runner_id);
     if (runner == null)
       throw new Error(`runnwe is not found:${runner_id}`);
-    await this.run_runner2({ runner, full_reason: full_reason2 });
+    await this.run_runner2({ runner, full_reason });
   }
   toggle_watch_state(runner_id) {
     toggle_set(this.monitored, runner_id);
@@ -8845,7 +8836,7 @@ function make_loop_func(monitor) {
               void monitor.stop_runner({ runner_id });
               return;
             }
-            void monitor.run_runner({ runner_id, reason: "user" });
+            void monitor.run_runner({ runner_id, full_reason: { reason: "user" } });
             break;
           }
         }
