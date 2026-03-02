@@ -93,10 +93,15 @@ export function register_command(context: ExtensionContext,command:string,comman
     return source_file
   return path.join(workspace_folder,source_file)
 }*/
+async function revealFolderInSidebar(folderUri:string) {
+    const uri = vscode.Uri.file(folderUri);
+    await vscode.commands.executeCommand('revealInExplorer', uri);
+}
 export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<void> {
+    const {source_file}=pos
     try {
         //const uri = vscode.Uri.file(pos.file);
-        const {source_file}=pos
+  
         const document = await vscode.workspace.openTextDocument(source_file);
         const editor = await vscode.window.showTextDocument(document, {
             preview: false
@@ -113,10 +118,14 @@ export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<voi
             new vscode.Range(position, position),
             vscode.TextEditorRevealType.InCenter
         );
-    } catch (ex) {
-        vscode.window.showErrorMessage(
-            `Failed to open file: ${pos.source_file} ${get_error(ex).message}`
-        );
+    } catch {
+        try{
+          await revealFolderInSidebar(source_file)
+        }catch(ex){
+          vscode.window.showErrorMessage(
+              `Failed to open file: ${pos.source_file} ${get_error(ex).message}`
+          );
+        }
     }
 }
 async function open_file_start_end(pos: Pos): Promise<void> {

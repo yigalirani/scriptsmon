@@ -1,0 +1,69 @@
+{
+  "ipty": "<skipped>",
+  "runs": {},
+  "monitored": [],
+  "root": {
+    "name": "root",
+    "id": "root",
+    "workspace_folder": "",
+    "folders": [
+      {
+        "runners": [],
+        "folders": [],
+        "name": "src",
+        "workspace_folder": "c:\\yigal\\base_types\\src",
+        "id": "c--yigal-base_types-src",
+        "need_ctl": true,
+        "errors": [
+          {
+            "pos": {
+              "source_file": "c:\\yigal\\base_types\\src\\package.json"
+            },
+            "id": "c--yigal-base_types-srcerror",
+            "need_ctl": false,
+            "message": "ENOENT: no such file or directory, open 'c:\\yigal\\base_types\\src\\package.json'"
+          }
+        ]
+      }
+    ],
+    "runners": [],
+    "need_ctl": true,
+    "errors": []
+  },
+  "watcher": {
+    "started": [],
+    "id_to_reason": {},
+    "id_to_watching_path": {
+      "root": [
+        "package.json",
+        "c:\\yigal\\base_types\\src\\package.json"
+      ]
+    },
+    "watching_path_to_id": {
+      "package.json": [
+        {
+          "watch_id": "root",
+          "rel": "package.json"
+        }
+      ],
+      "c:\\yigal\\base_types\\src\\package.json": [
+        {
+          "watch_id": "root",
+          "rel": "package.json"
+        }
+      ]
+    },
+    "watchers": "<skipped>"
+  },
+  "repeater": {
+    "is_running": true,
+    "loop": "<function>",
+    "delay": 200
+  },
+  "calc_one_debug_name": "<function>",
+  "add_watch": "<function>",
+  "iter": "<function>",
+  "workspace_folders": [
+    "c:\\yigal\\base_types\\src"
+  ]
+}

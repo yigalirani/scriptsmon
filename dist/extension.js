@@ -8708,15 +8708,15 @@ import * as path3 from "node:path";
 import * as fs3 from "node:fs";
 import * as vscode from "vscode";
 import {
-  Uri,
+  Uri as Uri2,
   window as window3,
-  commands
+  commands as commands2
 } from "vscode";
 function get_webview_content(context, webview, html_filename) {
   const htmlPath = path3.join(context.extensionPath, "client", "resources", html_filename);
   let html = fs3.readFileSync(htmlPath, "utf-8");
   const uri = webview.asWebviewUri(
-    Uri.joinPath(context.extensionUri, "client", "resources")
+    Uri2.joinPath(context.extensionUri, "client", "resources")
   ).toString();
   const base = `${uri}/`;
   html = html.replaceAll("./", base);
@@ -8730,7 +8730,7 @@ function define_webview({ context, id, html_filename, f }) {
       webviewView.webview.options = {
         enableScripts: true,
         localResourceRoots: [
-          Uri.file(path3.join(context.extensionPath, "client/resources"))
+          Uri2.file(path3.join(context.extensionPath, "client/resources"))
         ]
       };
       webviewView.webview.html = get_webview_content(context, webviewView.webview, html_filename);
@@ -8751,11 +8751,15 @@ function define_webview({ context, id, html_filename, f }) {
   console.log(ans);
 }
 function register_command(context, command, commandHandler) {
-  context.subscriptions.push(commands.registerCommand(command, commandHandler));
+  context.subscriptions.push(commands2.registerCommand(command, commandHandler));
+}
+async function revealFolderInSidebar(folderUri) {
+  const uri = vscode.Uri.file(folderUri);
+  await vscode.commands.executeCommand("revealInExplorer", uri);
 }
 async function open_file_row_col(pos) {
+  const { source_file } = pos;
   try {
-    const { source_file } = pos;
     const document = await vscode.workspace.openTextDocument(source_file);
     const editor = await vscode.window.showTextDocument(document, {
       preview: false
@@ -8769,10 +8773,14 @@ async function open_file_row_col(pos) {
       new vscode.Range(position, position),
       vscode.TextEditorRevealType.InCenter
     );
-  } catch (ex) {
-    vscode.window.showErrorMessage(
-      `Failed to open file: ${pos.source_file} ${get_error(ex).message}`
-    );
+  } catch {
+    try {
+      await revealFolderInSidebar(source_file);
+    } catch (ex) {
+      vscode.window.showErrorMessage(
+        `Failed to open file: ${pos.source_file} ${get_error(ex).message}`
+      );
+    }
   }
 }
 async function open_file_start_end(pos) {
