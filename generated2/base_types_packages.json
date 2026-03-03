@@ -3,21 +3,75 @@
   "runs": {
     "c--yigal-base_types--biome": [
       {
-        "start_time": 1772558912187,
-        "end_time": 1772558912768,
+        "start_time": 1772559539105,
+        "end_time": 1772559539756,
         "full_reason": {
-          "reason": "add",
-          "full_filename": "c:\\yigal\\base_types\\src\\df",
-          "rel": "src"
+          "reason": "change",
+          "full_filename": "c:\\yigal\\base_types\\package.json",
+          "rel": "package.json"
         },
         "output": [],
         "exit_code": 0,
-        "run_id": 2
+        "run_id": 0
+      }
+    ],
+    "c--yigal-base_types--eslint": [
+      {
+        "start_time": 1772559539392,
+        "end_time": 1772559543425,
+        "full_reason": {
+          "reason": "initial"
+        },
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-base_types--test": [
+      {
+        "start_time": 1772559541316,
+        "end_time": 1772559543952,
+        "full_reason": {
+          "reason": "change",
+          "full_filename": "c:\\yigal\\base_types\\dist\\test.js",
+          "rel": "dist/test.js"
+        },
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ],
+    "c--yigal-base_types--build": [
+      {
+        "start_time": 1772559540411,
+        "end_time": 1772559541169,
+        "full_reason": {
+          "reason": "initial"
+        },
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
+      }
+    ],
+    "c--yigal-base_types--tsc": [
+      {
+        "start_time": 1772559540704,
+        "end_time": 1772559542454,
+        "full_reason": {
+          "reason": "initial"
+        },
+        "output": [],
+        "exit_code": 0,
+        "run_id": 0
       }
     ]
   },
   "monitored": [
-    "c--yigal-base_types--biome"
+    "c--yigal-base_types--biome",
+    "c--yigal-base_types--eslint",
+    "c--yigal-base_types--test",
+    "c--yigal-base_types--build",
+    "c--yigal-base_types--tsc"
   ],
   "root": {
     "name": "root",
@@ -301,7 +355,11 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-base_types--biome"
+      "c--yigal-base_types--biome",
+      "c--yigal-base_types--eslint",
+      "c--yigal-base_types--test",
+      "c--yigal-base_types--build",
+      "c--yigal-base_types--tsc"
     ],
     "id_to_reason": {},
     "watched_paths": "Map",

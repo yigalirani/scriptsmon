@@ -55,13 +55,13 @@ export class Monitor{
   root?:Folder
   watcher=new Watcher()
   //monitored_runners:Runner[]=[]
-  repeater=new Repeater(200)
+  repeater=new Repeater(100)
   constructor(
     public workspace_folders:string[]    
   ){}
   async start_monitor(){
     await this.read_package_json_and_start_watching()
-    await new Repeater(1000).repeat(this.dump_debug)
+    await new Repeater(2000).repeat(this.dump_debug)
     return await this.repeater.repeat(this.iter)
 
   }

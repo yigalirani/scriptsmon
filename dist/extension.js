@@ -6317,7 +6317,7 @@ var Repeater = class {
       } catch (error) {
         console.error("Error:", error);
       }
-      await sleep(200);
+      await sleep(this.delay);
     }
   };
   async repeat(f) {
@@ -8554,10 +8554,10 @@ var Monitor = class {
   root;
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
-  repeater = new Repeater(200);
+  repeater = new Repeater(100);
   async start_monitor() {
     await this.read_package_json_and_start_watching();
-    await new Repeater(1e3).repeat(this.dump_debug);
+    await new Repeater(2e3).repeat(this.dump_debug);
     return await this.repeater.repeat(this.iter);
   }
   get_runner_runs(runner) {
