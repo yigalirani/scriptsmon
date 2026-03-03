@@ -8414,49 +8414,67 @@ function new_set() {
 function add(data2, id, value) {
   default_get(data2, id, new_set).add(value);
 }
+function diff_set(a, b) {
+  return new Set(
+    [...a].filter((element) => !b.has(element))
+  );
+}
+function make_watch_index() {
+  return {
+    id_to_watching_path: {},
+    watching_path_to_id: {}
+  };
+}
+function calc_watch_state(v, existing_paths) {
+  const requested_paths = /* @__PURE__ */ new Set();
+  const watch_index = make_watch_index();
+  for (const { watch_id, path: path4, rel } of v) {
+    requested_paths.add(path4);
+    add(watch_index.id_to_watching_path, watch_id, path4);
+    add(watch_index.watching_path_to_id, path4, { watch_id, rel });
+  }
+  const paths_to_add = diff_set(requested_paths, existing_paths);
+  const paths_to_close = diff_set(existing_paths, requested_paths);
+  return {
+    watch_index,
+    paths_to_add,
+    paths_to_close
+  };
+}
 var Watcher = class {
   started = /* @__PURE__ */ new Set();
   id_to_reason = {};
   //watch id to listfirst detected reason, no need to show all reason because the ui cant show more than one
-  id_to_watching_path = {};
-  //watch id to list of paths
-  watching_path_to_id = {};
-  watchers = /* @__PURE__ */ new Set();
-  add_watch(watch_id, path4, rel) {
-    add(this.id_to_watching_path, watch_id, path4);
-    add(this.watching_path_to_id, path4, { watch_id, rel });
-  }
-  add_change = (ids, reason, full_filename) => {
-    for (const idel of ids) {
-      const { watch_id, rel } = idel;
-      const full_reason = {
-        reason,
-        full_filename,
-        rel
-      };
-      this.id_to_reason[watch_id] = full_reason;
-    }
+  watched_paths = /* @__PURE__ */ new Map();
+  watch_index = make_watch_index();
+  close_watched_path = async (path4) => {
+    await this.watched_paths.get(path4)?.close();
+    this.watched_paths.delete(path4);
   };
-  start_watching() {
-    for (const [watching_path, ids] of Object.entries(this.watching_path_to_id)) {
-      const watcher = watch(watching_path).on("all", (event, full_filename) => {
-        console.log(event, full_filename);
-        this.add_change(ids, "change", full_filename);
-      });
-      this.watchers.add(watcher);
-    }
-  }
-  async stop_watching() {
-    const promises = [...this.watchers].map(async (x) => await x.close());
-    this.watchers.clear();
-    await Promise.all(promises);
-  }
-  initial_or_changed(watch_id) {
-    const exists = this.id_to_watching_path[watch_id];
-    if (exists == null)
-      return true;
-    const changed = this.id_to_reason[watch_id];
-    return changed != null;
+  add_watched_path = (path4) => {
+    const watcher = watch(path4).on("all", (event, full_filename) => {
+      console.log(event);
+      for (const { watch_id, rel } of this.watch_index.watching_path_to_id[path4]) {
+        const full_reason = {
+          reason: "change",
+          full_filename,
+          rel
+        };
+        this.id_to_reason[watch_id] = full_reason;
+      }
+    });
+    this.watched_paths.set(path4, watcher);
+  };
+  async restart(watch_requests) {
+    const keys = new Set(this.watched_paths.keys());
+    const {
+      watch_index,
+      paths_to_add,
+      paths_to_close
+    } = calc_watch_state(watch_requests, keys);
+    await Promise.all([...paths_to_close].map(this.close_watched_path));
+    [...paths_to_add].map(this.add_watched_path);
+    this.watch_index = watch_index;
   }
   set_started(id) {
     this.started.add(id);
@@ -8525,7 +8543,9 @@ var Monitor = class {
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
   repeater = new Repeater(200);
-  async run() {
+  async start_monitor() {
+    await this.read_package_json_and_start_watching();
+    await new Repeater(1e3).repeat(this.dump_debug);
     return await this.repeater.repeat(this.iter);
   }
   get_runner_runs(runner) {
@@ -8648,34 +8668,44 @@ var Monitor = class {
     const ans = path2.basename(path2.resolve(path2.normalize(workspace_folder)));
     return ans;
   };
-  add_watch = (folder) => {
-    this.watcher.add_watch("root", path2.join(folder.workspace_folder, "package.json"), "package.json");
-    for (const runner of folder.runners) {
-      const { id, effective_watch } = runner;
-      for (const x of effective_watch)
-        this.watcher.add_watch(id, x.full, x.rel.str);
+  collect_watch_requests(folder) {
+    const ans = [];
+    function add_watch(watch_id, path4, rel) {
+      ans.push({ watch_id, path: path4, rel });
     }
-    folder.folders.map(this.add_watch);
-  };
-  async dump_debug() {
+    function f(folder2) {
+      add_watch("root", path2.join(folder2.workspace_folder, "package.json"), "package.json");
+      for (const runner of folder2.runners) {
+        const { id, effective_watch } = runner;
+        for (const x of effective_watch)
+          add_watch(id, x.full, x.rel.str);
+      }
+      folder2.folders.map(f);
+    }
+    f(folder);
+    return ans;
+  }
+  dump_debug = async () => {
     const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated2/${name}_packages.json`;
     const to_write = to_json(this, ["ipty", "watchers"]);
     await mkdir_write_file(filename, to_write, true);
+  };
+  async read_package_json_and_start_watching() {
+    const new_root = await read_package_json(this.workspace_folders);
+    this.root = new_root;
+    const requests = this.collect_watch_requests(new_root);
+    await this.watcher.restart(requests);
   }
   iter = async () => {
-    if (this.watcher.initial_or_changed("root")) {
-      await this.watcher.stop_watching();
-      const new_root = await read_package_json(this.workspace_folders);
-      this.add_watch(new_root);
-      this.root = new_root;
-      this.watcher.start_watching();
-    }
     const changed = this.watcher.get_reasons(this.monitored);
+    if (changed.length === 0)
+      return;
+    if (changed.some((x) => x.runner_id === "root"))
+      await this.read_package_json_and_start_watching();
     this.watcher.clear_changed();
     for (const x of changed)
       void this.run_runner(x);
-    await this.dump_debug();
   };
   get_root() {
     if (this.root == null)
@@ -8874,7 +8904,7 @@ async function activate(context) {
     return;
   outputChannel.append(to_json({ workspace_folders }));
   const monitor = new Monitor(workspace_folders);
-  await monitor.run();
+  await monitor.start_monitor();
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html_filename: "index.html", f: the_loop });
   register_command(context, "Scriptsmon.startWatching", () => {

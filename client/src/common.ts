@@ -1,6 +1,6 @@
 import type {WebviewMessage} from '../../src/extension.js'
 import {vscode} from './dom_utils.js'
-import type {RunnerReport,Run, Runner,State} from '../../src/data.js';
+import type {RunnerReport,Runner,State} from '../../src/data.js';
 
 
 export interface FileLocation {

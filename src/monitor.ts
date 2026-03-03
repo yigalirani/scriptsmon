@@ -1,10 +1,10 @@
 import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
-import type {Run,Runner,Folder,Runs,RunnerReport,Reason,Filename,FullReason} from './data.js'
+import type {Run,Runner,Folder,Runs,RunnerReport,FullReason} from './data.js'
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
 import * as path from 'node:path';
 const fs = await import("node:fs/promises");
-import {Watcher} from './watcher.js'
+import {Watcher,type IdRelPath} from './watcher.js'
 
 import {
   sleep,
@@ -59,8 +59,11 @@ export class Monitor{
   constructor(
     public workspace_folders:string[]    
   ){}
-  async run(){
+  async start_monitor(){
+    await this.read_package_json_and_start_watching()
+    await new Repeater(1000).repeat(this.dump_debug)
     return await this.repeater.repeat(this.iter)
+
   }
   get_runner_runs(runner:Runner):Run[]{
     const {id}=runner
@@ -197,37 +200,47 @@ export class Monitor{
     const ans=path.basename(path.resolve(path.normalize(workspace_folder)));
     return ans
   }
-  add_watch=(folder:Folder)=>{
-    this.watcher.add_watch("root",path.join(folder.workspace_folder,'package.json'),'package.json')
-    for (const runner of folder.runners){
-      const {id,effective_watch}=runner
-      //const watched=this.watched[id]===true
-      //if (runner.watched)
-      for (const x of effective_watch)
-          this.watcher.add_watch(id,x.full,x.rel.str)
-    }    
-    folder.folders.map(this.add_watch)
+  collect_watch_requests(folder:Folder){
+    const ans:IdRelPath[]=[]
+    function add_watch(watch_id:string,path:string,rel:string){
+      ans.push({watch_id,path,rel})
+    }
+    function f(folder:Folder){
+      add_watch("root",path.join(folder.workspace_folder,'package.json'),'package.json')
+      for (const runner of folder.runners){
+        const {id,effective_watch}=runner
+        //const watched=this.watched[id]===true
+        //if (runner.watched)
+        for (const x of effective_watch)
+            add_watch(id,x.full,x.rel.str)
+      }    
+      folder.folders.map(f)
+    }
+    f(folder)
+    return ans
   }
-  async dump_debug(){
+  dump_debug=async()=>{
     const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated2/${name}_packages.json`
     //console.log(filename)
     const to_write=to_json(this,["ipty","watchers"])
     await mkdir_write_file(filename,to_write,true)
   }
+  async read_package_json_and_start_watching(){
+    const new_root= await read_package_json(this.workspace_folders)
+    this.root=new_root
+    const requests=this.collect_watch_requests(new_root)
+    await this.watcher.restart(requests)
+  }
   iter=async ()=>{
-    if (this.watcher.initial_or_changed('root')){
-      await this.watcher.stop_watching() //does not clear the changed 
-      const new_root= await read_package_json(this.workspace_folders)
-      this.add_watch(new_root)
-      this.root=new_root
-      this.watcher.start_watching() //based on add watcg from before
-    }
     const changed=this.watcher.get_reasons(this.monitored)
+    if (changed.length===0)
+      return
+    if (changed.some(x=>x.runner_id==='root')) //one of the package.json file was changed
+      await this.read_package_json_and_start_watching()
     this.watcher.clear_changed()
     for (const x of changed)
       void this.run_runner(x)
-    await this.dump_debug()
   }
   get_root(){
     if (this.root==null) 

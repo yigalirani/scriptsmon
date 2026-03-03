@@ -3,8 +3,8 @@ import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
-import type { Folder,Run,Runner,RunnerReport,Reason} from '../../src/data.js';
-import  {type FileLocation,post_message,calc_runner_status,calc_last_run} from './common.js'
+import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
+import  {type FileLocation,post_message,calc_last_run} from './common.js'
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
@@ -136,11 +136,6 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
    
   })
   return ans;
-}
-function calc_stats_html(new_runner:Runner){
-  return Object.entries(new_runner).filter(([k])=>k!=='output').map(([k,v])=>`<tr>
-      <td><span class=value>${k} = </span>${v}</td>
-    </tr>`).join('\n')
 }
 function calc_elapsed_html(report:RunnerReport,runner:Runner){
   const last_run=calc_last_run(report,runner)

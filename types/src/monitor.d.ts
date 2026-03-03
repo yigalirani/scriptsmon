@@ -1,6 +1,6 @@
 import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import type { Run, Runner, Folder, Runs, RunnerReport, FullReason } from './data.js';
-import { Watcher } from './watcher.js';
+import { Watcher, type IdRelPath } from './watcher.js';
 import { Repeater } from "@yigal/base_types";
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
 export declare class Monitor {
@@ -12,7 +12,7 @@ export declare class Monitor {
     watcher: Watcher;
     repeater: Repeater;
     constructor(workspace_folders: string[]);
-    run(): Promise<void>;
+    start_monitor(): Promise<void>;
     get_runner_runs(runner: Runner): Run[];
     is_ready_to_start(runner: Runner): boolean;
     extract_report(base_uri: string): RunnerReport;
@@ -26,8 +26,9 @@ export declare class Monitor {
     }): Promise<void>;
     find_runners(root: Folder, filter: (x: Runner) => boolean): Runner[];
     calc_one_debug_name: (workspace_folder: string) => string;
-    add_watch: (folder: Folder) => void;
-    dump_debug(): Promise<void>;
+    collect_watch_requests(folder: Folder): IdRelPath[];
+    dump_debug: () => Promise<void>;
+    read_package_json_and_start_watching(): Promise<void>;
     iter: () => Promise<void>;
     get_root(): Folder;
     stop_runner({ runner_id }: {

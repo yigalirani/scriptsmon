@@ -1,4 +1,4 @@
-import  type { s2t,MaybePromise} from '@yigal/base_types'
+import  type { MaybePromise} from '@yigal/base_types'
 import {get_parent_by_class} from './dom_utils.js'
 export interface TreeNode{
   type                   : 'item'|'folder'   //is this needed?
@@ -45,7 +45,7 @@ function get_next_selected(selected:HTMLElement){
   }
   return null
 }
-function index_folder(root:TreeNode){
+/*function index_folder(root:TreeNode){
   const ans:s2t<TreeNode>={}
   function f(node:TreeNode){
     ans[node.id]=node
@@ -53,7 +53,7 @@ function index_folder(root:TreeNode){
   }
   f(root)
   return ans
-}
+}*/
 function calc_summary(node:TreeNode):string{
   const ignore=['icon_version','icon','toggles','className']
   function replacer(k:string,v:unknown){

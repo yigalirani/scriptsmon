@@ -1,26 +1,25 @@
-import * as chokidar from 'chokidar';
-import { type FullReason, type Reason } from './data.js';
+import type { FullReason } from './data.js';
 interface IdRel {
     watch_id: string;
     rel: string;
 }
+export interface IdRelPath extends IdRel {
+    path: string;
+}
 export declare class Watcher {
-    started: Set<string>;
-    id_to_reason: Record<string, FullReason>;
-    id_to_watching_path: Record<string, Set<string>>;
-    watching_path_to_id: Record<string, Set<IdRel>>;
-    watchers: Set<chokidar.FSWatcher>;
-    add_watch(watch_id: string, path: string, rel: string): void;
-    add_change: (ids: Set<IdRel>, reason: Reason, full_filename: string) => void;
-    start_watching(): void;
-    stop_watching(): Promise<void>;
-    initial_or_changed(watch_id: string): boolean;
+    private started;
+    private id_to_reason;
+    private watched_paths;
+    private watch_index;
+    private close_watched_path;
+    private add_watched_path;
+    restart(watch_requests: IdRelPath[]): Promise<void>;
     set_started(id: string): void;
     get_reasons(monitored: Set<string>): {
         full_reason: FullReason;
         runner_id: string;
     }[];
-    get_reason(watch_id: string): FullReason | undefined;
+    private get_reason;
     clear_changed(): void;
 }
 export {};
