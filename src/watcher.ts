@@ -1,6 +1,6 @@
 import * as chokidar from 'chokidar'; //{watch,FSWatcher}
 import {default_get} from '@yigal/base_types'
-import type { FullReason } from './data.js';
+import type { FullReason,Reason } from './data.js';
 
 function new_set<T>(){
   return new Set<T>
@@ -48,6 +48,16 @@ function calc_watch_state(v:IdRelPath[],existing_paths:Set<string>){
   }
 
 }
+const validReasons=[
+  'add', 
+  'unlink', 
+  'unlinkDir', 
+  'change', 
+  'addDir'
+];
+function is_reason(value: string): value is Reason{
+  return validReasons.includes(value)
+}
 export class Watcher{
   private started=new Set<string>
   private id_to_reason     : Record<string, FullReason > = {}  //watch id to listfirst detected reason, no need to show all reason because the ui cant show more than one
@@ -58,11 +68,13 @@ export class Watcher{
     this.watched_paths.delete(path)
   }
   private add_watched_path=(path:string)=>{
-    const watcher=chokidar.watch(path).on('all', (event,full_filename) => {
-      console.log(event)
+    const watcher=chokidar.watch(path,{ignoreInitial: true}).on('all', (reason,full_filename) => {
+      console.log(reason,full_filename)
+      if (!is_reason(reason))
+        return
       for (const {watch_id,rel} of this.watch_index.watching_path_to_id[path]!){
         const full_reason:FullReason={
-          reason:'change',
+          reason,
           full_filename,
           rel
         }

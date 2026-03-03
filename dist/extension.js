@@ -8441,6 +8441,16 @@ function calc_watch_state(v, existing_paths) {
     paths_to_close
   };
 }
+var validReasons = [
+  "add",
+  "unlink",
+  "unlinkDir",
+  "change",
+  "addDir"
+];
+function is_reason(value) {
+  return validReasons.includes(value);
+}
 var Watcher = class {
   started = /* @__PURE__ */ new Set();
   id_to_reason = {};
@@ -8452,11 +8462,13 @@ var Watcher = class {
     this.watched_paths.delete(path4);
   };
   add_watched_path = (path4) => {
-    const watcher = watch(path4).on("all", (event, full_filename) => {
-      console.log(event);
+    const watcher = watch(path4, { ignoreInitial: true }).on("all", (reason, full_filename) => {
+      console.log(reason, full_filename);
+      if (!is_reason(reason))
+        return;
       for (const { watch_id, rel } of this.watch_index.watching_path_to_id[path4]) {
         const full_reason = {
-          reason: "change",
+          reason,
           full_filename,
           rel
         };

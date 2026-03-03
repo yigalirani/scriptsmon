@@ -1,64 +1,7 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-scriptsmon--build": [
-      {
-        "start_time": 1772553224944,
-        "end_time": 1772553225550,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\monitor.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 17
-      }
-    ],
-    "c--yigal-scriptsmon--tsc": [
-      {
-        "start_time": 1772553225011,
-        "end_time": 1772553226661,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\monitor.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 19
-      }
-    ],
-    "c--yigal-scriptsmon--oxlinttypeaware": [
-      {
-        "start_time": 1772553225089,
-        "end_time": 1772553226002,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\monitor.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 19
-      }
-    ],
-    "c--yigal-scriptsmon--oxlint": [
-      {
-        "start_time": 1772553225161,
-        "end_time": 1772553225784,
-        "reason": "changed:c:\\yigal\\scriptsmon\\src\\monitor.ts",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 19
-      }
-    ],
-    "c--yigal-scriptsmon-client--build": [
-      {
-        "start_time": 1772551787546,
-        "end_time": 1772551788465,
-        "reason": "initial",
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ]
-  },
-  "monitored": [
-    "c--yigal-scriptsmon--build",
-    "c--yigal-scriptsmon--tsc",
-    "c--yigal-scriptsmon--oxlinttypeaware",
-    "c--yigal-scriptsmon--oxlint",
-    "c--yigal-scriptsmon-client--build"
-  ],
+  "runs": {},
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -610,13 +553,7 @@
     "errors": []
   },
   "watcher": {
-    "started": [
-      "c--yigal-scriptsmon--build",
-      "c--yigal-scriptsmon--tsc",
-      "c--yigal-scriptsmon--oxlinttypeaware",
-      "c--yigal-scriptsmon--oxlint",
-      "c--yigal-scriptsmon-client--build"
-    ],
+    "started": [],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [
