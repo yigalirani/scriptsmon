@@ -3,67 +3,11 @@
   "runs": {
     "c--yigal-base_types--biome": [
       {
-        "start_time": 1772557990711,
-        "end_time": 1772557991367,
+        "start_time": 1772558912187,
+        "end_time": 1772558912768,
         "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\src\\index.ts",
-          "rel": "src"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 11
-      }
-    ],
-    "c--yigal-base_types--eslint": [
-      {
-        "start_time": 1772557990813,
-        "end_time": 1772557993935,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\src\\index.ts",
-          "rel": "src"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 4
-      }
-    ],
-    "c--yigal-base_types--test": [
-      {
-        "start_time": 1772557991679,
-        "end_time": 1772557994290,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\dist\\test.js",
-          "rel": "dist/test.js"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 3
-      }
-    ],
-    "c--yigal-base_types--build": [
-      {
-        "start_time": 1772557990892,
-        "end_time": 1772557991698,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\src\\index.ts",
-          "rel": "src"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 2
-      }
-    ],
-    "c--yigal-base_types--tsc": [
-      {
-        "start_time": 1772557990980,
-        "end_time": 1772557992722,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\src\\index.ts",
+          "reason": "add",
+          "full_filename": "c:\\yigal\\base_types\\src\\df",
           "rel": "src"
         },
         "output": [],
@@ -73,11 +17,7 @@
     ]
   },
   "monitored": [
-    "c--yigal-base_types--biome",
-    "c--yigal-base_types--eslint",
-    "c--yigal-base_types--test",
-    "c--yigal-base_types--build",
-    "c--yigal-base_types--tsc"
+    "c--yigal-base_types--biome"
   ],
   "root": {
     "name": "root",
@@ -361,11 +301,7 @@
   },
   "watcher": {
     "started": [
-      "c--yigal-base_types--biome",
-      "c--yigal-base_types--eslint",
-      "c--yigal-base_types--test",
-      "c--yigal-base_types--build",
-      "c--yigal-base_types--tsc"
+      "c--yigal-base_types--biome"
     ],
     "id_to_reason": {},
     "watched_paths": "Map",

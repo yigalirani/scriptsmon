@@ -1,7 +1,64 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-scriptsmon--build": [
+      {
+        "start_time": 1772557540131,
+        "end_time": 1772557540767,
+        "reason": "changed:c:\\yigal\\scriptsmon\\src\\watcher.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 31
+      }
+    ],
+    "c--yigal-scriptsmon--tsc": [
+      {
+        "start_time": 1772558829227,
+        "end_time": 1772558831112,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 40
+      }
+    ],
+    "c--yigal-scriptsmon--oxlinttypeaware": [
+      {
+        "start_time": 1772558829329,
+        "end_time": 1772558830287,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 39
+      }
+    ],
+    "c--yigal-scriptsmon--oxlint": [
+      {
+        "start_time": 1772558829442,
+        "end_time": 1772558830015,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 39
+      }
+    ],
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1772558829528,
+        "end_time": 1772558830490,
+        "reason": "changed:c:\\yigal\\scriptsmon\\client\\src\\terminals.ts",
+        "output": [],
+        "exit_code": 0,
+        "run_id": 6
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-scriptsmon--build",
+    "c--yigal-scriptsmon--tsc",
+    "c--yigal-scriptsmon--oxlinttypeaware",
+    "c--yigal-scriptsmon--oxlint",
+    "c--yigal-scriptsmon-client--build"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -553,7 +610,13 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-scriptsmon--build",
+      "c--yigal-scriptsmon--tsc",
+      "c--yigal-scriptsmon--oxlinttypeaware",
+      "c--yigal-scriptsmon--oxlint",
+      "c--yigal-scriptsmon-client--build"
+    ],
     "id_to_changed_path": {},
     "id_to_watching_path": {
       "root": [

@@ -95,17 +95,6 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
     const {target}=event
     if (!(target instanceof Element))
       return
-    (()=>{
-      const parent=get_parent_by_class(target,'term_title_dir')
-      if (parent==null||!event.ctrlKey)
-        return
-      post_message({
-        command: "command_open_file_rowcol",
-        source_file:'package.json',
-        row:0,
-        col:0
-      })
-    })();
     
     (()=>{
       const parent=get_parent_by_class(target,'rel')
@@ -161,7 +150,7 @@ function calc_reason_tr(report:RunnerReport,runner:Runner){
   const {reason,full_filename}=full_reason
   if (ignore_reasons.includes(reason))
     return ''
-  return `<tr><td>${reason}:</td><td><div>${full_filename}</div></td></tr>`
+  return `<tr><td>${reason}:</td><td><div><div class=rel title=${full_filename}>${full_filename}</div></div></td></tr>`
 }
 function calc_watching(report:RunnerReport,runner:Runner){
   const sep=`<span class=sep> • </span>`
