@@ -1,6 +1,6 @@
 {
     "name": "Scriptsmon",
-    "publisher":"yigal",
+    "publisher": "yigal",
     "version": "1.7.0",
     "description": "",
     "license": "ISC",
@@ -15,26 +15,26 @@
         "tsc": "tsc",
         "eslint": "eslint . --color --max-warnings=0",
         "ls": "ls -la  --color=always",
-        "compile":"npm run build & cd client & npm run build",
+        "compile": "npm run build & cd client & npm run build",
         "vscode:prepublish": "npm run compile",
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ",
         "biome": "biome lint",
-        "vsce":"vsce package"
+        "vsce": "vsce package"
     },
-    "workspaces": [ 
+    "workspaces": [
         "client"
     ],
     "activationEvents": [
-      "onStartupFinished"
+        "onStartupFinished"
     ],
     "scriptsmon": {
         "build": [
             "src",
-            "package.json", 
+            "package.json",
             "build.ts"
         ],
-        "lint,tsc": [
+        "eslint,tsc": [
             "$build",
             "client/src",
             "tsconfig.json",
@@ -42,11 +42,11 @@
         ],
         "test": "./dist/test.js",
         "oxlint,oxlinttypeaware": [
-            "$lint",
+            "$eslint",
             ".oxlintrc.json"
         ],
         "biome": [
-            "$lint",
+            "$eslint",
             "biome.json"
         ],
         "ls": [
@@ -100,14 +100,14 @@
             ]
         },
         "viewsContainers": {
-          "panel": [
-            {
-              "id": "scriptsmon-bottom-drawer",
-              "title": "Scriptsmon Terminals",
-              "icon": "$(terminal)"
-            }
-          ]          
-        },   	
+            "panel": [
+                {
+                    "id": "scriptsmon-bottom-drawer",
+                    "title": "Scriptsmon Terminals",
+                    "icon": "$(terminal)"
+                }
+            ]
+        },
         "views": {
             "scriptsmon-bottom-drawer": [
                 {
@@ -122,25 +122,25 @@
         "vscode": "^1.100.0"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.3.11",
-        "@eslint/js": "9.39.2",
+        "@biomejs/biome": "^2.4.5",
+        "@eslint/js": "10.0.1",
         "@types/lodash.clonedeep": "^4.5.9",
-        "@types/node": "25.0.6",
+        "@types/node": "25.3.3",
         "@types/vscode": "^1.100",
-        "esbuild": "0.27.2",
+        "esbuild": "0.27.3",
         "eslint-import-resolver-typescript": "4.4.4",
         "eslint-plugin-import-x": "4.16.1",
-        "oxlint": "^1.38.0",
-        "oxlint-tsgolint": "^0.11.0",
+        "oxlint": "^1.51.0",
         "typescript": "5.9.3",
-        "typescript-eslint": "8.52.0"
+        "typescript-eslint": "8.56.1"
     },
     "dependencies": {
         "@homebridge/node-pty-prebuilt-multiarch": "^0.13.1",
         "@yigal/base_types": "file:../base_types",
-        "@yigal/watch_runner": "^2.1.0",
-        "acorn": "^8.15.0",
+        "acorn": "^8.16.0",
         "chokidar": "^5.0.0",
+        "eslint": "^10.0.2",
+        "globals": "^17.4.0",
         "lodash.clonedeep": "^4.5.0"
     }
 }

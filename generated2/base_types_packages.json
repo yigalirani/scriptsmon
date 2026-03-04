@@ -1,78 +1,7 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-base_types--biome": [
-      {
-        "start_time": 1772559539105,
-        "end_time": 1772559539756,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\package.json",
-          "rel": "package.json"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
-    "c--yigal-base_types--eslint": [
-      {
-        "start_time": 1772559539392,
-        "end_time": 1772559543425,
-        "full_reason": {
-          "reason": "initial"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
-    "c--yigal-base_types--test": [
-      {
-        "start_time": 1772559541316,
-        "end_time": 1772559543952,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\base_types\\dist\\test.js",
-          "rel": "dist/test.js"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 1
-      }
-    ],
-    "c--yigal-base_types--build": [
-      {
-        "start_time": 1772559540411,
-        "end_time": 1772559541169,
-        "full_reason": {
-          "reason": "initial"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
-    "c--yigal-base_types--tsc": [
-      {
-        "start_time": 1772559540704,
-        "end_time": 1772559542454,
-        "full_reason": {
-          "reason": "initial"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ]
-  },
-  "monitored": [
-    "c--yigal-base_types--biome",
-    "c--yigal-base_types--eslint",
-    "c--yigal-base_types--test",
-    "c--yigal-base_types--build",
-    "c--yigal-base_types--tsc"
-  ],
+  "runs": {},
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -354,13 +283,7 @@
     "errors": []
   },
   "watcher": {
-    "started": [
-      "c--yigal-base_types--biome",
-      "c--yigal-base_types--eslint",
-      "c--yigal-base_types--test",
-      "c--yigal-base_types--build",
-      "c--yigal-base_types--tsc"
-    ],
+    "started": [],
     "id_to_reason": {},
     "watched_paths": "Map",
     "watch_index": {
@@ -513,7 +436,7 @@
   "repeater": {
     "is_running": true,
     "loop": "<function>",
-    "delay": 200
+    "delay": 100
   },
   "calc_one_debug_name": "<function>",
   "dump_debug": "<function>",
