@@ -8594,6 +8594,7 @@ var Monitor = class {
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
   repeater = new Repeater(100);
+  dump_debug_enabled = false;
   async start_monitor() {
     await this.read_package_json_and_start_watching();
     await new Repeater(2e3).repeat(this.dump_debug);
@@ -8737,11 +8738,17 @@ var Monitor = class {
     return ans;
   }
   dump_debug = async () => {
+    if (!this.dump_debug_enabled)
+      return;
     const name = this.workspace_folders.map(this.calc_one_debug_name).join("_");
     const filename = `c:/yigal/scriptsmon/generated2/${name}_packages.json`;
     const to_write = to_json(this, ["ipty", "watchers"]);
     await mkdir_write_file(filename, to_write, true);
   };
+  toggle_dump_debug() {
+    this.dump_debug_enabled = !this.dump_debug_enabled;
+    console.log("dump_debug_enabled", this.dump_debug_enabled);
+  }
   async read_package_json_and_start_watching() {
     const new_root = await read_package_json(this.workspace_folders);
     this.root = new_root;
@@ -8961,6 +8968,10 @@ async function activate(context) {
   register_command(context, "Scriptsmon.startWatching", () => {
     monitor.start_watching();
     outputChannel.append("start watching");
+  });
+  register_command(context, "Scriptsmon.toggleDumpDebug", () => {
+    monitor.toggle_dump_debug();
+    outputChannel.append(`dump_debug_enabled=${monitor.dump_debug_enabled}`);
   });
   vscode2.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event, null, 2));

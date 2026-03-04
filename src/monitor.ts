@@ -56,6 +56,7 @@ export class Monitor{
   watcher=new Watcher()
   //monitored_runners:Runner[]=[]
   repeater=new Repeater(100)
+  dump_debug_enabled=false
   constructor(
     public workspace_folders:string[]    
   ){}
@@ -220,11 +221,17 @@ export class Monitor{
     return ans
   }
   dump_debug=async()=>{
+    if (!this.dump_debug_enabled)
+      return
     const name=this.workspace_folders.map(this.calc_one_debug_name).join('_')
     const filename=`c:/yigal/scriptsmon/generated2/${name}_packages.json`
     //console.log(filename)
     const to_write=to_json(this,["ipty","watchers"])
     await mkdir_write_file(filename,to_write,true)
+  }
+  toggle_dump_debug(){
+    this.dump_debug_enabled=!this.dump_debug_enabled
+    console.log('dump_debug_enabled',this.dump_debug_enabled)
   }
   async read_package_json_and_start_watching(){
     const new_root= await read_package_json(this.workspace_folders)

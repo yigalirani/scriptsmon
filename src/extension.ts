@@ -86,6 +86,7 @@ export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   const outputChannel = vscode.window.createOutputChannel("Scriptsmon");    
   const workspace_folders=function(){ 
+    //return [String.raw`c:\yigal\million_try3`]
     const ans= (vscode.workspace.workspaceFolders??[]).map(x=>x.uri.fsPath)
     if (ans.length===0)
 //      return ['c:/yigal/myfastifyapp']
@@ -104,6 +105,10 @@ export  async function activate(context: vscode.ExtensionContext) {
   register_command(context,'Scriptsmon.startWatching',()=>{
     monitor.start_watching()
     outputChannel.append('start watching')
+  })
+  register_command(context,'Scriptsmon.toggleDumpDebug',()=>{
+    monitor.toggle_dump_debug()
+    outputChannel.append(`dump_debug_enabled=${monitor.dump_debug_enabled}`)
   })
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event,null,2))

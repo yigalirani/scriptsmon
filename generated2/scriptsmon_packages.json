@@ -1,37 +1,7 @@
 {
   "ipty": "<skipped>",
-  "runs": {
-    "c--yigal-scriptsmon-client--build": [
-      {
-        "start_time": 1772619692169,
-        "end_time": 1772619692988,
-        "full_reason": {
-          "reason": "initial"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 0
-      }
-    ],
-    "c--yigal-scriptsmon--build": [
-      {
-        "start_time": 1772620654276,
-        "end_time": 1772620654703,
-        "full_reason": {
-          "reason": "change",
-          "full_filename": "c:\\yigal\\scriptsmon\\package.json",
-          "rel": "package.json"
-        },
-        "output": [],
-        "exit_code": 0,
-        "run_id": 7
-      }
-    ]
-  },
-  "monitored": [
-    "c--yigal-scriptsmon-client--build",
-    "c--yigal-scriptsmon--build"
-  ],
+  "runs": {},
+  "monitored": [],
   "root": {
     "name": "root",
     "id": "root",
@@ -638,20 +608,12 @@
     "errors": []
   },
   "watcher": {
-    "started": [
-      "c--yigal-scriptsmon-client--build",
-      "c--yigal-scriptsmon--build"
-    ],
+    "started": [],
     "id_to_reason": {
       "c--yigal-scriptsmon--ls": {
         "reason": "change",
         "full_filename": "c:\\yigal\\scriptsmon\\generated2\\scriptsmon_packages.json",
         "rel": "."
-      },
-      "c--yigal-scriptsmon--test": {
-        "reason": "change",
-        "full_filename": "c:\\yigal\\scriptsmon\\dist\\test.js",
-        "rel": "./dist/test.js"
       }
     },
     "watched_paths": "Map",
@@ -935,6 +897,7 @@
     "loop": "<function>",
     "delay": 100
   },
+  "dump_debug_enabled": true,
   "calc_one_debug_name": "<function>",
   "dump_debug": "<function>",
   "iter": "<function>",

@@ -11,6 +11,7 @@ export declare class Monitor {
     root?: Folder;
     watcher: Watcher;
     repeater: Repeater;
+    dump_debug_enabled: boolean;
     constructor(workspace_folders: string[]);
     start_monitor(): Promise<void>;
     get_runner_runs(runner: Runner): Run[];
@@ -28,6 +29,7 @@ export declare class Monitor {
     calc_one_debug_name: (workspace_folder: string) => string;
     collect_watch_requests(folder: Folder): IdRelPath[];
     dump_debug: () => Promise<void>;
+    toggle_dump_debug(): void;
     read_package_json_and_start_watching(): Promise<void>;
     iter: () => Promise<void>;
     get_root(): Folder;

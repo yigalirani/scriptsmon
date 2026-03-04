@@ -1,7 +1,7 @@
 {
     "name": "Scriptsmon",
     "publisher": "yigal",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "description": "",
     "license": "ISC",
     "author": "",
@@ -83,6 +83,10 @@
             {
                 "command": "Scriptsmon.startWatching",
                 "title": "Start Watching"
+            },
+            {
+                "command": "Scriptsmon.toggleDumpDebug",
+                "title": "Toggle Dump Debug"
             }
         ],
         "menus": {
