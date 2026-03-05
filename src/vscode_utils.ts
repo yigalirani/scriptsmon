@@ -110,9 +110,11 @@ export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<voi
         });
 
         // VS Code positions arpae 0-based
+        if (pos.row==null)
+          return
         const position = new vscode.Position(
             Math.max(0, pos.row - 1),
-            Math.max(0, pos.col - 1)
+            Math.max(0, pos.col!=null?pos.col-1:0)
         );
 
         editor.selection = new vscode.Selection(position, position);
