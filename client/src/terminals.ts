@@ -8,19 +8,31 @@ import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_last_run} from './common.js'
 
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
-function make_links(input: string,y:number,workspace_folder:string) {
-  const ans= []
-  for (const match of input.matchAll(links_regex)){
-    const { groups, index } = match;
-    if (groups==null)
-      continue
-    const text = match[0];
-    const source_file= groups.source_file!////by the defintioin of the regex, it is clear that it is not undefined, why tsc cannt know it
-    const row= groups.row && parseInt(groups.row, 10)||undefined
-    const col= groups.col && parseInt(groups.col, 10)||undefined
-    const start= index+1
-    const end= index + text.length
-
+const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
+const ref_regex = /^(:(?<row>\d+))?(:(?<col>\d+))?(.*)$/;
+function addFileLocationLinkDetection(
+  terminal: Terminal,
+  workspace_folder:string
+): void {
+  const ancors:Array<undefined|string|false>=[] //string means anchor/unknown/no ancore
+  let links:Array<ILink>=[]
+  function get_text(y:number){
+    const line = terminal.buffer.active.getLine(y - 1)
+    const ans=line&&line.translateToString(true)||''
+    return ans
+  }
+  function write_ancores(start:number,end:number,value:false|string){
+    ancors.fill(value, start, end);
+  }
+  function push_link({start,end,y,text,source_file,row,col}:{
+    y:number
+    start:number
+    end:number
+    text:string
+    source_file:string,
+    row:number
+    col:number
+  }){
     const link:ILink={
       range: {
         start: { x: start, y },
@@ -37,20 +49,75 @@ function make_links(input: string,y:number,workspace_folder:string) {
       },
       text
     }
-    ans.push(link)
+    links.push(link)
   }
-  return ans
-}
+  function find_anchor(y:number){
+    for (let i=y;i>=0;i--){
+      const ancor=ancors[i]
+      if (ancor===false){
+        write_ancores(i,y,false)
+        return false
+      }
+      if (typeof(ancor)==='string'){
+        write_ancores(i,y,ancor)
+        return ancor
+      }
+      const input=get_text(i)
+      const ancor_match=input.match(ancor_regex)
+      if (ancor_match!=null){
+        const source_file=ancor_match.groups!.source_file!
+        write_ancores(i,y,source_file)
+        return source_file
+      }
+      const ref_match=input.match(ref_regex) 
+      if (ref_match==null){
+        write_ancores(i,y,false)
+        return false
+      }
+    }
+    write_ancores(0,y,false)
+    return false
+  }
+  function make_ref_link(input: string,y:number){
+    if (ancors[y]===false)
+      return false
 
-function addFileLocationLinkDetection(
-  terminal: Terminal,
-  workspace_folder:string
-): void {
+    const ref_match=input.match(ref_regex)     
+    if (ref_match==null){
+       ancors[y]=false
+       return false
+    }
+    const ancor=find_anchor(y)
+    if (ancor==null)
+      return false
+    push_link({start,end,y,text,source_file,row,col}
+    return true
+  }
+  function make_links(y:number) {
+    const input=get_text(y)    
+    if (make_ref_link(input,y))
+      return 
+
+    
+    for (const match of input.matchAll(links_regex)){
+      const { groups, index } = match;
+      if (groups==null)
+        continue 
+      const text = match[0];
+      const source_file= groups.source_file!////by the defintioin of the regex, it is clear that it is not undefined, why tsc cannt know it
+      const row= groups.row && parseInt(groups.row, 10)||0
+      const col= groups.col && parseInt(groups.col, 10)||0
+      const start= index+1
+      const end= index + text.length
+      push_link({start,end,y,text,source_file,row,col})
+
+    }
+    return links
+  }
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
-      const line = terminal.buffer.active.getLine(y - 1)
-      const text=line&&line.translateToString(true)||''
-      const links=make_links(text,y,workspace_folder)
+      links=[]
+      make_links(y)
       console.log(links)
       callback(links);
     }
