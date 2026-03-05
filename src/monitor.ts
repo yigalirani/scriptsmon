@@ -143,7 +143,12 @@ export class Monitor{
         cols:200,
         useConpty:false,
         cwd:workspace_folder,
-        env: { ...process.env, FORCE_COLOR: "3" },
+        env: { 
+          ...process.env, 
+          TERM: "xterm-256color", 
+          COLORTERM: "truecolor", // Specifically triggers 24-bit color support
+          FORCE_COLOR: "3"          
+         },
       });
       if (child===null)
         return

@@ -194,7 +194,7 @@ class TerminalPanel{
     runner:Runner
   ){
     this.el=create_terminal_element(parent,runner)
-    this.term=new Terminal({cols:200,rows:200,scrollback: 5000})
+    this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
     this.term.loadAddon(new WebglAddon ());
 
     this.fitAddon = new FitAddon();
