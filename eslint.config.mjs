@@ -64,7 +64,8 @@ export default defineConfig(
       "eqeqeq": ["error", "always", { "null": "ignore" }],
       "no-constant-condition":"off",
       "@typescript-eslint/unified-signatures":"off",//rule crashes in my case
-      "@typescript-eslint/no-unsafe-call":"off"//not easy, todo
+      "@typescript-eslint/no-unsafe-call":"off",//not easy, todo
+      "no-useless-escape":"off"
     },
     languageOptions: {
       globals: {

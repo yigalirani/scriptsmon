@@ -7,6 +7,7 @@ export interface Pos {
 export interface CommandOpenFileRowCol {
     command: "command_open_file_rowcol";
     source_file: string;
+    workspace_folder: string;
     row: number;
     col: number;
 }

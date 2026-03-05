@@ -5,14 +5,48 @@ import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_last_run} from './common.js'
+interface FileMatch {
+  path: string;
+  row: number | null;
+  col: number | null;
+  start: number; // Start index of the match
+  end: number;   // End index of the match
+  y:number
+}
+function parse_line(input: string,y:number): FileMatch[] {
+  // Regex with Named Groups
+  const regex = /(?<path>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
+  
+  const results= [];
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(input)) !== null) {
+    const { groups, index } = match;
+    const fullMatch = match[0];
+
+    if (groups) {
+      results.push({
+        path: groups.path!,
+        row: groups.row ? parseInt(groups.row, 10) : null,
+        col: groups.col ? parseInt(groups.col, 10) : null,
+        start: index,
+        end: index + fullMatch.length,
+        y
+      });
+    }
+  }
+
+  return results;
+}
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
 ): void {
-  const pattern = /([a-zA-Z0-9_\-./\\:@]+)(:\d+)?(:\d+)?/g
+  //const pattern = /([a-zA-Z0-9_\-./\\:@]+)(:\d+)?(:\d+)?/g
+  const pattern = /(?<path>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(?<row>:\d+)?(?<col>:\d+)?/g
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
-      const line = terminal.buffer.active.getLine(y - 1);
+      const line = terminal.buffer.active.getLine(y - 1)
 
       if (!line) {
         console.log('provideLinks',y,"!text")    
@@ -20,6 +54,9 @@ function addFileLocationLinkDetection(
         return;
       }
       const text = line.translateToString(true);
+      parse_line(text,y)
+      const ret=parseLocation(text)
+      links=ret.map(({path,row,col})
       console.log('provideLinks',y,text)      
       const links: ILink[] = [];
       let match: RegExpExecArray | null;
@@ -27,10 +64,9 @@ function addFileLocationLinkDetection(
         match = pattern.exec(text)
         if (match==null)
           break
-        const [full, file, row, col] = match;
-        if (file==null)
+        const [full, source_file, row, col] = match;
+        if (source_file==null)
           continue
-        const source_file=path_join(workspace_folder,file)
         const start= match.index + 1
         const end= match.index + full.length
         console.log({start,end,full})
@@ -43,9 +79,10 @@ function addFileLocationLinkDetection(
             if (ctrl.pressed)
               post_message({
                 command: "command_open_file_rowcol",
-                source_file,
-                row: Number(row),
-                col: Number(col)
+                workspace_folder,
+                source_file, 
+                row: y,
+                col: start
               });
           },
           text: full
@@ -108,6 +145,7 @@ function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement
         const {title}=parent
         post_message({
           command: "command_open_file_rowcol",
+          workspace_folder:'',
           source_file:title,
           row:0,
           col:0

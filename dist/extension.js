@@ -6333,8 +6333,8 @@ function pk(obj, ...keys) {
   return ret;
 }
 async function sleep(ms) {
-  return await new Promise((resolve5) => {
-    setTimeout(() => resolve5(void 0), ms);
+  return await new Promise((resolve6) => {
+    setTimeout(() => resolve6(void 0), ms);
   });
 }
 function default_get(obj, k, maker) {
@@ -6463,7 +6463,7 @@ function strip_$(a) {
   return { ...a, str: a.str.slice(1) };
 }
 function resolve_vars(vars, ast) {
-  function resolve5(a) {
+  function resolve6(a) {
     const visiting = /* @__PURE__ */ new Set();
     function f(a2) {
       if (Array.isArray(a2))
@@ -6485,7 +6485,7 @@ function resolve_vars(vars, ast) {
   }
   const ans = {};
   for (const [k, v] of Object.entries(vars)) {
-    const resolved = resolve5(v);
+    const resolved = resolve6(v);
     ans[k] = resolved;
   }
   return ans;
@@ -7586,7 +7586,7 @@ var NodeFsHandler = class {
         this._addToNodeFs(path4, initialAdd, wh, depth + 1);
       }
     }).on(EV.ERROR, this._boundHandleError);
-    return new Promise((resolve5, reject) => {
+    return new Promise((resolve6, reject) => {
       if (!stream)
         return reject();
       stream.once(STR_END, () => {
@@ -7595,7 +7595,7 @@ var NodeFsHandler = class {
           return;
         }
         const wasThrottled = throttler ? throttler.clear() : false;
-        resolve5(void 0);
+        resolve6(void 0);
         previous.getChildren().filter((item) => {
           return item !== directory && !current2.has(item);
         }).forEach((item) => {
@@ -8654,7 +8654,7 @@ var Monitor = class {
     full_reason
   }) {
     await this.stop({ runner });
-    await new Promise((resolve5, _reject) => {
+    await new Promise((resolve6, _reject) => {
       const runs = this.get_runner_runs(runner);
       const { workspace_folder, name } = runner;
       const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
@@ -8700,7 +8700,7 @@ var Monitor = class {
         if (signal != null || exitCode == null && signal == null) {
           run.stopped = true;
         }
-        resolve5(null);
+        resolve6(null);
       });
     });
   }
@@ -8850,9 +8850,10 @@ async function revealFolderInSidebar(folderUri) {
   await vscode.commands.executeCommand("revealInExplorer", uri);
 }
 async function open_file_row_col(pos) {
-  const { source_file } = pos;
+  const { source_file, workspace_folder } = pos;
+  const full_filename = path3.resolve(workspace_folder, source_file);
   try {
-    const document = await vscode.workspace.openTextDocument(source_file);
+    const document = await vscode.workspace.openTextDocument(full_filename);
     const editor = await vscode.window.showTextDocument(document, {
       preview: false
     });

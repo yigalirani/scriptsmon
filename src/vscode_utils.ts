@@ -19,6 +19,7 @@ export interface Pos{
 export interface CommandOpenFileRowCol{
    command: "command_open_file_rowcol"
    source_file:string,
+   workspace_folder:string,
    row:number
    col:number
 }
@@ -98,11 +99,12 @@ async function revealFolderInSidebar(folderUri:string) {
     await vscode.commands.executeCommand('revealInExplorer', uri);
 }
 export async function open_file_row_col(pos: CommandOpenFileRowCol): Promise<void> {
-    const {source_file}=pos
+    const {source_file,workspace_folder}=pos
+    const full_filename=path.resolve(workspace_folder,source_file)
     try {
         //const uri = vscode.Uri.file(pos.file);
   
-        const document = await vscode.workspace.openTextDocument(source_file);
+        const document = await vscode.workspace.openTextDocument(full_filename);
         const editor = await vscode.window.showTextDocument(document, {
             preview: false
         });
