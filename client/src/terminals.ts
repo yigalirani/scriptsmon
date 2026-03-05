@@ -5,6 +5,7 @@ import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_last_run} from './common.js'
+import { group } from 'node:console';
 interface FileMatch {
   path: string;
   row: number | null;
@@ -13,81 +14,51 @@ interface FileMatch {
   end: number;   // End index of the match
   y:number
 }
-function parse_line(input: string,y:number): FileMatch[] {
-  // Regex with Named Groups
-  const regex = /(?<path>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
-  
-  const results= [];
-  let match: RegExpExecArray | null;
-
-  while ((match = regex.exec(input)) !== null) {
+const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
+function make_links(input: string,y:number,workspace_folder:string) {
+  const ans= []
+  for (const match of input.matchAll(links_regex)){
     const { groups, index } = match;
-    const fullMatch = match[0];
+    if (groups==null)
+      continue
+    const text = match[0];
+    const source_file= groups.source_file!////by the defintioin of the regex, it is clear that it is not undefined, why tsc cannt know it
+    const row= groups.row && parseInt(groups.row, 10)||undefined
+    const col= groups.col && parseInt(groups.col, 10)||undefined
+    const start= index+1
+    const end= index + text.length
 
-    if (groups) {
-      results.push({
-        path: groups.path!,
-        row: groups.row ? parseInt(groups.row, 10) : null,
-        col: groups.col ? parseInt(groups.col, 10) : null,
-        start: index,
-        end: index + fullMatch.length,
-        y
-      });
+    const link:ILink={
+      range: {
+        start: { x: start, y },
+        end: { x: end, y }
+      },
+      activate(){
+        post_message({
+          command: "command_open_file_rowcol",
+          workspace_folder,
+          source_file, 
+          row,
+          col
+        });
+      },
+      text
     }
+    ans.push(link)
   }
-
-  return results;
+  return ans
 }
+
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
 ): void {
-  //const pattern = /([a-zA-Z0-9_\-./\\:@]+)(:\d+)?(:\d+)?/g
-  const pattern = /(?<path>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(?<row>:\d+)?(?<col>:\d+)?/g
   const provider: ILinkProvider = {
     provideLinks(y, callback) {
       const line = terminal.buffer.active.getLine(y - 1)
-
-      if (!line) {
-        console.log('provideLinks',y,"!text")    
-        callback([]);
-        return;
-      }
-      const text = line.translateToString(true);
-      parse_line(text,y)
-      const ret=parseLocation(text)
-      links=ret.map(({path,row,col})
-      console.log('provideLinks',y,text)      
-      const links: ILink[] = [];
-      let match: RegExpExecArray | null;
-      while (true) {
-        match = pattern.exec(text)
-        if (match==null)
-          break
-        const [full, source_file, row, col] = match;
-        if (source_file==null)
-          continue
-        const start= match.index + 1
-        const end= match.index + full.length
-        console.log({start,end,full})
-        links.push({
-          range: {
-            start: { x: start, y },
-            end: { x: end, y }
-          },
-          activate: () => {
-            if (ctrl.pressed)
-              post_message({
-                command: "command_open_file_rowcol",
-                workspace_folder,
-                source_file, 
-                row: y,
-                col: start
-              });
-          },
-          text: full
-        });
-      }
+      const text=line&&line.translateToString(true)||''
+      const links=make_links(text,y,workspace_folder)
+      console.log(links)
       callback(links);
     }
   };

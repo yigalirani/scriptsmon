@@ -20,8 +20,8 @@ export interface CommandOpenFileRowCol{
    command: "command_open_file_rowcol"
    source_file:string,
    workspace_folder:string,
-   row:number
-   col:number
+   row:number|undefined
+   col:number|undefined
 }
 export interface CommandOpenFilePos{
    command: "command_open_file_pos"
