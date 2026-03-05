@@ -1,13 +1,13 @@
 
 import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
-import { CanvasAddon } from '@xterm/addon-canvas';
+import { WebglAddon  } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_last_run} from './common.js'
 
-const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
+const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 function make_links(input: string,y:number,workspace_folder:string) {
   const ans= []
   for (const match of input.matchAll(links_regex)){
@@ -195,7 +195,7 @@ class TerminalPanel{
   ){
     this.el=create_terminal_element(parent,runner)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000})
-    this.term.loadAddon(new CanvasAddon());
+    this.term.loadAddon(new WebglAddon ());
 
     this.fitAddon = new FitAddon();
     this.term.loadAddon(this.fitAddon);
