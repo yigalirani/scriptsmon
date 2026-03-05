@@ -1,19 +1,12 @@
 
 import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
+import { CanvasAddon } from '@xterm/addon-canvas';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {type FileLocation,post_message,calc_last_run} from './common.js'
-import { group } from 'node:console';
-interface FileMatch {
-  path: string;
-  row: number | null;
-  col: number | null;
-  start: number; // Start index of the match
-  end: number;   // End index of the match
-  y:number
-}
+
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 function make_links(input: string,y:number,workspace_folder:string) {
   const ans= []
@@ -201,7 +194,8 @@ class TerminalPanel{
     runner:Runner
   ){
     this.el=create_terminal_element(parent,runner)
-    this.term=new Terminal({cols:200,rows:200})
+    this.term=new Terminal({cols:200,rows:200,scrollback: 5000})
+    this.term.loadAddon(new CanvasAddon());
 
     this.fitAddon = new FitAddon();
     this.term.loadAddon(this.fitAddon);
