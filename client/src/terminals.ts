@@ -3,9 +3,9 @@ import  {type s2t,default_get} from '@yigal/base_types'
 import { Terminal,type ILink, type ILinkProvider } from '@xterm/xterm';
 import { WebglAddon  } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
-import {query_selector,create_element,get_parent_by_class,update_child_html,ctrl,path_join,type Component} from './dom_utils.js'
+import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
-import  {type FileLocation,post_message,calc_last_run} from './common.js'
+import  {post_message,calc_last_run} from './common.js'
 
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
@@ -165,9 +165,9 @@ function formatElapsedTime(ms: number): string {
       </div>
     </div>*/ 
 function create_terminal_element(runner:Runner): HTMLElement {
-  const parent=query_selector<HTMLElement>(document.body,'.terms_container')
+  const terms_container=query_selector<HTMLElement>(document.body,'.terms_container')
   const {id}=runner
-  const ret=parent.querySelector<HTMLElement>(`#${id}`)
+  const ret=terms_container.querySelector<HTMLElement>(`#${id}`)
   if (ret!=null)
     return ret //todo check that it is HTMLElement
   const ans=create_element(  `
@@ -175,7 +175,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
   <div class="term_title_bar"><div class=icon></div><div class="term_title_bar2"></div></div>
   <div class=term></div>
 </div>
-  `,parent)
+  `,terms_container)
   ans.addEventListener('click',event=>{
     const {target}=event
     if (!(target instanceof Element))
@@ -255,22 +255,19 @@ function calc_title_html(report:RunnerReport,runner:Runner){
 }
 class TerminalPanel{
   last_run_id:number|undefined
-  el:HTMLElement
-  term
-  clearAnchors: () => void
-  onLink =(location: FileLocation)=>{
-    console.log(location)
-  }
-  show_watch_old(runner:Runner){
-    update_child_html(this.el, '.term_title_script .value',runner.script)
-    const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(', ')
-    update_child_html(this.el,'.term_title_watch .value',html)
-  }
+  el
+  term:Terminal|undefined
+  clearAnchors= () => console.log('')
+  //runner_id=''
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
-    console.log('create terminal',runner.id)
     this.el=create_terminal_element(runner)
+  }
+  create_if_needed(runner:Runner){
+    if (this.term)
+      return this.term
+    console.log('create terminal',runner.id)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
     this.term.loadAddon(new WebglAddon()); // todo: restore this
 
@@ -286,33 +283,27 @@ class TerminalPanel{
       this.term.open(term_container)
     }
     call_fit()
+    return this.term
     //query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
     //this.show_watch(runner)
     //query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
-  update_terminal(report:RunnerReport,new_runner:Runner){
-    const title_bar=calc_title_html(report,new_runner)
+  update_terminal(report:RunnerReport,runner:Runner){
+    const title_bar=calc_title_html(report,runner)
     update_child_html(this.el,'.term_title_bar2',title_bar)
-    
-    //const statusEl = query_selector(this.el, '.term_title_status .value')
-    //statusEl.textContent = state
-    //statusEl.className = `value background_${state}`
-    //this.show_watch(new_runner)
-    const last_run=calc_last_run(report,new_runner)
+    const last_run=calc_last_run(report,runner)
     if (last_run==null)
       return
+    const term=this.create_if_needed(runner)
     const {run_id}=last_run
     if (run_id!==this.last_run_id){
       this.clearAnchors()
-      this.term.clear()
+      term.clear()
     }
     this.last_run_id=last_run.run_id
     for (const line of last_run.output)
-      this.term.write(line)
-    //onst stats=calc_stats_html(new_runner)
-    //update_child_html(this.el,'.stats>tbody',stats)
+      term.write(line)
 
-    //.update_child_html(this.el,'.term_title_runid .value',`${run_id}`)
   }
 }
 
