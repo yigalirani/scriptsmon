@@ -8,6 +8,7 @@ declare class TerminalPanel {
     term: Terminal | undefined;
     clearAnchors: () => void;
     constructor(runner: Runner);
+    set_visibility(visibility: boolean): void;
     create_if_needed(runner: Runner): Terminal;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }

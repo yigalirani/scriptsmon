@@ -264,6 +264,9 @@ class TerminalPanel{
   ){
     this.el=create_terminal_element(runner)
   }
+  set_visibility(visibility:boolean){
+    this.el.style.display=(visibility)?'flex':'none'
+  }
   create_if_needed(runner:Runner){
     if (this.term)
       return this.term
@@ -326,10 +329,8 @@ export class Terminals implements Component{
     f(report.root)    
   }
   set_selected(id:string){
-    for (const panel of document.querySelectorAll('.terms_container > *')){ //todo: make a genr
-      if (!(panel instanceof HTMLElement))
-        continue
-      panel.style.display=(panel.id===id)?'flex':'none'
+    for (const [panel_id,panel] of Object.entries(this.terminals)){
+      panel.set_visibility(panel_id===id)
     }
   }
 }
