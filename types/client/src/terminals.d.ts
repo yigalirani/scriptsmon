@@ -1,20 +1,16 @@
 import { type s2t } from '@yigal/base_types';
 import { Terminal } from '@xterm/xterm';
-import { FitAddon } from '@xterm/addon-fit';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
 import { type FileLocation } from './common.js';
 declare class TerminalPanel {
-    parent: HTMLElement;
     last_run_id: number | undefined;
     el: HTMLElement;
     term: Terminal;
-    fitAddon: FitAddon;
     clearAnchors: () => void;
     onLink: (location: FileLocation) => void;
     show_watch_old(runner: Runner): void;
-    call_fit: () => void;
-    constructor(parent: HTMLElement, runner: Runner);
+    constructor(runner: Runner);
     update_terminal(report: RunnerReport, new_runner: Runner): void;
 }
 export declare class Terminals implements Component {

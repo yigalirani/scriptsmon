@@ -257,7 +257,6 @@ class TerminalPanel{
   last_run_id:number|undefined
   el:HTMLElement
   term
-  fitAddon
   clearAnchors: () => void
   onLink =(location: FileLocation)=>{
     console.log(location)
@@ -267,10 +266,6 @@ class TerminalPanel{
     const html=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(', ')
     update_child_html(this.el,'.term_title_watch .value',html)
   }
-  call_fit=()=>{
-    this.fitAddon.fit()
-      //console.log('fit')
-    } 
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
@@ -279,16 +274,18 @@ class TerminalPanel{
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
     this.term.loadAddon(new WebglAddon()); // todo: restore this
 
-    this.fitAddon = new FitAddon();
-    this.term.loadAddon(this.fitAddon);
-    setInterval(this.call_fit,1000)
+    const fitAddon = new FitAddon();
+    this.term.loadAddon(fitAddon);
 
+    const call_fit = () => fitAddon.fit()
+    setInterval(call_fit,1000)
 
     this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement){
       this.term.open(term_container)
     }
+    call_fit()
     //query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
     //this.show_watch(runner)
     //query_selector(this.el, '.term_title_status .value').textContent='ready'
