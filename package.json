@@ -1,7 +1,7 @@
 {
     "name": "Scriptsmon",
     "publisher": "yigal",
-    "version": "1.9.0",
+    "version": "1.10.0",
     "description": "",
     "license": "ISC",
     "author": "",
@@ -18,7 +18,7 @@
         "compile": "npm run build & cd client & npm run build",
         "vscode:prepublish": "npm run compile",
         "oxlinttypeaware": "oxlint . --type-aware",
-        "oxlint": "oxlint ",
+        "oxlint": "oxlint ", 
         "biome": "biome lint",
         "vsce": "vsce package"
     },
@@ -70,7 +70,7 @@
                 "command": "Scriptsmon.runner.play",
                 "title": "Play",
                 "icon": "$(play)"
-            },
+            }, 
             {
                 "command": "Scriptsmon.runner.debug",
                 "title": "Debug",

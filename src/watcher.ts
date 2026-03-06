@@ -99,7 +99,7 @@ export class Watcher{
   }
   get_reasons(monitored:Set<string>){ //id:string
     const ans=[]
-    for (const runner_id of monitored){
+    for (const runner_id of [...monitored,"root"]){
       const full_reason=this.get_reason(runner_id)
       if (full_reason!=null)
         ans.push({full_reason,runner_id})
@@ -110,8 +110,8 @@ export class Watcher{
     const ans=this.id_to_reason[watch_id]
     if (ans!=null)
       return ans
-    if (this.started.has(watch_id))
-      return
+    if (watch_id==="root"||this.started.has(watch_id))
+      return;
     return {
       reason:'initial'
     }

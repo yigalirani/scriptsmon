@@ -1,7 +1,24 @@
 {
   "ipty": "<skipped>",
-  "runs": {},
-  "monitored": [],
+  "runs": {
+    "c--yigal-scriptsmon-client--build": [
+      {
+        "start_time": 1772794111681,
+        "end_time": 1772794112368,
+        "full_reason": {
+          "reason": "change",
+          "full_filename": "c:\\yigal\\scriptsmon\\client\\package.json",
+          "rel": "package.json"
+        },
+        "output": [],
+        "exit_code": 0,
+        "run_id": 1
+      }
+    ]
+  },
+  "monitored": [
+    "c--yigal-scriptsmon-client--build"
+  ],
   "root": {
     "name": "root",
     "id": "root",
@@ -552,8 +569,8 @@
                     "rel": {
                       "str": "build.ts",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
-                      "start": 148,
-                      "end": 158
+                      "start": 154,
+                      "end": 164
                     },
                     "full": "c:\\yigal\\scriptsmon\\client\\build.ts"
                   },
@@ -561,8 +578,8 @@
                     "rel": {
                       "str": "src",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
-                      "start": 169,
-                      "end": 174
+                      "start": 178,
+                      "end": 183
                     },
                     "full": "c:\\yigal\\scriptsmon\\client\\src"
                   },
@@ -570,8 +587,8 @@
                     "rel": {
                       "str": "package.json",
                       "source_file": "c:\\yigal\\scriptsmon\\client\\package.json",
-                      "start": 184,
-                      "end": 198
+                      "start": 197,
+                      "end": 211
                     },
                     "full": "c:\\yigal\\scriptsmon\\client\\package.json"
                   }
@@ -608,12 +625,54 @@
     "errors": []
   },
   "watcher": {
-    "started": [],
+    "started": [
+      "c--yigal-scriptsmon-client--build"
+    ],
     "id_to_reason": {
       "c--yigal-scriptsmon--ls": {
         "reason": "change",
         "full_filename": "c:\\yigal\\scriptsmon\\generated2\\scriptsmon_packages.json",
         "rel": "."
+      },
+      "root": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--build": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--tsc": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--eslint": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--oxlinttypeaware": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--oxlint": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--biome": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\package.json",
+        "rel": "package.json"
+      },
+      "c--yigal-scriptsmon--test": {
+        "reason": "change",
+        "full_filename": "c:\\yigal\\scriptsmon\\dist\\test.js",
+        "rel": "./dist/test.js"
       }
     },
     "watched_paths": "Map",
