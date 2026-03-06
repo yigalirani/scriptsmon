@@ -9,7 +9,7 @@ import  {type FileLocation,post_message,calc_last_run} from './common.js'
 
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
-const ref_regex = /^(:(?<row>\d+))?(:(?<col>\d+))?(.*)$/;
+const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
@@ -22,17 +22,24 @@ function addFileLocationLinkDetection(
     return ans
   }
   function write_ancores(start:number,end:number,value:false|string){
-    ancors.fill(value, start, end);
+    ///ancors.fill(value, start, end); ///didnt work
+    //console.log('write_ancores',start,end,value)
+    for (let i=start;i<=end;i++)
+      if (ancors[i]==null)
+          ancors[i]=value
   }
-  function push_link({start,end,y,text,source_file,row,col}:{
+  function push_link({match,y,source_file,groups}:{
     y:number
-    start:number
-    end:number
-    text:string
     source_file:string,
-    row:number
-    col:number
+    groups:Record<string,string>
+    match:RegExpExecArray|RegExpMatchArray
   }){
+    const { index } = match;
+    const text = match[0];
+    const start= index!+1
+    const end= index! + text.length  
+    const row= groups.row && parseInt(groups.row, 10)||0
+    const col= groups.col && parseInt(groups.col, 10)||0  
     const link:ILink={
       range: {
         start: { x: start, y },
@@ -81,17 +88,21 @@ function addFileLocationLinkDetection(
   function make_ref_link(input: string,y:number){
     if (ancors[y]===false)
       return false
-
-    const ref_match=input.match(ref_regex)     
-    if (ref_match==null){
-       ancors[y]=false
-       return false
-    }
-    const ancor=find_anchor(y)
-    if (ancor==null)
+ 
+    const source_file=find_anchor(y)
+    if (source_file===false)
       return false
-    push_link({start,end,y,text,source_file,row,col}
+    const match = input.match(ref_regex)
+    if (match==null){
+      write_ancores(y,y,false)
+      return false
+    }    
+    const {groups}=match
+    if (groups==null)
+      return false
+    push_link({match,y,source_file,groups})
     return true
+
   }
   function make_links(y:number) {
     const input=get_text(y)    
@@ -100,16 +111,13 @@ function addFileLocationLinkDetection(
 
     
     for (const match of input.matchAll(links_regex)){
-      const { groups, index } = match;
+      const { groups } = match;
       if (groups==null)
         continue 
-      const text = match[0];
       const source_file= groups.source_file!////by the defintioin of the regex, it is clear that it is not undefined, why tsc cannt know it
-      const row= groups.row && parseInt(groups.row, 10)||0
-      const col= groups.col && parseInt(groups.col, 10)||0
-      const start= index+1
-      const end= index + text.length
-      push_link({start,end,y,text,source_file,row,col})
+
+
+      push_link({match,y,source_file,groups})
 
     }
     return links
@@ -118,7 +126,7 @@ function addFileLocationLinkDetection(
     provideLinks(y, callback) {
       links=[]
       make_links(y)
-      console.log(links)
+      //console.log(links)
       callback(links);
     }
   };
@@ -262,7 +270,7 @@ class TerminalPanel{
   ){
     this.el=create_terminal_element(parent,runner)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
-    this.term.loadAddon(new WebglAddon ());
+    //this.term.loadAddon(new WebglAddon ()); todo: restore this
 
     this.fitAddon = new FitAddon();
     this.term.loadAddon(this.fitAddon);
