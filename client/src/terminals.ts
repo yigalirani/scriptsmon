@@ -164,7 +164,8 @@ function formatElapsedTime(ms: number): string {
         <div class="term_title_runid"><div class=title></div><div class=value></div></div>
       </div>
     </div>*/ 
-function create_terminal_element(parent: HTMLElement,runner:Runner): HTMLElement {
+function create_terminal_element(runner:Runner): HTMLElement {
+  const parent=query_selector<HTMLElement>(document.body,'.terms_container')
   const {id}=runner
   const ret=parent.querySelector<HTMLElement>(`#${id}`)
   if (ret!=null)
@@ -271,13 +272,12 @@ class TerminalPanel{
       //console.log('fit')
     } 
   constructor(
-    public parent:HTMLElement,
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
     console.log('create terminal',runner.id)
-    this.el=create_terminal_element(parent,runner)
+    this.el=create_terminal_element(runner)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
-    //this.term.loadAddon(new WebglAddon ()); todo: restore this
+    this.term.loadAddon(new WebglAddon()); // todo: restore this
 
     this.fitAddon = new FitAddon();
     this.term.loadAddon(this.fitAddon);
@@ -322,8 +322,7 @@ class TerminalPanel{
 export class Terminals implements Component{
   terminals:s2t<TerminalPanel>={} 
   get_terminal(runner:Runner){
-    const parent=query_selector<HTMLElement>(document.body,'.terms_container')
-    const ans=default_get(this.terminals,runner.id,()=> new TerminalPanel(parent, runner))
+    const ans=default_get(this.terminals,runner.id,()=> new TerminalPanel(runner))
     return ans
   }
   on_interval(){
