@@ -253,10 +253,13 @@ function calc_title_html(report:RunnerReport,runner:Runner){
   
   </table>`
 }
+let webgl_count=0
+setInterval(()=>console.log('webgl_count',webgl_count),1000)
 class TerminalPanel{
   last_run_id:number|undefined
   el
   term:Terminal|undefined
+  webgl_addon:WebglAddon|undefined 
   clearAnchors= () => console.log('')
   //runner_id=''
   constructor(
@@ -264,15 +267,35 @@ class TerminalPanel{
   ){
     this.el=create_terminal_element(runner)
   }
-  set_visibility(visibility:boolean){
-    this.el.style.display=(visibility)?'flex':'none'
+  webgl_on(){
+    webgl_count++
+    this.webgl_addon= new WebglAddon();
+    this.term!.loadAddon(this.webgl_addon);    
+  }
+  set_visibility(val:boolean){
+    this.el.style.display=(val)?'flex':'none'   
+    if (!this.term)
+      return
+    if (val){
+      if (this.webgl_addon)
+        return
+      this.webgl_on()
+      return
+    }
+    if (!this.webgl_addon)
+      return    
+    webgl_count--
+    this.webgl_addon.dispose()
+    this.webgl_addon=undefined
   }
   create_if_needed(runner:Runner){
     if (this.term)
       return this.term
     console.log('create terminal',runner.id)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
-    this.term.loadAddon(new WebglAddon()); // todo: restore this
+    if (this.el.style.display!=='none')
+      this.webgl_on() //was selected and term was just created
+    //this.term.loadAddon(new WebglAddon()); // todo: restore this
 
     const fitAddon = new FitAddon();
     this.term.loadAddon(fitAddon);

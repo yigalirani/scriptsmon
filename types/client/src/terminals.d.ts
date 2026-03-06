@@ -1,14 +1,16 @@
 import { type s2t } from '@yigal/base_types';
 import { Terminal } from '@xterm/xterm';
+import { WebglAddon } from '@xterm/addon-webgl';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
 declare class TerminalPanel {
     last_run_id: number | undefined;
     el: HTMLElement;
     term: Terminal | undefined;
+    webgl_addon: WebglAddon | undefined;
     clearAnchors: () => void;
     constructor(runner: Runner);
-    set_visibility(visibility: boolean): void;
+    set_visibility(val: boolean): void;
     create_if_needed(runner: Runner): Terminal;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }
