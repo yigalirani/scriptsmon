@@ -13,9 +13,12 @@ const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
 function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
-): void {
+){
   const ancors:Array<undefined|string|false>=[] //string means anchor/unknown/no ancore
   let links:Array<ILink>=[]
+  function clearAnchors() {
+    ancors.length = 0
+  }
   function get_text(y:number){
     const line = terminal.buffer.active.getLine(y - 1)
     const ans=line&&line.translateToString(true)||''
@@ -131,6 +134,8 @@ function addFileLocationLinkDetection(
     }
   };
   terminal.registerLinkProvider(provider);
+  terminal.onResize(() => clearAnchors())
+  return clearAnchors
 }
 function formatElapsedTime(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
@@ -252,6 +257,7 @@ class TerminalPanel{
   el:HTMLElement
   term
   fitAddon
+  clearAnchors: () => void
   onLink =(location: FileLocation)=>{
     console.log(location)
   }
@@ -266,8 +272,9 @@ class TerminalPanel{
     } 
   constructor(
     public parent:HTMLElement,
-    runner:Runner
+    runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
+    console.log('create terminal',runner.id)
     this.el=create_terminal_element(parent,runner)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
     //this.term.loadAddon(new WebglAddon ()); todo: restore this
@@ -277,7 +284,7 @@ class TerminalPanel{
     setInterval(this.call_fit,1000)
 
 
-    addFileLocationLinkDetection(this.term,runner.workspace_folder)
+    this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement){
       this.term.open(term_container)
@@ -298,8 +305,10 @@ class TerminalPanel{
     if (last_run==null)
       return
     const {run_id}=last_run
-    if (run_id!==this.last_run_id)
+    if (run_id!==this.last_run_id){
+      this.clearAnchors()
       this.term.clear()
+    }
     this.last_run_id=last_run.run_id
     for (const line of last_run.output)
       this.term.write(line)

@@ -10,6 +10,7 @@ declare class TerminalPanel {
     el: HTMLElement;
     term: Terminal;
     fitAddon: FitAddon;
+    clearAnchors: () => void;
     onLink: (location: FileLocation) => void;
     show_watch_old(runner: Runner): void;
     call_fit: () => void;
