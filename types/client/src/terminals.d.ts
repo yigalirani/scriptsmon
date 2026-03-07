@@ -10,6 +10,7 @@ declare class TerminalPanel {
     webgl_addon: WebglAddon | undefined;
     clearAnchors: () => void;
     constructor(runner: Runner);
+    webgl_on(): void;
     set_visibility(val: boolean): void;
     create_if_needed(runner: Runner): Terminal;
     update_terminal(report: RunnerReport, runner: Runner): void;

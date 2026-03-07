@@ -20,7 +20,7 @@ export interface TreeDataProvider{
   //convert: (root:unknown)=>TreeNode
   command:(id:string,command_name:string)=>MaybePromise<void>
   selected:(id:string)=>MaybePromise<void>
-  icons_html:string
+  //icons_html:string
 }
 
 function get_prev_selected(selected:HTMLElement){

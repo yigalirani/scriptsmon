@@ -86,7 +86,7 @@ class TheTreeProvider implements TreeDataProvider{
       command_name
     })
   }
-  icons_html=ICONS_HTML
+  //icons_html=ICONS_HTML
   selected(id:string){
     this.terminals.set_selected(id)
     const base=parser.find_base(this.report!.root,id)

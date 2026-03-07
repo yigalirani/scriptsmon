@@ -70,10 +70,10 @@ export class IconsAnimator{
     const f=(node:TreeNode)=>{ 
       const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
-      update_child_html(document.body,`#${id}>.label_row .icon`,this.icons[icon]??'')
-      update_class_name(document.body,`#${id}>.label_row .icon`,`icon ${icon}`)
-      update_child_html(document.body,`#${id} .term_title_bar .icon`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`)
-      update_class_name(document.body,`#${id} .term_title_bar .icon`,`icon ${icon}`)
+      update_child_html(document.body,`#${id} .icon`,this.icons[icon]??'') //set the svg
+      update_child_html(document.body,`#${id} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text
+      update_class_name(document.body,`#${id} .icon.text`,`icon text ${icon}`) 
+      update_class_name(document.body,`#${id} .icon:not(.text)`,`icon ${icon}`) 
       
       node.children.map(f)
     }
