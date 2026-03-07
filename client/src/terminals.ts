@@ -238,18 +238,22 @@ function calc_reason_tr(report:RunnerReport,runner:Runner){
     return ''
   return `<tr><td>${reason}:</td><td><div><div class=rel title=${full_filename}>${full_filename}</div></div></td></tr>`
 }
-function calc_watching(report:RunnerReport,runner:Runner){
+function calc_watching_tr(report:RunnerReport,runner:Runner){
+  if (runner.effective_watch.length===0)
+    return ''
   const sep=`<span class=sep> • </span>`
-  return runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
+  const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
+  return `<tr><td>Watching:</td><td><div>${ret}</div></td></tr>`
 }
 function calc_title_html(report:RunnerReport,runner:Runner){
-  const watching=calc_watching(report,runner)
+ // const watching=calc_watching(report,runner)
   const elapsed=calc_elapsed_html(report,runner)
 
   return `<div class=term_title_duration>${elapsed}</div>
   <table>
-  <tr><td>Watching:</td><td><div>${watching}</div></td></tr> 
+  
   ${calc_reason_tr(report,runner)}
+  ${calc_watching_tr(report,runner)}
   
   </table>`
 }
