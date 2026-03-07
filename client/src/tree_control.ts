@@ -51,13 +51,12 @@ export class TreeControl{
     const {type,id,description,label,commands,tags}=node
     const children=(type==='folder')?`<div class=children></div>`:''
     const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
-    const  toggles_icons=this.provider.toggle_order.map(x=>`<div class="toggle_icon" id=${x}></div>`).join('')
     const node_class=this.calc_node_class(node)
     const vtags=tags.map(x=>`<div class=tag>${x}</div>`).join('')
     const ans= create_element(` 
   <div  class="${node_class}" id="${id}" >
     <div  class="label_row">
-      ${divs({toggles_icons})}
+      <div class=toggles_icons></div>
       <div  class=shifter style='margin-left:${margin}px'>
         <div class="icon"> </div>
         ${divs({label,vtags,description})}

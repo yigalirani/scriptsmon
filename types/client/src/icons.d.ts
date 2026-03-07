@@ -6,6 +6,7 @@ export declare class IconsAnimator {
     private icon_versions;
     constructor(icons: Record<string, string>);
     private set_icon_version;
+    private calc_icon;
     private update_icons;
     animate(tree_node: TreeNode): void;
 }

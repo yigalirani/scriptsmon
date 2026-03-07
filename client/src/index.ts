@@ -15,7 +15,7 @@ function the_convert(_report:unknown):TreeNode{
       const {script,id,name,effective_watch,tags}=runner
       const watched=function(){
         if (effective_watch.length===0)
-          return "missing"
+          return
         return report.monitored.includes(id)
       }()
       const {version,state}=calc_runner_status(report,runner)

@@ -54,6 +54,8 @@ function calc_box_shadow(icon:string,timeOffset:number){
     return f('rgba(128, 0, 128, 0.5)')
   return ''
 }
+
+
 export class IconsAnimator{
   //icons
   private id_changed:Record<string,number>={}
@@ -66,12 +68,19 @@ export class IconsAnimator{
     this.id_changed[id]=Date.now()
     this.icon_versions[id]={icon,version}
   }
+  private calc_icon(k:string,v:boolean|undefined){
+    if (v===undefined)
+      return ''
+    return this.icons[`${k}_${v}`]
+  }
   private update_icons(tree_node:TreeNode){
     const f=(node:TreeNode)=>{ 
       const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
+      const toggles=Object.entries(node.toggles).map(([k,v])=>`<div class='toggle_icon' id=${k}>${this.calc_icon(k,v)}</div>`).join('') 
       update_child_html(document.body,`#${id} .icon`,this.icons[icon]??'') //set the svg
       update_child_html(document.body,`#${id} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text
+      update_child_html(document.body,`#${id} .toggles_icons`,toggles)
       update_class_name(document.body,`#${id} .icon.text`,`icon text ${icon}`) 
       update_class_name(document.body,`#${id} .icon:not(.text)`,`icon ${icon}`) 
       
