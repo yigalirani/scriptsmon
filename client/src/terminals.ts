@@ -238,6 +238,7 @@ function calc_reason_tr(report:RunnerReport,runner:Runner){
     return ''
   return `<tr><td>${reason}:</td><td><div><div class=rel title=${full_filename}>${full_filename}</div></div></td></tr>`
 }
+
 function calc_watching_tr(report:RunnerReport,runner:Runner){
   if (runner.effective_watch.length===0)
     return ''
@@ -251,9 +252,8 @@ function calc_title_html(report:RunnerReport,runner:Runner){
 
   return `<div class=term_title_duration>${elapsed}</div>
   <table>
-  
+  ${calc_watching_tr(report,runner)}  
   ${calc_reason_tr(report,runner)}
-  ${calc_watching_tr(report,runner)}
   
   </table>`
 }
