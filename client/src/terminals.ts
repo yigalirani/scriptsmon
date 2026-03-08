@@ -236,7 +236,7 @@ function calc_reason_tr(report:RunnerReport,runner:Runner){
   const {reason,full_filename}=full_reason
   if (ignore_reasons.includes(reason))
     return ''
-  return `<tr><td>${reason}:</td><td><div><div class=rel title=${full_filename}>${full_filename}</div></div></td></tr>`
+  return `<tr><td>(${reason})</td><td><div><div class=rel title=${full_filename}>${full_filename}</div></div></td></tr>`
 }
 
 function calc_watching_tr(report:RunnerReport,runner:Runner){
@@ -244,14 +244,14 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
     return ''
   const sep=`<span class=sep> • </span>`
   const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
-  return `<tr><td><div class=toggles_icons></div></td><td><div>${ret}</div></td></tr>`
+  return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
 function calc_title_html(report:RunnerReport,runner:Runner){
  // const watching=calc_watching(report,runner)
   const elapsed=calc_elapsed_html(report,runner)
 
   return `<div class=term_title_duration>${elapsed}</div>
-  <table>
+  <table class=watching>
   ${calc_watching_tr(report,runner)}  
   ${calc_reason_tr(report,runner)}
   

@@ -100,7 +100,7 @@ button:hover {
 }
 .term_title_bar2 tr td:first-child{
   font-weight: bold;
-  color: #875eba;  
+  text-align: right;
 }
 .term_title_bar2 tr td{
 
@@ -302,7 +302,7 @@ span.term_title_watch{
 .toggles_icons > .watched.false svg{
   color: gray;
 }
-.toggles_icons > .watched.false:hover{
+.toggles_icons > .watched.false svg:hover{
   width: 16px;
   height: 16px;
   color: white;
@@ -448,4 +448,13 @@ span.term_title_watch{
 }
 .sep{
   color: #875eba;
+}
+.watching:has(.watched.true){
+  color: white;
+}
+.watching:has(.watched.false){
+  color: gray;
+}
+.term_title_bar2 table.watching tr td:first-child:has(.watched.true){
+  color:darkorange;
 }
