@@ -77,6 +77,9 @@ button:hover {
   border-bottom: 1px solid var(--vscode-panel-border, #3e3e42);
   font-size: 12px;
   gap: 8px;
+  align-items: center;
+  overflow: hidden;
+  gap:12px;
 }
 
 .term_title_bar .title{
@@ -86,23 +89,19 @@ button:hover {
 .term_title_bar .value{
   margin-right: 10px;
 }
-.term_title_bar2{
-  display: flex;
-  overflow: hidden;
-  gap:12px;
-}
-.term_title_bar2 td div{
+
+.term_title_bar td div{
   display: flex;
 }
-.term_title_bar2 table{
+.term_title_bar table{
   white-space: nowrap;
   border-collapse: collapse;
 }
-.term_title_bar2 tr td:first-child{
+.term_title_bar tr td:first-child{
   font-weight: bold;
   text-align: right;
 }
-.term_title_bar2 tr td{
+.term_title_bar tr td{
 
 }
 .term_title_dir .value,
@@ -268,8 +267,10 @@ span.term_title_watch{
   position: sticky;
   right: 10px;
 }
-.term_title_bar2 .commands_icons{
+.term_title_bar .commands_icons{
   display: flex;  
+  align-items: center;
+  margin-left: 5px;  
 }
 .label_row:hover .commands_icons{
   display: flex;
@@ -458,6 +459,6 @@ span.term_title_watch{
 .watching:has(.watched.false){
   color: gray;
 }
-.term_title_bar2 table.watching tr td:first-child:has(.watched.true){
+.term_title_bar table.watching tr td:first-child:has(.watched.true){
   color:darkorange;
 }
