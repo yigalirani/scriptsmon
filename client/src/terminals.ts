@@ -172,7 +172,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
     return ret //todo check that it is HTMLElement
   const ans=create_element(  `
 <div class="term_panel" id="${id}" style="display: none;">
-  <div class="term_title_bar">
+  <div class="term_title_bar"></div>
   <div class=term></div>
 </div>
   `,terms_container)
