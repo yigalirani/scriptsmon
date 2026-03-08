@@ -172,7 +172,12 @@ function create_terminal_element(runner:Runner): HTMLElement {
     return ret //todo check that it is HTMLElement
   const ans=create_element(  `
 <div class="term_panel" id="${id}" style="display: none;">
-  <div class="term_title_bar"></div>
+  <div class="term_title_bar">
+    <div class="icon text"></div>
+    <div class=commands_icons></div>
+    <div class=term_title_duration></div>
+    <table class=watching></table>
+  </div>
   <div class=term></div>
 </div>
   `,terms_container)
@@ -319,8 +324,12 @@ class TerminalPanel{
     //query_selector(this.el, '.term_title_status .value').textContent='ready'
   }
   update_terminal(report:RunnerReport,runner:Runner){
-    const title_bar=calc_title_html(report,runner)
-    update_child_html(this.el,'.term_title_bar',title_bar)
+    //const title_bar=calc_title_html(report,runner)
+    const watching=  `${calc_watching_tr(report,runner)}  
+  ${calc_reason_tr(report,runner)}`
+    update_child_html(this.el,'.term_title_bar .term_title_duration',calc_elapsed_html(report,runner))
+    update_child_html(this.el,'.term_title_bar .watching',watching)
+
     const last_run=calc_last_run(report,runner)
     if (last_run==null)
       return
