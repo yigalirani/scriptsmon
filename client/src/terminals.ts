@@ -137,7 +137,7 @@ function addFileLocationLinkDetection(
   terminal.onResize(() => clearAnchors())
   return clearAnchors
 }
-function formatElapsedTime(ms: number): string {
+function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
   const totalSeconds = Math.floor(ms / 1000);
   const milliseconds = ms % 1000;
   const seconds = totalSeconds % 60;
@@ -150,7 +150,8 @@ function formatElapsedTime(ms: number): string {
     hours > 0
       ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`
       : `${pad2(minutes)}:${pad2(seconds)}`;
-  return `${time}<span class=ms>.${pad3(milliseconds)}</span>`;
+  const ms_display=show_ms?`<span class=ms>.${pad3(milliseconds)}</span>`:''
+  return `<div title="${title}">${time}${ms_display}</div>`;
 }
    /*<div class="term_title_bar">
       <div class ="row_title_bar">
@@ -222,14 +223,18 @@ function calc_elapsed_html(report:RunnerReport,runner:Runner){
   if (last_run==null)
     return ''
   const {start_time,end_time}=last_run
+  const now=Date.now()
   const effective_end_time=function(){
-    if (end_time==null){
-      const ans=Date.now()
-      return ans
-    }
+    if (end_time==null)
+      return now
     return end_time
   }()
-  const new_time=formatElapsedTime(effective_end_time-start_time)
+  const time_since_end=function(){
+    if (end_time==null)
+      return ''
+    return formatElapsedTime(now-end_time,"time since done",false) //not sure if people woule like this
+  }()
+  const new_time=formatElapsedTime(effective_end_time-start_time,'run time',true)+time_since_end
   return new_time
 }
 const ignore_reasons:Reason[]=['initial','user']
