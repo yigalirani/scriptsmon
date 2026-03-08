@@ -16,7 +16,7 @@ export class TreeControl{
   private calc_node_class(node:TreeNode){
     const {id,type,toggles}=node    
     const ans=new Set<string>([`tree_${type}`])
-    for (const k of this.provider.toggle_order){
+    for (const k of this.provider.toggle_order){ //leaving it here because i my want to change the styling of the tree line based on watch state. but cancled the css that supports it
       const cls=`${k}_${toggles[k]}`
       ans.add(cls)
     } 

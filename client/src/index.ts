@@ -108,7 +108,7 @@ function start(){
   // /let base_uri=''
   const provider=new TheTreeProvider(terminals)
   const icons=parse_icons(ICONS_HTML)
-  const icons_animator=new IconsAnimator(icons)
+  const icons_animator=new IconsAnimator(icons,["watched","play","stop"])
   const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider,icons) //no error, whay
  
   function on_interval(){

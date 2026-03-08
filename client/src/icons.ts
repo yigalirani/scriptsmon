@@ -61,8 +61,16 @@ export class IconsAnimator{
   //icons
   private id_changed:Record<string,number>={}
   private icon_versions:Record<string,IconVersion>={}
-  constructor(public icons:Record<string,string>){
+  constructor(
+    public icons:Record<string,string>,
+    public commands:string[]    
+  ){
     document.body.addEventListener('click',this.on_click)
+  }
+  get_command(icon:HTMLElement){
+    for (const className of icon.classList)
+      if (this.commands.includes(className))
+        return className
   }
   on_click=(evt:MouseEvent)=>{
     if (evt.target==null)
@@ -70,7 +78,7 @@ export class IconsAnimator{
     const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','toggle_icon'])
     if (command_icon==null)
       return
-    const command_name=command_icon.id
+    const command_name=this.get_command(command_icon)
     if (command_name==null)
       return
     
@@ -99,10 +107,10 @@ export class IconsAnimator{
   }
   private update_icons(tree_node:TreeNode){
     const f=(node:TreeNode)=>{ 
-      const {id,icon,icon_version,commands}=node
+      const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
-      const toggles=Object.entries(node.toggles).map(([k,v])=>`<div class='toggle_icon' id=${k}>${this.calc_icon(k,v)}</div>`).join('') 
-      const commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${this.icons[x]}</div>`).join('')
+      const toggles=Object.entries(node.toggles).map(([k,v])=>`<div class='toggle_icon ${v} ${k}'>${this.calc_icon(k,v)}</div>`).join('') 
+      const commands_icons=node.commands.map(x=>`<div class="command_icon ${x}">${this.icons[x]}</div>`).join('')
       const top=`#${id} > :not(.children)`
       update_child_html(document.body,`${top} .icon:not(.text)`,this.icons[icon]??'') //set the svg
       update_child_html(document.body,`${top} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text

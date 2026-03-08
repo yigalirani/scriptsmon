@@ -286,20 +286,23 @@ span.term_title_watch{
   width: 16px;
   height: 16px;
 }
-.toggles_icons{
+.label_row > .toggles_icons{
   position: absolute;
   min-width: 18px;
   height: 100%;
   border-right: 1px dotted darkgray;
 }
 
-.watched_true > .label_row #watched svg{
+/*.watched_true > .label_row #watched svg{
+  color: darkorange;
+}*/
+.toggles_icons > .watched.true svg{
   color: darkorange;
 }
-.watched_false > .label_row #watched{
+.toggles_icons > .watched.false svg{
   color: gray;
 }
-.watched_false > .label_row #watched:hover{
+.toggles_icons > .watched.false:hover{
   width: 16px;
   height: 16px;
   color: white;

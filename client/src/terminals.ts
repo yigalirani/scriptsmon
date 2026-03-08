@@ -244,7 +244,7 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
     return ''
   const sep=`<span class=sep> • </span>`
   const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
-  return `<tr><td>Watching:</td><td><div>${ret}</div></td></tr>`
+  return `<tr><td><div class=toggles_icons></div></td><td><div>${ret}</div></td></tr>`
 }
 function calc_title_html(report:RunnerReport,runner:Runner){
  // const watching=calc_watching(report,runner)

@@ -2,9 +2,11 @@ import type { TreeNode } from './tree_internals.js';
 export declare function parse_icons(html: string): Record<string, string>;
 export declare class IconsAnimator {
     icons: Record<string, string>;
+    commands: string[];
     private id_changed;
     private icon_versions;
-    constructor(icons: Record<string, string>);
+    constructor(icons: Record<string, string>, commands: string[]);
+    get_command(icon: HTMLElement): string | undefined;
     on_click: (evt: MouseEvent) => false | undefined;
     private set_icon_version;
     private calc_icon;
