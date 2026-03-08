@@ -99,13 +99,15 @@ export class IconsAnimator{
   }
   private update_icons(tree_node:TreeNode){
     const f=(node:TreeNode)=>{ 
-      const {id,icon,icon_version}=node
+      const {id,icon,icon_version,commands}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
       const toggles=Object.entries(node.toggles).map(([k,v])=>`<div class='toggle_icon' id=${k}>${this.calc_icon(k,v)}</div>`).join('') 
+      const commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${this.icons[x]}</div>`).join('')
       const top=`#${id} > :not(.children)`
       update_child_html(document.body,`${top} .icon:not(.text)`,this.icons[icon]??'') //set the svg
       update_child_html(document.body,`${top} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text
       update_child_html(document.body,`${top} .toggles_icons`,toggles)
+      update_child_html(document.body,`${top} .commands_icons`,commands_icons)
       update_class_name(document.body,`${top} .icon.text`,`icon text ${icon}`) 
       update_class_name(document.body,`${top} .icon:not(.text)`,`icon ${icon}`) 
       
