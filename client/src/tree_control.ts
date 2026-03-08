@@ -1,5 +1,5 @@
 import  { type s2s,toggle_set} from '@yigal/base_types'
-import {get_parent_by_class,create_element,divs,get_parent_by_classes,update_class_name,update_child_html} from './dom_utils.js'
+import {get_parent_by_class,create_element,divs,update_class_name,update_child_html} from './dom_utils.js'
 import {
   type TreeNode,
   type TreeDataProvider,
@@ -47,10 +47,10 @@ export class TreeControl{
   }
   //collapsed_set:Set<string>=new Set()
   private create_node_element(node:TreeNode,margin:number,parent?:HTMLElement){
-    const {icons}=this
-    const {type,id,description,label,commands,tags}=node
+    //const {icons}=this
+    const {type,id,description,label,tags}=node
     const children=(type==='folder')?`<div class=children></div>`:''
-    const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
+    //const  commands_icons=commands.map(x=>`<div class=command_icon id=${x}>${icons[x]}</div>`).join('')
     const node_class=this.calc_node_class(node)
     const vtags=tags.map(x=>`<div class=tag>${x}</div>`).join('')
     const ans= create_element(` 
@@ -61,7 +61,7 @@ export class TreeControl{
         <div class="icon"> </div>
         ${divs({label,vtags,description})}
       </div>
-      ${divs({commands_icons})}
+      <div class=commands_icons></div>
     </div>
     ${children}
   </div>`,parent) 
@@ -72,22 +72,7 @@ export class TreeControl{
     this.selected_id=id
     await this.provider.selected(id)
   }
-  private command_clicked(evt:Event){
-    if (evt.target==null)
-      return false
-    const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','toggle_icon'])
-    if (command_icon==null)
-      return false
-    const command=command_icon.id
-    if (command==null)
-      return false
-    const item=get_parent_by_classes(evt.target as HTMLElement,['tree_item','tree_folder'])
-    if (item==null||this.converted==null)
-      return false
-    const id=item.id
-    void this.provider.command(id,command)
-    return true
-  }
+
 
   constructor(
     private parent:HTMLElement,
@@ -99,12 +84,11 @@ export class TreeControl{
         return
       parent.tabIndex = 0;
       parent.focus();
-      const command_clicked=this.command_clicked(evt)
       const clicked=get_parent_by_class(evt.target,'label_row')?.parentElement
       if (clicked==null)
         return
       const {id}=clicked
-      if (!command_clicked&&clicked.classList.contains('tree_folder')) //if clicked command than don  change collpased status because dual action is annoing
+      if (clicked.classList.contains('tree_folder')) //if clicked command than don  change collpased status because dual action is annoing
         toggle_set(this.collapsed,id)
       void this.set_selected(id)
     })

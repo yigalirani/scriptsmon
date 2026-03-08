@@ -12,7 +12,6 @@ export declare class TreeControl {
     on_interval(): void;
     private create_node_element;
     private set_selected;
-    private command_clicked;
     constructor(parent: HTMLElement, provider: TreeDataProvider, icons: s2s);
     private create_node;
     private big_render;

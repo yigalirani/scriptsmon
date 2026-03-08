@@ -1,5 +1,6 @@
 import type {TreeNode} from './tree_internals.js'
-import {update_child_html,update_class_name} from './dom_utils.js'
+import {post_message} from './common.js'
+import {update_child_html,update_class_name,get_parent_by_classes,get_parent_id} from './dom_utils.js'
 export function parse_icons(html: string): Record<string, string> {
   const result: Record<string, string> = {};
   // Parse the HTML string into a Document
@@ -60,7 +61,30 @@ export class IconsAnimator{
   //icons
   private id_changed:Record<string,number>={}
   private icon_versions:Record<string,IconVersion>={}
-  constructor(public icons:Record<string,string>){}
+  constructor(public icons:Record<string,string>){
+    document.body.addEventListener('click',this.on_click)
+  }
+  on_click=(evt:MouseEvent)=>{
+    if (evt.target==null)
+      return false
+    const command_icon=get_parent_by_classes(evt.target as HTMLElement,['command_icon','toggle_icon'])
+    if (command_icon==null)
+      return
+    const command_name=command_icon.id
+    if (command_name==null)
+      return
+    
+    const id=get_parent_id(command_icon) //Argument of type 'HTMLElement | null' is not assignable to parameter of type 'HTMLElement'. why
+    if (id==null)
+      return
+    post_message({
+      command: "command_clicked",
+      id,
+      command_name
+    })    
+    evt.stopImmediatePropagation();
+
+  }
   private set_icon_version(id:string,icon:string,version:number){ //call mutuple time, one for each id
     const exists=this.icon_versions[id]
     if (exists!=null && exists.icon===icon&&exists.version===version)
@@ -78,11 +102,12 @@ export class IconsAnimator{
       const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
       const toggles=Object.entries(node.toggles).map(([k,v])=>`<div class='toggle_icon' id=${k}>${this.calc_icon(k,v)}</div>`).join('') 
-      update_child_html(document.body,`#${id} .icon`,this.icons[icon]??'') //set the svg
-      update_child_html(document.body,`#${id} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text
-      update_child_html(document.body,`#${id} .toggles_icons`,toggles)
-      update_class_name(document.body,`#${id} .icon.text`,`icon text ${icon}`) 
-      update_class_name(document.body,`#${id} .icon:not(.text)`,`icon ${icon}`) 
+      const top=`#${id} > :not(.children)`
+      update_child_html(document.body,`${top} .icon:not(.text)`,this.icons[icon]??'') //set the svg
+      update_child_html(document.body,`${top} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text
+      update_child_html(document.body,`${top} .toggles_icons`,toggles)
+      update_class_name(document.body,`${top} .icon.text`,`icon text ${icon}`) 
+      update_class_name(document.body,`${top} .icon:not(.text)`,`icon ${icon}`) 
       
       node.children.map(f)
     }

@@ -100,6 +100,8 @@
     "unicorn/no-process-exit":"off",
     "eslint/no-await-in-loop":"off",
     "eslint/max-statements":"off",
-    "@typescript-eslint/switch-exhaustiveness-check": "off"
+    "typescript-eslint/switch-exhaustiveness-check": "off",
+    "typescript/parameter-properties":"off",//dumb rule,
+    "unicorn/prefer-ternary":"off"
   }
 }

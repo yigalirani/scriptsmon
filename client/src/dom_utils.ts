@@ -53,6 +53,18 @@ export function get_parent_by_classes(
   } 
   return null;
 }
+export function get_parent_id( //loops over parents until first with id
+  el: HTMLElement
+): string|undefined{
+  let ans=el.parentElement
+
+  while (ans !== null) {
+    const id=ans.getAttribute('id')
+    if (id!=null)
+      return id
+    ans = ans.parentElement;
+  } 
+}
 function setter_cache(setter:(el:HTMLElement,value:string)=>void){
   const el_to_html= new WeakMap<HTMLElement,string>()
   return function(el:HTMLElement,selector:string,value:string){ 

@@ -36,8 +36,7 @@
       },
       "nursery": "warn",
       "nursery":{
-      "useExplicitType":"off",
-        "useMaxParams":"off"
+        "useExplicitType":"off"
       },
       "suspicious": "on",
       "suspicious": {

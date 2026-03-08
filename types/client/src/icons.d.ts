@@ -5,6 +5,7 @@ export declare class IconsAnimator {
     private id_changed;
     private icon_versions;
     constructor(icons: Record<string, string>);
+    on_click: (evt: MouseEvent) => false | undefined;
     private set_icon_version;
     private calc_icon;
     private update_icons;
