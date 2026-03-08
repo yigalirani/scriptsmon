@@ -250,7 +250,7 @@ function calc_title_html(report:RunnerReport,runner:Runner){
  // const watching=calc_watching(report,runner)
   const elapsed=calc_elapsed_html(report,runner)
 
-  return `<div class=term_title_duration>${elapsed}</div>
+  return `<div class=commands_icons></div><div class=term_title_duration>${elapsed}</div>
   <table class=watching>
   ${calc_watching_tr(report,runner)}  
   ${calc_reason_tr(report,runner)}
