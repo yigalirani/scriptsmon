@@ -276,7 +276,7 @@ span.term_title_watch{
   display: flex;
 }
 .command_icon:hover{
-  background-color:green ;
+  background-color:var(--vscode-toolbar-hoverBackground);
 }
 .command_icon > img {
   filter: invert(1);
