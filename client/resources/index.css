@@ -462,3 +462,10 @@ span.term_title_watch{
 .term_title_bar table.watching tr td:first-child:has(.watched.true){
   color:darkorange;
 }
+.term_title_bar .icon.text{
+   width:80px
+}
+.term_title_bar .term_title_duration{
+     min-width:60px
+
+}

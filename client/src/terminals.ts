@@ -256,17 +256,6 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
   const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
   return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
-function calc_title_html(report:RunnerReport,runner:Runner){
- // const watching=calc_watching(report,runner)
-  const elapsed=calc_elapsed_html(report,runner)
-
-  return `<div class="icon text"></div><div class=commands_icons></div><div class=term_title_duration>${elapsed}</div>
-  <table class=watching>
-  ${calc_watching_tr(report,runner)}  
-  ${calc_reason_tr(report,runner)}
-  
-  </table>`
-}
 let webgl_count=0
 setInterval(()=>console.log('webgl_count',webgl_count),1000)
 class TerminalPanel{

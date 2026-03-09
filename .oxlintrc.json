@@ -102,6 +102,7 @@
     "eslint/max-statements":"off",
     "typescript-eslint/switch-exhaustiveness-check": "off",
     "typescript/parameter-properties":"off",//dumb rule,
-    "unicorn/prefer-ternary":"off"
+    "unicorn/prefer-ternary":"off",
+    "eslint/no-shadow":"off"
   }
 }
