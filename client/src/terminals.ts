@@ -1,6 +1,6 @@
 
 import  {type s2t,default_get} from '@yigal/base_types'
-import { Terminal } from '@xterm/xterm';
+import { Terminal,type IMarker} from '@xterm/xterm';
 import { WebglAddon  } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
@@ -141,6 +141,8 @@ class TerminalPanel{
   webgl_addon:WebglAddon|undefined 
   num_scrolls=0
   newViewportY=-1
+  marker:IMarker|undefined
+  dispose_count=0
   clearAnchors= () => console.log('')
   //runner_id=''
   constructor(
@@ -180,12 +182,18 @@ class TerminalPanel{
       return `${start}<span>empty string</span>`
     return `${start}<span>${text}</span>`
   }  
+  on_marker_dispose=()=>{
+    this.marker=this.term!.registerMarker(0)
+    this.dispose_count++
+    this.marker.onDispose(this.on_marker_dispose)
+  }
+  
   create_if_needed(runner:Runner){
     if (this.term)
       return this.term
     console.log('create terminal',runner.id)
-    this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
-
+    this.term=new Terminal({cols:200,rows:200,scrollback: 200,allowProposedApi: true,minimumContrastRatio:1})
+    this.on_marker_dispose()
     this.term.onScroll((newViewportY) => {
         this.num_scrolls++
         this.newViewportY=newViewportY
@@ -202,13 +210,13 @@ class TerminalPanel{
  
     }
     const call_dbg=()=>{
-     update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY}` )
+     update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY} dispose_count${this.dispose_count}` )
       for (let i=0;i<3;i++){
         update_child_html(this.el,`.line${i}`,this.read_line(i))
       }      
     }
     setInterval(call_dbg,100)    
-    setInterval(call_fit,1000)
+    setInterval(call_fit,1000) 
 
     this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')

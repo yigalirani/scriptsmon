@@ -1,5 +1,5 @@
 import { type s2t } from '@yigal/base_types';
-import { Terminal } from '@xterm/xterm';
+import { Terminal, type IMarker } from '@xterm/xterm';
 import { WebglAddon } from '@xterm/addon-webgl';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
@@ -10,11 +10,14 @@ declare class TerminalPanel {
     webgl_addon: WebglAddon | undefined;
     num_scrolls: number;
     newViewportY: number;
+    marker: IMarker | undefined;
+    dispose_count: number;
     clearAnchors: () => void;
     constructor(runner: Runner);
     webgl_on(): void;
     set_visibility(val: boolean): void;
     read_line(i: number): string;
+    on_marker_dispose: () => void;
     create_if_needed(runner: Runner): Terminal;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }
