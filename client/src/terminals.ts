@@ -51,6 +51,9 @@ function create_terminal_element(runner:Runner): HTMLElement {
     <div class=term_title_duration></div>
     <table class=watching></table>
   </div>
+  <div class=line0></div>
+  <div class=line1></div>
+  <div class=line2></div>
   <div class=term></div>
 </div>
   `,terms_container)
@@ -163,6 +166,17 @@ class TerminalPanel{
     this.webgl_addon.dispose()
     this.webgl_addon=undefined
   }
+  read_line(i:number){
+    const line=this.term!.buffer.normal.getLine(i)
+    if (line==null)
+      return `<span>${i}</span><span>null</span>`
+    const text=line.translateToString();
+    const {isWrapped}=line
+    const start=`<span>${i}</span><span>${isWrapped}</span>`
+    if (text==='')
+      return `${start}<span>empty string</span>`
+    return `${start}<span>${text}</span>`
+  }  
   create_if_needed(runner:Runner){
     if (this.term)
       return this.term
@@ -175,8 +189,13 @@ class TerminalPanel{
     const fitAddon = new FitAddon();
     this.term.loadAddon(fitAddon);
 
-    const call_fit = () => fitAddon.fit()
-    setInterval(call_fit,1000)
+    const call_fit = () =>{ 
+      fitAddon.fit()
+      for (let i=0;i<3;i++){
+        update_child_html(this.el,`.line${i}`,this.read_line(i))
+      }
+    }
+    setInterval(call_fit,100)
 
     this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')

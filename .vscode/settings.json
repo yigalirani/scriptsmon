@@ -7,4 +7,5 @@
    "typescript.tsdk": "node_modules\\typescript\\lib",
    "editor.hover.delay": 1000,
    "oxc.typeAware":true,
+   "git.blame.editorDecoration.disableHover": true
 }

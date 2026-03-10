@@ -1,9 +1,101 @@
 
-import type { Terminal,ILink,ILinkProvider } from '@xterm/xterm';
+import type { Terminal,ILink,ILinkProvider, IBuffer } from '@xterm/xterm';
 import  {post_message} from './common.js'
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
 const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
+/*
+interface LineMap{
+  pos:number//int the orig line
+  y:number//in the broken
+}
+class OrigLine{
+  text=''
+  linemap:Array<LineMap>=[]
+  constructor(y:number){
+    const first_line_map:LineMap={y,pos:0}
+    this.linemap=[first_line_map]
+  }
+}
+
+
+class TerminalIndex{
+  orig_lines:OrigLine[]=[]
+  broken_to_orig:number[]=[]
+}
+class LineBuilder{
+  last_line_number=0
+  last_line_length=0
+  cur_texts=Array<string>
+  line_map=Array<LineMap>  
+  constructor(public orig_line:OrigLine){
+  }
+}
+class TerminalLines{
+  index=new TerminalIndex
+  buffer
+  line_builder
+  constructor(private term:Terminal){
+     this.buffer= this.term.buffer.normal
+     this.line_builder=new LineBuilder(this.index.orig_lines[0]!)
+  }
+
+  refresh(){
+    this.index=new TerminalIndex
+    this.read_all()
+  }
+  read_line(y:number){
+    const line = this.buffer.getLine(y)
+    if (line==null){
+      console.warn('buffer.getLine is null',y)
+      return    
+    }
+    if (!line.isWrapped){
+      const new_orig_line=new OrigLine(y)
+      this.index.orig_lines.push(new_orig_line)
+      this.line_builder=new LineBuilder(new_orig_line) //old one is not needed
+    }
+    this.index.broken_to_orig[y]=this.index.orig_lines.length-1
+    const text=line.translateToString(false)
+    if (text.length<=this.line_builder.last_line_length)
+      return
+    if (start===0)
+      line_map.push({y,line_map.text.length}
+
+  }
+  read_all(){
+    this.read_last_line()
+    //loops over the terminal.buffer.normal and creates a new index
+    
+    const buffer = this.term.buffer.normal
+    for (let i=this.index.last_line_number;i<buffer.length;i++){
+      const line = buffer.getLine(i)
+      if (line==null){
+        console.warn('buffer.getLine is null',i)
+        continue
+      }
+      const text= line.translateToString(false)
+      const {isWrapped}=line
+      if (isWrapped){
+        cur_line.push(text)
+        continue
+      }
+      orig_lines.at(-1).push(
+    
+      return ans      
+    }
+
+  }
+  on_timer(){
+    //called overy 100ms and updates the index based on appends to terminal.buffer.normal
+  }
+  get_orig_line(y:number):OrigLine{
+    //consultes the index and return the apprriate orig_line
+  }
+  get_row_col(orig_line:OrigLine,orig_line_number:number,offset:number){
+  }
+}
+  */
 export function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
@@ -13,7 +105,14 @@ export function addFileLocationLinkDetection(
   function clearAnchors() {
     ancors.length = 0
   }
+  function get_terminal_top_line_is_wrapped(term:Terminal){
+    const topline_number=terminal.buffer.active.viewportY
+    const topline=terminal.buffer.active.getLine(topline_number)
+    const {isWrapped}=topline!
+    return  isWrapped   //is this gurantted to be false
+  }
   function get_text(y:number){
+
     const line = terminal.buffer.active.getLine(y - 1)
     const ans=line&&line.translateToString(true)||''
     return ans

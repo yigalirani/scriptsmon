@@ -12,6 +12,7 @@ declare class TerminalPanel {
     constructor(runner: Runner);
     webgl_on(): void;
     set_visibility(val: boolean): void;
+    read_line(i: number): string;
     create_if_needed(runner: Runner): Terminal;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }
