@@ -8,6 +8,8 @@ declare class TerminalPanel {
     el: HTMLElement;
     term: Terminal | undefined;
     webgl_addon: WebglAddon | undefined;
+    num_scrolls: number;
+    newViewportY: number;
     clearAnchors: () => void;
     constructor(runner: Runner);
     webgl_on(): void;

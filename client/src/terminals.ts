@@ -49,6 +49,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
     <div class="icon text"></div>
     <div class=commands_icons></div>
     <div class=term_title_duration></div>
+    <div class=dbg></div>
     <table class=watching></table>
   </div>
   <div class=line0></div>
@@ -138,6 +139,8 @@ class TerminalPanel{
   el
   term:Terminal|undefined
   webgl_addon:WebglAddon|undefined 
+  num_scrolls=0
+  newViewportY=-1
   clearAnchors= () => console.log('')
   //runner_id=''
   constructor(
@@ -182,6 +185,11 @@ class TerminalPanel{
       return this.term
     console.log('create terminal',runner.id)
     this.term=new Terminal({cols:200,rows:200,scrollback: 5000,allowProposedApi: true,minimumContrastRatio:1})
+
+    this.term.onScroll((newViewportY) => {
+        this.num_scrolls++
+        this.newViewportY=newViewportY
+    });    
     if (this.el.style.display!=='none')
       this.webgl_on() //was selected and term was just created
     //this.term.loadAddon(new WebglAddon()); // todo: restore this
@@ -191,11 +199,16 @@ class TerminalPanel{
 
     const call_fit = () =>{ 
       fitAddon.fit()
+ 
+    }
+    const call_dbg=()=>{
+     update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY}` )
       for (let i=0;i<3;i++){
         update_child_html(this.el,`.line${i}`,this.read_line(i))
-      }
+      }      
     }
-    setInterval(call_fit,100)
+    setInterval(call_dbg,100)    
+    setInterval(call_fit,1000)
 
     this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
