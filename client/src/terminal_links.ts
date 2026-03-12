@@ -1,5 +1,5 @@
 
-import type { Terminal,ILink,ILinkProvider, IBuffer } from '@xterm/xterm';
+import type { Terminal,ILink,ILinkProvider, IBuffer,IBufferCellPosition } from '@xterm/xterm';
 import  {post_message} from './common.js'
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
@@ -95,7 +95,101 @@ class TerminalLines{
   get_row_col(orig_line:OrigLine,orig_line_number:number,offset:number){
   }
 }
+  algorithm:
+  start with y=last line, last length and keep looping until the end, keep track of the new last line and last length
+  for create genrator for that: for text, line_range of new lines. only process complete new lines.
+  the parse_line does: create links, update last_ancor
+  question, if i detect a link, how do i calc its rnage start(x,y) end (x,y)
+  ans you have mapping from the text pos to start of lines
+
+  write function: read_line
   */
+
+class Line { //https://gemini.google.com/share/7a938f003cb8
+  private readonly offsets: Uint32Array;
+  private readonly start_y: number;
+  public readonly len: number;
+  public readonly text: string;
+
+  constructor(strings: string[], start_y: number = 0) {
+    this.start_y = start_y;
+    this.text = strings.join("");
+    this.len = this.text.length;
+    
+    this.offsets = new Uint32Array(strings.length);
+    
+    let offset = 0;
+    for (let i = 0; i < strings.length; i++) {
+      this.offsets[i] = offset;
+      offset += strings[i]!.length;
+    }
+  }
+
+  public find_cell_pos(pos: number): IBufferCellPosition | null {
+    if (pos < 0 || pos >= this.len) {
+      return null;
+    }
+
+    const index = this.binary_search_offsets(pos);
+    
+    return {
+      y: this.start_y + index,
+      x: pos - this.offsets[index]!
+    };
+  }
+
+  private binary_search_offsets(target: number): number {
+    let low = 0;
+    let high = this.offsets.length - 1;
+
+    while (low <= high) {
+      const mid = (low + high) >>> 1;
+      const val = this.offsets[mid]!;
+
+      if (val === target) return mid;
+      
+      if (val < target) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    return high;
+  }
+}
+ class LineReader{ //create this class everytime you want to read lines in bulk, provide y_head and store away the updated
+  buffer
+  constructor(
+    term:Terminal,
+    public y_head:number,
+    public is_done:boolean
+  ){
+    this.buffer=term.buffer.normal
+  }
+  private skip_wrapped_lines(){ //because thats that vscode embbeded terminal does
+    while(this.y_head < this.buffer.length)
+      if (this.buffer.getLine(this.y_head)?.isWrapped===false)
+        return
+      this.y_head++
+  }
+  read_line(){
+    this.skip_wrapped_lines()
+    const strings= [];
+    for (let y=this.y_head;y<this.buffer.length;y++){
+      const line = this.buffer.getLine(y)!;
+      const {isWrapped}=line
+      if(!isWrapped || this.is_done){
+        const ans=new Line(strings,this.y_head)
+        this.y_head=y-(isWrapped?1:0)
+        return ans
+      }
+      const string = line.translateToString(true);        
+      strings.push(string)
+    }
+  }
+}
+
 export function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string

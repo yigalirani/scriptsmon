@@ -186,6 +186,7 @@ class TerminalPanel{
     this.marker=this.term!.registerMarker(0)
     this.dispose_count++
     this.marker.onDispose(this.on_marker_dispose)
+    this.clearAnchors()
   }
   
   create_if_needed(runner:Runner){
@@ -209,11 +210,14 @@ class TerminalPanel{
       fitAddon.fit()
  
     }
-    const call_dbg=()=>{
+    const _call_dbg_old=()=>{
      update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY} dispose_count${this.dispose_count}` )
       for (let i=0;i<3;i++){
         update_child_html(this.el,`.line${i}`,this.read_line(i))
       }      
+    }
+    const call_dbg=()=>{
+     update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY} dispose_count${this.dispose_count}` )    
     }
     setInterval(call_dbg,100)    
     setInterval(call_fit,1000) 
