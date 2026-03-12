@@ -1,5 +1,5 @@
 
-import type { Terminal,ILink,ILinkProvider, IBuffer,IBufferCellPosition } from '@xterm/xterm';
+import type { Terminal,ILink,ILinkProvider,IBufferCellPosition,IBufferRange } from '@xterm/xterm';
 import  {post_message} from './common.js'
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
@@ -111,7 +111,7 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
   public readonly len: number;
   public readonly text: string;
 
-  constructor(strings: string[], start_y: number = 0) {
+  constructor(strings: string[], start_y = 0) {
     this.start_y = start_y;
     this.text = strings.join("");
     this.len = this.text.length;
@@ -125,9 +125,9 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
     }
   }
 
-  public find_cell_pos(pos: number): IBufferCellPosition | null {
+  public find_cell_pos(pos: number): IBufferCellPosition | undefined {
     if (pos < 0 || pos >= this.len) {
-      return null;
+      return;
     }
 
     const index = this.binary_search_offsets(pos);
@@ -137,12 +137,20 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
       x: pos - this.offsets[index]!
     };
   }
+  public calc_range(start_pos:number,end_pos:number):IBufferRange|undefined{
+    const start=this.find_cell_pos(start_pos)
+    const end=this.find_cell_pos(end_pos)
+    if (start==null||end==null)
+      return
+    return {start,end}
+  }
 
   private binary_search_offsets(target: number): number {
     let low = 0;
     let high = this.offsets.length - 1;
 
     while (low <= high) {
+      // oxlint-disable-next-line no-bitwise
       const mid = (low + high) >>> 1;
       const val = this.offsets[mid]!;
 
@@ -158,22 +166,67 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
     return high;
   }
 }
- class LineReader{ //create this class everytime you want to read lines in bulk, provide y_head and store away the updated
-  buffer
-  constructor(
-    term:Terminal,
-    public y_head:number,
-    public is_done:boolean
-  ){
-    this.buffer=term.buffer.normal
+
+class LinkIndexer { //https://gemini.google.com/share/915cfa0a5958
+    // Maps a row index (y) to a set of links that exist on that row
+    private line_map: Map<number, Set<IlinkData>>;
+
+    constructor() {
+        this.line_map = new Map();
+    }
+
+    /**
+     * Adds a link to the index. 
+     * It calculates every row the link touches based on its range.
+     */
+    public add_link(link: IlinkData): void {
+      const start_y = link.range.start.y;
+      const end_y = link.range.end.y;
+
+      for (let y = start_y; y <= end_y; y++) {
+          if (!this.line_map.has(y)) {
+              this.line_map.set(y, new Set());
+          }
+          this.line_map.get(y)!.add(link);
+      }
+    }
+    public y_links(y: number): ILink[] {
+      const ans = [...this.line_map.get(y)|| new Set<ILink>()]
+      return ans
+    }    
+
+}
+interface IlinkData{
+  start:number
+  end:number
+  text: string;
+  row:number
+  col:number
+}
+
+function parse_text(text:string,ancore:string|undefined):{
+  links:IlinkData[],
+  new_ancore:string|undefined
+}{
+  return {
+    links:[],
+    new_ancore:ancore
   }
+}
+
+class LinkParser{
+  y_head=0
+  is_done=false
+  line_index
+  buffer
+  ancore:string|undefined
   private skip_wrapped_lines(){ //because thats that vscode embbeded terminal does
     while(this.y_head < this.buffer.length)
       if (this.buffer.getLine(this.y_head)?.isWrapped===false)
         return
       this.y_head++
-  }
-  read_line(){
+  }  
+  private read_line(){
     this.skip_wrapped_lines()
     const strings= [];
     for (let y=this.y_head;y<this.buffer.length;y++){
@@ -187,7 +240,24 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
       const string = line.translateToString(true);        
       strings.push(string)
     }
+  }  
+  constructor(term:Terminal){
+    this.line_index=new LinkIndexer()
+    this.buffer=term.buffer.normal
   }
+  iter(){
+    while(true){
+      const line=this.read_line()
+      if (line==null)
+        return
+      const {links,new_ancore}=parse_text(line.text,this.ancore)
+      this.ancore=new_ancore
+    }
+    
+  }
+
+
+
 }
 
 export function addFileLocationLinkDetection(
@@ -206,7 +276,6 @@ export function addFileLocationLinkDetection(
     return  isWrapped   //is this gurantted to be false
   }
   function get_text(y:number){
-
     const line = terminal.buffer.active.getLine(y - 1)
     const ans=line&&line.translateToString(true)||''
     return ans
