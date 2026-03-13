@@ -259,14 +259,21 @@ class LinkParser{
     const strings= [];
     for (let y=this.y_head;y<this.buffer.length;y++){
       const line = this.buffer.getLine(y)!;
+      const string = line.translateToString(false);    
       const {isWrapped}=line
-      if(!isWrapped || this.is_done){
-        const ans=new Line(strings,this.y_head)
-        this.y_head=y-(isWrapped?1:0)
-        return ans
+      if(isWrapped){
+        strings.push(string)
+        //todo: if isdone, then send it away
+        continue
       }
-      const string = line.translateToString(true);        
-      strings.push(string)
+      if (!strings.length){ //its the first one in
+        strings.push(string)
+        continue
+      }
+      // its the next one
+      const ans=new Line(strings,this.y_head) //y_head is where the sequance started
+      this.y_head=y //for next time
+      return ans
     }
   }  
   constructor(
