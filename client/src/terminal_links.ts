@@ -137,11 +137,11 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
       x: pos - this.offsets[index]!
     };
   }
-  public calc_range(start_pos:number,end_pos:number):IBufferRange|undefined{
+  public calc_range(start_pos:number,end_pos:number):IBufferRange{
     const start=this.find_cell_pos(start_pos)
     const end=this.find_cell_pos(end_pos)
     if (start==null||end==null)
-      return
+      throw "bad range" //by theoram should not get here
     return {start,end}
   }
 
@@ -167,42 +167,15 @@ class Line { //https://gemini.google.com/share/7a938f003cb8
   }
 }
 
-class LinkIndexer { //https://gemini.google.com/share/915cfa0a5958
-    // Maps a row index (y) to a set of links that exist on that row
-    private line_map: Map<number, Set<IlinkData>>;
-
-    constructor() {
-        this.line_map = new Map();
-    }
-
-    /**
-     * Adds a link to the index. 
-     * It calculates every row the link touches based on its range.
-     */
-    public add_link(link: IlinkData): void {
-      const start_y = link.range.start.y;
-      const end_y = link.range.end.y;
-
-      for (let y = start_y; y <= end_y; y++) {
-          if (!this.line_map.has(y)) {
-              this.line_map.set(y, new Set());
-          }
-          this.line_map.get(y)!.add(link);
-      }
-    }
-    public y_links(y: number): ILink[] {
-      const ans = [...this.line_map.get(y)|| new Set<ILink>()]
-      return ans
-    }    
-
-}
 interface IlinkData{
   start:number
   end:number
   text: string;
   row:number
   col:number
+  source_file:string
 }
+
 
 function parse_text(text:string,ancore:string|undefined):{
   links:IlinkData[],
@@ -217,9 +190,24 @@ function parse_text(text:string,ancore:string|undefined):{
 class LinkParser{
   y_head=0
   is_done=false
-  line_index
   buffer
   ancore:string|undefined
+  line_map: Map<number, Set<ILink>>=new Map()
+  private add_link(link: ILink): void {
+    const start_y = link.range.start.y;
+    const end_y = link.range.end.y;
+
+    for (let y = start_y; y <= end_y; y++) {
+        if (!this.line_map.has(y)) {
+            this.line_map.set(y, new Set());
+        }
+        this.line_map.get(y)!.add(link);
+    }
+  }
+  public y_links(y: number): ILink[] {
+    const ans = [...this.line_map.get(y)|| new Set<ILink>()]
+    return ans
+  }    
   private skip_wrapped_lines(){ //because thats that vscode embbeded terminal does
     while(this.y_head < this.buffer.length)
       if (this.buffer.getLine(this.y_head)?.isWrapped===false)
@@ -241,25 +229,66 @@ class LinkParser{
       strings.push(string)
     }
   }  
-  constructor(term:Terminal){
-    this.line_index=new LinkIndexer()
+  constructor(
+    term:Terminal,
+    public workspace_folder:string
+  ){
     this.buffer=term.buffer.normal
   }
-  iter(){
+  make_ilink(link_data:IlinkData,line:Line):ILink{
+    const {start,end,text,row,col,source_file}=link_data
+    const {workspace_folder}=this
+    const range=line.calc_range(start,end)
+    return {
+      range,
+      text,
+      activate(){
+        post_message({
+          command: "command_open_file_rowcol",
+          workspace_folder,
+          source_file, 
+          row,
+          col
+        });        
+      }
+    }
+  }
+  iter=()=>{
     while(true){
       const line=this.read_line()
       if (line==null)
         return
       const {links,new_ancore}=parse_text(line.text,this.ancore)
+      for (const x of links){
+        const ilink=this.make_ilink(x,line)
+        this.add_link(ilink)
+      }
       this.ancore=new_ancore
     }
-    
   }
-
-
-
 }
 
+export class MyLinkProvider implements ILinkProvider{
+  parser
+  constructor(
+    public terminal: Terminal,
+    public workspace_folder:string
+  ){
+    this.parser=this.make_parser() //line A
+    setInterval(this.parser.iter,100)
+  }
+  make_parser(){
+    return new LinkParser(this.terminal,this.workspace_folder)
+  }
+  provideLinks(y:number, callback:(links: ILink[] | undefined) => void){//error TS7006: Parameter 'callback' implicitly has an 'any' type. why? doent it get the type from ILinkProvider
+    const links=this.parser.y_links(y)
+    //console.log(links)
+    callback(links);
+  }
+  reset(){
+    this.parser=this.make_parser() //line B
+  }
+}
 export function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
