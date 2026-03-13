@@ -6,7 +6,7 @@ import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
-import {addFileLocationLinkDetection} from './terminal_links.js'
+import {MyLinkProvider} from './terminal_links.js'
 
 
 function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
@@ -143,12 +143,16 @@ class TerminalPanel{
   newViewportY=-1
   marker:IMarker|undefined
   dispose_count=0
-  clearAnchors= () => console.log('')
+  link_provider:MyLinkProvider|undefined
   //runner_id=''
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
     this.el=create_terminal_element(runner)
+  }
+  reset_link_provider(){
+    if (this.link_provider)
+      this.link_provider.reset()
   }
   webgl_on(){
     webgl_count++
@@ -185,8 +189,8 @@ class TerminalPanel{
   on_marker_dispose=()=>{
     this.marker=this.term!.registerMarker(0)
     this.dispose_count++
-    this.marker.onDispose(this.on_marker_dispose)
-    this.clearAnchors()
+    this.marker.onDispose(this.on_marker_dispose) // the new one that we just created
+    this.reset_link_provider()
   }
   
   create_if_needed(runner:Runner){
@@ -194,6 +198,8 @@ class TerminalPanel{
       return this.term
     console.log('create terminal',runner.id)
     this.term=new Terminal({cols:200,rows:200,scrollback: 200,allowProposedApi: true,minimumContrastRatio:1})
+    this.link_provider=new MyLinkProvider(this.term,runner.workspace_folder)
+    this.term.registerLinkProvider(this.link_provider)
     this.on_marker_dispose()
     this.term.onScroll((newViewportY) => {
         this.num_scrolls++
@@ -222,7 +228,7 @@ class TerminalPanel{
     setInterval(call_dbg,100)    
     setInterval(call_fit,1000) 
 
-    this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
+    //this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
     const term_container=query_selector(this.el,'.term')
     if (term_container instanceof HTMLElement){
       this.term.open(term_container)
@@ -246,8 +252,8 @@ class TerminalPanel{
     const term=this.create_if_needed(runner)
     const {run_id}=last_run
     if (run_id!==this.last_run_id){
-      this.clearAnchors()
-      term.clear()
+      term.clear()      
+      //this.reset_link_provider() //no need to do it here because term.clear is not effective immideeatly. btter do it on marker dispose 
     }
     this.last_run_id=last_run.run_id
     for (const line of last_run.output)

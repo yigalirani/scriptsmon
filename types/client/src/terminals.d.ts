@@ -3,6 +3,7 @@ import { Terminal, type IMarker } from '@xterm/xterm';
 import { WebglAddon } from '@xterm/addon-webgl';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
+import { MyLinkProvider } from './terminal_links.js';
 declare class TerminalPanel {
     last_run_id: number | undefined;
     el: HTMLElement;
@@ -12,8 +13,9 @@ declare class TerminalPanel {
     newViewportY: number;
     marker: IMarker | undefined;
     dispose_count: number;
-    clearAnchors: () => void;
+    link_provider: MyLinkProvider | undefined;
     constructor(runner: Runner);
+    reset_link_provider(): void;
     webgl_on(): void;
     set_visibility(val: boolean): void;
     read_line(i: number): string;

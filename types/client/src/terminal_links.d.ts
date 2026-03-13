@@ -37,9 +37,8 @@ export declare class MyLinkProvider implements ILinkProvider {
     workspace_folder: string;
     parser: LinkParser;
     constructor(terminal: Terminal, workspace_folder: string);
-    make_parser(): LinkParser;
+    private make_parser;
     provideLinks(y: number, callback: (links: ILink[] | undefined) => void): void;
     reset(): void;
 }
-export declare function addFileLocationLinkDetection(terminal: Terminal, workspace_folder: string): () => void;
 export {};

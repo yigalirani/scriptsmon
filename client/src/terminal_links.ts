@@ -175,16 +175,56 @@ interface IlinkData{
   col:number
   source_file:string
 }
-
-
-function parse_text(text:string,ancore:string|undefined):{
-  links:IlinkData[],
-  new_ancore:string|undefined
-}{
-  return {
-    links:[],
-    new_ancore:ancore
+type GroupType= {
+    [key: string]: string;
+} | undefined
+function parse_group_int(groups:GroupType,name:string){
+  if (groups==null)
+    return 0
+  const str=groups[name]||''
+  return parseInt(str, 10)||0 
+}
+function parse_group_string(groups:GroupType,name:string){
+  if (groups==null)
+    return ''
+  const str=groups[name]||''
+  return str
+}
+function calc_match(match:RegExpMatchArray):IlinkData{
+  const { index,groups} = match;
+  const text = match[0];
+  const start= index!+1
+  const end= index! + text.length
+  const row= parse_group_int(groups,'row')
+  const col= parse_group_int(groups,'col')
+  const source_file=parse_group_string(groups,'source_file')
+  return {start,end,text,row,col,source_file}
+}
+function parse_text(input:string,ancore:string|undefined){
+  const links:IlinkData[]=[]
+  const ancor_match=input.match(ancor_regex)
+  if (ancor_match!=null){
+    const ret=calc_match(ancor_match)
+    const {source_file:ancore}=ret
+    links.push(ret)
+    return {ancore,links}
   }
+  if (ancore!=null){
+    const ref_match = input.match(ref_regex)
+    if (ref_match!==null){
+      links.push({
+        ...calc_match(ref_match), //by theoram will source_file will be empty string at this line, overriden by the next
+        source_file:ancore
+      })
+      return {ancore,links}
+    }
+  }
+
+  for (const match of input.matchAll(links_regex)){
+      ancore=undefined //if found link than cancel the ancore otherwize let it be
+      links.push(calc_match(match))
+  }
+  return {links,ancore}
 }
 
 class LinkParser{
@@ -258,12 +298,12 @@ class LinkParser{
       const line=this.read_line()
       if (line==null)
         return
-      const {links,new_ancore}=parse_text(line.text,this.ancore)
+      const {links,ancore}=parse_text(line.text,this.ancore)
+      this.ancore=ancore
       for (const x of links){
         const ilink=this.make_ilink(x,line)
         this.add_link(ilink)
       }
-      this.ancore=new_ancore
     }
   }
 }
@@ -275,9 +315,9 @@ export class MyLinkProvider implements ILinkProvider{
     public workspace_folder:string
   ){
     this.parser=this.make_parser() //line A
-    setInterval(this.parser.iter,100)
+    setInterval(()=>this.parser.iter(),100) //this is bad :setInterval(this.parser.iter,100) because thee parser is changing on reset
   }
-  make_parser(){
+  private make_parser(){
     return new LinkParser(this.terminal,this.workspace_folder)
   }
   provideLinks(y:number, callback:(links: ILink[] | undefined) => void){//error TS7006: Parameter 'callback' implicitly has an 'any' type. why? doent it get the type from ILinkProvider
@@ -289,7 +329,7 @@ export class MyLinkProvider implements ILinkProvider{
     this.parser=this.make_parser() //line B
   }
 }
-export function addFileLocationLinkDetection(
+/*function addFileLocationLinkDetection(
   terminal: Terminal,
   workspace_folder:string
 ){
@@ -298,6 +338,7 @@ export function addFileLocationLinkDetection(
   function clearAnchors() {
     ancors.length = 0
   }
+  
   function get_terminal_top_line_is_wrapped(term:Terminal){
     const topline_number=terminal.buffer.active.viewportY
     const topline=terminal.buffer.active.getLine(topline_number)
@@ -421,4 +462,4 @@ export function addFileLocationLinkDetection(
   terminal.registerLinkProvider(provider);
   terminal.onResize(() => clearAnchors())
   return clearAnchors
-}
+}*/
