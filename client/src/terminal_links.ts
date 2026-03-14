@@ -301,16 +301,20 @@ class LinkParser{
     }
   }
   iter=()=>{
+    console.group('iter')
     while(true){
       const line=this.read_line()
-      if (line==null)
+      if (line==null){
+        console.groupEnd()
         return
+      }
       const {links,ancore}=parse_text(line.text,this.ancore)
       this.ancore=ancore
       for (const x of links){
         const ilink=this.make_ilink(x,line)
         this.add_link(ilink)
       }
+      console.groupEnd()      
     }
   }
 }
@@ -322,10 +326,13 @@ export class MyLinkProvider implements ILinkProvider{
     public workspace_folder:string
   ){
     this.parser=this.make_parser() //line A
-    setInterval(()=>this.parser.iter(),100) //this is bad :setInterval(this.parser.iter,100) because thee parser is changing on reset
+    setInterval(()=>this.parser.iter(),500) //this is bad :setInterval(this.parser.iter,100) because thee parser is changing on reset
   }
   private make_parser(){
-    return new LinkParser(this.terminal,this.workspace_folder)
+    console.group('make_parser')
+    const ans=new LinkParser(this.terminal,this.workspace_folder)
+    console.groupEnd()
+    return ans
   }
   provideLinks(y:number, callback:(links: ILink[] | undefined) => void){//error TS7006: Parameter 'callback' implicitly has an 'any' type. why? doent it get the type from ILinkProvider
     const links=this.parser.y_links(y)
@@ -333,7 +340,9 @@ export class MyLinkProvider implements ILinkProvider{
     callback(links);
   }
   reset(){
+    console.group('MyLinkProvider.reset')
     this.parser=this.make_parser() //line B
+    console.groupEnd()
   }
 }
 /*function addFileLocationLinkDetection(

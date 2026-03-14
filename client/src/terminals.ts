@@ -1,12 +1,13 @@
 
 import  {type s2t,default_get} from '@yigal/base_types'
-import { Terminal,type IMarker} from '@xterm/xterm';
+import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
 import { WebglAddon  } from '@xterm/addon-webgl';
 import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 import {MyLinkProvider} from './terminal_links.js'
+import { groupEnd } from 'node:console';
 
 
 function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
@@ -133,7 +134,7 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
   return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
 let webgl_count=0
-setInterval(()=>console.log('webgl_count',webgl_count),1000)
+//setInterval(()=>console.log('webgl_count',webgl_count),1000)
 class TerminalPanel{
   last_run_id:number|undefined
   el
@@ -142,6 +143,7 @@ class TerminalPanel{
   num_scrolls=0
   newViewportY=-1
   marker:IMarker|undefined
+  marker_disposable:IDisposable|undefined
   dispose_count=0
   link_provider:MyLinkProvider|undefined
   //runner_id=''
@@ -151,8 +153,9 @@ class TerminalPanel{
     this.el=create_terminal_element(runner)
   }
   reset_link_provider(){
-    if (this.link_provider)
-      this.link_provider.reset()
+    console.group('reset_link_provider')
+    this.link_provider?.reset()
+    console.groupEnd()
   }
   webgl_on(){
     webgl_count++
@@ -187,20 +190,23 @@ class TerminalPanel{
     return `${start}<span>${text}</span>`
   }  
   on_marker_dispose=()=>{
-    this.marker=this.term!.registerMarker(0)
+    console.group('on_marker_dispose')
     this.dispose_count++
-    this.marker.onDispose(this.on_marker_dispose) // the new one that we just created
+    this.new_marker()
     this.reset_link_provider()
+    console.groupEnd()
   }
-  
   create_if_needed(runner:Runner){
     if (this.term)
       return this.term
     console.log('create terminal',runner.id)
+    console.group('create_if_needed')
     this.term=new Terminal({cols:200,rows:200,scrollback: 200,allowProposedApi: true,minimumContrastRatio:1})
     this.link_provider=new MyLinkProvider(this.term,runner.workspace_folder)
     this.term.registerLinkProvider(this.link_provider)
-    this.on_marker_dispose()
+
+    this.new_marker()
+
     this.term.onScroll((newViewportY) => {
         this.num_scrolls++
         this.newViewportY=newViewportY
@@ -213,8 +219,9 @@ class TerminalPanel{
     this.term.loadAddon(fitAddon);
 
     const call_fit = () =>{ 
+      console.group('call_fit')
       fitAddon.fit()
- 
+      console.groupEnd()
     }
     const _call_dbg_old=()=>{
      update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY} dispose_count${this.dispose_count}` )
@@ -234,10 +241,38 @@ class TerminalPanel{
       this.term.open(term_container)
     }
     call_fit()
-    return this.term
+    const ans=this.term
+    console.groupEnd()
+    return ans
     //query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
     //this.show_watch(runner)
     //query_selector(this.el, '.term_title_status .value').textContent='ready'
+  }
+  new_marker(){
+    this.marker_disposable?.dispose()
+    this.marker?.dispose()
+
+    //register a the marker
+    this.marker=this.term!.registerMarker(0)    
+    this.marker_disposable=this.marker.onDispose(this.on_marker_dispose)    
+  }
+  term_clear(){
+    console.group('term_clear');
+    //clear the prev marker if exists
+    this.new_marker()
+
+    //clear the link_provider and terminal
+    this.term?.clear()
+    this.reset_link_provider()
+    console.groupEnd(); 
+  }
+  term_write(output:string[]){ 
+    if (output.length===0)
+      return
+    console.group('term_write',output.length);
+    for (const line of output)
+      this.term?.write(line)
+    console.groupEnd(); 
   }
   update_terminal(report:RunnerReport,runner:Runner){
     //const title_bar=calc_title_html(report,runner)
@@ -252,13 +287,11 @@ class TerminalPanel{
     const term=this.create_if_needed(runner)
     const {run_id}=last_run
     if (run_id!==this.last_run_id){
-      term.clear()      
+      this.term_clear()     
       //this.reset_link_provider() //no need to do it here because term.clear is not effective immideeatly. btter do it on marker dispose 
     }
     this.last_run_id=last_run.run_id
-    for (const line of last_run.output)
-      term.write(line)
-
+    this.term_write(last_run.output)
   }
 }
 

@@ -1,5 +1,5 @@
 import { type s2t } from '@yigal/base_types';
-import { Terminal, type IMarker } from '@xterm/xterm';
+import { Terminal, type IMarker, IDisposable } from '@xterm/xterm';
 import { WebglAddon } from '@xterm/addon-webgl';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
@@ -12,6 +12,7 @@ declare class TerminalPanel {
     num_scrolls: number;
     newViewportY: number;
     marker: IMarker | undefined;
+    marker_disposable: IDisposable | undefined;
     dispose_count: number;
     link_provider: MyLinkProvider | undefined;
     constructor(runner: Runner);
@@ -21,6 +22,9 @@ declare class TerminalPanel {
     read_line(i: number): string;
     on_marker_dispose: () => void;
     create_if_needed(runner: Runner): Terminal;
+    new_marker(): void;
+    term_clear(): void;
+    term_write(output: string[]): void;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }
 export declare class Terminals implements Component {
