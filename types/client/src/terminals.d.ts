@@ -21,6 +21,7 @@ declare class TerminalPanel {
     set_visibility(val: boolean): void;
     read_line(i: number): string;
     on_marker_dispose: () => void;
+    on_marker_dispose2: () => void;
     create_if_needed(runner: Runner): Terminal;
     new_marker(): void;
     term_clear(): void;

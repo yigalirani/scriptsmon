@@ -1,12 +1,12 @@
 
 import  {type s2t,default_get} from '@yigal/base_types'
-import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
-import { WebglAddon  } from '@xterm/addon-webgl';
-import { FitAddon } from '@xterm/addon-fit';
+//import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
+//import { WebglAddon  } from '@xterm/addon-webgl';
+//import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
-import {MyLinkProvider} from './terminal_links.js'
+//import {MyLinkProvider} from './terminal_links.js'
 import { groupEnd } from 'node:console';
 
 
@@ -26,18 +26,7 @@ function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
   const ms_display=show_ms?`<span class=ms>.${pad3(milliseconds)}</span>`:''
   return `<div title="${title}">${time}${ms_display}</div>`;
 }
-   /*<div class="term_title_bar">
-      <div class ="row_title_bar">
-      <div class="term_title_dir"><div class=title>cwd</div><div class=value></div></div>
-        <div class="term_title_watch"><div class=title>watch</div><div class=value></div></div>
-      </div>
-      <div class ="row_title_bar">
-        <div class="term_title_script"><div class=title>run</div><div class=value></div></div>
-        <div class="term_title_status"><div class=title></div><div class=value></div></div>
-        <div class="term_title_duration"><div class=title></div><div class=value></div></div>
-        <div class="term_title_runid"><div class=title></div><div class=value></div></div>
-      </div>
-    </div>*/ 
+
 function create_terminal_element(runner:Runner): HTMLElement {
   const terms_container=query_selector<HTMLElement>(document.body,'.terms_container')
   const {id}=runner
@@ -53,9 +42,6 @@ function create_terminal_element(runner:Runner): HTMLElement {
     <div class=dbg></div>
     <table class=watching></table>
   </div>
-  <div class=line0></div>
-  <div class=line1></div>
-  <div class=line2></div>
   <div class=term></div>
 </div>
   `,terms_container)
@@ -133,146 +119,59 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
   const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
   return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
-let webgl_count=0
-//setInterval(()=>console.log('webgl_count',webgl_count),1000)
 class TerminalPanel{
   last_run_id:number|undefined
   el
-  term:Terminal|undefined
-  webgl_addon:WebglAddon|undefined 
-  num_scrolls=0
-  newViewportY=-1
-  marker:IMarker|undefined
-  marker_disposable:IDisposable|undefined
-  dispose_count=0
-  link_provider:MyLinkProvider|undefined
-  //runner_id=''
+  term_el
+  last_line=''
+  ancore=''
+
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
     this.el=create_terminal_element(runner)
+    this.term_el=query_selector(this.el,'.term')
   }
-  reset_link_provider(){
-    console.group('reset_link_provider')
-    this.link_provider?.reset()
-    console.groupEnd()
-  }
-  webgl_on(){
-    webgl_count++
-    this.webgl_addon= new WebglAddon();
-    this.term!.loadAddon(this.webgl_addon);    
-  }
+
+
   set_visibility(val:boolean){
     this.el.style.display=(val)?'flex':'none'   
-    if (!this.term)
-      return
-    if (val){
-      if (this.webgl_addon)
-        return
-      this.webgl_on()
-      return
-    }
-    if (!this.webgl_addon)
-      return    
-    webgl_count--
-    this.webgl_addon.dispose()
-    this.webgl_addon=undefined
   }
-  read_line(i:number){
-    const line=this.term!.buffer.normal.getLine(i)
-    if (line==null)
-      return `<span>${i}</span><span>null</span>`
-    const text=line.translateToString();
-    const {isWrapped}=line
-    const start=`<span>${i}</span><span>${isWrapped}</span>`
-    if (text==='')
-      return `${start}<span>empty string</span>`
-    return `${start}<span>${text}</span>`
-  }  
-  on_marker_dispose=()=>{
-    console.group('on_marker_dispose')
-    this.dispose_count++
-    this.new_marker()
-    this.reset_link_provider()
-    console.groupEnd()
-  }
-  create_if_needed(runner:Runner){
-    if (this.term)
-      return this.term
-    console.log('create terminal',runner.id)
-    console.group('create_if_needed')
-    this.term=new Terminal({cols:200,rows:200,scrollback: 200,allowProposedApi: true,minimumContrastRatio:1})
-    this.link_provider=new MyLinkProvider(this.term,runner.workspace_folder)
-    this.term.registerLinkProvider(this.link_provider)
 
-    this.new_marker()
-
-    this.term.onScroll((newViewportY) => {
-        this.num_scrolls++
-        this.newViewportY=newViewportY
-    });    
-    if (this.el.style.display!=='none')
-      this.webgl_on() //was selected and term was just created
-    //this.term.loadAddon(new WebglAddon()); // todo: restore this
-
-    const fitAddon = new FitAddon();
-    this.term.loadAddon(fitAddon);
-
-    const call_fit = () =>{ 
-      console.group('call_fit')
-      fitAddon.fit()
-      console.groupEnd()
-    }
-    const _call_dbg_old=()=>{
-     update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY} dispose_count${this.dispose_count}` )
-      for (let i=0;i<3;i++){
-        update_child_html(this.el,`.line${i}`,this.read_line(i))
-      }      
-    }
-    const call_dbg=()=>{
-     update_child_html(this.el,`.dbg`,`num_scrolls ${this.num_scrolls} ViewportY ${this.newViewportY} dispose_count${this.dispose_count}` )    
-    }
-    setInterval(call_dbg,100)    
-    setInterval(call_fit,1000) 
-
-    //this.clearAnchors = addFileLocationLinkDetection(this.term,runner.workspace_folder)
-    const term_container=query_selector(this.el,'.term')
-    if (term_container instanceof HTMLElement){
-      this.term.open(term_container)
-    }
-    call_fit()
-    const ans=this.term
-    console.groupEnd()
-    return ans
-    //query_selector(this.el, '.term_title_dir .value').textContent=runner.workspace_folder
-    //this.show_watch(runner)
-    //query_selector(this.el, '.term_title_status .value').textContent='ready'
-  }
-  new_marker(){
-    this.marker_disposable?.dispose()
-    this.marker?.dispose()
-
-    //register a the marker
-    this.marker=this.term!.registerMarker(0)    
-    this.marker_disposable=this.marker.onDispose(this.on_marker_dispose)    
-  }
   term_clear(){
-    console.group('term_clear');
-    //clear the prev marker if exists
-    this.new_marker()
 
-    //clear the link_provider and terminal
-    this.term?.clear()
-    this.reset_link_provider()
-    console.groupEnd(); 
   }
   term_write(output:string[]){ 
+    /*
+    concat. convert \r\n to \n strip away cursor movement
+    if this.last_line exists is not empty pre prend it and delete the last html line put
+    split over \n
+    put it int new_lines
+    this.last_line=new_lines.at(-1)
+    for each line do
+      replace non-color ansi codes with empty spans 
+      using regex 
+        find ancore and replace with <p data-file data-row data-col>text</p>
+        encore ref
+        links
+      we now have p tags with text that may have ansi codes p atgs do not span lines
+      using regex replace ansi colors with divs.
+      question: how to tread ovrelapping links and ansi colors answer: regex stage before will not let that happen and alaso tools themself will not
+
+      using regex replace, replace all ansi colors with divs
+      using regex replace, replace all unproccessed ansi code with span class=code
+    on the panel add on click that proccess these
+    on the last line add <span class=oef></span>
+
+    */
     if (output.length===0)
       return
-    console.group('term_write',output.length);
-    for (const line of output)
-      this.term?.write(line)
-    console.groupEnd(); 
+    const lines=[this.last_line,...output].join('').replaceAll('\n\r','\n').split('\n')
+    if (this.last_line!=='')
+      this.term_el.lastElementChild?.remove();
+    this.last_line=lines.at(-1)||''
+    const new_html=lines.map(x=>`<div class=line>${x}</div>`).join('')
+    this.term_el.insertAdjacentHTML('beforeend',new_html)
   }
   update_terminal(report:RunnerReport,runner:Runner){
     //const title_bar=calc_title_html(report,runner)
@@ -284,7 +183,6 @@ class TerminalPanel{
     const last_run=calc_last_run(report,runner)
     if (last_run==null)
       return
-    const term=this.create_if_needed(runner)
     const {run_id}=last_run
     if (run_id!==this.last_run_id){
       this.term_clear()     

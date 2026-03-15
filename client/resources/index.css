@@ -469,3 +469,9 @@ span.term_title_watch{
      min-width:60px
 
 }
+.term{
+    font-family: monospace;
+}
+.line{
+  background-color: black;
+}
