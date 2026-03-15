@@ -8,6 +8,7 @@ import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
 import { groupEnd } from 'node:console';
+import {Replacement} from './terminals_ansi.js'
 
 
 function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {

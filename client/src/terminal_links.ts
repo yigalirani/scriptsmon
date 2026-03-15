@@ -1,5 +1,4 @@
 
-import type { Terminal,ILink,ILinkProvider,IBufferCellPosition,IBufferRange } from '@xterm/xterm';
 import  {post_message} from './common.js'
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
