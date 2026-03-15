@@ -119,37 +119,8 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
   const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
   return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
-type font_style='normal'|'bold'|'italic'|'underline'|'blinking'|'inverse'|'strikethrough'
-interface Style{
-  foreground:string|undefined //undefined means back to default
-  background:string|undefined
-  font_styles:Set<font_style>
-}
-interface StylePosition extends Style{
-  position:number
-}
-interface Replacement{
-  start    : number
-  end      : number
-  start_tag: string
-  end_tag  : string
-}
-function strip_ansi(text:string,start_style:Style):{
-  stripped_text:string,
-  style_positions:Array<StylePosition>
-}{
-  //implement this. remove all cursor ansi char, and convert style chars from in stream to out of stream
-}
-function replace_ansi({start_style,replacments,text}:{
-  start_style:Style
-  replacments:Array<Replacement>
-  text:string
-}):{
-  
 
-  
 
-}
     /*extract class that allows to format ansi to html
     given start style and a line with ansi
     provide:

@@ -103,6 +103,8 @@
     "typescript-eslint/switch-exhaustiveness-check": "off",
     "typescript/parameter-properties":"off",//dumb rule,
     "unicorn/prefer-ternary":"off",
-    "eslint/no-shadow":"off"
+    "eslint/no-shadow":"off",
+    "eslint/complexity":"off",
+    "eslint/no-control-regex":"off"
   }
 }

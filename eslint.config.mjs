@@ -65,7 +65,8 @@ export default defineConfig(
       "no-constant-condition":"off",
       "@typescript-eslint/unified-signatures":"off",//rule crashes in my case
       "@typescript-eslint/no-unsafe-call":"off",//not easy, todo
-      "no-useless-escape":"off"
+      "no-useless-escape":"off",
+      "no-control-regex":"off" 
     },
     languageOptions: {
       globals: {

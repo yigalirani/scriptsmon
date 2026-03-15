@@ -52,7 +52,7 @@ function cloneStyle(style: Style): Style {
 function applySGRCode(params: number[], style: Style): void {
   let i = 0;
   while (i < params.length) {
-    const code = params[i];
+    const code = params[i]!;
 
     if (code === 0) {
       style.foreground = undefined;
@@ -87,7 +87,7 @@ function applySGRCode(params: number[], style: Style): void {
       const type = params[i + 1];
 
       if (type === 5) { // 8-bit
-        style[target] = get8BitColor(params[i + 2]);
+        style[target] = get8BitColor(params[i + 2]!);
         i += 3;
         continue;
       }
@@ -110,7 +110,7 @@ export function strip_ansi(text: string, start_style: Style): {
   let stripped_text = "";
   const current_style = { ...start_style, font_styles: new Set(start_style.font_styles) };
 
-  // Regex matches ALL ANSI sequences (CSI, OSC, etc.)
+// Regex matches ALL ANSI sequences (CSI, OSC, etc.)
   const ansi_regex = /[\u001b\u009b](?:\[[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]|\][^\x07\x1b]*[\x07\x1b\\]|[@-_][0-?]*[ -/]*[@-~])/g;
 
   let last_index = 0;
@@ -145,4 +145,18 @@ export function strip_ansi(text: string, start_style: Style): {
     stripped_text,
     style_positions
   };
+}
+export interface Replacement{
+  start:number
+  end:number
+  open:string
+  close:string
+}
+export function replace_ansi({start_style,replacments,text}:{
+  start_style:Style
+  replacments:Array<Replacement>
+  text:string
+}){
+  return text
+
 }
