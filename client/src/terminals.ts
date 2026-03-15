@@ -119,6 +119,52 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
   const ret=runner.effective_watch.map(({rel,full})=>`<div title='${full}'class=rel>${rel.str}</div>`).join(sep)
   return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
+type font_style='normal'|'bold'|'italic'|'underline'|'blinking'|'inverse'|'strikethrough'
+interface Style{
+  foreground:string|undefined //undefined means back to default
+  background:string|undefined
+  font_styles:Set<font_style>
+}
+interface StylePosition extends Style{
+  position:number
+}
+interface Replacement{
+  start    : number
+  end      : number
+  start_tag: string
+  end_tag  : string
+}
+function strip_ansi(text:string,start_style:Style):{
+  stripped_text:string,
+  style_positions:Array<StylePosition>
+}{
+  //implement this. remove all cursor ansi char, and convert style chars from in stream to out of stream
+}
+function replace_ansi({start_style,replacments,text}:{
+  start_style:Style
+  replacments:Array<Replacement>
+  text:string
+}):{
+  
+
+  
+
+}
+    /*extract class that allows to format ansi to html
+    given start style and a line with ansi
+    provide:
+     text without the ansi
+     end state of the ansi
+     replace function that accepts multiple:
+      start
+      end
+      tag start
+      tag end
+      replement 
+      text
+      and return replcement line */
+
+
 class TerminalPanel{
   last_run_id:number|undefined
   el
@@ -132,14 +178,14 @@ class TerminalPanel{
     this.el=create_terminal_element(runner)
     this.term_el=query_selector(this.el,'.term')
   }
-
-
   set_visibility(val:boolean){
     this.el.style.display=(val)?'flex':'none'   
   }
 
   term_clear(){
-
+  }
+  line_to_html=(x:string)=>{
+    return `<div class=line>${x}</div>`
   }
   term_write(output:string[]){ 
     /*
@@ -163,6 +209,8 @@ class TerminalPanel{
     on the panel add on click that proccess these
     on the last line add <span class=oef></span>
 
+
+
     */
     if (output.length===0)
       return
@@ -170,7 +218,11 @@ class TerminalPanel{
     if (this.last_line!=='')
       this.term_el.lastElementChild?.remove();
     this.last_line=lines.at(-1)||''
-    const new_html=lines.map(x=>`<div class=line>${x}</div>`).join('')
+
+
+
+
+    const new_html=lines.map(this.line_to_html).join('')
     this.term_el.insertAdjacentHTML('beforeend',new_html)
   }
   update_terminal(report:RunnerReport,runner:Runner){
