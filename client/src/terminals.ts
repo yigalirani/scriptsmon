@@ -8,7 +8,8 @@ import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
 import { groupEnd } from 'node:console';
-import {Replacement} from './terminals_ansi.js'
+import {Replacement,Style,strip_ansi} from './terminals_ansi.js'
+import {parse} from './terminals_parse.js'
 
 
 function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
@@ -142,7 +143,12 @@ class TerminalPanel{
   el
   term_el
   last_line=''
-  ancore=''
+  ancore:string|undefined
+  style:Style={
+    foreground: undefined,
+    background: undefined,
+    font_styles: new Set()
+  }
 
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
@@ -155,9 +161,17 @@ class TerminalPanel{
   }
 
   term_clear(){
+    this.term_el.innerHTML=''
   }
   line_to_html=(x:string)=>{
-    return `<div class=line>${x}</div>`
+    const {
+      stripped_text,
+      style_positions
+    }=strip_ansi(x, this.style)
+    this.style=style_positions.at(-1)||this.style
+    const {replacements,ancore}=parse(stripped_text,this.ancore)
+    this.ancore=ancore
+    return `<div class=line>${stripped_text}</div>`
   }
   term_write(output:string[]){ 
     /*

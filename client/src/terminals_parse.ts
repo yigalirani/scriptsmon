@@ -67,7 +67,7 @@ function link_to_replacemnt(link:IlinkData):Replacement{
   return {open,close,start,end} 
 }
 
-export function parse(line:string,old_ancore:string){
+export function parse(line:string,old_ancore:string|undefined){
   const {links,ancore}=parse_to_links(line,old_ancore)
   const replacements=links.map(link_to_replacemnt)
   return {replacements,ancore}

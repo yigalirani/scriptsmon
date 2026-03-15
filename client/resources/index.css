@@ -471,7 +471,35 @@ span.term_title_watch{
 }
 .term{
     font-family: monospace;
+    overflow: auto;
+    counter-reset: line-number;    
 }
-.line{
-  background-color: black;
+.line {
+  display: flex; /* This is the key to removing the ghost space */
+  counter-increment: line-number;
+  white-space: nowrap;
+background-color: black; /* Moved here for a consistent background */
+}
+
+.line::before {
+  content: counter(line-number);
+  color: #e6855b;
+  /* background-color: #3c3c3c; */
+  display: inline-block;
+  
+  /* Fixed width for the number area */
+  width: 30px;
+  flex-shrink: 0;
+  text-align: right;
+  
+  /* The Red Gutter */
+  border-right: 1px solid gray;
+  
+  /* REMOVE ALL GAPS */
+  margin-right: 2px;
+  padding-right: 5px;
+  user-select: none;
+}
+[source_file]:hover {
+  text-decoration: underline;
 }
