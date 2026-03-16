@@ -171,9 +171,10 @@ class TerminalPanel{
     this.style=style_positions.at(-1)||this.style
     const {replacements,ancore}=parse(stripped_text,this.ancore)
     this.ancore=ancore
-    return `<div class=line>${stripped_text}</div>`
+    const br=(stripped_text===''?'<br>':'')
+    return `<div class=line>${stripped_text}${br}</div>`
   }
-  term_write(output:string[]){ 
+  term_write(output:string[]){
     /*
     concat. convert \r\n to \n strip away cursor movement
     if this.last_line exists is not empty pre prend it and delete the last html line put
@@ -200,7 +201,7 @@ class TerminalPanel{
     */
     if (output.length===0)
       return
-    const lines=[this.last_line,...output].join('').replaceAll('\n\r','\n').split('\n')
+    const lines=[this.last_line,...output].join('').replaceAll('\r\n','\n').split('\n')
     if (this.last_line!=='')
       this.term_el.lastElementChild?.remove();
     this.last_line=lines.at(-1)||''

@@ -477,7 +477,7 @@ span.term_title_watch{
 .line {
   display: flex; /* This is the key to removing the ghost space */
   counter-increment: line-number;
-  white-space: nowrap;
+  white-space: pre;
 background-color: black; /* Moved here for a consistent background */
 }
 
