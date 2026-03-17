@@ -1,30 +1,18 @@
 import { type s2t } from '@yigal/base_types';
-import { Terminal, type IMarker, IDisposable } from '@xterm/xterm';
-import { WebglAddon } from '@xterm/addon-webgl';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
-import { MyLinkProvider } from './terminal_links.js';
+import { Style } from './terminals_ansi.js';
 declare class TerminalPanel {
     last_run_id: number | undefined;
     el: HTMLElement;
-    term: Terminal | undefined;
-    webgl_addon: WebglAddon | undefined;
-    num_scrolls: number;
-    newViewportY: number;
-    marker: IMarker | undefined;
-    marker_disposable: IDisposable | undefined;
-    dispose_count: number;
-    link_provider: MyLinkProvider | undefined;
+    term_el: Element;
+    last_line: string;
+    ancore: string | undefined;
+    style: Style;
     constructor(runner: Runner);
-    reset_link_provider(): void;
-    webgl_on(): void;
     set_visibility(val: boolean): void;
-    read_line(i: number): string;
-    on_marker_dispose: () => void;
-    on_marker_dispose2: () => void;
-    create_if_needed(runner: Runner): Terminal;
-    new_marker(): void;
     term_clear(): void;
+    line_to_html: (x: string) => string;
     term_write(output: string[]): void;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }

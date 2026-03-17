@@ -472,13 +472,11 @@ span.term_title_watch{
 .term{
     font-family: monospace;
     overflow: auto;
-    counter-reset: line-number;    
+    counter-reset: line-number;
 }
 .line {
-  display: flex; /* This is the key to removing the ghost space */
   counter-increment: line-number;
-  white-space: pre;
-background-color: black; /* Moved here for a consistent background */
+  background-color: black; /* Moved here for a consistent background */
 }
 
 .line::before {
@@ -502,4 +500,9 @@ background-color: black; /* Moved here for a consistent background */
 }
 [source_file]:hover {
   text-decoration: underline;
+}
+
+.line span:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }

@@ -8,7 +8,7 @@ import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
 import { groupEnd } from 'node:console';
-import {Replacement,Style,strip_ansi} from './terminals_ansi.js'
+import {Replacement,Style,strip_ansi,generate_html} from './terminals_ansi.js'
 import {parse} from './terminals_parse.js'
 
 
@@ -137,6 +137,11 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
       text
       and return replcement line */
 
+const clear_style:Style={
+  foreground: undefined,
+  background: undefined,
+  font_styles: new Set()
+}
 
 class TerminalPanel{
   last_run_id:number|undefined
@@ -144,17 +149,14 @@ class TerminalPanel{
   term_el
   last_line=''
   ancore:string|undefined
-  style:Style={
-    foreground: undefined,
-    background: undefined,
-    font_styles: new Set()
-  }
+  style=clear_style
 
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
     this.el=create_terminal_element(runner)
     this.term_el=query_selector(this.el,'.term')
+    this.term_clear()
   }
   set_visibility(val:boolean){
     this.el.style.display=(val)?'flex':'none'   
@@ -162,17 +164,22 @@ class TerminalPanel{
 
   term_clear(){
     this.term_el.innerHTML=''
+    this.style=clear_style
+    this.ancore=undefined
+    this.last_line=''
   }
   line_to_html=(x:string)=>{
     const {
-      stripped_text,
+      plain_text,
       style_positions
     }=strip_ansi(x, this.style)
     this.style=style_positions.at(-1)||this.style
-    const {replacements,ancore}=parse(stripped_text,this.ancore)
+    const {replacments,ancore}=parse(plain_text,this.ancore)
+    const html=generate_html({style_positions,replacments,plain_text})
+
     this.ancore=ancore
-    const br=(stripped_text===''?'<br>':'')
-    return `<div class=line>${stripped_text}${br}</div>`
+    const br=(plain_text===''?'<br>':'')
+    return `<div class=line>${html}${br}</div>`
   }
   term_write(output:string[]){
     /*

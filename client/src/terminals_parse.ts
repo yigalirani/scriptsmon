@@ -27,7 +27,7 @@ function parse_group_string(groups:GroupType,name:string){
 function calc_match(match:RegExpMatchArray):IlinkData{
   const { index,groups} = match;
   const text = match[0];
-  const start= index!+1
+  const start= index!
   const end= index! + text.length
   const row= parse_group_int(groups,'row')
   const col= parse_group_int(groups,'col')
@@ -60,15 +60,15 @@ export function parse_to_links(input:string,ancore:string|undefined){
   }
   return {links,ancore}
 }
-function link_to_replacemnt(link:IlinkData):Replacement{
+function link_to_replacemnt(link:IlinkData):Replacement[]{
   const {start,end,source_file,row,col}=link
-  const open=`<p data-source_file=${source_file} data-row=${row} data-col=${col}>`
-  const close=`</p>`
-  return {open,close,start,end} 
+  const open=`<span data-source_file='${source_file}' data-row='${row}' data-col='${col}'>`
+  const close=`</span>`
+  return [{pos:start,str:open},{pos:end,str:close}]
 }
 
 export function parse(line:string,old_ancore:string|undefined){
   const {links,ancore}=parse_to_links(line,old_ancore)
-  const replacements=links.map(link_to_replacemnt)
-  return {replacements,ancore}
+  const replacments=links.flatMap(link_to_replacemnt)
+  return {replacments,ancore}
 }

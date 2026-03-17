@@ -1,4 +1,3 @@
-import type { Terminal, ILink, ILinkProvider, IBufferCellPosition, IBufferRange } from '@xterm/xterm';
 declare class Line {
     private readonly offsets;
     private readonly start_y;
@@ -21,7 +20,7 @@ declare class LinkParser {
     workspace_folder: string;
     y_head: number;
     is_done: boolean;
-    buffer: import("@xterm/xterm").IBuffer;
+    buffer: any;
     ancore: string | undefined;
     line_map: Map<number, Set<ILink>>;
     private add_link;
