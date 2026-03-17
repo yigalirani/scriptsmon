@@ -90,9 +90,9 @@ function get_style_css(style: Style|undefined): string {
   
   if (decorations.length > 0)
     css_parts.push(`text-decoration:${decorations.join(' ')}`);
-  if (css_parts.length)
+  if (css_parts.length===0)
     return ''
-  return `style="${css_parts.join(';')}"`
+  return `style='${css_parts.map(x=>`${x};`).join('')}'`
 }
 function is_clear_style(style:Style){
   return style.background==null&&style.foreground==null&&style.font_styles.size===0
@@ -120,21 +120,21 @@ export function generate_html({
     while(true){
       if (style_head+1>=style_positions.length)
         break
-      if (style_positions[style_head]?.position===pos)
+      if (style_positions[style_head+1]!.position>pos)
         break
       style_head++
     }
     const cur_style=style_positions[style_head]
-    if (cur_style==null||is_clear_style(cur_style))
-      return
-    html.push(`<div "${get_style_css(cur_style)}">`);
+    //if (cur_style==null||is_clear_style(cur_style))
+    //  return
+    html.push(`<span ${get_style_css(cur_style)}>`);
     num_open++
   }
   function close_style(){
     if (num_open===0)
       return
     num_open--
-    html.push(`</div>`);
+    html.push(`</span>`);
   }
 
   for (let i = 0; i <= plain_text.length; i++) {
