@@ -18,6 +18,6 @@ export declare function generate_html({ style_positions, replacments, plain_text
 }): string;
 export declare function strip_ansi(text: string, start_style: Style): {
     plain_text: string;
-    style_positions: Array<StylePosition>;
+    style_positions: StylePosition[];
 };
 export {};

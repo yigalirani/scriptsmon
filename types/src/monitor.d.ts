@@ -1,4 +1,3 @@
-import { type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
 import type { Run, Runner, Folder, Runs, RunnerReport, FullReason } from './data.js';
 import { Watcher, type IdRelPath } from './watcher.js';
 import { Repeater } from "@yigal/base_types";
