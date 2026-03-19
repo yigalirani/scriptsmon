@@ -60,14 +60,14 @@ function attach(child:ChildProcessWithoutNullStreams,run:Run,resolve:(a:unknown)
     console.log('on spwan')
   })
 
-  child.on('close', (exit_code,signal) => {
+  /*child.on('close', (exit_code,signal) => { //not needed per https://stackoverflow.com/a/40898359/39939
     run.end_time=Date.now()
     run.exit_code=exit_code||undefined
     if (signal!=null || exit_code==null && signal==null){ //is exit_code==null && signal==null still needed?
       run.stopped=true
     }
     resolve(null);
-  });
+  });*/
   // Listen to exit events
   child.on("exit", (exit_code,signal) => {
     run.end_time=Date.now()

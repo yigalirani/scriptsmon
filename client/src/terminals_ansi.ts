@@ -127,9 +127,10 @@ export function generate_html({
       style_head++
     }
     const cur_style=style_positions[style_head]
-    //if (cur_style==null||is_clear_style(cur_style))
-    //  return
-    html.push(`<span ${get_style_css(cur_style)}>`);
+    if (cur_style==null||cur_style.position>pos||is_clear_style(cur_style))
+      html.push(`<span >`);
+    else
+      html.push(`<span ${get_style_css(cur_style)}>`);
     num_open++
   }
   function close_style(){
@@ -286,7 +287,7 @@ export function strip_ansi(text: string, start_style: Style){
       style_positions.push(cloned)
   }
   return {
-    plain_text:strings.join(''),
+    plain_text:strings.join('')+text.slice(last_index),
     style_positions
   };
 }
