@@ -1,4 +1,4 @@
-import { spawn, type IPty } from "@homebridge/node-pty-prebuilt-multiarch";
+import { ChildProcessWithoutNullStreams,spawn } from "child_process";
 import type {Run,Runner,Folder,Runs,RunnerReport,FullReason} from './data.js'
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
@@ -9,7 +9,8 @@ import {Watcher,type IdRelPath} from './watcher.js'
 import {
   sleep,
   toggle_set,
-  Repeater
+  Repeater,
+  get_error
 } from "@yigal/base_types";
 
 
@@ -48,8 +49,43 @@ export async function mkdir_write_file(filePath:string,data:string,cache=false){
     console.error('Error writing file',err)
   }
 }
+function attach(child:ChildProcessWithoutNullStreams,run:Run,resolve:(a:unknown)=>void){
+  child.stdout.on("data",(data:unknown)=>
+    run.stdout.push(String(data))
+  )
+  child.stderr.on("data",(data:unknown)=>
+    run.stderr.push(String(data))
+  )
+  child.on("spawn", () => {
+    console.log('on spwan')
+  })
+
+  child.on('close', (exit_code,signal) => {
+    run.end_time=Date.now()
+    run.exit_code=exit_code||undefined
+    if (signal!=null || exit_code==null && signal==null){ //is exit_code==null && signal==null still needed?
+      run.stopped=true
+    }
+    resolve(null);
+  });
+  // Listen to exit events
+  child.on("exit", (exit_code,signal) => {
+    run.end_time=Date.now()
+    run.exit_code=exit_code||undefined
+    if (signal!=null || exit_code==null && signal==null){ //is exit_code==null && signal==null still needed?
+      run.stopped=true
+    }
+    resolve(null);
+  });
+  child.on("error", (err) => {
+    run.Err=err
+    run.stderr.push(err.stack||'error')
+    run.end_time=Date.now()
+    resolve(null);
+  });
+}
 export class Monitor{
-  ipty:Record<string,IPty>={}
+  ipty:Record<string,AbortController>={}
   runs:Runs={} 
   monitored=new Set<string>
   root?:Folder
@@ -88,7 +124,8 @@ export class Monitor{
         continue
       runs[k]=cloneDeep(v)
       keep_only_last(v)
-      v[0]!.output=[]
+      v[0]!.stderr=[]
+      v[0]!.stdout=[]      
     }
     return {
       command: "RunnerReport",
@@ -115,7 +152,7 @@ export class Monitor{
         was_stopped=true
         console.log(`stopping runner ${runner.name}...`)
         const {id}=runner
-        this.ipty[id]?.kill() // what if more than one kill function call is needed
+        this.ipty[id]?.abort() // what if more than one kill function call is needed
       }
       await sleep(10)
     }
@@ -128,31 +165,14 @@ export class Monitor{
     full_reason:FullReason
   }) {
     await this.stop({runner})
+  const abort_controller=new AbortController()
+  this.ipty[runner.id]=abort_controller//overrides that last one if any
+  const {signal}=abort_controller    
     await new Promise((resolve, _reject) => { 
       const runs=this.get_runner_runs(runner)
       const {workspace_folder,name}=runner
-      //(runner,'running')
-      // Spawn a shell with the script as command
-      //const split_args=script.str.split(' ').filter(Boolean)
-      const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
-      const shellArgs = process.platform === 'win32' ? ['/c', 'npm run',name] : ['-c', 'npm run',name];
-      //const shellArgs = process.platform === 'win32' ? ['/c', ...split_args] : ['-c', ...split_args];
-      this.watcher.set_started(runner.id)
-      const child = spawn(shell, shellArgs,  {
-      // name: 'xterm-color',
-        cols:200,
-        useConpty:false,
-        cwd:workspace_folder,
-        env: { 
-          ...process.env, 
-          TERM: "xterm-256color", 
-          COLORTERM: "truecolor", // Specifically triggers 24-bit color support
-          FORCE_COLOR: "3"          
-         },
-      });
-      if (child===null)
-        return
-      this.ipty[runner.id]=child//overrides that last on
+      //const script=`npm run ${name}`
+      this.watcher.set_started(runner.id) 
       // Set state to running immediately (spawn happens synchronously)
       const run_id=function(){
         if (runs.length===0)
@@ -163,32 +183,31 @@ export class Monitor{
         start_time: Date.now(),
         end_time  : undefined,    //initialy is undefined then changes to number and stops changing
         full_reason,
-        output   : [],
+        stderr   : [],
+        stdout   : [],
         Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
         exit_code: undefined,
         stopped  : undefined,
         run_id 
       }
     
-    this.get_runner_runs(runner).push(run)
-    // Listen to data events (both stdout and stderr come through onData)
-    const dataDisposable = child.onData((data: string) => {
-      run.output.push(data)
-      //run.output_time=Date.now()
-    });
-    // Listen to exit events
-    const exitDisposable = child.onExit(({ exitCode,signal }) => {
-      dataDisposable.dispose();
-      exitDisposable.dispose();
-      console.log({ exitCode,signal })
-      run.end_time=Date.now()
-      run.exit_code=exitCode
-      if (signal!=null || exitCode==null && signal==null){
-        run.stopped=true
+    this.get_runner_runs(runner).push(run)      
+      try{
+        const child = spawn('npm.cmd',['run',name], {
+          signal,
+          shell: true, 
+          cwd:workspace_folder,
+          env: { ...process.env, FORCE_COLOR: "1" }
+        })
+        attach(child,run,resolve)
+      }catch (err) {
+        // If spawn fails synchronously, handle it here
+        run.Err = get_error(err);
+        run.end_time = Date.now();
+        resolve(null); 
+        return;
       }
-      resolve(null);
-    });
-  }); 
+    })
   }
   find_runners(root:Folder,filter:(x:Runner)=>boolean){
     const ans:Runner[]=[]
@@ -266,7 +285,7 @@ export class Monitor{
 
     await this.stop({runner})
     const runs=this.get_runner_runs(runner)
-    runs.at(-1)!.output.push('stopped')
+    runs.at(-1)!.stderr.push('stopped')
   }
   async run_runner({runner_id,full_reason}:{
     runner_id:string

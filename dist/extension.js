@@ -647,7 +647,7 @@ var require_lodash = __commonJS({
 });
 
 // src/monitor.ts
-import { spawn } from "@homebridge/node-pty-prebuilt-multiarch";
+import { spawn } from "child_process";
 
 // src/parser.ts
 import * as path from "node:path";
@@ -8583,6 +8583,41 @@ async function mkdir_write_file(filePath, data2, cache = false) {
     console.error("Error writing file", err);
   }
 }
+function attach(child, run, resolve6) {
+  child.stdout.on(
+    "data",
+    (data2) => run.stdout.push(String(data2))
+  );
+  child.stderr.on(
+    "data",
+    (data2) => run.stderr.push(String(data2))
+  );
+  child.on("spawn", () => {
+    console.log("on spwan");
+  });
+  child.on("close", (exit_code, signal) => {
+    run.end_time = Date.now();
+    run.exit_code = exit_code || void 0;
+    if (signal != null || exit_code == null && signal == null) {
+      run.stopped = true;
+    }
+    resolve6(null);
+  });
+  child.on("exit", (exit_code, signal) => {
+    run.end_time = Date.now();
+    run.exit_code = exit_code || void 0;
+    if (signal != null || exit_code == null && signal == null) {
+      run.stopped = true;
+    }
+    resolve6(null);
+  });
+  child.on("error", (err) => {
+    run.Err = err;
+    run.stderr.push(err.stack || "error");
+    run.end_time = Date.now();
+    resolve6(null);
+  });
+}
 var Monitor = class {
   constructor(workspace_folders) {
     this.workspace_folders = workspace_folders;
@@ -8621,7 +8656,8 @@ var Monitor = class {
         continue;
       runs[k] = (0, import_lodash.default)(v);
       keep_only_last(v);
-      v[0].output = [];
+      v[0].stderr = [];
+      v[0].stdout = [];
     }
     return {
       command: "RunnerReport",
@@ -8643,7 +8679,7 @@ var Monitor = class {
         was_stopped = true;
         console.log(`stopping runner ${runner.name}...`);
         const { id } = runner;
-        this.ipty[id]?.kill();
+        this.ipty[id]?.abort();
       }
       await sleep(10);
     }
@@ -8654,28 +8690,13 @@ var Monitor = class {
     full_reason
   }) {
     await this.stop({ runner });
+    const abort_controller = new AbortController();
+    this.ipty[runner.id] = abort_controller;
+    const { signal } = abort_controller;
     await new Promise((resolve6, _reject) => {
       const runs = this.get_runner_runs(runner);
       const { workspace_folder, name } = runner;
-      const shell = process.platform === "win32" ? "cmd.exe" : "/bin/sh";
-      const shellArgs = process.platform === "win32" ? ["/c", "npm run", name] : ["-c", "npm run", name];
       this.watcher.set_started(runner.id);
-      const child = spawn(shell, shellArgs, {
-        // name: 'xterm-color',
-        cols: 200,
-        useConpty: false,
-        cwd: workspace_folder,
-        env: {
-          ...process.env,
-          TERM: "xterm-256color",
-          COLORTERM: "truecolor",
-          // Specifically triggers 24-bit color support
-          FORCE_COLOR: "3"
-        }
-      });
-      if (child === null)
-        return;
-      this.ipty[runner.id] = child;
       const run_id = (function() {
         if (runs.length === 0)
           return 0;
@@ -8686,7 +8707,8 @@ var Monitor = class {
         end_time: void 0,
         //initialy is undefined then changes to number and stops changing
         full_reason,
-        output: [],
+        stderr: [],
+        stdout: [],
         Err: void 0,
         //initialy is undefined then maybe changes to error and stop changing
         exit_code: void 0,
@@ -8694,20 +8716,20 @@ var Monitor = class {
         run_id
       };
       this.get_runner_runs(runner).push(run);
-      const dataDisposable = child.onData((data2) => {
-        run.output.push(data2);
-      });
-      const exitDisposable = child.onExit(({ exitCode, signal }) => {
-        dataDisposable.dispose();
-        exitDisposable.dispose();
-        console.log({ exitCode, signal });
+      try {
+        const child = spawn("npm.cmd", ["run", name], {
+          signal,
+          shell: true,
+          cwd: workspace_folder,
+          env: { ...process.env, FORCE_COLOR: "1" }
+        });
+        attach(child, run, resolve6);
+      } catch (err) {
+        run.Err = get_error(err);
         run.end_time = Date.now();
-        run.exit_code = exitCode;
-        if (signal != null || exitCode == null && signal == null) {
-          run.stopped = true;
-        }
         resolve6(null);
-      });
+        return;
+      }
     });
   }
   find_runners(root, filter) {
@@ -8782,7 +8804,7 @@ var Monitor = class {
       throw new Error(`runnwe is not found:${runner_id}`);
     await this.stop({ runner });
     const runs = this.get_runner_runs(runner);
-    runs.at(-1).output.push("stopped");
+    runs.at(-1).stderr.push("stopped");
   }
   async run_runner({ runner_id, full_reason }) {
     const runner = find_runner(this.get_root(), runner_id);

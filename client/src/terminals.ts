@@ -142,7 +142,7 @@ const clear_style:Style={
   background: undefined,
   font_styles: new Set()
 }
-
+type Channel='stderr'|'stdout'
 class TerminalPanel{
   last_run_id:number|undefined
   el
@@ -181,7 +181,7 @@ class TerminalPanel{
     const br=(plain_text===''?'<br>':'')
     return `<div class=line>${html}${br}</div>`
   }
-  term_write(output:string[]){
+  term_write(output:string[],channel:Channel){
     /*
     concat. convert \r\n to \n strip away cursor movement
     if this.last_line exists is not empty pre prend it and delete the last html line put
@@ -208,7 +208,9 @@ class TerminalPanel{
     */
     if (output.length===0)
       return
-    const lines=[this.last_line,...output].join('').replaceAll('\r\n','\n').split('\n')
+    const joined_lines=[this.last_line,...output].join('').replaceAll('\r\n','\n')
+    const lines=joined_lines.split('\n')
+  
     if (this.last_line!=='')
       this.term_el.lastElementChild?.remove();
     this.last_line=lines.at(-1)||''
@@ -235,7 +237,8 @@ class TerminalPanel{
       //this.reset_link_provider() //no need to do it here because term.clear is not effective immideeatly. btter do it on marker dispose 
     }
     this.last_run_id=last_run.run_id
-    this.term_write(last_run.output)
+    this.term_write(last_run.stdout,"stdout")
+    this.term_write(last_run.stderr,"stderr")
   }
 }
 

@@ -27,7 +27,8 @@ export interface Run {
     start_time: number;
     end_time: number | undefined;
     full_reason: FullReason;
-    output: string[];
+    stderr: string[];
+    stdout: string[];
     Err: Error | undefined;
     exit_code: number | undefined;
     stopped: undefined | true;

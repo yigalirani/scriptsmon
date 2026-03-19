@@ -16,6 +16,14 @@
 				"${workspaceFolder}/dist/**/*.js"
 			],
 			"preLaunchTask": "npm: watch"
-		}
+		},
+    {
+      "name": "Attach to Extension Host",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    }
 	]
 }

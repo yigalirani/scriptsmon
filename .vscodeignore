@@ -34,3 +34,5 @@ node_modules/
 !node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.node
 !node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.js
 !node_modules/@homebridge/node-pty-prebuilt-multiarch/**/*.json
+
+!node_modules/node-pty

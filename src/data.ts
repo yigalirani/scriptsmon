@@ -30,7 +30,8 @@ export interface Run{
   start_time: number
   end_time  : number|undefined  //initialy is undefined then changes to number and stops changing
   full_reason:FullReason,
-  output    : string[]          ////growing
+  stderr    : string[]          ////growing
+  stdout    : string[]
   Err       : Error|undefined   //initialy is undefined then maybe changes to error and stop changing
   exit_code : number|undefined
   stopped   : undefined|true
