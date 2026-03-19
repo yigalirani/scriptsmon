@@ -7,8 +7,7 @@ import {query_selector,create_element,get_parent_by_class,update_child_html,type
 import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
-import { groupEnd } from 'node:console';
-import {Replacement,Style,strip_ansi,generate_html} from './terminals_ansi.js'
+import  {type Style,strip_ansi,generate_html} from './terminals_ansi.js';
 import {parse} from './terminals_parse.js'
 
 

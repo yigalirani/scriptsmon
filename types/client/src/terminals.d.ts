@@ -1,7 +1,7 @@
 import { type s2t } from '@yigal/base_types';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
-import { Style } from './terminals_ansi.js';
+import { type Style } from './terminals_ansi.js';
 type Channel = 'stderr' | 'stdout';
 declare class TerminalPanel {
     last_run_id: number | undefined;

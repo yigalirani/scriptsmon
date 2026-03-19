@@ -647,7 +647,7 @@ var require_lodash = __commonJS({
 });
 
 // src/monitor.ts
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 
 // src/parser.ts
 import * as path from "node:path";
@@ -8597,7 +8597,7 @@ function attach(child, run, resolve6) {
   });
   child.on("exit", (exit_code, signal) => {
     run.end_time = Date.now();
-    run.exit_code = exit_code || void 0;
+    run.exit_code = exit_code ?? void 0;
     if (signal != null || exit_code == null && signal == null) {
       run.stopped = true;
     }
@@ -8720,7 +8720,6 @@ var Monitor = class {
         run.Err = get_error(err);
         run.end_time = Date.now();
         resolve6(null);
-        return;
       }
     });
   }

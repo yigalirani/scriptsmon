@@ -1,4 +1,4 @@
-import { ChildProcessWithoutNullStreams,spawn } from "child_process";
+import { type ChildProcessWithoutNullStreams,spawn } from "node:child_process";
 import type {Run,Runner,Folder,Runs,RunnerReport,FullReason} from './data.js'
 import {read_package_json,to_json,find_runner} from './parser.js'
 import  cloneDeep  from 'lodash.clonedeep'
@@ -71,7 +71,7 @@ function attach(child:ChildProcessWithoutNullStreams,run:Run,resolve:(a:unknown)
   // Listen to exit events
   child.on("exit", (exit_code,signal) => {
     run.end_time=Date.now()
-    run.exit_code=exit_code||undefined
+    run.exit_code=exit_code??undefined
     if (signal!=null || exit_code==null && signal==null){ //is exit_code==null && signal==null still needed?
       run.stopped=true
     }
@@ -205,7 +205,6 @@ export class Monitor{
         run.Err = get_error(err);
         run.end_time = Date.now();
         resolve(null); 
-        return;
       }
     })
   }
