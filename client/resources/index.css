@@ -482,7 +482,7 @@ span.term_title_watch{
 
 .line::before {
   content: counter(line-number);
-  color: #e6855b;
+  color: #685a54;
   /* background-color: #3c3c3c; */
   display: inline-block;
   

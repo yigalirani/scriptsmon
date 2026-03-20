@@ -66,17 +66,17 @@ function get_style_css(style: Style|undefined): string {
   if (style==null)
     return ''
   const css_parts: string[] = [];
-  let fg = style.foreground;
-  let bg = style.background;
+  let {foreground,background}=style;
 
   // Handle 'inverse' by swapping colors (destructured for single statement)
   if (style.font_styles.has('inverse'))
-    [fg, bg] = [bg, fg];
-
-  if (fg)
-    css_parts.push(`color:${fg}`);
-  if (bg)
-    css_parts.push(`background-color:${bg}`);
+    [foreground, background] = [background, foreground];
+  if (style.font_styles.has('faint'))
+    css_parts.push(`opacity:.5`);
+  if (foreground!=null)
+    css_parts.push(`color:${foreground}`);
+  if (background!=null)
+    css_parts.push(`background-color:${background}`);
   if (style.font_styles.has('bold'))
     css_parts.push(`font-weight:bold`);
   if (style.font_styles.has('italic'))
@@ -117,9 +117,9 @@ export function generate_html({
   let num_open=0
   function open_style(pos:number){
     if (num_open>0){
-      throw "style alreay open"
+      throw new Error("style alreay open")
     }
-    while(true){
+    for(;;){
       if (style_head+1>=style_positions.length)
         break
       if (style_positions[style_head+1]!.position>pos)
@@ -140,13 +140,17 @@ export function generate_html({
     html.push(`</span>`);
   }
 
+  open_style(0);
   for (let i = 0; i <= plain_text.length; i++) {
     const cur_replacement=replacments[repl_head]
-    if (cur_replacement?.pos===i){
+    const has_style_change=style_positions[style_head+1]?.position===i;
+    if (cur_replacement?.pos === i || has_style_change) {
       close_style()
-      html.push(cur_replacement.str)
+      if (cur_replacement?.pos === i) {
+        html.push(cur_replacement.str)
+        repl_head++
+      }
       open_style(i)
-      repl_head++
     }
     const c=plain_text[i]
     if (c!=null)
