@@ -21,7 +21,18 @@ export function divs(vals:s2t<string|undefined>){
       ans.push(`<div class="${k}">${v}</div>`)
   return ans.join('')
 }
-
+export function get_parent_by_data_attibute(el:HTMLElement|null,key:string){
+  if (el==null)
+    return null
+  let ans:HTMLElement|null=el
+  while(ans!=null){
+    const {dataset}=ans
+    if (key in dataset)
+      return ans
+    ans=ans.parentElement
+  }
+  return null
+}
 export function get_parent_by_class(el:Element|null,className:string){
   if (el==null)
     return null

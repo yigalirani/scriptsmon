@@ -16,7 +16,7 @@
   },
   "rules":{
     "no-magic-numbers": "off",
-    "no-unused-vars":"warn",//becaus biome does it
+    "no-unused-vars":"off",//becaus biome does it. oxc has bug where it doent deteect usage in a in inner clouser
     "unicorn/filename-case":"off",//dumb rule wtf
     "eslint/sort-imports":"off",
     "typescript/array-type":"off",

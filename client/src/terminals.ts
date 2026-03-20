@@ -3,7 +3,7 @@ import  {type s2t,default_get} from '@yigal/base_types'
 //import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
 //import { WebglAddon  } from '@xterm/addon-webgl';
 //import { FitAddon } from '@xterm/addon-fit';
-import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
+import {query_selector,create_element,get_parent_by_class,update_child_html,type Component,get_parent_by_data_attibute} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason,Filename} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
@@ -27,10 +27,20 @@ function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
   const ms_display=show_ms?`<span class=ms>.${pad3(milliseconds)}</span>`:''
   return `<div title="${title}">${time}${ms_display}</div>`;
 }
-function rel_click(event:MouseEvent,effective_watch:Filename[]){
-  const {target}=event
-  if (!(target instanceof Element))
-    return false
+function link_click(event:MouseEvent,target:HTMLElement,workspace_folder:string){
+  const parent=get_parent_by_data_attibute(target,'source_file')
+  if (parent==null)
+    return  
+  const {source_file='',row='',col=''}=parent.dataset
+  post_message({
+    command: "command_open_file_rowcol",
+    workspace_folder:'',
+    source_file,
+    row:parseInt(row,10)||0,
+    col:parseInt(col,10)||0
+  })  
+}   
+function rel_click(event:MouseEvent,target:HTMLElement,effective_watch:Filename[]){
   const parent=get_parent_by_class(target,'rel')
   if (parent==null)
     return false
@@ -61,8 +71,12 @@ function rel_click(event:MouseEvent,effective_watch:Filename[]){
 
 function make_onclick(parent:HTMLElement,workspace_folder:string,effective_watch:Filename[]){
   return function(event:MouseEvent){
-    if (rel_click(event,effective_watch))
+    const {target}=event
+    if (!(target instanceof HTMLElement))
+      return    
+    if (rel_click(event,target,effective_watch))
       return
+    link_click(event,target,workspace_folder)          
   }
 }
 
