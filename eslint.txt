@@ -1,0 +1,40 @@
+
+> Scriptsmon@1.12.0 eslint
+> eslint . --color --max-warnings=0
+
+import.meta.dirname C:\yigal\scriptsmon
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\client\src\dom_utils.ts[24m[0m
+[0m    [2m3:32[22m  [33mwarning[39m  Type parameter T is used only once in the function signature  [2m@typescript-eslint/no-unnecessary-type-parameters[22m[0m
+[0m   [2m30:9[22m   [33mwarning[39m  Unnecessary conditional, the types have no overlap            [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m107:16[22m  [33mwarning[39m  Unnecessary conditional, value is always truthy               [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m118:29[22m  [33mwarning[39m  Unnecessary conditional, value is always falsy                [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m129:7[22m   [33mwarning[39m  Unnecessary conditional, value is always truthy               [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\client\src\terminals.ts[24m[0m
+[0m  [2m257:34[22m  [33mwarning[39m  Unnecessary optional chain on a non-nullish value  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\client\src\terminals_ansi.ts[24m[0m
+[0m  [2m120:13[22m  [33mwarning[39m  Expected an error object to be thrown            [2m@typescript-eslint/only-throw-error[22m[0m
+[0m  [2m122:11[22m  [33mwarning[39m  Unnecessary conditional, value is always truthy  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\client\src\tree_internals.ts[24m[0m
+[0m   [2m27:7[22m  [33mwarning[39m  Unnecessary conditional, the types have no overlap  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m   [2m38:7[22m  [33mwarning[39m  Unnecessary conditional, the types have no overlap  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m126:9[22m  [33mwarning[39m  Unnecessary conditional, value is always truthy     [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\src\extension.ts[24m[0m
+[0m  [2m97:7[22m  [33mwarning[39m  Unnecessary conditional, the types have no overlap  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\src\monitor.ts[24m[0m
+[0m   [2m17:25[22m  [33mwarning[39m  Type parameter T is used only once in the function signature                      [2m@typescript-eslint/no-unnecessary-type-parameters[22m[0m
+[0m   [2m75:44[22m  [33mwarning[39m  Unnecessary conditional, comparison is always true, since `null == null` is true  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m145:11[22m  [33mwarning[39m  Unnecessary conditional, value is always truthy                                   [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[4mC:\yigal\scriptsmon\src\parser.ts[24m[0m
+[0m  [2m259:9[22m   [33mwarning[39m  Unnecessary conditional, the types have no overlap  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m340:15[22m  [33mwarning[39m  Unnecessary conditional, the types have no overlap  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m  [2m365:9[22m   [33mwarning[39m  Unnecessary conditional, the types have no overlap  [2m@typescript-eslint/no-unnecessary-condition[22m[0m
+[0m[0m
+[0m[33m[1m✖ 18 problems (0 errors, 18 warnings)[22m[39m[0m
+[0m[33m[1m[22m[39m[0m

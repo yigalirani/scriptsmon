@@ -47,10 +47,10 @@ export default defineConfig(
       "@typescript-eslint/no-unsafe-argument":"warn",
       "no-unsafe-member-access":"off",
       "@typescript-eslint/no-explicit-any": "warn",
-      "no-unused-labels": "off", //i dont like this rule because i like to orgenize long routines using labels
-      "@typescript-eslint/no-unnecessary-type-parameters":"off",//i dont like this rule because it flages some usefull functions sucks as resuse_prev
-      "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/no-unnecessary-condition": "off",//terible law, implmenting it resulted in bugs in the code
+      "no-unused-labels": "warn", //i dont like this rule because i like to orgenize long routines using labels
+      "@typescript-eslint/no-unnecessary-type-parameters":"warn",//i dont like this rule because it flages some usefull functions sucks as resuse_prev
+      "@typescript-eslint/ban-ts-comment": "warn",
+      "@typescript-eslint/no-unnecessary-condition": "warn",//terible law, implmenting it resulted in bugs in the code
       "@typescript-eslint/no-use-before-define": [
         "warn",
         {
@@ -58,15 +58,15 @@ export default defineConfig(
         }
       ],
       "@typescript-eslint/restrict-plus-operands": ["warn",{allowNumberAndString:true}], //ok to add string and number
-      "@typescript-eslint/only-throw-error":"off", //aint nothing wrong with throwing a string - just check on catch
+      "@typescript-eslint/only-throw-error":"warn", //aint nothing wrong with throwing a string - just check on catch
       //more than recomended
       "no-duplicate-imports":"warn",
       "eqeqeq": ["error", "always", { "null": "ignore" }],
-      "no-constant-condition":"off",
-      "@typescript-eslint/unified-signatures":"off",//rule crashes in my case
-      "@typescript-eslint/no-unsafe-call":"off",//not easy, todo
-      "no-useless-escape":"off",
-      "no-control-regex":"off" 
+      "no-constant-condition":"warn",
+      "@typescript-eslint/unified-signatures":"warn",//rule crashes in my case
+      "@typescript-eslint/no-unsafe-call":"warn",//not easy, todo
+      "no-useless-escape":"warn",
+      "no-control-regex":"warn" 
     },
     languageOptions: {
       globals: {

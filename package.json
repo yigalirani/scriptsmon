@@ -145,6 +145,7 @@
         "chokidar": "^5.0.0",
         "eslint": "^9",
         "globals": "^17.4.0",
-        "lodash.clonedeep": "^4.5.0"
+        "lodash.clonedeep": "^4.5.0",
+        "oxlint-tsgolint": "^0.17.0"
     }
 }

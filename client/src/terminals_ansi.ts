@@ -1,6 +1,6 @@
 import ansiRegex from 'ansi-regex';
 const ansi_regex=ansiRegex()
-type font_style = 'normal' | 'bold' | 'italic' | 'underline' | 'blinking' | 'inverse' | 'strikethrough';
+type font_style = 'normal' | 'bold' | 'italic' |'faint'| 'underline' | 'blinking' | 'inverse' | 'strikethrough';
 
 export interface Style {
   foreground: string | undefined;
@@ -215,11 +215,13 @@ function applySGRCode(params: number[], style: Style): void {
 
     // Font Styles
     if (code === 1) { style.font_styles.add('bold'); i++; continue; }
+    if (code === 2) { style.font_styles.add('faint'); i++; continue; }
     if (code === 3) { style.font_styles.add('italic'); i++; continue; }
     if (code === 4) { style.font_styles.add('underline'); i++; continue; }
     if (code === 5) { style.font_styles.add('blinking'); i++; continue; }
     if (code === 7) { style.font_styles.add('inverse'); i++; continue; }
     if (code === 9) { style.font_styles.add('strikethrough'); i++; continue; }
+    if (code === 22) { style.font_styles.delete('faint');style.font_styles.delete('bold'); i++; continue; }
 
     // Foreground (Standard & Bright)
     if (code >= 30 && code <= 37) { style.foreground = getAnsiNamedColor(code - 30); i++; continue; }
