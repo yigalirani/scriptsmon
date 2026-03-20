@@ -105,6 +105,8 @@
     "unicorn/prefer-ternary":"off",
     "eslint/no-shadow":"off",
     "eslint/complexity":"off",
-    "eslint/no-control-regex":"off"
+    "eslint/no-control-regex":"off",
+    "typescript/prefer-readonly-parameter-types":"off"
+
   }
 }

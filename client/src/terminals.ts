@@ -4,7 +4,7 @@ import  {type s2t,default_get} from '@yigal/base_types'
 //import { WebglAddon  } from '@xterm/addon-webgl';
 //import { FitAddon } from '@xterm/addon-fit';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
-import type { Folder,Runner,RunnerReport,Reason} from '../../src/data.js';
+import type { Folder,Runner,RunnerReport,Reason,Filename} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
 import  {type Style,strip_ansi,generate_html} from './terminals_ansi.js';
@@ -27,6 +27,44 @@ function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
   const ms_display=show_ms?`<span class=ms>.${pad3(milliseconds)}</span>`:''
   return `<div title="${title}">${time}${ms_display}</div>`;
 }
+function rel_click(event:MouseEvent,effective_watch:Filename[]){
+  const {target}=event
+  if (!(target instanceof Element))
+    return false
+  const parent=get_parent_by_class(target,'rel')
+  if (parent==null)
+    return false
+  
+  if (!event.ctrlKey){
+    const {title}=parent
+    post_message({
+      command: "command_open_file_rowcol",
+      workspace_folder:'',
+      source_file:title,
+      row:0,
+      col:0
+    })
+    return true     
+  }
+  
+  const rel=effective_watch.find(x=>x.rel.str===parent.textContent)
+  if (rel!=null){
+    //rel
+    post_message({
+      command: "command_open_file_pos",
+      pos:rel.rel
+    })
+    return true
+  }
+  return false
+}  
+
+function make_onclick(parent:HTMLElement,workspace_folder:string,effective_watch:Filename[]){
+  return function(event:MouseEvent){
+    if (rel_click(event,effective_watch))
+      return
+  }
+}
 
 function create_terminal_element(runner:Runner): HTMLElement {
   const terms_container=query_selector<HTMLElement>(document.body,'.terms_container')
@@ -46,40 +84,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
   <div class=term></div>
 </div>
   `,terms_container)
-  ans.addEventListener('click',event=>{
-    const {target}=event
-    if (!(target instanceof Element))
-      return
-    
-    (()=>{
-      const parent=get_parent_by_class(target,'rel')
-      if (parent==null)
-        return
-      
-      if (!event.ctrlKey){
-        const {title}=parent
-        post_message({
-          command: "command_open_file_rowcol",
-          workspace_folder:'',
-          source_file:title,
-          row:0,
-          col:0
-        })
-        return        
-      }
-     
-      const rel=runner.effective_watch.find(x=>x.rel.str===parent.textContent)
-      if (rel!=null){
-        //rel
-        post_message({
-          command: "command_open_file_pos",
-          pos:rel.rel
-        })
-      }
-    })()
-
-   
-  })
+  ans.addEventListener('click',make_onclick(ans,runner.workspace_folder,runner.effective_watch))
   return ans;
 }
 function calc_elapsed_html(report:RunnerReport,runner:Runner){
