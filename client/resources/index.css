@@ -499,11 +499,13 @@ span.term_title_watch{
   padding-right: 5px;
   user-select: none;
 }
-[source_file]:hover {
+[data-source_file]:hover {
   text-decoration: underline;
+  cursor: pointer;    
+  font-weight:900;
 }
 
 .line span:hover{
-  text-decoration: underline;
-  cursor: pointer;
+
+
 }
