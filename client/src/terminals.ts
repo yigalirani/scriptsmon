@@ -34,7 +34,7 @@ function link_click(event:MouseEvent,target:HTMLElement,workspace_folder:string)
   const {source_file='',row='',col=''}=parent.dataset
   post_message({
     command: "command_open_file_rowcol",
-    workspace_folder:'',
+    workspace_folder,
     source_file,
     row:parseInt(row,10)||0,
     col:parseInt(col,10)||0

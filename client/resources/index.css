@@ -482,7 +482,7 @@ span.term_title_watch{
 
 .line::before {
   content: counter(line-number);
-  color: #685a54;
+  color: #646362;
   /* background-color: #3c3c3c; */
   display: inline-block;
   
@@ -492,7 +492,7 @@ span.term_title_watch{
   text-align: right;
   
   /* The Red Gutter */
-  border-right: 1px solid gray;
+  border-right: 1px dotted #ffffff;
   
   /* REMOVE ALL GAPS */
   margin-right: 2px;
