@@ -242,8 +242,10 @@ class TerminalPanel{
       //this.reset_link_provider() //no need to do it here because term.clear is not effective immideeatly. btter do it on marker dispose 
     }
     this.last_run_id=last_run.run_id
+    this.el.querySelector('.eof')?.classList.remove('eof')
     this.term_write(last_run.stderr,"stderr")
     this.term_write(last_run.stdout,"stdout")
+    this.term_el.lastElementChild?.classList.add('eof')
   }
 }
 

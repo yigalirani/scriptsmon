@@ -509,6 +509,10 @@ span.term_title_watch{
   border-right: 2px solid red;  
   margin-right: 2px;
 }
+.eof::after{
+  content: "<eof>";
+  background-color:purple;
+}
 [data-source_file]:hover {
   text-decoration: underline;
   cursor: pointer;    
