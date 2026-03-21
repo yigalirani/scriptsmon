@@ -523,3 +523,6 @@ span.term_title_watch{
 
 
 }
+.line_stdout span,.line_stderr span {
+    display: contents;
+}
