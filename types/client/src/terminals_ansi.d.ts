@@ -1,4 +1,4 @@
-type font_style = 'normal' | 'bold' | 'italic' | 'faint' | 'underline' | 'blinking' | 'inverse' | 'strikethrough';
+type font_style = 'bold' | 'italic' | 'faint' | 'underline' | 'blinking' | 'inverse' | 'strikethrough';
 export interface Style {
     foreground: string | undefined;
     background: string | undefined;

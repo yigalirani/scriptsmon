@@ -1,6 +1,6 @@
 import ansiRegex from 'ansi-regex';
 const ansi_regex=ansiRegex()
-type font_style = 'normal' | 'bold' | 'italic' |'faint'| 'underline' | 'blinking' | 'inverse' | 'strikethrough';
+type font_style = 'bold' | 'italic' |'faint'| 'underline' | 'blinking' | 'inverse' | 'strikethrough';
 
 export interface Style {
   foreground: string | undefined;
@@ -191,16 +191,22 @@ function get8BitColor(n: number): string {
   return `rgb(${r},${g},${b})`;
 }
 
-function cloneStyle(style: Style): Style {
+function clone_style(style: Style): Style {
   // Requirement: if all font styles are normal, don't report 'normal'
-  const styles = new Set(style.font_styles);
-  styles.delete('normal'); 
+  return {...style,font_styles:new Set(style.font_styles)}
+}
 
-  return {
-    foreground: style.foreground,
-    background: style.background,
-    font_styles: styles,
-  };
+function is_same_style(a: Style | undefined, b: Style): boolean {
+  if (a == null)
+    return false
+  if (a.foreground !== b.foreground || a.background !== b.background)
+    return false
+  if (a.font_styles.size !== b.font_styles.size)
+    return false
+  for (const style of a.font_styles)
+    if (!b.font_styles.has(style))
+      return false
+  return true
 }
 
 function applySGRCode(params: number[], style: Style): void {
@@ -257,7 +263,17 @@ function applySGRCode(params: number[], style: Style): void {
     i++;
   }
 }
-
+function dedup_positions(style_positions:Array<StylePosition>){
+  const ans=[]
+  let last:StylePosition|undefined
+  for (const x of style_positions){
+    const same=is_same_style(last,x)
+    last=x
+    if (!same)
+      ans.push(x)
+  }
+  return ans
+}
 export function strip_ansi(text: string, start_style: Style){
   const style_positions: Array<StylePosition> = [];
   const strings=[]
@@ -286,14 +302,23 @@ export function strip_ansi(text: string, start_style: Style){
     applySGRCode(params, current_style);
 
     // 4. Capture state
-    const cloned={...cloneStyle(current_style),position}
-    if (style_positions.at(-1)?.position===position)
+    const cloned={...clone_style(current_style),position}
+    const last_style=style_positions.at(-1)
+    if (is_same_style(last_style, cloned))
+        continue
+    if (last_style?.position===position) {
       style_positions.splice(-1,1,cloned)
-    else
-      style_positions.push(cloned)
+      continue
+    }
+    style_positions.push(cloned)
+    //if (is_same_style(style_positions.at(-1),style_positions.at(-2)))
+    //console.log('after_bug')
   }
-  return {
+  
+  const ans= {
     plain_text:strings.join('')+text.slice(last_index),
-    style_positions
-  };
+    style_positions:dedup_positions(style_positions) //dedup_positions is needed even thoow we knowen out a few above 
+  }; 
+  console.log(ans)
+  return ans
 }

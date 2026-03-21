@@ -478,6 +478,8 @@ span.term_title_watch{
   counter-increment: line-number;
   background-color: black; /* Moved here for a consistent background */
   white-space: pre;
+  display: flex;
+  min-width: fit-content;
 }
 
 .line_stderr::before,.line_stdout::before  {
@@ -485,6 +487,10 @@ span.term_title_watch{
   color: #646362;
   /* background-color: #3c3c3c; */
   display: inline-block;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: black;
   
   /* Fixed width for the number area */
   width: 30px;

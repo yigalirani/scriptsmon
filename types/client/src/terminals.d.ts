@@ -3,17 +3,20 @@ import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
 import { type Style } from './terminals_ansi.js';
 type Channel = 'stderr' | 'stdout';
+type ChannelState = {
+    last_line: string;
+    ancore: string | undefined;
+    style: Style;
+};
 declare class TerminalPanel {
     last_run_id: number | undefined;
     el: HTMLElement;
     term_el: Element;
-    last_line: string;
-    ancore: string | undefined;
-    style: Style;
+    channel_states: Record<Channel, ChannelState>;
     constructor(runner: Runner);
     set_visibility(val: boolean): void;
     term_clear(): void;
-    line_to_html: (x: string) => string;
+    line_to_html: (x: string, state: ChannelState, line_class: string) => string;
     term_write(output: string[], channel: Channel): void;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }
