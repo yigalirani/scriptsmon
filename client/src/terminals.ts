@@ -218,11 +218,12 @@ class TerminalPanel{
     if (channel_state.last_line!=='')
       this.term_el.querySelector(`.${line_class}:last-child`)?.remove()
     channel_state.last_line=lines.at(-1)||''
+    const lines_to_render = channel_state.last_line === '' ? lines.slice(0,-1) : lines
 
 
 
 
-    const new_html=lines.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
+    const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
     this.term_el.insertAdjacentHTML('beforeend',new_html)
   }
   update_terminal(report:RunnerReport,runner:Runner){

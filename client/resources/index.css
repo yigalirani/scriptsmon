@@ -495,12 +495,13 @@ span.term_title_watch{
   border-right: 1px dotted #ffffff;
   
   /* REMOVE ALL GAPS */
-  margin-right: 2px;
+  margin-right: 3px;
   padding-right: 5px;
   user-select: none;
 }
 .line_stderr::before{
   border-right: 2px solid red;  
+  margin-right: 2px;
 }
 [data-source_file]:hover {
   text-decoration: underline;
