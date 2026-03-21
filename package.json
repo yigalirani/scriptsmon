@@ -11,7 +11,7 @@
     "repository": "https://github.com/yigalirani/scriptsmon.git",
     "scripts": {
         "test": "node ./dist/test.js",
-        "build": "node build.ts",
+        "build": "node build.ts", 
         "tsc": "tsc",
         "eslint": "eslint . --color --max-warnings=0",
         "ls": "ls --color=always --hyperlink=always -la",
@@ -20,7 +20,8 @@
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ", 
         "biome": "biome lint --colors=force",
-        "vsce": "vsce package"
+        "vsce": "vsce package",
+        "find"        : "find c:\\windows\\system32 | grep --color=always -F '.ts'"      
     },
     "workspaces": [
         "client"

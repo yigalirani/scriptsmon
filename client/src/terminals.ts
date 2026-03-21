@@ -161,13 +161,19 @@ const clear_style:Style={
   font_styles: new Set()
 }
 type Channel='stderr'|'stdout'
+type ChannelState={
+  last_line:string
+  ancore:string|undefined
+  style:Style
+}
 class TerminalPanel{
   last_run_id:number|undefined
   el
   term_el
-  last_line=''
-  ancore:string|undefined
-  style=clear_style
+  channel_states:Record<Channel,ChannelState>={
+    stdout:{last_line:'',ancore:undefined,style:clear_style},
+    stderr:{last_line:'',ancore:undefined,style:clear_style}
+  }
 
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
@@ -182,61 +188,41 @@ class TerminalPanel{
 
   term_clear(){
     this.term_el.innerHTML=''
-    this.style=clear_style
-    this.ancore=undefined
-    this.last_line=''
+    this.channel_states={
+      stdout:{last_line:'',ancore:undefined,style:clear_style},
+      stderr:{last_line:'',ancore:undefined,style:clear_style}
+    }
   }
-  line_to_html=(x:string)=>{
+  line_to_html=(x:string,state:ChannelState,line_class:string)=>{
     const {
       plain_text,
       style_positions
-    }=strip_ansi(x, this.style)
-    this.style=style_positions.at(-1)||this.style
-    const {replacments,ancore}=parse(plain_text,this.ancore)
+    }=strip_ansi(x, state.style)
+    state.style=style_positions.at(-1)||state.style
+    const {replacments,ancore}=parse(plain_text,state.ancore)
     const html=generate_html({style_positions,replacments,plain_text})
 
-    this.ancore=ancore
+    state.ancore=ancore
     const br=(plain_text===''?'<br>':'')
-    return `<div class=line>${html}${br}</div>`
+    return `<div class="${line_class}">${html}${br}</div>`
   }
   term_write(output:string[],channel:Channel){
-    /*
-    concat. convert \r\n to \n strip away cursor movement
-    if this.last_line exists is not empty pre prend it and delete the last html line put
-    split over \n
-    put it int new_lines
-    this.last_line=new_lines.at(-1)
-    for each line do
-      replace non-color ansi codes with empty spans 
-      using regex 
-        find ancore and replace with <p data-file data-row data-col>text</p>
-        encore ref
-        links
-      we now have p tags with text that may have ansi codes p atgs do not span lines
-      using regex replace ansi colors with divs.
-      question: how to tread ovrelapping links and ansi colors answer: regex stage before will not let that happen and alaso tools themself will not
 
-      using regex replace, replace all ansi colors with divs
-      using regex replace, replace all unproccessed ansi code with span class=code
-    on the panel add on click that proccess these
-    on the last line add <span class=oef></span>
-
-
-
-    */
     if (output.length===0)
       return
-    const joined_lines=[this.last_line,...output].join('').replaceAll('\r\n','\n')
+    const channel_state=this.channel_states[channel]
+    const line_class=`line_${channel}`
+    const joined_lines=[channel_state.last_line,...output].join('').replaceAll('\r\n','\n')
     const lines=joined_lines.split('\n')
   
-    if (this.last_line!=='')
-      this.term_el.lastElementChild?.remove();
-    this.last_line=lines.at(-1)||''
+    if (channel_state.last_line!=='')
+      this.term_el.querySelector(`.${line_class}:last-child`)?.remove()
+    channel_state.last_line=lines.at(-1)||''
 
 
 
 
-    const new_html=lines.map(this.line_to_html).join('')
+    const new_html=lines.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
     this.term_el.insertAdjacentHTML('beforeend',new_html)
   }
   update_terminal(report:RunnerReport,runner:Runner){
@@ -255,8 +241,8 @@ class TerminalPanel{
       //this.reset_link_provider() //no need to do it here because term.clear is not effective immideeatly. btter do it on marker dispose 
     }
     this.last_run_id=last_run.run_id
-    this.term_write(last_run.stdout,"stdout")
     this.term_write(last_run.stderr,"stderr")
+    this.term_write(last_run.stdout,"stdout")
   }
 }
 

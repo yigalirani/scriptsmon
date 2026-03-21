@@ -474,13 +474,13 @@ span.term_title_watch{
     overflow: auto;
     counter-reset: line-number;
 }
-.line {
+.line_stderr,.line_stdout {
   counter-increment: line-number;
   background-color: black; /* Moved here for a consistent background */
   white-space: pre;
 }
 
-.line::before {
+.line_stderr::before,.line_stdout::before  {
   content: counter(line-number);
   color: #646362;
   /* background-color: #3c3c3c; */
@@ -498,6 +498,9 @@ span.term_title_watch{
   margin-right: 2px;
   padding-right: 5px;
   user-select: none;
+}
+.line_stderr::before{
+  border-right: 2px solid red;  
 }
 [data-source_file]:hover {
   text-decoration: underline;
