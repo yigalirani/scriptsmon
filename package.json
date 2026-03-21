@@ -14,12 +14,12 @@
         "build": "node build.ts",
         "tsc": "tsc",
         "eslint": "eslint . --color --max-warnings=0",
-        "ls": "ls -la  --color=always",
+        "ls": "ls --color=always --hyperlink=always -la",
         "compile": "npm run build & cd client & npm run build",
         "vscode:prepublish": "npm run compile",
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ", 
-        "biome": "biome lint",
+        "biome": "biome lint --colors=force",
         "vsce": "vsce package"
     },
     "workspaces": [
