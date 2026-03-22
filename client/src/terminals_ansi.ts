@@ -7,25 +7,45 @@ export interface Style {
   background: string | undefined;
   font_styles: Set<font_style>;
 }
-
-interface StylePosition extends Style {
+type AnsiCommandType='style'|'insert'|'style_insert'
+interface AnsiCommand{
   position: number;
+  command:AnsiCommandType
 }
-export interface Replacement{
-  pos:number
+
+interface AnsiStyleCommand extends AnsiCommand{
+  command:'style'
+  style:Style
+}
+export interface AnsiInsertCommand extends AnsiCommand{
+  command:'insert'
   str:string
+}
+export interface AnsiStyleInsertCommand extends AnsiCommand{
+  command:'style_insert'
+  str:string,
+  style:Style
+}
+function is_style_command(a:AnsiCommand|undefined):a is AnsiStyleCommand{
+  return a?.command==="style"
+}
+function is_insert_command(a:AnsiCommand|undefined):a is AnsiInsertCommand{
+  return a?.command==="insert"
+}
+function is_style_insert_command(a:AnsiCommand|undefined):a is AnsiStyleInsertCommand{
+  return a?.command==="style_insert"
 }
 /*export function _generate_html({start_style,style_positions,replacments,plain_text}:{
   start_style:Style
-  replacments:Array<Replacement>
+  replacments:Array<Insert>
   style_positions: Array<StylePosition>
   plain_text:string
 }):{
   html:string,
   end_style:Style
 }{
-  position in StylePosition, start,end in Replacement all refer to postion in plain_text
-  open and close in Replacement means the text that should be inserted 
+  position in StylePosition, start,end in Insert all refer to postion in plain_text
+  open and close in Insert means the text that should be inserted 
   perform the replacement but also add divs to apply styles in style_positions, 
   the style in StylePosition sets the style starting at plain_text postion until the end undefined values foreground,background measns stay with the same stle
   return html and end postion
@@ -44,16 +64,16 @@ export interface Replacement{
 
 }*/
 
-function check_replacements_validity(replacments: Array<Replacement>): void {
+function check_replacements_validity(inserts: Array<AnsiInsertCommand>): void {
   let last_end = -1;
-  for (const r of replacments) {
-    if (r.pos < last_end)
+  for (const r of inserts) {
+    if (r.position < last_end)
       throw new Error("Replacements cannot overlap and must be sorted");
-    last_end = r.pos;
+    last_end = r.position;
   }
 }
 
-function check_style_positions_validity(style_positions: Array<StylePosition>): void {
+function check_style_positions_validity(style_positions: Array<AnsiStyleCommand>): void {
   let last_pos = -1;
   for (const s of style_positions) {
     if (s.position < last_pos)
@@ -99,70 +119,116 @@ function get_style_css(style: Style|undefined): string {
 function is_clear_style(style:Style){
   return style.background==null&&style.foreground==null&&style.font_styles.size===0
 }
+class HTMLMaker{
+  set_style(style:Style){
+  }
+  push_char(a:string){
+  }
+  push_replacement(a:string){
+  }
+}
+function merge_one(a:AnsiCommand,b:AnsiCommand):AnsiStyleInsertCommand{
+  if (is_style_command(a)&&is_insert_command(b) ){  
+    return {
+      command:"style_insert",
+      position:a.position,
+      style:a.style,
+      str:b.str
+    }
+  }
+  if (is_style_command(b)&&is_insert_command(a) ){  
+    return {
+      command:"style_insert",
+      position:a.position,
+      style:b.style,
+      str:a.str
+    }
+  }  
+  throw new Error("unexpected ansi structure")  
+}
+function merge(a:Array<AnsiCommand>,b:Array<AnsiCommand>){
+  const sorted=[...a,...b].toSorted() //todo: marge faster using the fact that a and b are sorted by themself, or maybe that automaticly faster
+  const ans:Array<AnsiCommand>=[]
+  for (const x of sorted){
+    const last_index:number=ans.length - 1
+    const last_item=ans[last_index]
+    if(last_item?.position===x.position)
+      ans[last_index] = merge_one(last_item,x)
+    else
+      ans.push(x)
+  }
+  return ans
+}
 export function generate_html({
   style_positions,
   replacments,
   plain_text
 }: {
-  replacments: Array<Replacement>
-  style_positions: Array<StylePosition>
+  replacments: Array<AnsiInsertCommand>
+  style_positions: Array<AnsiStyleCommand>
   plain_text: string
 }): string{
   check_replacements_validity(replacments);
   check_style_positions_validity(style_positions);
+  const commands=merge(replacments,style_positions)
   const html:string[]= [];
 
-  let style_head = 0;
-  let repl_head = 0;
-  let num_open=0
-  function open_style(pos:number){
-    if (num_open>0){
-      throw new Error("style alreay open")
-    }
-    for(;;){
-      if (style_head+1>=style_positions.length)
-        break
-      if (style_positions[style_head+1]!.position>pos)
-        break
-      style_head++
-    }
-    const cur_style=style_positions[style_head]
-    if (cur_style==null||cur_style.position>pos||is_clear_style(cur_style))
-      html.push(`<span >`);
-    else
-      html.push(`<span ${get_style_css(cur_style)}>`);
-    num_open++
-  }
-  function close_style(){
-    if (num_open===0)
+  let command_head = 0;
+  let pushed_style:Style|undefined
+  function push_style(style?:Style){
+    if (style==null||is_clear_style(style)){
+      html.push(`<span>`)
       return
-    num_open--
-    html.push(`</span>`);
-  }
-
-  open_style(0);
-  for (let i = 0; i <= plain_text.length; i++) {
-    const cur_replacement=replacments[repl_head]
-    const has_style_change=style_positions[style_head+1]?.position===i;
-    if (cur_replacement?.pos === i || has_style_change) {
-      close_style()
-      if (cur_replacement?.pos === i) {
-        html.push(cur_replacement.str)
-        repl_head++
-      }
-      open_style(i)
     }
-    const c=plain_text[i]
-    if (c!=null)
-      html.push(c)
-
+    if (pushed_style!=null){
+      throw new Error("style alreay open")
+    }    
+    html.push(`<span ${get_style_css(style)}>`);
+    pushed_style=style
   }
-  close_style()
+  function pop_style(){
+    html.push(`</span>`);    
+    if (pushed_style==null)
+      return
+    const ans=pushed_style
+    pushed_style=undefined
+    html.push(`</span>`);
+    return ans
+  }
+  function get_command(position:number){
+    for(;;){
+      const ans=commands[command_head]
+      if (ans==null)
+        return 
+      if (ans.position===position)
+        return ans
+      if (ans.position>position)
+        return
+      command_head++
+    }
+  }
+  for (let i = 0; i <= plain_text.length; i++) {
+    const command=get_command(i)
+    if (is_insert_command(command)){
+      const style=pop_style()
+      html.push(command.str)
+      push_style(style)
+    }
+    if (is_style_command(command)){
+      push_style(command.style)
+    }
+    if (is_style_insert_command(command)){
+      pop_style()
+      html.push(command.str)
+      push_style(command.style)      
+    }
+    const c=plain_text[i]!
+    html.push(c)
+  }
+  pop_style()
   const ans=html.join('')
   return ans
 }
-
-
 
 /**
  * Maps standard ANSI color codes to CSS named colors.
@@ -196,7 +262,7 @@ function clone_style(style: Style): Style {
   return {...style,font_styles:new Set(style.font_styles)}
 }
 
-function is_same_style(a: Style | undefined, b: Style): boolean {
+function is_same_style(a: Style|undefined, b: Style): boolean {
   if (a == null)
     return false
   if (a.foreground !== b.foreground || a.background !== b.background)
@@ -263,11 +329,11 @@ function applySGRCode(params: number[], style: Style): void {
     i++;
   }
 }
-function dedup_positions(style_positions:Array<StylePosition>){
+function dedup_positions(style_positions:Array<AnsiStyleCommand>){
   const ans=[]
-  let last:StylePosition|undefined
+  let last:AnsiStyleCommand|undefined
   for (const x of style_positions){
-    const same=is_same_style(last,x)
+    const same=is_same_style(last?.style,x.style)
     last=x
     if (!same)
       ans.push(x)
@@ -275,7 +341,7 @@ function dedup_positions(style_positions:Array<StylePosition>){
   return ans
 }
 export function strip_ansi(text: string, start_style: Style){
-  const style_positions: Array<StylePosition> = [];
+  const style_positions: Array<AnsiStyleCommand> = [];
   const strings=[]
   const current_style = { ...start_style, font_styles: new Set(start_style.font_styles) };
 
@@ -302,9 +368,9 @@ export function strip_ansi(text: string, start_style: Style){
     applySGRCode(params, current_style);
 
     // 4. Capture state
-    const cloned={...clone_style(current_style),position}
+    const cloned:AnsiStyleCommand={style:clone_style(current_style),position,command:'style'}
     const last_style=style_positions.at(-1)
-    if (is_same_style(last_style, cloned))
+    if (is_same_style(last_style?.style, cloned.style))
         continue
     if (last_style?.position===position) {
       style_positions.splice(-1,1,cloned)

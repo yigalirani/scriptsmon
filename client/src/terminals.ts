@@ -198,7 +198,7 @@ class TerminalPanel{
       plain_text,
       style_positions
     }=strip_ansi(x, state.style)
-    state.style=style_positions.at(-1)||state.style
+    state.style=style_positions.at(-1)?.style??state.style
     const {replacments,ancore}=parse(plain_text,state.ancore)
     const html=generate_html({style_positions,replacments,plain_text})
 
@@ -264,7 +264,7 @@ export class Terminals implements Component{
     const report=data as RunnerReport
     const f=(folder:Folder)=>{
       for (const runner of folder.runners)
-        this.get_terminal(runner)?.update_terminal(report,runner)
+        this.get_terminal(runner).update_terminal(report,runner)
       folder.folders.forEach(f) 
     }
     f(report.root)    

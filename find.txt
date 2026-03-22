@@ -1,0 +1,11 @@
+
+> Scriptsmon@1.12.0 find
+> find c:\windows\system32 | grep --color=always -F '.ts'
+
+c:\windows\system32/en-US/hidphone[01;31m[K.ts[m[Kp.mui
+c:\windows\system32/en-US/kmddsp[01;31m[K.ts[m[Kp.mui
+c:\windows\system32/en-US/unimdm[01;31m[K.ts[m[Kp.mui
+c:\windows\system32/hidphone[01;31m[K.ts[m[Kp
+c:\windows\system32/kmddsp[01;31m[K.ts[m[Kp
+c:\windows\system32/remotesp[01;31m[K.ts[m[Kp
+c:\windows\system32/unimdm[01;31m[K.ts[m[Kp

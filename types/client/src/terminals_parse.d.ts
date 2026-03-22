@@ -1,4 +1,4 @@
-import type { Replacement } from './terminals_ansi.js';
+import type { AnsiInsertCommand } from './terminals_ansi.js';
 interface IlinkData {
     start: number;
     end: number;
@@ -11,7 +11,7 @@ export declare function parse_to_links(input: string, ancore: string | undefined
     ancore: string | undefined;
 };
 export declare function parse(line: string, old_ancore: string | undefined): {
-    replacments: Replacement[];
+    replacments: AnsiInsertCommand[];
     ancore: string | undefined;
 };
 export {};

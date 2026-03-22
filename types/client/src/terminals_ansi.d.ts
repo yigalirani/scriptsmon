@@ -4,20 +4,31 @@ export interface Style {
     background: string | undefined;
     font_styles: Set<font_style>;
 }
-interface StylePosition extends Style {
+type AnsiCommandType = 'style' | 'insert' | 'style_insert';
+interface AnsiCommand {
     position: number;
+    command: AnsiCommandType;
 }
-export interface Replacement {
-    pos: number;
+interface AnsiStyleCommand extends AnsiCommand {
+    command: 'style';
+    style: Style;
+}
+export interface AnsiInsertCommand extends AnsiCommand {
+    command: 'insert';
     str: string;
 }
+export interface AnsiStyleInsertCommand extends AnsiCommand {
+    command: 'style_insert';
+    str: string;
+    style: Style;
+}
 export declare function generate_html({ style_positions, replacments, plain_text }: {
-    replacments: Array<Replacement>;
-    style_positions: Array<StylePosition>;
+    replacments: Array<AnsiInsertCommand>;
+    style_positions: Array<AnsiStyleCommand>;
     plain_text: string;
 }): string;
 export declare function strip_ansi(text: string, start_style: Style): {
     plain_text: string;
-    style_positions: StylePosition[];
+    style_positions: AnsiStyleCommand[];
 };
 export {};

@@ -1,4 +1,4 @@
-import type {Replacement} from './terminals_ansi.js'
+import type {AnsiInsertCommand} from './terminals_ansi.js'
 const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
 const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
@@ -60,11 +60,11 @@ export function parse_to_links(input:string,ancore:string|undefined){
   }
   return {links,ancore}
 }
-function link_to_replacemnt(link:IlinkData):Replacement[]{
+function link_to_replacemnt(link:IlinkData):AnsiInsertCommand[]{
   const {start,end,source_file,row,col}=link
   const open=`<span data-source_file='${source_file}' data-row='${row}' data-col='${col}'>`
   const close=`</span>`
-  return [{pos:start,str:open},{pos:end,str:close}]
+  return [{position:start,str:open,command:'insert'},{position:end,str:close,command:'insert'}]
 }
 
 export function parse(line:string,old_ancore:string|undefined){

@@ -478,7 +478,6 @@ span.term_title_watch{
   counter-increment: line-number;
   background-color: black; /* Moved here for a consistent background */
   white-space: pre;
-  display: flex;
   min-width: fit-content;
 }
 
@@ -517,6 +516,7 @@ span.term_title_watch{
   text-decoration: underline;
   cursor: pointer;    
   font-weight:900;
+  background-color: purple;
 }
 
 .line span:hover{
@@ -524,5 +524,5 @@ span.term_title_watch{
 
 }
 .line_stdout span,.line_stderr span {
-    display: contents;
+    display: inline;
 }
