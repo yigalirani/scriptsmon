@@ -2,8 +2,13 @@ import type {AnsiInsertCommand} from './terminals_ansi.js'
 import {regex} from 'regex';
 const links_regex = regex('g')`
   (?<source_file>               #capture group source_file
+    (?<![.a-zA-Z]) 
     ([a-zA-Z]:)?                #optional drive char followed by colon
-    [a-zA-Z0-9_\-.\/\\@]+       #one or more file name charecters
+    [a-zA-Z0-9_\-\/\\@\.]+        #one or more file name charecters
+    [.]
+    [a-zA-Z0-9]+
+    (?![.])                     #disallow dot immediatly after the match
+
   )
   (
     (   #optional row/col biome style :3:5

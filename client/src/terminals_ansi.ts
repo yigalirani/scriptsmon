@@ -395,6 +395,6 @@ export function strip_ansi(text: string, start_style: Style){
     plain_text:strings.join('')+text.slice(last_index),
     style_positions:with_pos0
   }; 
-  console.log(ans)
+  //console.log(ans)
   return ans
 }
