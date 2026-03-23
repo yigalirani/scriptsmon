@@ -470,13 +470,13 @@ span.term_title_watch{
 
 }
 .term{
-    font-family: monospace;
-    overflow: auto;
-    counter-reset: line-number;
+  font-family: monospace;
+  overflow: auto;
+  counter-reset: line-number;
+  background-color: black; 
 }
 .line_stderr,.line_stdout {
   counter-increment: line-number;
-  background-color: black; /* Moved here for a consistent background */
   white-space: pre;
   min-width: fit-content;
 }
@@ -489,7 +489,7 @@ span.term_title_watch{
   position: sticky;
   left: 0;
   z-index: 1;
-  background-color: black;
+
   
   /* Fixed width for the number area */
   width: 30px;
