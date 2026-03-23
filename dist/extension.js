@@ -8598,7 +8598,7 @@ function attach(child, run, resolve6) {
   child.on("exit", (exit_code, signal) => {
     run.end_time = Date.now();
     run.exit_code = exit_code ?? void 0;
-    if (signal != null || exit_code == null && signal == null) {
+    if (signal != null || exit_code == null) {
       run.stopped = true;
     }
     resolve6(null);

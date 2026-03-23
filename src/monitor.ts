@@ -72,7 +72,7 @@ function attach(child:ChildProcessWithoutNullStreams,run:Run,resolve:(a:unknown)
   child.on("exit", (exit_code,signal) => {
     run.end_time=Date.now()
     run.exit_code=exit_code??undefined
-    if (signal!=null || exit_code==null && signal==null){ //is exit_code==null && signal==null still needed?
+    if (signal!=null || exit_code==null){ //is exit_code==null && signal==null still needed?
       run.stopped=true
     }
     resolve(null);
