@@ -21,7 +21,8 @@
     "strict": true,
     "strictNullChecks": true,
     /* Completeness */
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "pretty": true
   },
   "include": [
     "**/src/*",

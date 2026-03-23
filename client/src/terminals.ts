@@ -3,6 +3,7 @@ import  {type s2t,default_get, get_error} from '@yigal/base_types'
 //import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
 //import { WebglAddon  } from '@xterm/addon-webgl';
 //import { FitAddon } from '@xterm/addon-fit';
+import { Terminal,TerminalListener } from './terminal.js';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component,get_parent_by_data_attibute} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason,Filename} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
@@ -99,6 +100,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
 </div>
   `,terms_container)
   ans.addEventListener('click',make_onclick(ans,runner.workspace_folder,runner.effective_watch))
+  
   return ans;
 }
 function calc_elapsed_html(report:RunnerReport,runner:Runner){
@@ -155,76 +157,41 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
       text
       and return replcement line */
 
-const clear_style:Style={
-  foreground: undefined,
-  background: undefined,
-  font_styles: new Set()
-}
+
 type Channel='stderr'|'stdout'
 type ChannelState={
   last_line:string
   ancore:string|undefined
   style:Style
 }
-class TerminalPanel{
+interface TerminalValues{
+  source_file:string
+  row:string
+  col:string
+}
+class TerminalPanel implements TerminalListener{
   last_run_id:number|undefined
   el
-  term_el
-  channel_states:Record<Channel,ChannelState>={
-    stdout:{last_line:'',ancore:undefined,style:clear_style},
-    stderr:{last_line:'',ancore:undefined,style:clear_style}
-  }
+  term
+
 
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
     this.el=create_terminal_element(runner)
-    this.term_el=query_selector(this.el,'.term')
-    this.term_clear()
+    this.term=new Terminal(query_selector(this.el,'.term'),this)
+    //this.term_clear()
   }
   set_visibility(val:boolean){
     this.el.style.display=(val)?'flex':'none'   
   }
-
-  term_clear(){
-    this.term_el.innerHTML=''
-    this.channel_states={
-      stdout:{last_line:'',ancore:undefined,style:clear_style},
-      stderr:{last_line:'',ancore:undefined,style:clear_style}
+  parse(line_text:string,state:unknown){
+    return{
+      parser_state:'df',
+      ranges:[] 
     }
   }
-  line_to_html=(x:string,state:ChannelState,line_class:string)=>{
-    const {
-      plain_text,
-      style_positions
-    }=strip_ansi(x, state.style)
-    state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
-    const {replacments,ancore}=parse(plain_text,state.ancore)
-    const html=generate_html({style_positions,replacments,plain_text})
-
-    state.ancore=ancore
-    const br=(plain_text===''?'<br>':'')
-    return `<div class="${line_class}">${html}${br}</div>`
-  }
-  term_write(output:string[],channel:Channel){
-
-    if (output.length===0)
-      return
-    const channel_state=this.channel_states[channel]
-    const line_class=`line_${channel}`
-    const joined_lines=[channel_state.last_line,...output].join('').replaceAll('\r\n','\n')
-    const lines=joined_lines.split('\n')
-  
-    if (channel_state.last_line!=='')
-      this.term_el.querySelector(`.${line_class}:last-child`)?.remove()
-    channel_state.last_line=lines.at(-1)||''
-    const lines_to_render = channel_state.last_line === '' ? lines.slice(0,-1) : lines
-
-
-
-
-    const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
-    this.term_el.insertAdjacentHTML('beforeend',new_html)
+  click(values:Record<string,string>){
   }
   update_terminal2(report:RunnerReport,runner:Runner){
     //const title_bar=calc_title_html(report,runner)
@@ -238,16 +205,16 @@ class TerminalPanel{
       return
     const {run_id}=last_run
     if (run_id!==this.last_run_id){
-      this.term_clear()     
+      this.term.term_clear()     
       //this.reset_link_provider() //no need to do it here because term.clear is not effective immideeatly. btter do it on marker dispose 
     }
     this.last_run_id=last_run.run_id
     if (last_run.stderr.length===0 && last_run.stdout.length===0)
       return
-    this.el.querySelector('.eof')?.classList.remove('eof')
-    this.term_write(last_run.stderr,"stderr")
-    this.term_write(last_run.stdout,"stdout")
-    this.term_el.lastElementChild?.classList.add('eof')
+
+    this.term.term_write(last_run.stderr,"stderr")
+    this.term.term_write(last_run.stdout,"stdout")
+    this.term.after_write()
   }
   update_terminal(report:RunnerReport,runner:Runner){
     try{
