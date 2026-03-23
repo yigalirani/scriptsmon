@@ -17,6 +17,17 @@ interface AnsiStyleCommand extends AnsiCommand{
   command:'style'
   style:Style
 }
+function make_clear_style_command(position:number):AnsiStyleCommand{
+  return {
+    command:'style',
+    position,
+    style:{
+      foreground:undefined,
+      background:undefined,
+      font_styles: new Set()
+    }
+  }
+}
 export interface AnsiInsertCommand extends AnsiCommand{
   command:'insert'
   str:string
@@ -147,7 +158,7 @@ function merge_one(a:AnsiCommand,b:AnsiCommand):AnsiStyleInsertCommand{
   throw new Error("unexpected ansi structure")  
 }
 function merge(a:Array<AnsiCommand>,b:Array<AnsiCommand>){
-  const sorted=[...a,...b].toSorted() //todo: marge faster using the fact that a and b are sorted by themself, or maybe that automaticly faster
+  const sorted=[...a,...b].toSorted((a, b)=>a.position-b.position) //todo: marge faster using the fact that a and b are sorted by themself, or maybe that automaticly faster
   const ans:Array<AnsiCommand>=[]
   for (const x of sorted){
     const last_index:number=ans.length - 1
@@ -169,27 +180,27 @@ export function generate_html({
   plain_text: string
 }): string{
   check_replacements_validity(replacments);
+  if (style_positions[0]?.position!==0)
+    style_positions=[...style_positions]
   check_style_positions_validity(style_positions);
   const commands=merge(replacments,style_positions)
   const html:string[]= [];
 
   let command_head = 0;
   let pushed_style:Style|undefined
-  function push_style(style?:Style){
-    if (style==null||is_clear_style(style)){
-      html.push(`<span>`)
-      return
-    }
+  function push_style(style:Style){
     if (pushed_style!=null){
       throw new Error("style alreay open")
     }    
     html.push(`<span ${get_style_css(style)}>`);
     pushed_style=style
   }
-  function pop_style(){
-    html.push(`</span>`);    
-    if (pushed_style==null)
-      return
+  function pop_style(allow_empty:boolean){ 
+    if (pushed_style==null){
+      if (allow_empty)
+        return make_clear_style_command(0).style
+      throw new Error("unexpected null style")
+    }
     const ans=pushed_style
     pushed_style=undefined
     html.push(`</span>`);
@@ -210,22 +221,23 @@ export function generate_html({
   for (let i = 0; i <= plain_text.length; i++) {
     const command=get_command(i)
     if (is_insert_command(command)){
-      const style=pop_style()
+      const style=pop_style(i===0)
       html.push(command.str)
       push_style(style)
     }
     if (is_style_command(command)){
+      pop_style(i===0)
       push_style(command.style)
     }
     if (is_style_insert_command(command)){
-      pop_style()
+      pop_style(i===0)
       html.push(command.str)
       push_style(command.style)      
     }
     const c=plain_text[i]!
     html.push(c)
   }
-  pop_style()
+  pop_style(plain_text.length===0)
   const ans=html.join('')
   return ans
 }
@@ -380,10 +392,15 @@ export function strip_ansi(text: string, start_style: Style){
     //if (is_same_style(style_positions.at(-1),style_positions.at(-2)))
     //console.log('after_bug')
   }
-  
+  const deduped=dedup_positions(style_positions)//dedup_positions is needed even thoow we knowen out a few above 
+  const with_pos0=function(){ //i want a style at pos 0 to help the logic of genetate_html
+    if (deduped[0]?.position!==0)
+      return [make_clear_style_command(0),...deduped]
+    return deduped
+  }()
   const ans= {
     plain_text:strings.join('')+text.slice(last_index),
-    style_positions:dedup_positions(style_positions) //dedup_positions is needed even thoow we knowen out a few above 
+    style_positions:with_pos0
   }; 
   console.log(ans)
   return ans

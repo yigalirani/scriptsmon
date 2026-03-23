@@ -198,7 +198,7 @@ class TerminalPanel{
       plain_text,
       style_positions
     }=strip_ansi(x, state.style)
-    state.style=style_positions.at(-1)?.style??state.style
+    state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
     const {replacments,ancore}=parse(plain_text,state.ancore)
     const html=generate_html({style_positions,replacments,plain_text})
 
