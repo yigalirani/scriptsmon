@@ -78,7 +78,7 @@ function is_style_insert_command(a:AnsiCommand|undefined):a is AnsiStyleInsertCo
 function check_replacements_validity(inserts: Array<AnsiInsertCommand>): void {
   let last_end = -1;
   for (const r of inserts) {
-    if (r.position < last_end)
+    if (r.position <= last_end)
       throw new Error("Replacements cannot overlap and must be sorted");
     last_end = r.position;
   }
@@ -130,14 +130,7 @@ function get_style_css(style: Style|undefined): string {
 function is_clear_style(style:Style){
   return style.background==null&&style.foreground==null&&style.font_styles.size===0
 }
-class HTMLMaker{
-  set_style(style:Style){
-  }
-  push_char(a:string){
-  }
-  push_replacement(a:string){
-  }
-}
+
 function merge_one(a:AnsiCommand,b:AnsiCommand):AnsiStyleInsertCommand{
   if (is_style_command(a)&&is_insert_command(b) ){  
     return {

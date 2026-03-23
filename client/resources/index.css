@@ -473,7 +473,7 @@ span.term_title_watch{
   font-family: monospace;
   overflow: auto;
   counter-reset: line-number;
-  background-color: black; 
+  background-color: var(--vscode-terminal-background);
 }
 .line_stderr,.line_stdout {
   counter-increment: line-number;
@@ -484,6 +484,8 @@ span.term_title_watch{
 .line_stderr::before,.line_stdout::before  {
   content: counter(line-number);
   color: #646362;
+  background-color: var(--vscode-editorGutter-background);
+  color:var(--vscode-editorLineNumber-foreground);
   /* background-color: #3c3c3c; */
   display: inline-block;
   position: sticky;

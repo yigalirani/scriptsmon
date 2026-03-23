@@ -66,9 +66,19 @@ function link_to_replacemnt(link:IlinkData):AnsiInsertCommand[]{
   const close=`</span>`
   return [{position:start,str:open,command:'insert'},{position:end,str:close,command:'insert'}]
 }
-
+function merge_replacements(inserts:Array<AnsiInsertCommand>){
+  const ans=[]
+  for (const x of inserts){
+    const last_item=ans.at(-1)
+    if (x.position===last_item?.position)
+      last_item.str+=x.str
+    else
+      ans.push(x)
+  }
+  return ans
+}
 export function parse(line:string,old_ancore:string|undefined){
   const {links,ancore}=parse_to_links(line,old_ancore)
-  const replacments=links.flatMap(link_to_replacemnt)
+  const replacments=merge_replacements(links.flatMap(link_to_replacemnt))
   return {replacments,ancore}
 }

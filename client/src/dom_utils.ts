@@ -38,7 +38,7 @@ export function get_parent_by_class(el:Element|null,className:string){
     return null
   let ans:Element|null=el
   while(ans!=null){
-    if (ans!=null&&ans.classList.contains(className))
+    if (ans.classList.contains(className))
       return ans as HTMLElement
     ans=ans.parentElement
   }
@@ -107,38 +107,6 @@ export class CtrlTracker{
       }
     });    
   }
-}
-export function path_join(...segments: string[]): string {
-  const parts: string[] = [];
-  let absolute = true;
-
-  for (const segment of segments) {
-    if (!segment) continue;
-
-    absolute = absolute || segment.startsWith("/");
-
-    const tokens = segment.split("/");
-    for (const token of tokens) {
-      if (token === "" || token === ".") continue;
-
-      if (token === ".." && parts.length && parts.at(-1) !== "..") {
-        parts.pop();
-        continue;
-      }
-
-      if (token === ".." && !absolute) {
-        parts.push("..");
-        continue;
-      }
-
-      if (token !== "..") {
-        parts.push(token);
-      }
-    }
-  }
-  const ans = parts.join("/");
-  if (absolute) return `/${ans}`;
-  return ans || ".";
 }
 interface VSCodeApi {
   postMessage(message: unknown): void;

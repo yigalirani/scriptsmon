@@ -1,5 +1,5 @@
 
-import  {type s2t,default_get} from '@yigal/base_types'
+import  {type s2t,default_get, get_error} from '@yigal/base_types'
 //import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
 //import { WebglAddon  } from '@xterm/addon-webgl';
 //import { FitAddon } from '@xterm/addon-fit';
@@ -226,7 +226,7 @@ class TerminalPanel{
     const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
     this.term_el.insertAdjacentHTML('beforeend',new_html)
   }
-  update_terminal(report:RunnerReport,runner:Runner){
+  update_terminal2(report:RunnerReport,runner:Runner){
     //const title_bar=calc_title_html(report,runner)
     const watching=  `${calc_watching_tr(report,runner)}  
   ${calc_reason_tr(report,runner)}`
@@ -248,6 +248,14 @@ class TerminalPanel{
     this.term_write(last_run.stderr,"stderr")
     this.term_write(last_run.stdout,"stdout")
     this.term_el.lastElementChild?.classList.add('eof')
+  }
+  update_terminal(report:RunnerReport,runner:Runner){
+    try{
+      this.update_terminal2(report,runner)
+    }catch(ex){
+      const {message}=get_error(ex)
+      update_child_html(this.el,'.dbg',message)
+    }
   }
 }
 

@@ -13,7 +13,6 @@ export declare class CtrlTracker {
     pressed: boolean;
     constructor();
 }
-export declare function path_join(...segments: string[]): string;
 interface VSCodeApi {
     postMessage(message: unknown): void;
     getState(): unknown;

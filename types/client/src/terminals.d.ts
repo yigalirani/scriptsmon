@@ -18,6 +18,7 @@ declare class TerminalPanel {
     term_clear(): void;
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;
     term_write(output: string[], channel: Channel): void;
+    update_terminal2(report: RunnerReport, runner: Runner): void;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }
 export declare class Terminals implements Component {
