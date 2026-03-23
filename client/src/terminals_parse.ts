@@ -1,5 +1,8 @@
 import type {AnsiInsertCommand} from './terminals_ansi.js'
-const links_regex = /(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?/g;
+import {regex} from 'regex';
+const links_regex = regex('g')`
+  (?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-.\/\\@]+)
+  (:(?<row>\d+))?(:(?<col>\d+))?`
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
 const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
 interface IlinkData{
