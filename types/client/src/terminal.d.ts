@@ -1,5 +1,5 @@
 import { type Style } from './terminals_ansi.js';
-interface ParseRange {
+export interface ParseRange {
     start: number;
     end: number;
     values: Record<string, string>;
@@ -12,12 +12,12 @@ export interface TerminalListener {
     click: (values: Record<string, string>) => void;
 }
 type Channel = 'stderr' | 'stdout';
-type ChannelState = {
+interface ChannelState {
     last_line: string;
     parser_state: unknown;
     style: Style;
-};
-export declare class Terminal<T extends object> {
+}
+export declare class Terminal {
     private term_el;
     private listener;
     channel_states: Record<Channel, ChannelState>;

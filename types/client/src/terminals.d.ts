@@ -1,17 +1,17 @@
 import { type s2t } from '@yigal/base_types';
-import { Terminal, TerminalListener } from './terminal.js';
+import { Terminal, type TerminalListener } from './terminal.js';
 import { type Component } from './dom_utils.js';
 import type { Runner, RunnerReport } from '../../src/data.js';
 declare class TerminalPanel implements TerminalListener {
     last_run_id: number | undefined;
     el: HTMLElement;
-    term: Terminal<object>;
+    term: Terminal;
     workspace_folder: string;
     constructor(runner: Runner);
     set_visibility(val: boolean): void;
-    parse(line_text: string, state: unknown): {
-        parser_state: string;
-        ranges: never[];
+    parse(line_text: string, parse_state: unknown): {
+        parser_state: string | undefined;
+        ranges: import("./terminal.js").ParseRange[];
     };
     click(values: Record<string, string>): void;
     update_terminal2(report: RunnerReport, runner: Runner): void;

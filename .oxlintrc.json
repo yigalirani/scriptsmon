@@ -106,7 +106,8 @@
     "eslint/no-shadow":"off",
     "eslint/complexity":"off",
     "eslint/no-control-regex":"off",
-    "typescript/prefer-readonly-parameter-types":"off"
+    "typescript/prefer-readonly-parameter-types":"off",
+    "typescript/prefer-readonly":"off"
 
   }
 }

@@ -25,9 +25,9 @@
     "rules": {
       "correctness":"on",
       "correctness":{
-        "noUnusedFunctionParameters":"off",
+        "noUnusedFunctionParameters":"warn",
         "noConstantCondition":"off",
-        "noUnusedImports":"off",
+        "noUnusedImports":"warn",
         "noUnreachable":"off"
       },
       "performance":"on",

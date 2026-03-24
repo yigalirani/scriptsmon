@@ -3,13 +3,13 @@ import  {type s2t,default_get, get_error} from '@yigal/base_types'
 //import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
 //import { WebglAddon  } from '@xterm/addon-webgl';
 //import { FitAddon } from '@xterm/addon-fit';
-import { Terminal,TerminalListener } from './terminal.js';
+import { Terminal,type TerminalListener } from './terminal.js';
 import {query_selector,create_element,get_parent_by_class,update_child_html,type Component,get_parent_by_data_attibute} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason,Filename} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
 //import {MyLinkProvider} from './terminal_links.js'
 import  {type Style,strip_ansi,generate_html} from './terminals_ansi.js';
-import {parse} from './terminals_parse.js'
+import {parse_line} from './terminals_parse.js'
 
 
 function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
@@ -186,11 +186,8 @@ class TerminalPanel implements TerminalListener{
   set_visibility(val:boolean){
     this.el.style.display=(val)?'flex':'none'   
   }
-  parse(line_text:string,state:unknown){
-    return{
-      parser_state:'df',
-      ranges:[] 
-    }
+  parse(line_text:string,parse_state:unknown){
+    return parse_line(line_text,parse_state)
   }
   click(values:Record<string,string>){
     const source_file=values.source_file

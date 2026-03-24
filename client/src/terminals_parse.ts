@@ -1,4 +1,5 @@
 import type {AnsiInsertCommand} from './terminals_ansi.js'
+import type {ParseRange} from './terminal.js'
 import {regex} from 'regex';
 const links_regex = regex('g')`
   (?<source_file>               #capture group source_file
@@ -44,45 +45,55 @@ function parse_group_int(groups:GroupType,name:string){
 }
 function parse_group_string(groups:GroupType,name:string){
   if (groups==null)
-    return ''
-  const str=groups[name]||''
-  return str
+    return 
+  return groups[name]
+//  return str
 }
-function calc_match(match:RegExpMatchArray):IlinkData{
+function no_nulls(obj: Record<string, string|undefined>){
+  const ans:Record<string,string>={}
+  for (const [k,v] of Object.entries(obj))
+    if (v!=null)
+      ans[k]=v
+  return ans
+}
+
+
+function calc_match(match:RegExpMatchArray):ParseRange{
   const { index,groups} = match;
   const text = match[0];
   const start= index!
   const end= index! + text.length
-  const row= parse_group_int(groups,'row')
-  const col= parse_group_int(groups,'col')
+  const row= parse_group_string(groups,'row')
+  const col= parse_group_string(groups,'col')
   const source_file=parse_group_string(groups,'source_file')
-  return {start,end,row,col,source_file}
+  return {start,end,values:no_nulls({row,col,source_file})}
 }
-export function parse_to_links(input:string,ancore:string|undefined){
-  const links:IlinkData[]=[]
+export function parse_to_ranges(input:string,parser_state:string|undefined){
+  const ranges:ParseRange[]=[]
   const ancor_match=input.match(ancor_regex)
   if (ancor_match!=null){
     const ret=calc_match(ancor_match)
-    const {source_file:ancore}=ret
-    links.push(ret)
-    return {ancore,links}
+    ranges.push(ret)
+    return {parser_state:ret.values.source_file,ranges}
   }
-  if (ancore!=null){
+  if (parser_state!=null){
     const ref_match = input.match(ref_regex)
     if (ref_match!==null){
-      links.push({
+      const range=calc_match(ref_match)
+      const {values}=range
+      ranges.push({
         ...calc_match(ref_match), //by theoram will source_file will be empty string at this line, overriden by the next
-        source_file:ancore
+        values:{...values,source_file:parser_state}
       })
-      return {ancore,links}
+      return {parser_state,ranges}
     }
   }
 
   for (const match of input.matchAll(links_regex)){
-      ancore=undefined //if found link than cancel the ancore otherwize let it be
-      links.push(calc_match(match))
+      parser_state=undefined //if found link than cancel the ancore otherwize let it be
+      ranges.push(calc_match(match))
   }
-  return {links,ancore}
+  return {ranges,parser_state}
 }
 function link_to_replacemnt(link:IlinkData):AnsiInsertCommand[]{
   const {start,end,source_file,row,col}=link
@@ -101,8 +112,11 @@ function merge_replacements(inserts:Array<AnsiInsertCommand>){
   }
   return ans
 }
-export function parse(line:string,old_ancore:string|undefined){
-  const {links,ancore}=parse_to_links(line,old_ancore)
-  const replacments=merge_replacements(links.flatMap(link_to_replacemnt))
-  return {replacments,ancore}
+function is_string_or_undefined(x:unknown): x is string|undefined{
+  return  typeof x === 'string' || x === undefined;
+}
+export function parse_line(line:string,parser_state:unknown){
+  if (!is_string_or_undefined(parser_state))
+    throw new Error("expecting string or undefined")
+  return parse_to_ranges(line,parser_state)
 }

@@ -1,11 +1,6 @@
-import  {type s2t,default_get, get_error} from '@yigal/base_types'
-import {query_selector,create_element,get_parent_by_class,update_child_html,type Component,get_parent_by_data_attibute} from './dom_utils.js'
-import type { Folder,Runner,RunnerReport,Reason,Filename} from '../../src/data.js';
-import  {post_message,calc_last_run} from './common.js'
-//import {MyLinkProvider} from './terminal_links.js'
-import  {type Style,strip_ansi,generate_html,AnsiInsertCommand} from './terminals_ansi.js';
-//import {parse} from './terminals_parse.js'
-interface ParseRange{
+
+import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand} from './terminals_ansi.js';
+export interface ParseRange{
   start:number
   end:number
   values:Record<string,string>
@@ -18,7 +13,7 @@ export interface TerminalListener{
   click:(values:Record<string,string>)=>void
 }
 type Channel='stderr'|'stdout' 
-type ChannelState={
+interface ChannelState{
   last_line:string
   parser_state:unknown
   style:Style
@@ -36,7 +31,7 @@ function make_channel_states():Record<Channel,ChannelState>{
 }
 function range_to_replacemnt(range:ParseRange):AnsiInsertCommand[]{
   const {start,end,values}=range
-  const datamap=Object.entries(values).map(([k,v])=>`data-${k}='${v}'`)
+  const datamap=Object.entries(values).map(([k,v])=>`data-${k}='${v}'`).join('')
   const open=`<span ${datamap}>`
   const close=`</span>`
   return [{position:start,str:open,command:'insert'},{position:end,str:close,command:'insert'}]
@@ -44,7 +39,7 @@ function range_to_replacemnt(range:ParseRange):AnsiInsertCommand[]{
 function ranges_to_replacments(ranges:Array<ParseRange>){
   return ranges.flatMap(range_to_replacemnt)
 }
-export class Terminal<T extends object>{
+export class Terminal{
   channel_states
   constructor(
     private term_el:HTMLElement,
