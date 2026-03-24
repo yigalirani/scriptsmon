@@ -145,8 +145,8 @@ class TerminalPanel implements TerminalListener{
     const source_file=values.source_file
     if (source_file==null) //todo: check that not empty string?
       return
-    const row=parseInt(values.row??'',10)
-    const col=parseInt(values.col??'',10)
+    const row=parseInt(values.row??'',10)||0
+    const col=parseInt(values.col??'',10)||0
     const {workspace_folder}=this
     post_message({
       command: "command_open_file_rowcol",
