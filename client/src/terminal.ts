@@ -1,5 +1,6 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand} from './terminals_ansi.js';
+import {get_parent_with_dataset} from './dom_utils.js'
 export interface ParseRange{
   start:number
   end:number
@@ -10,7 +11,7 @@ export interface TerminalListener{
     parser_state:unknown,
     ranges:Array<ParseRange> 
   }
-  click:(values:Record<string,string>)=>void
+  link_click:(values:Record<string,string>)=>void
 }
 type Channel='stderr'|'stdout' 
 interface ChannelState{
@@ -39,6 +40,9 @@ function range_to_replacemnt(range:ParseRange):AnsiInsertCommand[]{
 function ranges_to_replacments(ranges:Array<ParseRange>){
   return ranges.flatMap(range_to_replacemnt)
 }
+function get_element_dataset (element: HTMLElement): Record<string, string> {
+  return Object.fromEntries(Object.entries(element.dataset)) as Record<string, string>;
+};
 export class Terminal{
   channel_states
   constructor(
@@ -47,6 +51,17 @@ export class Terminal{
   ){
     this.channel_states=make_channel_states()
     this.term_el.innerHTML=''
+    this.term_el.addEventListener('click',this.onclick)
+  }
+  onclick=(event:MouseEvent)=>{
+    const {target}=event
+    if (!(target instanceof HTMLElement))
+      return    
+    const parent=get_parent_with_dataset(target)
+    if (parent==null)
+      return  
+    const dataset=get_element_dataset(parent)
+    this.listener.link_click(dataset)
   }
   line_to_html=(x:string,state:ChannelState,line_class:string)=>{
     const {

@@ -13,7 +13,7 @@ declare class TerminalPanel implements TerminalListener {
         parser_state: string | undefined;
         ranges: import("./terminal.js").ParseRange[];
     };
-    click(values: Record<string, string>): void;
+    link_click(values: Record<string, string>): void;
     update_terminal2(report: RunnerReport, runner: Runner): void;
     update_terminal(report: RunnerReport, runner: Runner): void;
 }

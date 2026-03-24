@@ -1,14 +1,9 @@
 
 import  {type s2t,default_get, get_error} from '@yigal/base_types'
-//import { Terminal,type IMarker,IDisposable} from '@xterm/xterm';
-//import { WebglAddon  } from '@xterm/addon-webgl';
-//import { FitAddon } from '@xterm/addon-fit';
 import { Terminal,type TerminalListener } from './terminal.js';
-import {query_selector,create_element,get_parent_by_class,update_child_html,type Component,get_parent_by_data_attibute} from './dom_utils.js'
+import {query_selector,create_element,get_parent_by_class,update_child_html,type Component} from './dom_utils.js'
 import type { Folder,Runner,RunnerReport,Reason,Filename} from '../../src/data.js';
 import  {post_message,calc_last_run} from './common.js'
-//import {MyLinkProvider} from './terminal_links.js'
-import  {type Style,strip_ansi,generate_html} from './terminals_ansi.js';
 import {parse_line} from './terminals_parse.js'
 
 
@@ -28,19 +23,6 @@ function formatElapsedTime(ms: number,title:string,show_ms:boolean): string {
   const ms_display=show_ms?`<span class=ms>.${pad3(milliseconds)}</span>`:''
   return `<div title="${title}">${time}${ms_display}</div>`;
 }
-function link_click(event:MouseEvent,target:HTMLElement,workspace_folder:string){
-  const parent=get_parent_by_data_attibute(target,'source_file')
-  if (parent==null)
-    return  
-  const {source_file='',row='',col=''}=parent.dataset
-  post_message({
-    command: "command_open_file_rowcol",
-    workspace_folder,
-    source_file,
-    row:parseInt(row,10)||0,
-    col:parseInt(col,10)||0
-  })  
-}   
 function rel_click(event:MouseEvent,target:HTMLElement,effective_watch:Filename[]){
   const parent=get_parent_by_class(target,'rel')
   if (parent==null)
@@ -70,14 +52,12 @@ function rel_click(event:MouseEvent,target:HTMLElement,effective_watch:Filename[
   return false
 }  
 
-function make_onclick(parent:HTMLElement,workspace_folder:string,effective_watch:Filename[]){
+function make_onclick(effective_watch:Filename[]){
   return function(event:MouseEvent){
     const {target}=event
     if (!(target instanceof HTMLElement))
       return    
-    if (rel_click(event,target,effective_watch))
-      return
-    link_click(event,target,workspace_folder)          
+    rel_click(event,target,effective_watch)
   }
 }
 
@@ -99,8 +79,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
   <div class=term></div>
 </div>
   `,terms_container)
-  ans.addEventListener('click',make_onclick(ans,runner.workspace_folder,runner.effective_watch))
-  
+  ans.addEventListener('click',make_onclick(runner.effective_watch))
   return ans;
 }
 function calc_elapsed_html(report:RunnerReport,runner:Runner){
@@ -134,7 +113,7 @@ function calc_reason_tr(report:RunnerReport,runner:Runner){
   return `<tr><td>(${reason})</td><td><div><div class=rel title=${full_filename}>${full_filename}</div></div></td></tr>`
 }
 
-function calc_watching_tr(report:RunnerReport,runner:Runner){
+function calc_watching_tr(runner:Runner){
   if (runner.effective_watch.length===0)
     return ''
   const sep=`<span class=sep> • </span>`
@@ -142,33 +121,6 @@ function calc_watching_tr(report:RunnerReport,runner:Runner){
   return `<tr><td><div><div class=toggles_icons></div>Watching:</td></div><td><div>${ret}</div></td></tr>`
 }
 
-
-    /*extract class that allows to format ansi to html
-    given start style and a line with ansi
-    provide:
-     text without the ansi
-     end state of the ansi
-     replace function that accepts multiple:
-      start
-      end
-      tag start
-      tag end
-      replement 
-      text
-      and return replcement line */
-
-
-type Channel='stderr'|'stdout'
-type ChannelState={
-  last_line:string
-  ancore:string|undefined
-  style:Style
-}
-interface TerminalValues{
-  source_file:string
-  row:string
-  col:string
-}
 class TerminalPanel implements TerminalListener{
   last_run_id:number|undefined
   el
@@ -189,12 +141,12 @@ class TerminalPanel implements TerminalListener{
   parse(line_text:string,parse_state:unknown){
     return parse_line(line_text,parse_state)
   }
-  click(values:Record<string,string>){
+  link_click(values:Record<string,string>){
     const source_file=values.source_file
     if (source_file==null) //todo: check that not empty string?
       return
-    const row=parseInt(values.row||'',10)
-    const col=parseInt(values.col||'',10)
+    const row=parseInt(values.row??'',10)
+    const col=parseInt(values.col??'',10)
     const {workspace_folder}=this
     post_message({
       command: "command_open_file_rowcol",
@@ -206,7 +158,7 @@ class TerminalPanel implements TerminalListener{
   }
   update_terminal2(report:RunnerReport,runner:Runner){
     //const title_bar=calc_title_html(report,runner)
-    const watching=  `${calc_watching_tr(report,runner)}  
+    const watching=  `${calc_watching_tr(runner)}  
   ${calc_reason_tr(report,runner)}`
     update_child_html(this.el,'.term_title_bar .term_title_duration',calc_elapsed_html(report,runner))
     update_child_html(this.el,'.term_title_bar .watching',watching)

@@ -33,6 +33,17 @@ export function get_parent_by_data_attibute(el:HTMLElement|null,key:string){
   }
   return null
 }
+export function get_parent_with_dataset(el:HTMLElement|null){
+  if (el==null)
+    return null
+  let ans:HTMLElement|null=el
+  while(ans!=null){
+    if (Object.entries(ans.dataset).length!==0)
+      return ans
+    ans=ans.parentElement
+  }
+  return null
+}
 export function get_parent_by_class(el:Element|null,className:string){
   if (el==null)
     return null

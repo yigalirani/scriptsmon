@@ -9,7 +9,7 @@ export interface TerminalListener {
         parser_state: unknown;
         ranges: Array<ParseRange>;
     };
-    click: (values: Record<string, string>) => void;
+    link_click: (values: Record<string, string>) => void;
 }
 type Channel = 'stderr' | 'stdout';
 interface ChannelState {
@@ -22,6 +22,7 @@ export declare class Terminal {
     private listener;
     channel_states: Record<Channel, ChannelState>;
     constructor(term_el: HTMLElement, listener: TerminalListener);
+    onclick: (event: MouseEvent) => void;
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;
     after_write(): void;
     term_write(output: string[], channel: Channel): void;
