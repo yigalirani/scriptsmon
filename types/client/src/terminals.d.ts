@@ -6,6 +6,7 @@ declare class TerminalPanel implements TerminalListener {
     last_run_id: number | undefined;
     el: HTMLElement;
     term: Terminal<object>;
+    workspace_folder: string;
     constructor(runner: Runner);
     set_visibility(val: boolean): void;
     parse(line_text: string, state: unknown): {

@@ -173,11 +173,12 @@ class TerminalPanel implements TerminalListener{
   last_run_id:number|undefined
   el
   term
-
+  workspace_folder
 
   constructor(
     runner:Runner //this is not saved, it doent have the public/private,that in purpuse becasue runner hcnages
   ){
+    this.workspace_folder=runner.workspace_folder
     this.el=create_terminal_element(runner)
     this.term=new Terminal(query_selector(this.el,'.term'),this)
     //this.term_clear()
@@ -192,6 +193,19 @@ class TerminalPanel implements TerminalListener{
     }
   }
   click(values:Record<string,string>){
+    const source_file=values.source_file
+    if (source_file==null) //todo: check that not empty string?
+      return
+    const row=parseInt(values.row||'',10)
+    const col=parseInt(values.col||'',10)
+    const {workspace_folder}=this
+    post_message({
+      command: "command_open_file_rowcol",
+      workspace_folder,
+      source_file,
+      row,
+      col
+    })      
   }
   update_terminal2(report:RunnerReport,runner:Runner){
     //const title_bar=calc_title_html(report,runner)
