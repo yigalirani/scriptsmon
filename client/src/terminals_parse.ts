@@ -1,15 +1,15 @@
-import type {AnsiInsertCommand} from './terminals_ansi.js'
+import {type AnsiInsertCommand,parse_group_string} from './terminals_ansi.js'
+import {re} from './dom_utils.js'
 import type {ParseRange} from './terminal.js'
-import {regex} from 'regex';
-const links_regex = regex('g')`
-  (?<source_file>               #capture group source_file
+
+const links_regex_old = re('g')`
+  (?<source_file>              #capture group source_file
     (?<![.a-zA-Z]) 
-    ([a-zA-Z]:)?                #optional drive char followed by colon
-    [a-zA-Z0-9_\-\/\\@\.]+        #one or more file name charecters
+    ([a-zA-Z]:)?               #optional drive char followed by colon
+    [a-zA-Z0-9_/\\@.-]+        #one or more file name charecters
     [.]
     [a-zA-Z0-9]+
-    (?![.])                     #disallow dot immediatly after the match
-
+    (?![.])                    #disallow dot immediatly after the match
   )
   (
     (   #optional row/col biome style :3:5
@@ -24,7 +24,50 @@ const links_regex = regex('g')`
       (?<col>\d+)
       \)
     )
-  )?               `              
+  )?`     
+function capture(name:string){
+  return function(...content:string[]){
+    return `(?<${name}>${content.join('')})`
+  }
+}
+  //const links_regex2 = re('g')
+function neg_lookahead(...pat:string[]){
+  return `(?!${pat.join('')})`
+}
+function neg_lookbehind(...pat:string[]){
+  return `(?<!${pat.join('')})`
+}
+function seq(...pat:string[]){
+  return `(${pat.join('')})`
+}
+function or(...pat:string[]){
+  return `(${pat.join('|')})`
+}
+function make_re(flags:string){
+  return function(...pat:string[]){
+    return new RegExp(pat.join(''),flags)
+  }
+}
+
+const r = String.raw;
+const digits=r`\d+`
+const row=capture('row')(digits)
+const col=capture('col')(digits)
+const links_regex=make_re('g')(
+  capture('source_file')(            // capture group source_file
+    neg_lookbehind(`[.a-zA-Z]`),
+    `([a-zA-Z]:)?`,               //optional drive char followed by colon
+    r`[a-zA-Z0-9_/\\@.-]+`,        //one or more file name charecters
+    `[.]`,
+    `[a-zA-Z0-9]+`,
+    neg_lookahead('[.]')                    //disallow dot immediatly after the match
+  ),
+  or(
+    seq(r`\(`,row,',',col,r`\)`),
+    seq(':',row,':',col),
+  ),
+  '?'
+)
 const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
 const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
 interface IlinkData{
@@ -34,21 +77,8 @@ interface IlinkData{
   col:number
   source_file:string
 }
-type GroupType= {
-    [key: string]: string;
-} | undefined
-function parse_group_int(groups:GroupType,name:string){
-  if (groups==null)
-    return 0
-  const str=groups[name]||''
-  return parseInt(str, 10)||0 
-}
-function parse_group_string(groups:GroupType,name:string){
-  if (groups==null)
-    return 
-  return groups[name]
-//  return str
-}
+
+
 function no_nulls(obj: Record<string, string|undefined>){
   const ans:Record<string,string>={}
   for (const [k,v] of Object.entries(obj))
@@ -59,13 +89,13 @@ function no_nulls(obj: Record<string, string|undefined>){
 
 
 function calc_match(match:RegExpMatchArray):ParseRange{
-  const { index,groups} = match;
+  const { index} = match;
   const text = match[0];
   const start= index!
   const end= index! + text.length
-  const row= parse_group_string(groups,'row')
-  const col= parse_group_string(groups,'col')
-  const source_file=parse_group_string(groups,'source_file')
+  const row= parse_group_string(match,'row')
+  const col= parse_group_string(match,'col')
+  const source_file=parse_group_string(match,'source_file')
   return {start,end,values:no_nulls({row,col,source_file})}
 }
 export function parse_to_ranges(input:string,parser_state:string|undefined){

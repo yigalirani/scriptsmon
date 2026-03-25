@@ -11,17 +11,17 @@
     "repository": "https://github.com/yigalirani/scriptsmon.git",
     "scripts": {
         "test": "node ./dist/test.js",
-        "build": "node build.ts", 
+        "build": "node build.ts",
         "tsc": "tsc",
         "eslint": "eslint . --color --max-warnings=0",
         "ls": "ls --color=always --hyperlink=always -la",
         "compile": "npm run build & cd client & npm run build",
         "vscode:prepublish": "npm run compile",
         "oxlinttypeaware": "oxlint . --type-aware",
-        "oxlint": "oxlint ", 
+        "oxlint": "oxlint ",
         "biome": "biome lint --colors=force",
         "vsce": "vsce package",
-        "find"        : "find c:\\windows\\system32 | grep --color=always -F '.ts'"      
+        "find": "find c:\\windows\\system32 | grep --color=always -F '.ts'"
     },
     "workspaces": [
         "client"
@@ -71,7 +71,7 @@
                 "command": "Scriptsmon.runner.play",
                 "title": "Play",
                 "icon": "$(play)"
-            }, 
+            },
             {
                 "command": "Scriptsmon.runner.debug",
                 "title": "Debug",
@@ -140,13 +140,13 @@
         "typescript-eslint": "8.57.0"
     },
     "dependencies": {
-
         "@yigal/base_types": "file:../base_types",
         "acorn": "^8.16.0",
         "chokidar": "^5.0.0",
         "eslint": "^9",
         "globals": "^17.4.0",
         "lodash.clonedeep": "^4.5.0",
-        "oxlint-tsgolint": "^0.17.0"
+        "oxlint-tsgolint": "^0.17.0",
+        "regex": "^6.1.0"
     }
 }

@@ -131,3 +131,9 @@ export interface Component{
   on_data:(data:unknown)=>void
 }
 export const ctrl=new CtrlTracker()
+export const re = (flags?: string) =>  //todo: move it to some generic lib like the base_types. already obsolete
+  (strings: TemplateStringsArray, ...values: unknown[]): RegExp => {
+    const raw = String.raw({ raw: strings }, ...values);
+    const sanitized = raw.replace(/#.*$/gm, '').replace(/\s+/g, '');
+    return new RegExp(sanitized, flags);
+  };

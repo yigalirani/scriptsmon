@@ -25,4 +25,5 @@ export interface Component {
     on_data: (data: unknown) => void;
 }
 export declare const ctrl: CtrlTracker;
+export declare const re: (flags?: string) => (strings: TemplateStringsArray, ...values: unknown[]) => RegExp;
 export {};

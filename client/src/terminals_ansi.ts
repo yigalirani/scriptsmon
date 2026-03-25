@@ -1,5 +1,22 @@
 import ansiRegex from 'ansi-regex';
+import {regex} from 'regex'
 const ansi_regex=ansiRegex()
+type GroupType= {
+    [key: string]: string;
+} | undefined
+export function parse_group_int(groups:GroupType,name:string){
+  if (groups==null)
+    return 0
+  const str=groups[name]||''
+  return parseInt(str, 10)||0 
+}
+export function parse_group_string(match:RegExpMatchArray,name:string){
+  const {groups}=match
+  if (groups==null)
+    return 
+  return groups[name]
+//  return str
+}
 type font_style = 'bold' | 'italic' |'faint'| 'underline' | 'blinking' | 'inverse' | 'strikethrough';
 
 export interface Style {

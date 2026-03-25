@@ -22,7 +22,6 @@
     "dependencies": {
         "ansi-regex": "^6.2.2",
         "lodash.isequal": "^4.5.0",
-        "path-browserify": "^1.0.1",
-        "regex": "^6.1.0"
+        "path-browserify": "^1.0.1"
     }
 }

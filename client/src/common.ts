@@ -33,3 +33,4 @@ export function calc_runner_status(report:RunnerReport ,runner:Runner):{
     return {version,state:'done'}
   return {version,state:'error'}
 }
+

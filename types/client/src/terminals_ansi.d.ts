@@ -1,3 +1,8 @@
+type GroupType = {
+    [key: string]: string;
+} | undefined;
+export declare function parse_group_int(groups: GroupType, name: string): number;
+export declare function parse_group_string(match: RegExpMatchArray, name: string): string | undefined;
 type font_style = 'bold' | 'italic' | 'faint' | 'underline' | 'blinking' | 'inverse' | 'strikethrough';
 export interface Style {
     foreground: string | undefined;
