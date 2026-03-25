@@ -53,6 +53,13 @@ const r = String.raw;
 const digits=r`\d+`
 const row=capture('row')(digits)
 const col=capture('col')(digits)
+const optional_rowcol=seq(
+  or(
+    seq(r`\(`,row,',',col,r`\)`),
+    seq(':',row,':',col),
+  ),
+  '?'
+)
 const links_regex=make_re('g')(
   capture('source_file')(            // capture group source_file
     neg_lookbehind(`[.a-zA-Z]`),
@@ -62,13 +69,19 @@ const links_regex=make_re('g')(
     `[a-zA-Z0-9]+`,
     neg_lookahead('[.]')                    //disallow dot immediatly after the match
   ),
-  or(
-    seq(r`\(`,row,',',col,r`\)`),
-    seq(':',row,':',col),
-  ),
-  '?'
+  optional_rowcol
 )
-const ancor_regex = /^(?<source_file>([a-zA-Z]:)?[a-zA-Z0-9_\-./\\@]+)(:(?<row>\d+))?(:(?<col>\d+))?\s*$/;
+
+const ancor_regex=make_re('g')(
+  '^',
+  capture('source_file')(
+    '([a-zA-Z]:)?',
+    r`[a-zA-Z0-9_\-./\\@]+`,
+  ),
+  optional_rowcol,
+  r`\s*$`
+)
+
 const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
 interface IlinkData{
   start:number
