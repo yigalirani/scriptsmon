@@ -48,7 +48,7 @@ export default defineConfig(
       "no-unsafe-member-access":"off",
       "@typescript-eslint/no-explicit-any": "warn",
       "no-unused-labels": "warn", //i dont like this rule because i like to orgenize long routines using labels
-      "@typescript-eslint/no-unnecessary-type-parameters":"warn",//i dont like this rule because it flages some usefull functions sucks as resuse_prev
+      "@typescript-eslint/no-unnecessary-type-parameters":"off",//i dont like this rule because it flages some usefull functions sucks as resuse_prev
       "@typescript-eslint/ban-ts-comment": "warn",
       "@typescript-eslint/no-unnecessary-condition": "warn",//terible law, implmenting it resulted in bugs in the code
       "@typescript-eslint/no-use-before-define": [

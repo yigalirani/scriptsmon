@@ -109,7 +109,7 @@
     "typescript/prefer-readonly-parameter-types":"off",
     "typescript/prefer-readonly":"off",
     "typescript/consistent-return":"off",
-    "typescript/prefer-regexp-exec":"off"
-
+    "typescript/prefer-regexp-exec":"off",
+    "typescript/no-unnecessary-type-parameters":"off" //revisit
   }
 }
