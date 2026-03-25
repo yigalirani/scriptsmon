@@ -46,36 +46,8 @@ function is_insert_command(a:AnsiCommand|undefined):a is AnsiInsertCommand{
 function is_style_insert_command(a:AnsiCommand|undefined):a is AnsiStyleInsertCommand{
   return a?.command==="style_insert"
 }
-/*export function _generate_html({start_style,style_positions,replacments,plain_text}:{
-  start_style:Style
-  replacments:Array<Insert>
-  style_positions: Array<StylePosition>
-  plain_text:string
-}):{
-  html:string,
-  end_style:Style
-}{
-  position in StylePosition, start,end in Insert all refer to postion in plain_text
-  open and close in Insert means the text that should be inserted 
-  perform the replacement but also add divs to apply styles in style_positions, 
-  the style in StylePosition sets the style starting at plain_text postion until the end undefined values foreground,background measns stay with the same stle
-  return html and end postion
-  use snake_case for everything except class and interfaces
-  if using helper function define them outside the main function
 
-  its is guranteeds not to have two overkapping replacements. start <end always. add a sanity function to check that 
-  style_positions are sorted by position. replacments are sorted by start. no two replacements have the same position add sanity functions to check that
-
-  when genrating the html first create an array of substrings then join it -for permormance
-  i just need the implmenation , dont regenerate the existing definitions
-  dont use else
-    when creating set pass along the initaal members rather then adding them immidiatly
-    dont use braces for bocks that have just one statement. put the single statmente in a new line indented 
-  
-
-}*/
-
-function check_replacements_validity(inserts: Array<AnsiInsertCommand>): void {
+function check_inserts_validity(inserts: Array<AnsiInsertCommand>): void {
   let last_end = -1;
   for (const r of inserts) {
     if (r.position <= last_end)
@@ -150,7 +122,11 @@ function merge_one(a:AnsiCommand,b:AnsiCommand):AnsiStyleInsertCommand{
   }  
   throw new Error("unexpected ansi structure")  
 }
-function merge(a:Array<AnsiCommand>,b:Array<AnsiCommand>){
+export function merge_inserts(a:Array<AnsiInsertCommand>,b:Array<AnsiInsertCommand>){
+  const ans=[...a,...b].toSorted((a, b)=>a.position-b.position) //todo: marge faster using the fact that a and b are sorted by themself, or maybe that automaticly faster
+  return ans
+}
+export function merge(a:Array<AnsiCommand>,b:Array<AnsiCommand>){
   const sorted=[...a,...b].toSorted((a, b)=>a.position-b.position) //todo: marge faster using the fact that a and b are sorted by themself, or maybe that automaticly faster
   const ans:Array<AnsiCommand>=[]
   for (const x of sorted){
@@ -165,18 +141,18 @@ function merge(a:Array<AnsiCommand>,b:Array<AnsiCommand>){
 }
 export function generate_html({
   style_positions,
-  replacments,
+  inserts,
   plain_text
 }: {
-  replacments: Array<AnsiInsertCommand>
+  inserts: Array<AnsiInsertCommand>
   style_positions: Array<AnsiStyleCommand>
   plain_text: string
 }): string{
-  check_replacements_validity(replacments);
+  check_inserts_validity(inserts);
   if (style_positions[0]?.position!==0)
     style_positions=[...style_positions]
   check_style_positions_validity(style_positions);
-  const commands=merge(replacments,style_positions)
+  const commands=merge(inserts,style_positions)
   const html:string[]= [];
 
   let command_head = 0;
@@ -349,6 +325,7 @@ export function strip_ansi(text: string, start_style: Style){
   const style_positions: Array<AnsiStyleCommand> = [];
   const strings=[]
   const current_style = { ...start_style, font_styles: new Set(start_style.font_styles) };
+  const link_inserts:Array<AnsiInsertCommand>=[]
 
   let last_index = 0;
   let position=0
@@ -364,6 +341,7 @@ export function strip_ansi(text: string, start_style: Style){
     const sequence = match[0];
     last_index = index+sequence.length
     // 2. Filter for SGR only (ESC [ ... m)
+    /*if link than create a parseRange and return it. remove all link text from plain_text*/
     if (!sequence.startsWith('\x1b[') || !sequence.endsWith('m')) {
       continue;
     }
@@ -393,7 +371,8 @@ export function strip_ansi(text: string, start_style: Style){
   }()
   const ans= {
     plain_text:strings.join('')+text.slice(last_index),
-    style_positions:with_pos0
+    style_positions:with_pos0,
+    link_inserts
   }; 
   //console.log(ans)
   return ans

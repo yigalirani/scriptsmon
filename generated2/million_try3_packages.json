@@ -905,6 +905,14 @@
         "c:\\yigal\\million_try3\\tsconfig.json",
         "c:\\yigal\\million_try3\\tsconfig.settings.json"
       ],
+      "c--yigal-million_try3--tsc_pretty": [
+        "c:\\yigal\\million_try3\\main\\src",
+        "c:\\yigal\\million_try3\\converter\\src",
+        "c:\\yigal\\million_try3\\filesrvr\\src",
+        "c:\\yigal\\million_try3\\package.json",
+        "c:\\yigal\\million_try3\\tsconfig.json",
+        "c:\\yigal\\million_try3\\tsconfig.settings.json"
+      ],
       "c--yigal-million_try3--ls": [
         "c:\\yigal\\million_try3"
       ],
@@ -924,14 +932,6 @@
       ],
       "c--yigal-million_try3-filesrvr--run": [
         "c:\\yigal\\million_try3\\filesrvr\\dist\\index.js"
-      ],
-      "c--yigal-million_try3--tsc_pretty": [
-        "c:\\yigal\\million_try3\\main\\src",
-        "c:\\yigal\\million_try3\\converter\\src",
-        "c:\\yigal\\million_try3\\filesrvr\\src",
-        "c:\\yigal\\million_try3\\package.json",
-        "c:\\yigal\\million_try3\\tsconfig.json",
-        "c:\\yigal\\million_try3\\tsconfig.settings.json"
       ]
     },
     "watching_path_to_id": {
@@ -953,8 +953,8 @@
         "c--yigal-million_try3--eslint_plain",
         "c--yigal-million_try3--oxlint",
         "c--yigal-million_try3--tsc",
-        "c--yigal-million_try3-main--build",
-        "c--yigal-million_try3--tsc_pretty"
+        "c--yigal-million_try3--tsc_pretty",
+        "c--yigal-million_try3-main--build"
       ],
       "c:\\yigal\\million_try3\\converter\\src": [
         "c--yigal-million_try3--biome",
@@ -962,8 +962,8 @@
         "c--yigal-million_try3--eslint_plain",
         "c--yigal-million_try3--oxlint",
         "c--yigal-million_try3--tsc",
-        "c--yigal-million_try3-converter--build",
-        "c--yigal-million_try3--tsc_pretty"
+        "c--yigal-million_try3--tsc_pretty",
+        "c--yigal-million_try3-converter--build"
       ],
       "c:\\yigal\\million_try3\\filesrvr\\src": [
         "c--yigal-million_try3--biome",
@@ -971,8 +971,8 @@
         "c--yigal-million_try3--eslint_plain",
         "c--yigal-million_try3--oxlint",
         "c--yigal-million_try3--tsc",
-        "c--yigal-million_try3-filesrvr--build",
-        "c--yigal-million_try3--tsc_pretty"
+        "c--yigal-million_try3--tsc_pretty",
+        "c--yigal-million_try3-filesrvr--build"
       ],
       "c:\\yigal\\million_try3\\tsconfig.json": [
         "c--yigal-million_try3--biome",

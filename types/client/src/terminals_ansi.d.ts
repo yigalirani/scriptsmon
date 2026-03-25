@@ -22,13 +22,16 @@ export interface AnsiStyleInsertCommand extends AnsiCommand {
     str: string;
     style: Style;
 }
-export declare function generate_html({ style_positions, replacments, plain_text }: {
-    replacments: Array<AnsiInsertCommand>;
+export declare function merge_inserts(a: Array<AnsiInsertCommand>, b: Array<AnsiInsertCommand>): AnsiInsertCommand[];
+export declare function merge(a: Array<AnsiCommand>, b: Array<AnsiCommand>): AnsiCommand[];
+export declare function generate_html({ style_positions, inserts, plain_text }: {
+    inserts: Array<AnsiInsertCommand>;
     style_positions: Array<AnsiStyleCommand>;
     plain_text: string;
 }): string;
 export declare function strip_ansi(text: string, start_style: Style): {
     plain_text: string;
     style_positions: AnsiStyleCommand[];
+    link_inserts: AnsiInsertCommand[];
 };
 export {};

@@ -1,5 +1,5 @@
 
-import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand} from './terminals_ansi.js';
+import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
 import {get_parent_with_dataset} from './dom_utils.js'
 export interface ParseRange{
   start:number
@@ -30,15 +30,15 @@ function make_channel_states():Record<Channel,ChannelState>{
     stderr:{last_line:'',parser_state:undefined,style:clear_style}
   }
 }
-function range_to_replacemnt(range:ParseRange):AnsiInsertCommand[]{
+function range_to_inserts(range:ParseRange):AnsiInsertCommand[]{
   const {start,end,values}=range
   const datamap=Object.entries(values).map(([k,v])=>`data-${k}='${v}'`).join('')
   const open=`<span ${datamap}>`
   const close=`</span>`
   return [{position:start,str:open,command:'insert'},{position:end,str:close,command:'insert'}]
 }
-function ranges_to_replacments(ranges:Array<ParseRange>){
-  return ranges.flatMap(range_to_replacemnt)
+function ranges_to_inserts(ranges:Array<ParseRange>){
+  return ranges.flatMap(range_to_inserts)
 }
 function get_element_dataset (element: HTMLElement): Record<string, string> {
   return Object.fromEntries(Object.entries(element.dataset)) as Record<string, string>;
@@ -66,13 +66,15 @@ export class Terminal{
   line_to_html=(x:string,state:ChannelState,line_class:string)=>{
     const {
       plain_text,
-      style_positions
+      style_positions,
+      link_inserts
     }=strip_ansi(x, state.style)
     state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
     const {ranges,parser_state}=this.listener.parse(plain_text,state.parser_state)
     state.parser_state=parser_state
-    const replacments=ranges_to_replacments(ranges)
-    const html=generate_html({style_positions,replacments,plain_text})
+    const range_inserts=ranges_to_inserts(ranges)
+    const inserts=merge_inserts(range_inserts,link_inserts)
+    const html=generate_html({style_positions,inserts,plain_text})
     const br=(plain_text===''?'<br>':'')
     return `<div class="${line_class}">${html}${br}</div>`
   }

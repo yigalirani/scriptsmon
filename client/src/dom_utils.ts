@@ -1,6 +1,6 @@
 import type { s2t} from '@yigal/base_types'
 
-export function query_selector<T extends Element=Element>(el:Element,selector:string){
+export function query_selector<T extends Element=Element>(el:Element,selector:string){ // 3:32  warning  Type parameter T is used only once in the function signature  @typescript-eslint/no-unnecessary-type-parameters why?
     const ans=el.querySelector<T>(selector);
     if (ans==null)
       throw new Error('selector not found or not expected type')  
