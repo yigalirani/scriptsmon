@@ -1,30 +1,6 @@
-import {type AnsiInsertCommand,parse_group_string} from './terminals_ansi.js'
-import {re} from './dom_utils.js'
+import {parse_group_string} from './terminals_ansi.js'
 import type {ParseRange} from './terminal.js'
 
-const links_regex_old = re('g')`
-  (?<source_file>              #capture group source_file
-    (?<![.a-zA-Z]) 
-    ([a-zA-Z]:)?               #optional drive char followed by colon
-    [a-zA-Z0-9_/\\@.-]+        #one or more file name charecters
-    [.]
-    [a-zA-Z0-9]+
-    (?![.])                    #disallow dot immediatly after the match
-  )
-  (
-    (   #optional row/col biome style :3:5
-      :
-      (?<row>\d+)
-      :
-      (?<col>\d+)
-    )|(
-      \(
-      (?<row>\d+)
-      ,
-      (?<col>\d+)
-      \)
-    )
-  )?`     
 function capture(name:string){
   return function(...content:string[]){
     return `(?<${name}>${content.join('')})`
@@ -84,17 +60,15 @@ const ancor_regex=make_re('')(
   optional_rowcol,
   r`\s*$`
 )
-
-const ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
-interface IlinkData{
-  start:number
-  end:number
-  row:number
-  col:number
-  source_file:string
-}
-
-
+const ref_regex = make_re('')(
+  r`^\s*`,
+  row,
+  ':',
+  col,
+  `(.*)`
+)
+//const old_ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
+//console.log({ref_regex,old_ref_regex})
 function no_nulls(obj: Record<string, string|undefined>){
   const ans:Record<string,string>={}
   for (const [k,v] of Object.entries(obj))
@@ -141,23 +115,7 @@ export function parse_to_ranges(input:string,parser_state:string|undefined){
   }
   return {ranges,parser_state}
 }
-function link_to_replacemnt(link:IlinkData):AnsiInsertCommand[]{
-  const {start,end,source_file,row,col}=link
-  const open=`<span data-source_file='${source_file}' data-row='${row}' data-col='${col}'>`
-  const close=`</span>`
-  return [{position:start,str:open,command:'insert'},{position:end,str:close,command:'insert'}]
-}
-function merge_replacements(inserts:Array<AnsiInsertCommand>){
-  const ans=[]
-  for (const x of inserts){
-    const last_item=ans.at(-1)
-    if (x.position===last_item?.position)
-      last_item.str+=x.str
-    else
-      ans.push(x)
-  }
-  return ans
-}
+
 function is_string_or_undefined(x:unknown): x is string|undefined{
   return  typeof x === 'string' || x === undefined;
 }
