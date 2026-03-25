@@ -38,6 +38,9 @@ function neg_lookbehind(...pat:string[]){
   return `(?<!${pat.join('')})`
 }
 function seq(...pat:string[]){
+  return pat.join('')
+}
+function group(...pat:string[]){
   return `(${pat.join('')})`
 }
 function or(...pat:string[]){
@@ -55,8 +58,8 @@ const row=capture('row')(digits)
 const col=capture('col')(digits)
 const optional_rowcol=seq(
   or(
-    seq(r`\(`,row,',',col,r`\)`),
-    seq(':',row,':',col),
+    group(r`\(`,row,',',col,r`\)`),
+    group(':',row,':',col),
   ),
   '?'
 )
@@ -72,7 +75,7 @@ const links_regex=make_re('g')(
   optional_rowcol
 )
 
-const ancor_regex=make_re('g')(
+const ancor_regex=make_re('')(
   '^',
   capture('source_file')(
     '([a-zA-Z]:)?',
