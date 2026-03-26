@@ -8925,6 +8925,19 @@ async function open_file(pos) {
   } else
     await open_file_start_end(pos.pos);
 }
+async function open_link(url) {
+  const uri = vscode.Uri.parse(url);
+  try {
+    if (uri.scheme === "file") {
+      const doc = await vscode.workspace.openTextDocument(uri);
+      await vscode.window.showTextDocument(doc);
+      return;
+    }
+    await vscode.env.openExternal(uri);
+  } catch (err) {
+    vscode.window.showErrorMessage(`Failed to open: ${get_error(err).message}`);
+  }
+}
 
 // src/extension.ts
 function post_message(view, msg) {
@@ -8944,6 +8957,10 @@ function make_loop_func(monitor) {
         switch (message.command) {
           case "command_open_file_rowcol": {
             void open_file(message);
+            break;
+          }
+          case "command_open_link": {
+            void open_link(message.url);
             break;
           }
           case "command_open_file_pos": {

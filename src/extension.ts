@@ -7,7 +7,8 @@ import {
   register_command,
   type CommandOpenFileRowCol,
   type CommandOpenFilePos,
-  open_file
+  open_file,
+  open_link
 } from './vscode_utils.js'
 import type {
   WebviewView,
@@ -65,6 +66,10 @@ function make_loop_func(monitor:Monitor){
             //const {file,row,col}=message
             break 
           }
+        case "command_open_link":{
+          void open_link(message.url)
+          break;
+        }
         case "command_open_file_pos":{
             void open_file(message)
             //const {file,row,col}=message

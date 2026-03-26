@@ -12,6 +12,7 @@ export interface TerminalListener{
     ranges:Array<ParseRange> 
   }
   dataset_click:(dataset:Record<string,string>)=>void
+  open_link:(url:string)=>void
 }
 type Channel='stderr'|'stdout' 
 interface ChannelState{
@@ -61,7 +62,11 @@ export class Terminal{
     if (parent==null)
       return  
     const dataset=get_element_dataset(parent)
-    this.listener.dataset_click(dataset)
+    const {url}=dataset
+    if (url!=null)
+      this.listener.open_link(url)
+    else
+      this.listener.dataset_click(dataset)
   }
   line_to_html=(x:string,state:ChannelState,line_class:string)=>{
     const {

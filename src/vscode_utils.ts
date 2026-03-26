@@ -161,4 +161,24 @@ export async function open_file(pos:CommandOpenFileRowCol|CommandOpenFilePos){
   }else
     await open_file_start_end(pos.pos)
 }
+export async function open_link(url: string): Promise<void> {
+    const uri = vscode.Uri.parse(url);
 
+    try {
+        if (uri.scheme === 'file') {
+            const doc = await vscode.workspace.openTextDocument(uri);
+            await vscode.window.showTextDocument(doc);
+            return;
+        }
+
+        // openExternal returns false if the user declines or OS fails.
+        // We simply stop here without throwing an error.
+        await vscode.env.openExternal(uri); //not checking return code
+    
+
+    } catch (err: unknown) {
+        // This will still catch your "Network name not found (0x43)" 
+        // because openTextDocument throws for file system errors.
+        vscode.window.showErrorMessage(`Failed to open: ${get_error(err).message}`);
+    }
+}

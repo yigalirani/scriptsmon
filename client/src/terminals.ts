@@ -141,6 +141,12 @@ class TerminalPanel implements TerminalListener{
   parse(line_text:string,parse_state:unknown){
     return parse_line(line_text,parse_state)
   }
+  open_link(url: string){
+    post_message({
+      command:"command_open_link",
+      url
+    })
+  }
   dataset_click(dataset:Record<string,string>){
     const source_file=dataset.source_file
     if (source_file==null) //todo: check that not empty string?

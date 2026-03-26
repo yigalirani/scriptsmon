@@ -10,6 +10,7 @@ export interface TerminalListener {
         ranges: Array<ParseRange>;
     };
     dataset_click: (dataset: Record<string, string>) => void;
+    open_link: (url: string) => void;
 }
 type Channel = 'stderr' | 'stdout';
 interface ChannelState {
