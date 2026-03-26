@@ -27,8 +27,19 @@ export interface CommandClicked{
    id:string
    command_name:string
 }
+export interface CommandOpenLink{
+  command: "command_open_link"
+  url:string
+}
 
-export type WebviewMessage=WebviewMessageSimple|RunnerReport|SetSelected|CommandClicked|CommandOpenFileRowCol|CommandOpenFilePos
+export type WebviewMessage=
+  WebviewMessageSimple|
+  RunnerReport|
+  SetSelected|
+  CommandClicked|
+  CommandOpenFileRowCol|
+  CommandOpenFilePos|
+  CommandOpenLink
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }

@@ -14,6 +14,10 @@ export interface CommandClicked {
     id: string;
     command_name: string;
 }
-export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos;
+export interface CommandOpenLink {
+    command: "command_open_link";
+    url: string;
+}
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos | CommandOpenLink;
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;

@@ -2,14 +2,14 @@ import { type Style } from './terminals_ansi.js';
 export interface ParseRange {
     start: number;
     end: number;
-    values: Record<string, string>;
+    dataset: Record<string, string>;
 }
 export interface TerminalListener {
     parse: (line_text: string, state: unknown) => {
         parser_state: unknown;
         ranges: Array<ParseRange>;
     };
-    link_click: (values: Record<string, string>) => void;
+    dataset_click: (dataset: Record<string, string>) => void;
 }
 type Channel = 'stderr' | 'stdout';
 interface ChannelState {

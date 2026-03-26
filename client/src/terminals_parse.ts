@@ -57,7 +57,7 @@ function calc_match(match:RegExpMatchArray):ParseRange{
   const row= parse_group_string(match,'row')
   const col= parse_group_string(match,'col')
   const source_file=parse_group_string(match,'source_file')
-  return {start,end,values:no_nulls({row,col,source_file})}
+  return {start,end,dataset:no_nulls({row,col,source_file})}
 }
 export function parse_to_ranges(input:string,parser_state:string|undefined){
   const ranges:ParseRange[]=[]
@@ -65,16 +65,16 @@ export function parse_to_ranges(input:string,parser_state:string|undefined){
   if (ancor_match!=null){
     const ret=calc_match(ancor_match)
     ranges.push(ret)
-    return {parser_state:ret.values.source_file,ranges}
+    return {parser_state:ret.dataset.source_file,ranges}
   }
   if (parser_state!=null){
     const ref_match = input.match(ref_regex)
     if (ref_match!==null){
       const range=calc_match(ref_match)
-      const {values}=range
+      const {dataset}=range
       ranges.push({
         ...calc_match(ref_match), //by theoram will source_file will be empty string at this line, overriden by the next
-        values:{...values,source_file:parser_state}
+        dataset:{...dataset,source_file:parser_state}
       })
       return {parser_state,ranges}
     }

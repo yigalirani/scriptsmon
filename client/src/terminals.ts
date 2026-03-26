@@ -141,12 +141,12 @@ class TerminalPanel implements TerminalListener{
   parse(line_text:string,parse_state:unknown){
     return parse_line(line_text,parse_state)
   }
-  link_click(values:Record<string,string>){
-    const source_file=values.source_file
+  dataset_click(dataset:Record<string,string>){
+    const source_file=dataset.source_file
     if (source_file==null) //todo: check that not empty string?
       return
-    const row=parseInt(values.row??'',10)||0
-    const col=parseInt(values.col??'',10)||0
+    const row=parseInt(dataset.row??'',10)||0
+    const col=parseInt(dataset.col??'',10)||0
     const {workspace_folder}=this
     post_message({
       command: "command_open_file_rowcol",

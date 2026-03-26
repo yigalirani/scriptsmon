@@ -4,14 +4,14 @@ import {get_parent_with_dataset} from './dom_utils.js'
 export interface ParseRange{
   start:number
   end:number
-  values:Record<string,string>
+  dataset:Record<string,string>
 }
 export interface TerminalListener{
   parse:(line_text:string,state:unknown)=>{
     parser_state:unknown,
     ranges:Array<ParseRange> 
   }
-  link_click:(values:Record<string,string>)=>void
+  dataset_click:(dataset:Record<string,string>)=>void
 }
 type Channel='stderr'|'stdout' 
 interface ChannelState{
@@ -31,8 +31,8 @@ function make_channel_states():Record<Channel,ChannelState>{
   }
 }
 function range_to_inserts(range:ParseRange):AnsiInsertCommand[]{
-  const {start,end,values}=range
-  const datamap=Object.entries(values).map(([k,v])=>`data-${k}='${v}'`).join('')
+  const {start,end,dataset}=range
+  const datamap=Object.entries(dataset).map(([k,v])=>`data-${k}='${v}'`).join('')
   const open=`<span ${datamap}>`
   const close=`</span>`
   return [{position:start,str:open,command:'insert'},{position:end,str:close,command:'insert'}]
@@ -61,7 +61,7 @@ export class Terminal{
     if (parent==null)
       return  
     const dataset=get_element_dataset(parent)
-    this.listener.link_click(dataset)
+    this.listener.dataset_click(dataset)
   }
   line_to_html=(x:string,state:ChannelState,line_class:string)=>{
     const {
