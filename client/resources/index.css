@@ -530,10 +530,27 @@ span.term_title_watch{
 }
 [data-url]{
   border-bottom: 1px dashed white;
+  position: relative;
 }
 [data-url]:hover {
-  text-decoration: underline;
   cursor: pointer;    
   font-weight:900;
   background-color: purple;
+}
+span[data-url]:hover::before {
+  content: attr(data-url);
+  position: absolute;
+  bottom: 150%;       /* Place it above the text */
+  left: 20px;
+  background: #333;
+  color: rgb(89, 191, 225);
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1;
+  border: 1px solid gray;
+}
+span.url{
+  color: #554bc5;
 }
