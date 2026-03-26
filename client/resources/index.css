@@ -528,3 +528,12 @@ span.term_title_watch{
 .line_stdout span,.line_stderr span {
     display: inline;
 }
+[data-url]{
+  border-bottom: 1px dashed white;
+}
+[data-url]:hover {
+  text-decoration: underline;
+  cursor: pointer;    
+  font-weight:900;
+  background-color: purple;
+}

@@ -1,35 +1,6 @@
 import {parse_group_string} from './terminals_ansi.js'
 import type {ParseRange} from './terminal.js'
-
-function capture(name:string){
-  return function(...content:string[]){
-    return `(?<${name}>${content.join('')})`
-  }
-}
-  //const links_regex2 = re('g')
-function neg_lookahead(...pat:string[]){
-  return `(?!${pat.join('')})`
-}
-function neg_lookbehind(...pat:string[]){
-  return `(?<!${pat.join('')})`
-}
-function seq(...pat:string[]){
-  return pat.join('')
-}
-function group(...pat:string[]){
-  return `(${pat.join('')})`
-}
-function or(...pat:string[]){
-  return `(${pat.join('|')})`
-}
-function make_re(flags:string){
-  return function(...pat:string[]){
-    return new RegExp(pat.join(''),flags)
-  }
-}
-
-const r = String.raw;
-const digits=r`\d+`
+import { capture,neg_lookahead,neg_lookbehind,seq,group,or,make_re,r,digits } from './regex_builder.js'
 const row=capture('row')(digits)
 const col=capture('col')(digits)
 const optional_rowcol=seq(

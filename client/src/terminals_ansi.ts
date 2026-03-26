@@ -1,6 +1,41 @@
-import ansiRegex from 'ansi-regex';
-import {regex} from 'regex'
-const ansi_regex=ansiRegex()
+import {r,or,seq,capture,make_re} from './regex_builder.js'
+// 1. Hyperlinks (Specific OSC 8)
+const hyperlink = seq(
+  r`\x1b\]8;`,
+  r`[^;]*`, 
+  ';',
+  capture('url')(r`[^\x1b\x07]*`), 
+  or(r`\x1b\\`, r`\x07`),
+  capture('link_text')(r`[^\x1b\x07]*`), 
+  r`\x1b\]8;;`,
+  or(r`\x1b\\`, r`\x07`)
+);
+
+// 2. SGR Colors (Specific CSI 'm')
+const sgr_color = seq(
+  r`\x1b\[`, 
+  capture('color')(r`[\d;]*`), 
+  'm'
+);
+
+// 3. Catch-all for other ANSI sequences (Cursor, Erase, other OSCs)
+// This matches anything starting with ESC [ or ESC ] that wasn't caught above.
+const other_ansi = or(
+  r`\x1b\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]`, // Standard CSI (Cursor, etc)
+  r`\x1b\][^\x1b\x07]*`,                        // Any other OSC
+  r`\x1b[\x40-\x5a\x5c\x5e\x5f]`,               // Fe Escape sequences
+  r`\x1b.`,                                     // 2-character sequences
+  r`[\x00-\x1f]`                                // Control chars (Tab, CR, LF, etc)
+);
+
+export const ansi_regex = make_re('g')(
+  or(
+    hyperlink,
+    sgr_color,
+    other_ansi
+  )
+);
+
 type GroupType= {
     [key: string]: string;
 } | undefined
@@ -346,6 +381,20 @@ export function strip_ansi(text: string, start_style: Style){
 
   let last_index = 0;
   let position=0
+  function apply_color(color:string){
+    const params = color.split(';').map(p => parseInt(p || "0", 10));
+    applySGRCode(params, current_style);
+
+    const cloned:AnsiStyleCommand={style:clone_style(current_style),position,command:'style'}
+    const last_style=style_positions.at(-1)
+    if (is_same_style(last_style?.style, cloned.style))
+        return
+    if (last_style?.position===position) {
+      style_positions.splice(-1,1,cloned)
+      return
+    }
+    style_positions.push(cloned)
+  }
 
   for (const match of text.matchAll(ansi_regex)){
     // 1. Accumulate plain text
@@ -357,28 +406,21 @@ export function strip_ansi(text: string, start_style: Style){
 
     const sequence = match[0];
     last_index = index+sequence.length
-    // 2. Filter for SGR only (ESC [ ... m)
-    /*if link than create a parseRange and return it. remove all link text from plain_text*/
-    if (!sequence.startsWith('\x1b[') || !sequence.endsWith('m')) {
-      continue;
-    }
-
-    // 3. Parse parameters
-    const params = sequence.slice(2, -1).split(';').map(p => parseInt(p || "0", 10));
-    applySGRCode(params, current_style);
-
-    // 4. Capture state
-    const cloned:AnsiStyleCommand={style:clone_style(current_style),position,command:'style'}
-    const last_style=style_positions.at(-1)
-    if (is_same_style(last_style?.style, cloned.style))
-        continue
-    if (last_style?.position===position) {
-      style_positions.splice(-1,1,cloned)
+    const color=parse_group_string(match,'color')
+    if (color!=null){
+      apply_color(color)
       continue
     }
-    style_positions.push(cloned)
-    //if (is_same_style(style_positions.at(-1),style_positions.at(-2)))
-    //console.log('after_bug')
+    const url=parse_group_string(match,'url')
+    const link_text=parse_group_string(match,'link_text')
+    if (url!=null && link_text!=null){
+      link_inserts.push({
+        str:`<span data-url=${url}>${link_text}</span>`,
+        position,
+        command:'insert'
+      })
+    }
+
   }
   const deduped=dedup_positions(style_positions)//dedup_positions is needed even thoow we knowen out a few above 
   const with_pos0=function(){ //i want a style at pos 0 to help the logic of genetate_html

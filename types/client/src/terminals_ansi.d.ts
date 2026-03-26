@@ -1,3 +1,4 @@
+export declare const ansi_regex: RegExp;
 type GroupType = {
     [key: string]: string;
 } | undefined;
