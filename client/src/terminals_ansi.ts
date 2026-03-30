@@ -191,6 +191,18 @@ export function merge(a:Array<AnsiCommand>,b:Array<AnsiCommand>){
   }
   return ans
 }
+const html_entity_map: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+
+function escape_html_char(char_to_escape: string): string {
+  return html_entity_map[char_to_escape] ?? char_to_escape;
+}
 export function generate_html({
   style_positions,
   inserts,
@@ -256,7 +268,8 @@ export function generate_html({
       push_style(command.style)      
     }
     const c=plain_text[i]!
-    html.push(c)
+    const escaped=escape_html_char(c)
+    html.push(escaped)
   }
   pop_style(plain_text.length===0)
   const ans=html.join('')
