@@ -1,40 +1,40 @@
-import {r,or,seq,capture,make_re} from './regex_builder.js'
+import {r,re} from './regex_builder.js'
 // 1. Hyperlinks (Specific OSC 8)
-const hyperlink = seq(
-  r`\x1b\]8;`,
-  r`[^;]*`, 
-  ';',
-  capture('url')(r`[^\x1b\x07]*`), 
-  or(r`\x1b\\`, r`\x07`),
-  capture('link_text')(r`[^\x1b\x07]*`), 
-  r`\x1b\]8;;`,
-  or(r`\x1b\\`, r`\x07`)
-);
+
+
+  // Return the actual function that handles the params
+const hyperlink = r`
+  \x1b\]8;
+  [^;]*
+  ;
+  (?<url>[^\x1b\x07]*) 
+  (?:\x1b\\|\x07)
+  (?<link_text>[^\x1b\x07]*)
+  \x1b\]8;;
+  (?:\x1b\\|\x07)`
 
 // 2. SGR Colors (Specific CSI 'm')
-const sgr_color = seq(
-  r`\x1b\[`, 
-  capture('color')(r`[\d;]*`), 
-  'm'
-);
+const sgr_color = r`
+  \x1b\[
+  (?<color>[\d;]*)
+  m`
+
 
 // 3. Catch-all for other ANSI sequences (Cursor, Erase, other OSCs)
 // This matches anything starting with ESC [ or ESC ] that wasn't caught above.
-const other_ansi = or(
-  r`\x1b\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]`, // Standard CSI (Cursor, etc)
-  r`\x1b\][^\x1b\x07]*`,                        // Any other OSC
-  r`\x1b[\x40-\x5a\x5c\x5e\x5f]`,               // Fe Escape sequences
-  r`\x1b.`,                                     // 2-character sequences
-  r`[\x00-\x1f]`                                // Control chars (Tab, CR, LF, etc)
-);
+const other_ansi = r`
+  \x1b\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]   # Standard CSI (Cursor, etc)
+  \x1b\][^\x1b\x07]*                          # Any other OSC
+  \x1b[\x40-\x5a\x5c\x5e\x5f,                 # Fe Escape sequences
+  \x1b.                                       # 2-character sequences
+  [\x00-\x1f]                                # Control chars (Tab, CR, LF, etc)
+`
 
-export const ansi_regex = make_re('g')(
-  or(
-    hyperlink,
-    sgr_color,
-    other_ansi
-  )
-);
+export const ansi_regex = re('g')`
+    ${hyperlink}|
+    ${sgr_color}|
+    ${other_ansi}|
+`
 
 type GroupType= {
     [key: string]: string;

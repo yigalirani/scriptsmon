@@ -1,3 +1,4 @@
+export declare function re(flags?: string): (strings: TemplateStringsArray, ...values: any[]) => RegExp;
 export declare function capture(name: string): (...content: string[]) => string;
 export declare function neg_lookahead(...pat: string[]): string;
 export declare function neg_lookbehind(...pat: string[]): string;
