@@ -1,43 +1,40 @@
 import {parse_group_string} from './terminals_ansi.js'
 import type {ParseRange} from './terminal.js'
-import { capture,neg_lookahead,neg_lookbehind,seq,group,or,make_re,r,digits } from './regex_builder.js'
-const row=capture('row')(digits)
-const col=capture('col')(digits)
-const optional_rowcol=seq(
-  or(
-    group(r`\(`,row,',',col,r`\)`),
-    group(':',row,':',col),
-  ),
-  '?'
-)
-const links_regex=make_re('g')(
-  capture('source_file')(            // capture group source_file
-    neg_lookbehind(`[.a-zA-Z]`),
-    `([a-zA-Z]:)?`,               //optional drive char followed by colon
-    r`[a-zA-Z0-9_/\\@.-]+`,        //one or more file name charecters
-    `[.]`,
-    `[a-zA-Z0-9]+`,
-    neg_lookahead('[.]')                    //disallow dot immediatly after the match
-  ),
-  optional_rowcol
-)
+import {r,digits,re } from './regex_builder.js'
+const row=r`(?<row>${digits})`
+const col=r`(?<col>${digits})`
+const optional_rowcol=r`(
+    (?:${row},${col})|
+    (?::${row}:${col})
+  )?`
+const links_regex=re('g')`
+  (?<source_file>            # capture group source_file
+    (?<![.a-zA-Z])
+    (?:[a-zA-Z]:)?             # optional drive char followed by colon
+    [a-zA-Z0-9_/\\@.-]+     # one or more file name charecters
+    [.]
+    [a-zA-Z0-9]+
+    (?![.]')                    #disallow dot immediatly after the match
+  )
+  ${optional_rowcol}`
 
-const ancor_regex=make_re('')(
-  '^',
-  capture('source_file')(
-    '([a-zA-Z]:)?',
-    r`[a-zA-Z0-9_\-./\\@]+`,
-  ),
-  optional_rowcol,
-  r`\s*$`
-)
-const ref_regex = make_re('')(
-  r`^\s*`,
-  row,
-  ':',
-  col,
-  `(.*)`
-)
+
+const ancor_regex=re('') `
+  ^
+  (?<source_file>
+    ([a-zA-Z]:)?
+    [a-zA-Z0-9_\-./\\@]+
+  )
+  ${optional_rowcol}
+  \s*$`
+
+const ref_regex = re('')`
+  ^\s*
+  ${row}
+  :
+  ${col}
+  (.*)
+`
 //const old_ref_regex = /^\s*(?<row>\d+):(?<col>\d+)(.*)/
 //console.log({ref_regex,old_ref_regex})
 function no_nulls(obj: Record<string, string|undefined>){
