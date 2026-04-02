@@ -77,7 +77,6 @@ function create_terminal_element(runner:Runner): HTMLElement {
     <table class=watching></table>
   
   </div>
-  <div class=term></div>
 </div>
   `,terms_container)
   ans.addEventListener('click',make_onclick(runner.effective_watch))
@@ -133,7 +132,7 @@ class TerminalPanel implements TerminalListener{
   ){
     this.workspace_folder=runner.workspace_folder
     this.el=create_terminal_element(runner)
-    this.term=new Terminal(query_selector(this.el,'.term'),this)
+    this.term=new Terminal(this.el,this)
     //this.term_clear()
   }
   set_visibility(val:boolean){

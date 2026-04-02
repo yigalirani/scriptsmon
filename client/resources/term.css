@@ -94,3 +94,113 @@ span[data-url]:hover::before {
 span.url{
   color: #554bc5;
 }
+
+.find_widget_container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--vscode-editorWidget-background);
+  padding: 4px;
+  border: 1px solid var(--vscode-widget-shadow);
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow);
+  width: 300px;
+  font-family: var(--vscode-font-family);
+}
+
+.find_input_wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+}
+
+.find_input_wrapper:focus-within {
+    border-color: var(--vscode-focusBorder);
+}
+
+.find_input_field {
+    background: none;
+    border: none;
+    color: var(--vscode-input-foreground);
+    padding: 3px 6px;
+    flex-grow: 1;
+    outline: none;
+}
+
+.action_buttons {
+    display: flex;
+    padding-right: 2px;
+}
+
+.icon_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    color: var(--vscode-icon-foreground);
+}
+
+.icon_button:hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.icon_button.active {
+    background-color: var(--vscode-inputOption-activeBackground);
+    border: 1px solid var(--vscode-inputOption-activeBorder);
+    color: var(--vscode-inputOption-activeForeground);
+}
+
+.status_container {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    padding: 2px 6px;
+}
+
+.find_toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navigation_buttons {
+    display: flex;
+    gap: 2px;
+}
+
+/* Standardized button for the arrows */
+.nav_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    color: var(--vscode-icon-foreground);
+}
+
+.nav_button:hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+/* Simple arrow styling using CSS borders */
+.arrow_up {
+    width: 0; 
+    height: 0; 
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid currentColor;
+}
+
+.arrow_down {
+    width: 0; 
+    height: 0; 
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
+}

@@ -19,11 +19,12 @@ interface ChannelState {
     style: Style;
 }
 export declare class Terminal {
-    private term_el;
+    private parent;
     private listener;
     channel_states: Record<Channel, ChannelState>;
     term_text: Element;
-    constructor(term_el: HTMLElement, listener: TerminalListener);
+    term_el: HTMLElement;
+    constructor(parent: HTMLElement, listener: TerminalListener);
     onclick: (event: MouseEvent) => void;
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;
     after_write(): void;
