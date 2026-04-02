@@ -98,7 +98,7 @@ span.url{
 .find_widget_container {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 100px;
   display: flex;
   flex-direction: column;
   background-color: var(--vscode-editorWidget-background);
@@ -159,6 +159,7 @@ span.url{
     font-size: 11px;
     color: var(--vscode-descriptionForeground);
     padding: 2px 6px;
+    white-space: nowrap;
 }
 
 .find_toolbar {

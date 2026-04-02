@@ -67,9 +67,13 @@ export class Terminal{
       </div>
 
       <div class="navigation_buttons">
+  
+        <div class="status_container" id="match_status">
+          0 of 0
+        </div>   
         <div class="nav_button" id="prev_match" title="Previous Match (Shift+F3)">
           <div class="arrow_up"></div>
-        </div>
+        </div>             
         <div class="nav_button" id="next_match" title="Next Match (F3)">
           <div class="arrow_down"></div>
         </div>
@@ -79,9 +83,7 @@ export class Terminal{
       </div>
     </div>
 
-    <div class="status_container" id="match_status">
-      0 of 0
-    </div>
+
   </div>
   <div class="term_text"></div>
 </div>
