@@ -75,6 +75,7 @@ function create_terminal_element(runner:Runner): HTMLElement {
     <div class=term_title_duration></div>
     <div class=dbg></div>
     <table class=watching></table>
+  
   </div>
   <div class=term></div>
 </div>

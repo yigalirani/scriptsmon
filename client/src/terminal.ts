@@ -1,6 +1,6 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
-import {get_parent_with_dataset} from './dom_utils.js'
+import {get_parent_with_dataset,create_element} from './dom_utils.js'
 export interface ParseRange{
   start:number
   end:number
@@ -46,12 +46,17 @@ function get_element_dataset (element: HTMLElement): Record<string, string> {
 };
 export class Terminal{
   channel_states
+  term_text
   constructor(
     private term_el:HTMLElement,
     private listener:TerminalListener
   ){
     this.channel_states=make_channel_states()
-    this.term_el.innerHTML=''
+    create_element(`
+      <div class="term_text"><div>
+    </div>`,term_el)
+    this.term_text=term_el.querySelector('.term_text')!
+    this.term_text.innerHTML=''
     this.term_el.addEventListener('click',this.onclick)
   }
   onclick=(event:MouseEvent)=>{
@@ -84,8 +89,8 @@ export class Terminal{
     return `<div class="${line_class}">${html}${br}</div>`
   }
   after_write(){
-    this.term_el.querySelector('.eof')?.classList.remove('eof')
-    this.term_el.lastElementChild?.classList.add('eof')
+    this.term_text.querySelector('.eof')?.classList.remove('eof')
+    this.term_text.lastElementChild?.classList.add('eof')
   }
   term_write(output:string[],channel:Channel){
     if (output.length===0)
@@ -96,15 +101,15 @@ export class Terminal{
     const lines=joined_lines.split('\n')
   
     if (channel_state.last_line!=='')
-      this.term_el.querySelector(`.${line_class}:last-child`)?.remove()
+      this.term_text.querySelector(`.${line_class}:last-child`)?.remove()
     channel_state.last_line=lines.at(-1)||''
     const lines_to_render = channel_state.last_line === '' ? lines.slice(0,-1) : lines
     const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
-    this.term_el.insertAdjacentHTML('beforeend',new_html)
+    this.term_text.insertAdjacentHTML('beforeend',new_html)
   }
   
   term_clear(){
-    this.term_el.innerHTML=''
+    this.term_text.innerHTML=''
     this.channel_states=make_channel_states()
       /*stdout:{last_line:'',ancore:undefined,style:clear_style},
       stderr:{last_line:'',ancore:undefined,style:clear_style}

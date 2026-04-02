@@ -1,0 +1,96 @@
+.term{
+  overflow: hidden;
+  position:relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  width: 100%;  
+}
+.term_text{
+  font-family: monospace;
+  overflow: auto;
+  counter-reset: line-number;
+  background-color: var(--vscode-terminal-background);
+  flex:1;
+  min-height: 0;
+}
+.line_stderr,.line_stdout {
+  counter-increment: line-number;
+  white-space: pre;
+  min-width: fit-content;
+}
+
+.line_stderr::before,.line_stdout::before  {
+  content: counter(line-number);
+  color: #646362;
+  background-color: var(--vscode-editorGutter-background);
+  color:var(--vscode-editorLineNumber-foreground);
+  /* background-color: #3c3c3c; */
+  display: inline-block;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+
+  
+  /* Fixed width for the number area */
+  width: 30px;
+  flex-shrink: 0;
+  text-align: right;
+  
+  /* The Red Gutter */
+  border-right: 1px dotted #ffffff;
+  
+  /* REMOVE ALL GAPS */
+  margin-right: 3px;
+  padding-right: 5px;
+  user-select: none;
+}
+.line_stderr::before{
+  border-right: 2px solid red;  
+  margin-right: 2px;
+}
+.eof::after{
+  content: "<eof>";
+  background-color:purple;
+}
+[data-source_file]:hover {
+  text-decoration: underline;
+  cursor: pointer;    
+  font-weight:900;
+  background-color: purple;
+}
+
+.line span:hover{
+
+
+}
+.line_stdout span,.line_stderr span {
+    display: inline;
+}
+[data-url]{
+  border-bottom: 1px dashed white;
+  position: relative;
+}
+[data-url]:hover {
+  cursor: pointer;    
+  font-weight:900;
+  background-color: purple;
+}
+span[data-url]:hover::before {
+  content: attr(data-url);
+  position: absolute;
+  bottom: 150%;       /* Place it above the text */
+  left: 20px;
+  background: #333;
+  color: rgb(89, 191, 225);
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1;
+  border: 1px solid gray;
+}
+span.url{
+  color: #554bc5;
+}

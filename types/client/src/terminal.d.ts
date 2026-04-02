@@ -22,6 +22,7 @@ export declare class Terminal {
     private term_el;
     private listener;
     channel_states: Record<Channel, ChannelState>;
+    term_text: Element;
     constructor(term_el: HTMLElement, listener: TerminalListener);
     onclick: (event: MouseEvent) => void;
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;

@@ -20,7 +20,7 @@
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ",
         "biome": "biome lint --colors=force",
-        "vsce": "vsce package",
+        "vsce": "vsce package", 
         "find": "find c:\\windows\\system32 | grep --color=always -F '.ts'"
     },
     "workspaces": [
