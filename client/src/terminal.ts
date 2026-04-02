@@ -144,7 +144,12 @@ export class Terminal{
     const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
     this.term_text.insertAdjacentHTML('beforeend',new_html)
   }
-  
+  show_find(){
+    const find_widget=this.term_el.querySelector('.find_widget_container') //bypassing the Terminal class todo: fix maybe
+    find_widget?.classList.remove('hidden')
+    find_widget?.querySelector<HTMLElement>('.find_input_field')?.focus();
+  }
+ 
   term_clear(){
     this.term_text.innerHTML=''
     this.channel_states=make_channel_states()

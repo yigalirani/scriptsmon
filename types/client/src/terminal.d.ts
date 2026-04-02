@@ -29,6 +29,7 @@ export declare class Terminal {
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;
     after_write(): void;
     term_write(output: string[], channel: Channel): void;
+    show_find(): void;
     term_clear(): void;
 }
 export {};

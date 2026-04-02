@@ -20,6 +20,7 @@ declare class TerminalPanel implements TerminalListener {
 }
 export declare class Terminals implements Component {
     terminals: s2t<TerminalPanel>;
+    visible_panel: TerminalPanel | undefined;
     get_terminal(runner: Runner): TerminalPanel;
     on_interval(): void;
     on_data(data: unknown): void;

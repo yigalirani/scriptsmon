@@ -197,6 +197,7 @@ class TerminalPanel implements TerminalListener{
 
 export class Terminals implements Component{
   terminals:s2t<TerminalPanel>={} 
+  visible_panel:TerminalPanel|undefined
   get_terminal(runner:Runner){
     const ans=default_get(this.terminals,runner.id,()=> new TerminalPanel(runner))
     return ans
@@ -214,13 +215,14 @@ export class Terminals implements Component{
     f(report.root)    
   }
   command_find(){
-    const find_widget=document.body.querySelector('.terms_container .term_panel[style*="display: flex"] .find_widget_container') //bypassing the Terminal class todo: fix maybe
-    find_widget?.classList.remove('hidden')
-    find_widget?.querySelector<HTMLElement>('.find_input_field')?.focus();
+    this.visible_panel?.term.show_find()
   }
   set_selected(id:string){
     for (const [panel_id,panel] of Object.entries(this.terminals)){
-      panel.set_visibility(panel_id===id)
+      const visible=panel_id===id
+      panel.set_visibility(visible)
+      if (visible)
+        this.visible_panel=panel
     }
   }
 }
