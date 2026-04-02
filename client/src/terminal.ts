@@ -1,6 +1,6 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
-import {get_parent_with_dataset,create_element} from './dom_utils.js'
+import {get_parent_with_dataset,create_element,get_parent_by_class} from './dom_utils.js'
 export interface ParseRange{
   start:number
   end:number
@@ -96,6 +96,10 @@ export class Terminal{
     const {target}=event
     if (!(target instanceof HTMLElement))
       return    
+    if (target.id==='close_widget'){
+      get_parent_by_class(target,'find_widget_container')?.classList.toggle("hidden");
+      return
+    }
     const parent=get_parent_with_dataset(target)
     if (parent==null)
       return  

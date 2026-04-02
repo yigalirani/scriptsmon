@@ -105,7 +105,7 @@ span.url{
   padding: 4px;
   border: 1px solid var(--vscode-widget-shadow);
   box-shadow: 0 2px 8px var(--vscode-widget-shadow);
-  width: 300px;
+  /* width: 300px; */
   font-family: var(--vscode-font-family);
 }
 
@@ -204,4 +204,7 @@ span.url{
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
     border-top: 4px solid currentColor;
+}
+.hidden{
+  display: none;
 }
