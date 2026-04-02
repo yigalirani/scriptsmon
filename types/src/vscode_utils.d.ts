@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { type WebviewView, type Webview, type ExtensionContext } from 'vscode';
 export interface Pos {
     source_file: string;
@@ -17,6 +18,7 @@ export interface CommandOpenFilePos {
 }
 export declare function get_webview_content(context: ExtensionContext, webview: Webview, html_filename: string): string;
 export type WebviewFunc = (webview: WebviewView, context: ExtensionContext) => Promise<void> | void;
+export declare let global_webview: vscode.Webview | null;
 export declare function define_webview({ context, id, html_filename, f }: {
     context: ExtensionContext;
     id: string;

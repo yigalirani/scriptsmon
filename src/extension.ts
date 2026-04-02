@@ -8,7 +8,8 @@ import {
   type CommandOpenFileRowCol,
   type CommandOpenFilePos,
   open_file,
-  open_link
+  open_link,
+  global_webview
 } from './vscode_utils.js'
 import type {
   WebviewView,
@@ -32,6 +33,13 @@ export interface CommandOpenLink{
   command: "command_open_link"
   url:string
 }
+export interface CommandFind{
+  command: "command_find"
+}
+export interface CommandFocus{
+  command: "view_focus"
+  val:boolean
+}
 
 export type WebviewMessage=
   WebviewMessageSimple|
@@ -40,14 +48,16 @@ export type WebviewMessage=
   CommandClicked|
   CommandOpenFileRowCol|
   CommandOpenFilePos|
-  CommandOpenLink
+  CommandOpenLink|
+  CommandFind|
+  CommandFocus
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
 }
 import {to_json} from './parser.js'
 //const folders=["c:\\yigal\\scriptsmon"]
 //const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
-
+let global_view_focus=false
 function make_loop_func(monitor:Monitor){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
     function send_report(_root_folder:Folder){
@@ -66,6 +76,16 @@ function make_loop_func(monitor:Monitor){
             //const {file,row,col}=message
             break 
           }
+        case "view_focus":{
+          console.log(`focus changed ${message.val}`)
+          void vscode.commands.executeCommand(
+            'setContext', 
+            'scriptsmon_focused', 
+            message.val
+          )
+          global_view_focus=message.val
+          break
+        }
         case "command_open_link":{
           void open_link(message.url)
           break;
@@ -126,6 +146,10 @@ export  async function activate(context: vscode.ExtensionContext) {
     monitor.toggle_dump_debug()
     outputChannel.append(`dump_debug_enabled=${monitor.dump_debug_enabled}`)
   })
+  register_command(context, 'scriptsmon.find', () => {
+      post_message(global_webview!,{command: "command_find"})
+    }
+  );  
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event,null,2))
   })

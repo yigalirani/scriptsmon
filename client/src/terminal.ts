@@ -55,7 +55,7 @@ export class Terminal{
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term>
-  <div class="find_widget_container">
+  <div class="find_widget_container hidden">
     <div class="find_toolbar">
       <div class="find_input_wrapper">
         <input type="text" class="find_input_field" placeholder="Find" id="find_input" />

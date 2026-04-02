@@ -109,7 +109,15 @@ function start(){
   const provider=new TheTreeProvider(terminals)
   const icons=parse_icons(ICONS_HTML)
   const icons_animator=new IconsAnimator(icons,["watched","play","stop"])
-  const tree=new TreeControl(query_selector(document.body,'#the_tree'),provider,icons) //no error, whay
+  const container:HTMLElement=query_selector(document.body,'#the_tree')
+    window.addEventListener('focus', () => {
+      post_message({command:'view_focus',val:true})
+    });
+
+    window.addEventListener('blur', () => {
+      post_message({command:'view_focus',val:false})
+    });  
+  const tree=new TreeControl(container,provider,icons) //no error, whay
  
   function on_interval(){
     tree.on_interval()
@@ -129,6 +137,11 @@ function start(){
             
             break
           }
+          case 'command_find':{
+            terminals.command_find()
+            break
+          }
+      
           case 'set_selected':
             //upda(document.body,'#selected', message.selected)
             provider.selected(message.selected)

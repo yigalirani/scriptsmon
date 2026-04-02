@@ -46,7 +46,7 @@ export function get_webview_content(context:ExtensionContext, webview:Webview,ht
   return html;
 }
 export type WebviewFunc=(webview:WebviewView,context:ExtensionContext)=>Promise<void>|void
-
+export let global_webview: vscode.Webview | null = null;
 export function define_webview({context,id,html_filename,f}:{
   context: ExtensionContext,
   id:string,
@@ -57,6 +57,7 @@ export function define_webview({context,id,html_filename,f}:{
   const provider:WebviewViewProvider={
     resolveWebviewView(webviewView: WebviewView,_webview_context:WebviewViewResolveContext) {
       console.log('resolveWebviewView')
+      global_webview = webviewView.webview;
       webviewView.webview.options = {
       enableScripts: true,
         localResourceRoots: [

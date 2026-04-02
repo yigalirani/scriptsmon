@@ -62,6 +62,14 @@
     },
     "keywords": [],
     "contributes": {
+        "keybindings": [
+          {
+            "command": "scriptsmon.find",
+            "key": "ctrl+f",
+            "mac": "cmd+f",
+            "when": "scriptsmon_focused"
+          }
+        ],    
         "commands": [
             {
                 "command": "Scriptsmon.start",
@@ -88,9 +96,19 @@
             {
                 "command": "Scriptsmon.toggleDumpDebug",
                 "title": "Toggle Dump Debug"
+            },
+            {
+              "command": "scriptsmon.find",
+              "title": "Find"
             }
         ],
         "menus": {
+            "commandPalette": [
+                {
+                  "command": "scriptsmon.find",
+                  "when": "scriptsmon_focused"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "Scriptsmon.runner.play",

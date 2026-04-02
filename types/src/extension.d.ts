@@ -18,6 +18,13 @@ export interface CommandOpenLink {
     command: "command_open_link";
     url: string;
 }
-export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos | CommandOpenLink;
+export interface CommandFind {
+    command: "command_find";
+}
+export interface CommandFocus {
+    command: "view_focus";
+    val: boolean;
+}
+export type WebviewMessage = WebviewMessageSimple | RunnerReport | SetSelected | CommandClicked | CommandOpenFileRowCol | CommandOpenFilePos | CommandOpenLink | CommandFind | CommandFocus;
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;
 export declare function deactivate(): void;

@@ -213,6 +213,9 @@ export class Terminals implements Component{
     }
     f(report.root)    
   }
+  command_find(){
+    document.body.querySelector('.terms_container .term_panel[style*="display: flex"] .find_widget_container')?.classList.remove('hidden') //bypassing the Terminal class todo: fix maybe
+  }
   set_selected(id:string){
     for (const [panel_id,panel] of Object.entries(this.terminals)){
       panel.set_visibility(panel_id===id)

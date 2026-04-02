@@ -8833,11 +8833,13 @@ function get_webview_content(context, webview, html_filename) {
   html = html.replaceAll("./", base);
   return html;
 }
+var global_webview = null;
 function define_webview({ context, id, html_filename, f }) {
   console.log("define_webview");
   const provider = {
     resolveWebviewView(webviewView, _webview_context) {
       console.log("resolveWebviewView");
+      global_webview = webviewView.webview;
       webviewView.webview.options = {
         enableScripts: true,
         localResourceRoots: [
@@ -8943,6 +8945,7 @@ async function open_link(url) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
+var global_view_focus = false;
 function make_loop_func(monitor) {
   const ans = (view, context) => {
     function send_report(_root_folder) {
@@ -8957,6 +8960,16 @@ function make_loop_func(monitor) {
         switch (message.command) {
           case "command_open_file_rowcol": {
             void open_file(message);
+            break;
+          }
+          case "view_focus": {
+            console.log(`focus changed ${message.val}`);
+            void vscode2.commands.executeCommand(
+              "setContext",
+              "scriptsmon_focused",
+              message.val
+            );
+            global_view_focus = message.val;
             break;
           }
           case "command_open_link": {
@@ -9012,6 +9025,13 @@ async function activate(context) {
     monitor.toggle_dump_debug();
     outputChannel.append(`dump_debug_enabled=${monitor.dump_debug_enabled}`);
   });
+  register_command(
+    context,
+    "scriptsmon.find",
+    () => {
+      post_message(global_webview, { command: "command_find" });
+    }
+  );
   vscode2.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event, null, 2));
   });
