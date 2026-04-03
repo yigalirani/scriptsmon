@@ -1,5 +1,9 @@
-import {create_element,get_parent_by_class} from './dom_utils.js'
+import {create_element,get_parent_by_class,has_class,update_child_html} from './dom_utils.js'
 
+interface StartEnd{
+  start:number
+  end:number
+}
 class NodeIndex{
   text_nodes:Node[]=[]
   plain_text=''
@@ -38,9 +42,9 @@ class NodeIndex{
     return result;
   }
 
-  get_ranges(offsets: [number, number][]): Range[] {
+  get_ranges(offsets: StartEnd[]): Range[] {
     const ans= [];
-    for (const [start, end] of offsets) {
+    for (const {start, end} of offsets) {
         // Find the starting node using binary search
         const start_node_idx = this.find_node_index_binary(start);
         const start_node = this.text_nodes[start_node_idx]!;
@@ -64,7 +68,40 @@ class NodeIndex{
     return ans;
   }
 }
+function make_regex({ txt, match_case, whole_word, reg_ex }:{ 
+  txt:string, 
+  match_case:boolean, 
+  whole_word:boolean, 
+  reg_ex:boolean 
+}) {
+    let pattern = txt;
+    let flags = "g";
 
+    if (!match_case) {
+        flags += "i";
+    }
+
+    if (!reg_ex) {
+        // Escape special characters for a literal string match
+        pattern = txt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    if (whole_word) {
+        pattern = `\\b${pattern}\\b`;
+    }
+
+    return new RegExp(pattern, flags);
+}
+function get_regexp_string(pattern: RegExp): string {
+  const source = pattern.source;
+  const flags = pattern.flags;
+
+  if (flags.length > 0) {
+    return `/${source}/${flags}`;
+  }
+
+  return `/${source}/`;
+}
 export class TerminalSearch{
   find_widget
   constructor(private term_el:HTMLElement){
@@ -74,9 +111,9 @@ export class TerminalSearch{
           <div class="find_input_wrapper">
             <input type="text" class="find_input_field" placeholder="Find" id="find_input" />
             <div class="action_buttons">
-              <div class="icon_button" title="Match Case">Aa</div>
-              <div class="icon_button" title="Match Whole Word"><u>ab</u></div>
-              <div class="icon_button" title="Use Regular Expression">.*</div>
+              <div class="icon_button" title="Match Case" id=match_case>Aa</div>
+              <div class="icon_button" title="Match Whole Word" id=whole_word><u>ab</u></div>
+              <div class="icon_button" title="Use Regular Expression" id=reg_ex>.*</div>
             </div>
           </div>
           <div class="navigation_buttons">
@@ -92,18 +129,33 @@ export class TerminalSearch{
             <div class="nav_button" id="close_widget" title="Close (Escape)">
               ×
             </div>
+            <div id="regex" title="Close (Escape)">
+              df
+            </div>            
           </div>
         </div>
     
     
       </div>`,this.term_el)
-      this.term_el.addEventListener('click',this.onclick)      
+      this.term_el.addEventListener('click',this.onclick)    
+      this.input()!.addEventListener('change',this.update_search)   
+      this.input()!.addEventListener('input',this.update_search)   
   }
   show(){
     this.find_widget.classList.remove('hidden')
-    this.find_widget.querySelector<HTMLElement>('.find_input_field')?.focus();
+    this.input()?.focus();
   }
-  update_search(){
+  input(){
+    return this.find_widget.querySelector<HTMLInputElement>('#find_input')
+  }
+  update_search=()=>{
+    const txt=this.input()!.value
+    const match_case=has_class(this.find_widget,'#match_case',"checked")
+    const whole_word=has_class(this.find_widget,'#whole_word',"checked")
+    const reg_ex=has_class(this.find_widget,'#reg_ex',"checked")
+
+    const regex=make_regex({txt,match_case,whole_word,reg_ex})
+    update_child_html(this.find_widget,'#regex',get_regexp_string(regex))
   }
   onclick=(event:MouseEvent)=>{
     const {target}=event

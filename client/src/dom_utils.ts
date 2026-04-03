@@ -4,7 +4,7 @@ export function query_selector<T extends Element=Element>(el:Element,selector:st
     const ans=el.querySelector<T>(selector);
     if (ans==null)
       throw new Error('selector not found or not expected type')  
-    return ans
+      return ans
 }
 export function create_element(html:string,parent?:HTMLElement){
   const template = document.createElement("template")
@@ -59,6 +59,12 @@ function has_classes(el: HTMLElement | null,classes:string[]){
   if (el==null)
     return false
   return classes.some(c => el.classList.contains(c))
+}
+export function has_class(parent: HTMLElement,selector:string,c:string){
+  const el=parent.querySelector(selector)
+  if (el==null)
+    return false
+  return el.classList.contains(c)
 }
 
 export function get_parent_by_classes(
