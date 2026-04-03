@@ -1,4 +1,4 @@
-import {create_element} from './dom_utils.js'
+import {create_element,get_parent_by_class} from './dom_utils.js'
 export class TerminalSearch{
   find_widget
   constructor(private term_el:HTMLElement){
@@ -31,11 +31,28 @@ export class TerminalSearch{
     
     
       </div>`,this.term_el)
+      this.term_el.addEventListener('click',this.onclick)      
   }
   show(){
     this.find_widget.classList.remove('hidden')
     this.find_widget.querySelector<HTMLElement>('.find_input_field')?.focus();
   }
-  update(){
+  update_search(){
+  }
+  onclick=(event:MouseEvent)=>{
+    const {target}=event
+    if (!(target instanceof HTMLElement))
+      return    
+    if (target.id==='close_widget'){
+      get_parent_by_class(target,'find_widget_container')?.classList.toggle("hidden");
+      return
+    }    
+    const icon_button=get_parent_by_class(target,'icon_button')
+    if (icon_button!=null){
+      icon_button.classList.toggle('checked')
+      this.update_search()
+    }
+  }
+  text_added(){
   }
 }

@@ -3,5 +3,7 @@ export declare class TerminalSearch {
     find_widget: HTMLElement;
     constructor(term_el: HTMLElement);
     show(): void;
-    update(): void;
+    update_search(): void;
+    onclick: (event: MouseEvent) => void;
+    text_added(): void;
 }

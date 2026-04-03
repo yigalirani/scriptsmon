@@ -359,7 +359,7 @@ span.term_title_watch{
 }
 
 /* Active/Checked state logic */
-.tree_checkbox.checked {
+.checked {
   background: var(--vscode-checkbox-background);
   border-color: var(--vscode-checkbox-border);
 }

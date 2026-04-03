@@ -69,10 +69,6 @@ export class Terminal{
     const {target}=event
     if (!(target instanceof HTMLElement))
       return    
-    if (target.id==='close_widget'){
-      get_parent_by_class(target,'find_widget_container')?.classList.toggle("hidden");
-      return
-    }
     const parent=get_parent_with_dataset(target)
     if (parent==null)
       return  
