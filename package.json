@@ -155,16 +155,16 @@
         "eslint-plugin-import-x": "4.16.2",
         "oxlint": "^1.55.0",
         "typescript": "5.9.3",
-        "typescript-eslint": "8.57.0"
+        "typescript-eslint": "8.57.0",
+        "oxlint-tsgolint": "^0.17.0",
+        "eslint": "^9",              
+        "globals": "^17.4.0"
     },
     "dependencies": {
         "@yigal/base_types": "file:../base_types",
         "acorn": "^8.16.0",
         "chokidar": "^5.0.0",
-        "eslint": "^9",
-        "globals": "^17.4.0",
-        "lodash.clonedeep": "^4.5.0",
-        "oxlint-tsgolint": "^0.17.0",
-        "regex": "^6.1.0"
+        "lodash.clonedeep": "^4.5.0"
+
     }
 }

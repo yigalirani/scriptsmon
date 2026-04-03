@@ -16,12 +16,6 @@
     },
     "devDependencies": {
         "@types/chrome": "^0.0.277",
-        "@types/he": "^1.2.3",
-        "@types/lodash.isequal": "^4.5.8"
-    },
-    "dependencies": {
-        "ansi-regex": "^6.2.2",
-        "lodash.isequal": "^4.5.0",
-        "path-browserify": "^1.0.1"
+        "@types/he": "^1.2.3"
     }
 }

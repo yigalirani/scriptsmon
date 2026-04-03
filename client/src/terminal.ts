@@ -1,6 +1,7 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
 import {get_parent_with_dataset,create_element,get_parent_by_class} from './dom_utils.js'
+import {TerminalSearch} from './terminal_search.js'
 export interface ParseRange{
   start:number
   end:number
@@ -48,6 +49,7 @@ export class Terminal{
   channel_states
   term_text
   term_el
+  search
   constructor(
     private parent:HTMLElement,
     private listener:TerminalListener
@@ -55,41 +57,12 @@ export class Terminal{
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term>
-  <div class="find_widget_container hidden">
-    <div class="find_toolbar">
-      <div class="find_input_wrapper">
-        <input type="text" class="find_input_field" placeholder="Find" id="find_input" />
-        <div class="action_buttons">
-          <div class="icon_button" title="Match Case">Aa</div>
-          <div class="icon_button" title="Match Whole Word"><u>ab</u></div>
-          <div class="icon_button" title="Use Regular Expression">.*</div>
-        </div>
-      </div>
-
-      <div class="navigation_buttons">
-  
-        <div class="status_container" id="match_status">
-          0 of 0
-        </div>   
-        <div class="nav_button" id="prev_match" title="Previous Match (Shift+F3)">
-          <div class="arrow_up"></div>
-        </div>             
-        <div class="nav_button" id="next_match" title="Next Match (F3)">
-          <div class="arrow_down"></div>
-        </div>
-        <div class="nav_button" id="close_widget" title="Close (Escape)">
-          ×
-        </div>
-      </div>
-    </div>
-
-
-  </div>
   <div class="term_text"></div>
 </div>
     `,parent)
     this.term_text=this.term_el.querySelector('.term_text')!
     this.term_text.innerHTML=''
+    this.search=new TerminalSearch(this.term_el)
     this.term_el.addEventListener('click',this.onclick)
   }
   onclick=(event:MouseEvent)=>{
@@ -145,9 +118,7 @@ export class Terminal{
     this.term_text.insertAdjacentHTML('beforeend',new_html)
   }
   show_find(){
-    const find_widget=this.term_el.querySelector('.find_widget_container') //bypassing the Terminal class todo: fix maybe
-    find_widget?.classList.remove('hidden')
-    find_widget?.querySelector<HTMLElement>('.find_input_field')?.focus();
+    this.search.show()
   }
  
   term_clear(){

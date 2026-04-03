@@ -1,4 +1,5 @@
 import { type Style } from './terminals_ansi.js';
+import { TerminalSearch } from './terminal_search.js';
 export interface ParseRange {
     start: number;
     end: number;
@@ -24,6 +25,7 @@ export declare class Terminal {
     channel_states: Record<Channel, ChannelState>;
     term_text: Element;
     term_el: HTMLElement;
+    search: TerminalSearch;
     constructor(parent: HTMLElement, listener: TerminalListener);
     onclick: (event: MouseEvent) => void;
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;
