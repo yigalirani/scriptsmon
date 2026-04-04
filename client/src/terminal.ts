@@ -60,9 +60,9 @@ export class Terminal{
   <div class="term_text"></div>
 </div>
     `,parent)
-    this.term_text=this.term_el.querySelector('.term_text')!
+    this.term_text=this.term_el.querySelector<HTMLElement>('.term_text')!
     this.term_text.innerHTML=''
-    this.search=new TerminalSearch(this.term_el)
+    this.search=new TerminalSearch(this.term_el,this.term_text)
     this.term_el.addEventListener('click',this.onclick)
   }
   onclick=(event:MouseEvent)=>{
@@ -120,6 +120,7 @@ export class Terminal{
   term_clear(){
     this.term_text.innerHTML=''
     this.channel_states=make_channel_states()
+    this.search.search_clear()
       /*stdout:{last_line:'',ancore:undefined,style:clear_style},
       stderr:{last_line:'',ancore:undefined,style:clear_style}
     }   */ 

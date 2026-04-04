@@ -5,6 +5,7 @@ export declare function divs(vals: s2t<string | undefined>): string;
 export declare function get_parent_by_data_attibute(el: HTMLElement | null, key: string): HTMLElement | null;
 export declare function get_parent_with_dataset(el: HTMLElement | null): HTMLElement | null;
 export declare function get_parent_by_class(el: Element | null, className: string): HTMLElement | null;
+export declare function has_class(parent: HTMLElement, selector: string, c: string): boolean;
 export declare function get_parent_by_classes(el: HTMLElement, className: string | string[]): HTMLElement | null;
 export declare function get_parent_id(//loops over parents until first with id
 el: HTMLElement): string | undefined;

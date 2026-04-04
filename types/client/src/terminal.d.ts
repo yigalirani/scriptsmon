@@ -23,7 +23,7 @@ export declare class Terminal {
     private parent;
     private listener;
     channel_states: Record<Channel, ChannelState>;
-    term_text: Element;
+    term_text: HTMLElement;
     term_el: HTMLElement;
     search: TerminalSearch;
     constructor(parent: HTMLElement, listener: TerminalListener);

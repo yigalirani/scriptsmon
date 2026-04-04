@@ -104,7 +104,11 @@ function get_regexp_string(pattern: RegExp): string {
 }
 export class TerminalSearch{
   find_widget
-  constructor(private term_el:HTMLElement){
+  index
+  constructor(
+    private term_el:HTMLElement,
+    private term_text:HTMLElement
+  ){
       this.find_widget=create_element(`
       <div class="find_widget_container hidden">
         <div class="find_toolbar">
@@ -140,6 +144,7 @@ export class TerminalSearch{
       this.term_el.addEventListener('click',this.onclick)    
       this.input()!.addEventListener('change',this.update_search)   
       this.input()!.addEventListener('input',this.update_search)   
+      this.index=new NodeIndex(this.term_text)
   }
   show(){
     this.find_widget.classList.remove('hidden')
@@ -147,6 +152,9 @@ export class TerminalSearch{
   }
   input(){
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
+  }
+  search_clear(){
+    this.index=new NodeIndex(this.term_text)
   }
   update_search=()=>{
     const txt=this.input()!.value
