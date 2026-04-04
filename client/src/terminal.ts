@@ -52,7 +52,8 @@ export class Terminal{
   search
   constructor(
     private parent:HTMLElement,
-    private listener:TerminalListener
+    private listener:TerminalListener,
+    id:string
   ){
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
@@ -62,8 +63,17 @@ export class Terminal{
     `,parent)
     this.term_text=this.term_el.querySelector<HTMLElement>('.term_text')!
     this.term_text.innerHTML=''
-    this.search=new TerminalSearch(this.term_el,this.term_text)
+    this.search=new TerminalSearch(this.term_el,this.term_text,this.make_highlight(id))
     this.term_el.addEventListener('click',this.onclick)
+  }
+  make_highlight(id:string){
+    const highlight_name=`search_${id}`
+    const highlight=new Highlight()
+    const dynamic_sheet = new CSSStyleSheet();
+    document.adoptedStyleSheets.push(dynamic_sheet);    
+    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { background-color: red; }`);
+    CSS.highlights.set(highlight_name, highlight);     
+    return highlight   
   }
   onclick=(event:MouseEvent)=>{
     const {target}=event
@@ -120,7 +130,7 @@ export class Terminal{
   term_clear(){
     this.term_text.innerHTML=''
     this.channel_states=make_channel_states()
-    this.search.search_clear()
+    this.search.search_term_clear()
       /*stdout:{last_line:'',ancore:undefined,style:clear_style},
       stderr:{last_line:'',ancore:undefined,style:clear_style}
     }   */ 

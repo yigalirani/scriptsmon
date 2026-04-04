@@ -9,10 +9,8 @@ class NodeIndex{
   plain_text=''
   node_offsets:number[]=[]
   walker
-  interval_id
   constructor(public root: HTMLElement){
     this.walker=document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
-    this.interval_id=setInterval(this.iter,100)
   }
   iter=()=>{
     const strings=[]
@@ -23,6 +21,7 @@ class NodeIndex{
       strings.push(string)
       this.node_offsets.push(string.length)
     }
+    this.plain_text+=strings.join('')
   }
   find_node_index_binary(target_index: number): number {
     let low = 0;
@@ -45,6 +44,9 @@ class NodeIndex{
   }
 
   get_ranges(offsets: StartEnd[]): Range[] {
+    if (offsets.length===0)
+      return []
+
     const ans= [];
     for (const {start, end} of offsets) {
         // Find the starting node using binary search
@@ -77,6 +79,8 @@ function make_regex({ txt, match_case, whole_word, reg_ex }:{
   reg_ex:boolean 
 }) {
     let pattern = txt;
+    if (txt==='')
+      return
     let flags = "g";
 
     if (!match_case) {
@@ -94,7 +98,9 @@ function make_regex({ txt, match_case, whole_word, reg_ex }:{
 
     return new RegExp(pattern, flags);
 }
-function get_regexp_string(pattern: RegExp): string {
+function get_regexp_string(pattern: RegExp|undefined): string {
+  if (pattern==null)
+    return 'none'
   const source = pattern.source;
   const flags = pattern.flags;
 
@@ -104,13 +110,48 @@ function get_regexp_string(pattern: RegExp): string {
 
   return `/${source}/`;
 }
+class RegExpSearcher{
+  constructor(
+    private index:NodeIndex,
+    private regex:RegExp,
+    private highlight:Highlight
+  ){
+  }
+  iter=()=>{
+    let match: RegExpExecArray | null;
+    
+    // Ensure the regex has the global flag
+    const offsets=[]
+    while ((match = this.regex.exec(this.index.plain_text)) !== null) {
+      const offset={
+        start:match.index,
+        end:match.index + match[0].length
+      }
+      offsets.push(offset)
+        
+      // Prevent infinite loops on zero-width matches
+      if (match.index === this.regex.lastIndex) {
+          this.regex.lastIndex++;
+      }
+    }
+    const ranges=this.index.get_ranges(offsets)
+    ranges.forEach(x=>this.highlight.add(x))
+    //this.highlight.add(...ranges)
+    //return offsets;
+  }
+}
 export class TerminalSearch{
   find_widget
   index
+  interval_id
+  regex_searcher:RegExpSearcher|undefined
+  regex:RegExp|undefined
   constructor(
     private term_el:HTMLElement,
-    private term_text:HTMLElement
+    private term_text:HTMLElement,
+    private highlight:Highlight
   ){
+
       this.find_widget=create_element(`
       <div class="find_widget_container hidden">
         <div class="find_toolbar">
@@ -147,17 +188,23 @@ export class TerminalSearch{
       this.input()!.addEventListener('change',this.update_search)   
       this.input()!.addEventListener('input',this.update_search)   
       this.index=new NodeIndex(this.term_text)
+      this.interval_id=setInterval(this.iter,200)
   }
   show(){
     this.find_widget.classList.remove('hidden')
     this.input()?.focus();
   }
+  iter=()=>{
+    this.index.iter()
+    this.regex_searcher?.iter()
+  }
   input(){
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
   }
-  search_clear(){
-    clearInterval(this.index.interval_id)
+  search_term_clear(){
     this.index=new NodeIndex(this.term_text)
+    if (this.regex)
+      this.regex_searcher=new  RegExpSearcher(this.index,this.regex,this.highlight) 
   }
   update_search=()=>{
     const txt=this.input()!.value
@@ -167,6 +214,10 @@ export class TerminalSearch{
 
     const regex=make_regex({txt,match_case,whole_word,reg_ex})
     update_child_html(this.find_widget,'#regex',get_regexp_string(regex))
+    this.highlight.clear()
+    this.regex_searcher=undefined
+    if (regex!=null)
+      this.regex_searcher=new  RegExpSearcher(this.index,regex,this.highlight)
   }
   onclick=(event:MouseEvent)=>{
     const {target}=event

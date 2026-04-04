@@ -132,7 +132,7 @@ class TerminalPanel implements TerminalListener{
   ){
     this.workspace_folder=runner.workspace_folder
     this.el=create_terminal_element(runner)
-    this.term=new Terminal(this.el,this)
+    this.term=new Terminal(this.el,this,runner.id)
     //this.term_clear()
   }
   set_visibility(val:boolean){

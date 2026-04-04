@@ -26,7 +26,8 @@ export declare class Terminal {
     term_text: HTMLElement;
     term_el: HTMLElement;
     search: TerminalSearch;
-    constructor(parent: HTMLElement, listener: TerminalListener);
+    constructor(parent: HTMLElement, listener: TerminalListener, id: string);
+    make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
     line_to_html: (x: string, state: ChannelState, line_class: string) => string;
     after_write(): void;
