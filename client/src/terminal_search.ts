@@ -9,10 +9,12 @@ class NodeIndex{
   plain_text=''
   node_offsets:number[]=[]
   walker
+  interval_id
   constructor(public root: HTMLElement){
     this.walker=document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
+    this.interval_id=setInterval(this.iter,100)
   }
-  iter(){
+  iter=()=>{
     const strings=[]
     while (this.walker.nextNode()) {
       const node = this.walker.currentNode;
@@ -154,6 +156,7 @@ export class TerminalSearch{
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
   }
   search_clear(){
+    clearInterval(this.index.interval_id)
     this.index=new NodeIndex(this.term_text)
   }
   update_search=()=>{

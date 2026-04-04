@@ -8,8 +8,9 @@ declare class NodeIndex {
     plain_text: string;
     node_offsets: number[];
     walker: TreeWalker;
+    interval_id: NodeJS.Timeout;
     constructor(root: HTMLElement);
-    iter(): void;
+    iter: () => void;
     find_node_index_binary(target_index: number): number;
     get_ranges(offsets: StartEnd[]): Range[];
 }
