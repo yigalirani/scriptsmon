@@ -111,9 +111,12 @@ class RegExpSearcher{
   iter=()=>{
     // Ensure the regex has the global flag
     while(true){
+      const {lastIndex}=this.regex
       const match = this.regex.exec(this.index.plain_text)
-      if (match==null)
+      if (match==null){
+        this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
         break
+      }
       const {length}=match[0]
       if (length===0){
         this.regex.lastIndex++
