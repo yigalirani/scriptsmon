@@ -50,7 +50,6 @@ export default defineConfig(
       "no-unused-labels": "warn", //i dont like this rule because i like to orgenize long routines using labels
       "@typescript-eslint/no-unnecessary-type-parameters":"off",//i dont like this rule because it flages some usefull functions sucks as resuse_prev
       "@typescript-eslint/ban-ts-comment": "warn",
-      "@typescript-eslint/no-unnecessary-condition": "warn",//terible law, implmenting it resulted in bugs in the code
       "@typescript-eslint/no-use-before-define": [
         "warn",
         {
@@ -66,7 +65,13 @@ export default defineConfig(
       "@typescript-eslint/unified-signatures":"warn",//rule crashes in my case
       "@typescript-eslint/no-unsafe-call":"warn",//not easy, todo
       "no-useless-escape":"warn",
-      "no-control-regex":"warn" 
+      "no-control-regex":"warn",
+      "@typescript-eslint/no-unnecessary-condition": [//terible law, implmenting it resulted in bugs in the code, giving it another try 
+        "warn",
+        {
+          "allowConstantLoopConditions": true
+        }
+      ]      
     },
     languageOptions: {
       globals: {

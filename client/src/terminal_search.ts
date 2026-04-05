@@ -4,26 +4,32 @@ interface StartEnd{
   start:number
   end:number
 }
+interface NodeOffset{
+  node:Node
+  start_pos:number
+  end_pos:number
+}
 class NodeIndex{
-  text_nodes:Node[]=[]
+  node_offsets:NodeOffset[]=[]
   plain_text=''
-  node_offsets:number[]=[]
   walker
   constructor(public root: HTMLElement){
     this.walker=document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
   }
   iter=()=>{
     const strings=[]
+    let start_pos=this.plain_text.length
     while (this.walker.nextNode()) {
       const node = this.walker.currentNode;
-      const string=node.textContent||''
-      this.text_nodes.push(node)
+      const string=node.textContent??''
+      const end_pos=start_pos+string.length-1
+      this.node_offsets.push({node,start_pos,end_pos})
+      start_pos+=string.length      
       strings.push(string)
-      this.node_offsets.push(string.length)
     }
     this.plain_text+=strings.join('')
   }
-  find_node_index_binary(target_index: number): number {
+  /*find_node_index_binary(target_index: number): number {
     let low = 0;
     let high = this.node_offsets.length - 2;
     let result = 0;
@@ -39,38 +45,8 @@ class NodeIndex{
             high = mid - 1;
         }
     }
-    
     return result;
-  }
-
-  get_ranges(offsets: StartEnd[]): Range[] {
-    if (offsets.length===0)
-      return []
-
-    const ans= [];
-    for (const {start, end} of offsets) {
-        // Find the starting node using binary search
-        const start_node_idx = this.find_node_index_binary(start);
-        const start_node = this.text_nodes[start_node_idx]!;
-        const start_offset = start - this.node_offsets[start_node_idx]!;
-
-        // Find the ending node (starting search from the start_node_idx for efficiency)
-        let end_node_idx = start_node_idx;
-        const total_nodes = this.text_nodes.length;
-        
-        while (end_node_idx < total_nodes - 1 && this.node_offsets[end_node_idx + 1]! <= end) {
-            end_node_idx++;
-        }
-
-        const end_node = this.text_nodes[end_node_idx]!;
-        const end_offset = end - this.node_offsets[end_node_idx]!;
-        const range = new Range();
-        range.setStart(start_node, start_offset);
-        range.setEnd(end_node, end_offset)
-        ans.push(range)
-    }
-    return ans;
-  }
+  }*/
 }
 function make_regex({ txt, match_case, whole_word, reg_ex }:{ 
   txt:string, 
@@ -110,34 +86,46 @@ function get_regexp_string(pattern: RegExp|undefined): string {
 
   return `/${source}/`;
 }
+
 class RegExpSearcher{
+  head=0
   constructor(
     private index:NodeIndex,
     private regex:RegExp,
     private highlight:Highlight
   ){
   }
-  iter=()=>{
-    let match: RegExpExecArray | null;
-    
-    // Ensure the regex has the global flag
-    const offsets=[]
-    while ((match = this.regex.exec(this.index.plain_text)) !== null) {
-      const offset={
-        start:match.index,
-        end:match.index + match[0].length
+  advance_head(pos:number){
+    //by thoeram, if index data is good and it should,and pos is from regex.match, then this function will always return
+    while(true){
+      const {node,start_pos,end_pos}=this.index.node_offsets[this.head]!
+      if (end_pos>=pos){
+        return {
+          node,
+          pos:pos-start_pos
+        }
       }
-      offsets.push(offset)
-        
-      // Prevent infinite loops on zero-width matches
-      if (match.index === this.regex.lastIndex) {
-          this.regex.lastIndex++;
-      }
+      this.head++
     }
-    const ranges=this.index.get_ranges(offsets)
-    ranges.forEach(x=>this.highlight.add(x))
-    //this.highlight.add(...ranges)
-    //return offsets;
+  }
+  iter=()=>{
+    // Ensure the regex has the global flag
+    while(true){
+      const match = this.regex.exec(this.index.plain_text)
+      if (match==null)
+        break
+      const {length}=match[0]
+      if (length===0){
+        this.regex.lastIndex++
+        continue
+      }
+      const start=this.advance_head(match.index)
+      const end=this.advance_head(match.index + match[0].length)
+      const range = new Range();
+      range.setStart(start.node,start.pos)
+      range.setEnd(end.node,end.pos)
+      this.highlight.add(range)
+    }
   }
 }
 export class TerminalSearch{
@@ -151,7 +139,6 @@ export class TerminalSearch{
     private term_text:HTMLElement,
     private highlight:Highlight
   ){
-
       this.find_widget=create_element(`
       <div class="find_widget_container hidden">
         <div class="find_toolbar">

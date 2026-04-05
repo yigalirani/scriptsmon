@@ -1,23 +1,26 @@
-interface StartEnd {
-    start: number;
-    end: number;
+interface NodeOffset {
+    node: Node;
+    start_pos: number;
+    end_pos: number;
 }
 declare class NodeIndex {
     root: HTMLElement;
-    text_nodes: Node[];
+    node_offsets: NodeOffset[];
     plain_text: string;
-    node_offsets: number[];
     walker: TreeWalker;
     constructor(root: HTMLElement);
     iter: () => void;
-    find_node_index_binary(target_index: number): number;
-    get_ranges(offsets: StartEnd[]): Range[];
 }
 declare class RegExpSearcher {
     private index;
     private regex;
     private highlight;
+    head: number;
     constructor(index: NodeIndex, regex: RegExp, highlight: Highlight);
+    advance_head(pos: number): {
+        node: Node;
+        pos: number;
+    };
     iter: () => void;
 }
 export declare class TerminalSearch {

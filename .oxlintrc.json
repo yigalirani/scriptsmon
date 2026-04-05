@@ -110,6 +110,12 @@
     "typescript/prefer-readonly":"off",
     "typescript/consistent-return":"off",
     "typescript/prefer-regexp-exec":"off",
-    "typescript/no-unnecessary-type-parameters":"off" //revisit
+    "typescript/no-unnecessary-type-parameters":"off", //revisit
+    "typescript/no-unnecessary-condition": [
+      "error",
+      {
+        "allowConstantLoopConditions": true
+      }
+    ]
   }
 }
