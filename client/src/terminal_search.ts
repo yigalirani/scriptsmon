@@ -9,10 +9,17 @@ interface NodeOffset{
   start_pos:number
   end_pos:number
 }
+function get_bottom_of_node(node:Node){
+  const range = document.createRange();
+  range.selectNodeContents(node);
+  const rects = range.getClientRects();
+  return rects[0]!.bottom
+}
 class NodeIndex{
   node_offsets:NodeOffset[]=[]
   plain_text=''
   walker
+  last_bottom:number|undefined
   constructor(public root: HTMLElement){
     this.walker=document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
   }
@@ -24,8 +31,16 @@ class NodeIndex{
       const string=node.textContent??''
       const end_pos=start_pos+string.length-1
       this.node_offsets.push({node,start_pos,end_pos})
+      /*const new_bottom=get_bottom_of_node(node)
+      if (new_bottom!==this.last_bottom){
+        this.last_bottom=new_bottom
+        strings.push("\n")
+        start_pos++
+        console.log(string)
+      }*/
       start_pos+=string.length      
       strings.push(string)
+
     }
     this.plain_text+=strings.join('')
   }
@@ -98,6 +113,10 @@ class RegExpSearcher{
   advance_head(pos:number){
     //by thoeram, if index data is good and it should,and pos is from regex.match, then this function will always return
     while(true){
+      if (this.head>=this.index.node_offsets.length){
+        console.log('before bug')
+      }      
+
       const {node,start_pos,end_pos}=this.index.node_offsets[this.head]!
       if (end_pos>=pos){
         return {

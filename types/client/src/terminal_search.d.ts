@@ -8,6 +8,7 @@ declare class NodeIndex {
     node_offsets: NodeOffset[];
     plain_text: string;
     walker: TreeWalker;
+    last_bottom: number | undefined;
     constructor(root: HTMLElement);
     iter: () => void;
 }
