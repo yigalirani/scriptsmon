@@ -151,9 +151,9 @@ function get_style_css(style: Style|undefined): string {
     return ''
   return `style='${css_parts.map(x=>`${x};`).join('')}'`
 }
-function is_clear_style(style:Style){
+/*function is_clear_style(style:Style){
   return style.background==null&&style.foreground==null&&style.font_styles.size===0
-}
+}*/
 
 function merge_one(a:AnsiCommand,b:AnsiCommand):AnsiStyleInsertCommand{
   if (is_style_command(a)&&is_insert_command(b) ){  

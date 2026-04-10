@@ -57,7 +57,7 @@ function post_message(view:vscode.Webview,msg:WebviewMessage){
 import {to_json} from './parser.js'
 //const folders=["c:\\yigal\\scriptsmon"]
 //const folders=["c:\\yigal\\scriptsmon","c:\\yigal\\million_try3"]
-let global_view_focus=false
+//let global_view_focus=false
 function make_loop_func(monitor:Monitor){
   const ans:WebviewFunc=(view:WebviewView,context:ExtensionContext)=>{
     function send_report(_root_folder:Folder){
@@ -83,7 +83,7 @@ function make_loop_func(monitor:Monitor){
             'scriptsmon_focused', 
             message.val
           )
-          global_view_focus=message.val
+          //global_view_focus=message.val
           break
         }
         case "command_open_link":{

@@ -8945,7 +8945,6 @@ async function open_link(url) {
 function post_message(view, msg) {
   view.postMessage(msg);
 }
-var global_view_focus = false;
 function make_loop_func(monitor) {
   const ans = (view, context) => {
     function send_report(_root_folder) {
@@ -8969,7 +8968,6 @@ function make_loop_func(monitor) {
               "scriptsmon_focused",
               message.val
             );
-            global_view_focus = message.val;
             break;
           }
           case "command_open_link": {

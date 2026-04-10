@@ -1,6 +1,6 @@
 import {create_element,get_parent_by_class,has_class,update_child_html} from './dom_utils.js'
 
-interface StartEnd{
+interface _StartEnd{
   start:number
   end:number
 }
@@ -13,27 +13,30 @@ export interface SearchData{
   term_text:HTMLElement
   highlight:Highlight  
   term_plain_text:string
-  lines:number[]
+  lines:BigInt64Array
   //new_line_pos:BigInt64Array
 }
-class Walker{
+class RegExpSearcher{
   text_head=0
   line=0
   children
   walker:TreeWalker|undefined
   walker_offset=0
-  constructor(public search_data:SearchData){
+  constructor(
+    public search_data:SearchData,
+    public regex:RegExp,
+  ){
     this.children=search_data.term_el.children
   }
   advance_line(text_pos:number){
     const {children,search_data:{lines,term_plain_text}}=this
     while(true){
-      const next_line_pos=lines[this.line+1]??term_plain_text.length
+      const next_line_pos=Number(lines[this.line+1]??term_plain_text.length)
       if (next_line_pos>text_pos){
         if (this.walker==null){
           const cur_line_node=children[this.line]!
           this.walker=document.createTreeWalker(cur_line_node, NodeFilter.SHOW_TEXT);
-          this.text_head=lines[this.line]!
+          this.text_head=Number(lines[this.line]!)
         }
         return
       }
@@ -59,56 +62,26 @@ class Walker{
     }
     throw new Error("should not get here")
   }
-}
-
-class _NodeIndexdeperacted{
-  node_offsets:NodeOffset[]=[]
-  plain_text=''
-  walker
-  last_bottom:number|undefined
-  constructor(public root: HTMLElement){
-    this.walker=document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
-  }
   iter=()=>{
-    const strings=[]
-    let start_pos=this.plain_text.length
-    while (this.walker.nextNode()) {
-      const node = this.walker.currentNode;
-      const string=node.textContent??''
-      const end_pos=start_pos+string.length-1
-      this.node_offsets.push({node,start_pos,end_pos})
-      /*const new_bottom=get_bottom_of_node(node)
-      if (new_bottom!==this.last_bottom){
-        this.last_bottom=new_bottom
-        strings.push("\n")
-        start_pos++
-        console.log(string)
-      }*/
-      start_pos+=string.length      
-      strings.push(string)
-
+    /*if (this.text_head===this.search_data.term_plain_text.length)
+      return*/
+    while (true) {
+      const {lastIndex}=this.regex
+      const m = this.regex.exec(this.search_data.term_plain_text)
+      if (m==null){
+        this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
+        return
+      }    
+      const start=this.get_node_offset(m.index)
+      const end=this.get_node_offset(m.index + m[0].length)
+      const range = new Range();
+      range.setStart(start.node,start.node_pos)
+      range.setEnd(end.node,end.node_pos)
+      this.search_data.highlight.add(range)
     }
-    this.plain_text+=strings.join('')
   }
-  /*find_node_index_binary(target_index: number): number {
-    let low = 0;
-    let high = this.node_offsets.length - 2;
-    let result = 0;
-
-    while (low <= high) {
-        const mid = Math.floor((low + high) / 2);
-        
-        // Check if the target falls within this node's range
-        if (this.node_offsets[mid]! <= target_index) {
-            result = mid;
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
-    }
-    return result;
-  }*/
 }
+
 function make_regex({ txt, match_case, whole_word, reg_ex }:{ 
   txt:string, 
   match_case:boolean, 
@@ -148,69 +121,7 @@ function get_regexp_string(pattern: RegExp|undefined): string {
   return `/${source}/`;
 }
 
-/*
-cur_line save
-lastIndex save
-walker - create on inter
- */
 
-class RegExpSearcher{
-  text_head=0
-  line_head=0
-  constructor(
-    private regex:RegExp,
-    private data: SearchData
-  ){
-  }
-
-  *get_next_range(){
-    // Ensure the regex has the global flag
-    let walker:TreeWalker|undefined
-    const {children}=this.data.term_text
-    function advance_head(pos:number):{
-      node:Node
-      pos:number
-    }{
-      //by thoeram, if index data is good and it should,and pos is from regex.match, then this function will always return
-      while(true){
-        if (end_pos>=pos){
-          return {
-            node,
-            pos:pos-start_pos
-          }
-        }
-        this.head++
-      }
-    }
-    for (let line=line_head;
-      
-
-      const {lastIndex}=this.regex
-      const match = this.regex.exec(this.data.term_plain_text)
-      if (match==null){
-        this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
-        return
-      }
-      const {length}=match[0]
-      if (length===0){
-        this.regex.lastIndex++
-        continue
-      }
-      const start=this.advance_head(match.index)
-      const end=this.advance_head(match.index + match[0].length)
-      const range = new Range();
-      range.setStart(start.node,start.pos)
-      range.setEnd(end.node,end.pos)
-      yield range
-    }
-  }
-  iter=()=>{
-    if (this.text_head===this.data.term_plain_text.length)
-      return
-    for (const range of this.get_next_range())
-      this.data.highlight.add(range)
-  }
-}
 
 export class TerminalSearch{
   find_widget
@@ -269,7 +180,7 @@ export class TerminalSearch{
   }
   search_term_clear(){
     if (this.regex)
-      this.regex_searcher=new  RegExpSearcher(this.regex,this.data) 
+      this.regex_searcher=new  RegExpSearcher(this.data,this.regex) 
   }
   update_search=()=>{
     const txt=this.input()!.value
@@ -282,7 +193,7 @@ export class TerminalSearch{
     this.data.highlight.clear()
     this.regex_searcher=undefined
     if (regex!=null)
-      this.regex_searcher=new  RegExpSearcher(regex,this.data)
+      this.regex_searcher=new  RegExpSearcher(this.data,regex)
   }
   onclick=(event:MouseEvent)=>{
     const {target}=event
@@ -297,7 +208,5 @@ export class TerminalSearch{
       icon_button.classList.toggle('checked')
       this.update_search()
     }
-  }
-  text_added(){
   }
 }

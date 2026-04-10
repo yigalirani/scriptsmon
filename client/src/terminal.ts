@@ -1,6 +1,6 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
-import {get_parent_with_dataset,create_element,get_parent_by_class} from './dom_utils.js'
+import {get_parent_with_dataset,create_element} from './dom_utils.js'
 import {TerminalSearch,type SearchData} from './terminal_search.js'
 export interface ParseRange{
   start:number
@@ -52,13 +52,15 @@ export class Terminal implements SearchData{
   term_el
   search
   highlight
-  plain_text
+  term_plain_text=''
+  lines
   //text_index
   constructor(
-    private parent:HTMLElement,
+    parent:HTMLElement,
     private listener:TerminalListener,
     id:string
   ){
+    this.lines=new BigInt64Array()
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term>
@@ -68,7 +70,7 @@ export class Terminal implements SearchData{
     this.term_text=this.term_el.querySelector<HTMLElement>('.term_text')!
     this.term_text.innerHTML=''
     //this.text_index=new BigInt64Array()
-    this.plain_text=''
+    this.term_plain_text=''
     this.highlight=this.make_highlight(id)
     this.search=new TerminalSearch(this)
     this.term_el.addEventListener('click',this.onclick)
@@ -125,7 +127,7 @@ export class Terminal implements SearchData{
   
     if (channel_state.last_line!=='')
       this.term_text.querySelector(`.${line_class}:last-child`)?.remove()
-    channel_state.last_line=lines.at(-1)||''
+    channel_state.last_line=lines.at(-1)??''
     const lines_to_render = channel_state.last_line === '' ? lines.slice(0,-1) : lines
     const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
     this.term_text.insertAdjacentHTML('beforeend',new_html)

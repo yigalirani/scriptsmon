@@ -1,17 +1,26 @@
+interface NodeOffset {
+    node: Node;
+    node_pos: number;
+}
 export interface SearchData {
     term_el: HTMLElement;
     term_text: HTMLElement;
     highlight: Highlight;
     term_plain_text: string;
-    lines: number[];
+    lines: BigInt64Array;
 }
 declare class RegExpSearcher {
-    private regex;
-    private data;
+    search_data: SearchData;
+    regex: RegExp;
     text_head: number;
-    line_head: number;
-    constructor(regex: RegExp, data: SearchData);
-    get_next_range(): Generator<Range, void, unknown>;
+    line: number;
+    children: HTMLCollection;
+    walker: TreeWalker | undefined;
+    walker_offset: number;
+    constructor(search_data: SearchData, regex: RegExp);
+    advance_line(text_pos: number): void;
+    get_node_offset(text_pos: number): NodeOffset;
+    iter: () => void;
 }
 export declare class TerminalSearch {
     private data;
@@ -26,6 +35,5 @@ export declare class TerminalSearch {
     search_term_clear(): void;
     update_search: () => void;
     onclick: (event: MouseEvent) => void;
-    text_added(): void;
 }
 export {};

@@ -44,3 +44,27 @@ interface NodeOffset{
   }
 
 }
+
+
+    for (let line=line_head;
+      
+
+      const {lastIndex}=this.regex
+      const match = this.regex.exec(this.data.term_plain_text)
+      if (match==null){
+        this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
+        return
+      }
+      const {length}=match[0]
+      if (length===0){
+        this.regex.lastIndex++
+        continue
+      }
+      const start=this.advance_head(match.index)
+      const end=this.advance_head(match.index + match[0].length)
+      const range = new Range();
+      range.setStart(start.node,start.pos)
+      range.setEnd(end.node,end.pos)
+      yield range
+    }
+  }

@@ -20,14 +20,14 @@ interface ChannelState {
     style: Style;
 }
 export declare class Terminal implements SearchData {
-    private parent;
     private listener;
     channel_states: Record<Channel, ChannelState>;
     term_text: HTMLElement;
     term_el: HTMLElement;
     search: TerminalSearch;
     highlight: Highlight;
-    plain_text: string;
+    term_plain_text: string;
+    lines: BigInt64Array<ArrayBuffer>;
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
