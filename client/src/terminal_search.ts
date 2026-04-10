@@ -6,16 +6,62 @@ interface StartEnd{
 }
 interface NodeOffset{
   node:Node
-  start_pos:number
-  end_pos:number
+  node_pos:number
 }
-function get_bottom_of_node(node:Node){
-  const range = document.createRange();
-  range.selectNodeContents(node);
-  const rects = range.getClientRects();
-  return rects[0]!.bottom
+export interface SearchData{
+  term_el:HTMLElement
+  term_text:HTMLElement
+  highlight:Highlight  
+  term_plain_text:string
+  lines:number[]
+  //new_line_pos:BigInt64Array
 }
-class NodeIndex{
+class Walker{
+  text_head=0
+  line=0
+  children
+  walker:TreeWalker|undefined
+  walker_offset=0
+  constructor(public search_data:SearchData){
+    this.children=search_data.term_el.children
+  }
+  advance_line(text_pos:number){
+    const {children,search_data:{lines,term_plain_text}}=this
+    while(true){
+      const next_line_pos=lines[this.line+1]??term_plain_text.length
+      if (next_line_pos>text_pos){
+        if (this.walker==null){
+          const cur_line_node=children[this.line]!
+          this.walker=document.createTreeWalker(cur_line_node, NodeFilter.SHOW_TEXT);
+          this.text_head=lines[this.line]!
+        }
+        return
+      }
+      this.walker=undefined
+      if (this.line<lines.length)
+        this.line++
+    }
+  }
+  get_node_offset(text_pos:number):NodeOffset{
+    this.advance_line(text_pos)
+    if (this.walker==null)
+      throw new Error('walker is null')
+    while (this.walker.nextNode()) {
+      const node = this.walker.currentNode;
+      const string=node.textContent??''
+      const {length}=string
+      this.text_head+=length
+      if (text_pos>=this.text_head-length&& text_pos <this.text_head)
+        return {
+          node,
+          node_pos:text_pos-this.text_head-length
+        } 
+    }
+    throw new Error("should not get here")
+  }
+}
+
+class _NodeIndexdeperacted{
   node_offsets:NodeOffset[]=[]
   plain_text=''
   walker
@@ -102,39 +148,48 @@ function get_regexp_string(pattern: RegExp|undefined): string {
   return `/${source}/`;
 }
 
+/*
+cur_line save
+lastIndex save
+walker - create on inter
+ */
+
 class RegExpSearcher{
-  head=0
+  text_head=0
+  line_head=0
   constructor(
-    private index:NodeIndex,
     private regex:RegExp,
-    private highlight:Highlight
+    private data: SearchData
   ){
   }
-  advance_head(pos:number){
-    //by thoeram, if index data is good and it should,and pos is from regex.match, then this function will always return
-    while(true){
-      if (this.head>=this.index.node_offsets.length){
-        console.log('before bug')
-      }      
 
-      const {node,start_pos,end_pos}=this.index.node_offsets[this.head]!
-      if (end_pos>=pos){
-        return {
-          node,
-          pos:pos-start_pos
-        }
-      }
-      this.head++
-    }
-  }
-  iter=()=>{
+  *get_next_range(){
     // Ensure the regex has the global flag
-    while(true){
+    let walker:TreeWalker|undefined
+    const {children}=this.data.term_text
+    function advance_head(pos:number):{
+      node:Node
+      pos:number
+    }{
+      //by thoeram, if index data is good and it should,and pos is from regex.match, then this function will always return
+      while(true){
+        if (end_pos>=pos){
+          return {
+            node,
+            pos:pos-start_pos
+          }
+        }
+        this.head++
+      }
+    }
+    for (let line=line_head;
+      
+
       const {lastIndex}=this.regex
-      const match = this.regex.exec(this.index.plain_text)
+      const match = this.regex.exec(this.data.term_plain_text)
       if (match==null){
         this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
-        break
+        return
       }
       const {length}=match[0]
       if (length===0){
@@ -146,20 +201,24 @@ class RegExpSearcher{
       const range = new Range();
       range.setStart(start.node,start.pos)
       range.setEnd(end.node,end.pos)
-      this.highlight.add(range)
+      yield range
     }
   }
+  iter=()=>{
+    if (this.text_head===this.data.term_plain_text.length)
+      return
+    for (const range of this.get_next_range())
+      this.data.highlight.add(range)
+  }
 }
+
 export class TerminalSearch{
   find_widget
-  index
   interval_id
   regex_searcher:RegExpSearcher|undefined
   regex:RegExp|undefined
   constructor(
-    private term_el:HTMLElement,
-    private term_text:HTMLElement,
-    private highlight:Highlight
+    private data:SearchData
   ){
       this.find_widget=create_element(`
       <div class="find_widget_container hidden">
@@ -192,11 +251,10 @@ export class TerminalSearch{
         </div>
     
     
-      </div>`,this.term_el)
-      this.term_el.addEventListener('click',this.onclick)    
+      </div>`,this.data.term_el)
+      this.data.term_el.addEventListener('click',this.onclick)    
       this.input()!.addEventListener('change',this.update_search)   
       this.input()!.addEventListener('input',this.update_search)   
-      this.index=new NodeIndex(this.term_text)
       this.interval_id=setInterval(this.iter,200)
   }
   show(){
@@ -204,16 +262,14 @@ export class TerminalSearch{
     this.input()?.focus();
   }
   iter=()=>{
-    this.index.iter()
     this.regex_searcher?.iter()
   }
   input(){
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
   }
   search_term_clear(){
-    this.index=new NodeIndex(this.term_text)
     if (this.regex)
-      this.regex_searcher=new  RegExpSearcher(this.index,this.regex,this.highlight) 
+      this.regex_searcher=new  RegExpSearcher(this.regex,this.data) 
   }
   update_search=()=>{
     const txt=this.input()!.value
@@ -223,10 +279,10 @@ export class TerminalSearch{
 
     const regex=make_regex({txt,match_case,whole_word,reg_ex})
     update_child_html(this.find_widget,'#regex',get_regexp_string(regex))
-    this.highlight.clear()
+    this.data.highlight.clear()
     this.regex_searcher=undefined
     if (regex!=null)
-      this.regex_searcher=new  RegExpSearcher(this.index,regex,this.highlight)
+      this.regex_searcher=new  RegExpSearcher(regex,this.data)
   }
   onclick=(event:MouseEvent)=>{
     const {target}=event

@@ -1,39 +1,25 @@
-interface NodeOffset {
-    node: Node;
-    start_pos: number;
-    end_pos: number;
-}
-declare class NodeIndex {
-    root: HTMLElement;
-    node_offsets: NodeOffset[];
-    plain_text: string;
-    walker: TreeWalker;
-    last_bottom: number | undefined;
-    constructor(root: HTMLElement);
-    iter: () => void;
+export interface SearchData {
+    term_el: HTMLElement;
+    term_text: HTMLElement;
+    highlight: Highlight;
+    term_plain_text: string;
+    lines: number[];
 }
 declare class RegExpSearcher {
-    private index;
     private regex;
-    private highlight;
-    head: number;
-    constructor(index: NodeIndex, regex: RegExp, highlight: Highlight);
-    advance_head(pos: number): {
-        node: Node;
-        pos: number;
-    };
-    iter: () => void;
+    private data;
+    text_head: number;
+    line_head: number;
+    constructor(regex: RegExp, data: SearchData);
+    get_next_range(): Generator<Range, void, unknown>;
 }
 export declare class TerminalSearch {
-    private term_el;
-    private term_text;
-    private highlight;
+    private data;
     find_widget: HTMLElement;
-    index: NodeIndex;
     interval_id: NodeJS.Timeout;
     regex_searcher: RegExpSearcher | undefined;
     regex: RegExp | undefined;
-    constructor(term_el: HTMLElement, term_text: HTMLElement, highlight: Highlight);
+    constructor(data: SearchData);
     show(): void;
     iter: () => void;
     input(): HTMLInputElement | null;

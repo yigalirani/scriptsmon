@@ -1,5 +1,5 @@
 import { type Style } from './terminals_ansi.js';
-import { TerminalSearch } from './terminal_search.js';
+import { TerminalSearch, type SearchData } from './terminal_search.js';
 export interface ParseRange {
     start: number;
     end: number;
@@ -19,13 +19,15 @@ interface ChannelState {
     parser_state: unknown;
     style: Style;
 }
-export declare class Terminal {
+export declare class Terminal implements SearchData {
     private parent;
     private listener;
     channel_states: Record<Channel, ChannelState>;
     term_text: HTMLElement;
     term_el: HTMLElement;
     search: TerminalSearch;
+    highlight: Highlight;
+    plain_text: string;
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;

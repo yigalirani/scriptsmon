@@ -1,7 +1,7 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
 import {get_parent_with_dataset,create_element,get_parent_by_class} from './dom_utils.js'
-import {TerminalSearch} from './terminal_search.js'
+import {TerminalSearch,type SearchData} from './terminal_search.js'
 export interface ParseRange{
   start:number
   end:number
@@ -45,11 +45,15 @@ function ranges_to_inserts(ranges:Array<ParseRange>){
 function get_element_dataset (element: HTMLElement): Record<string, string> {
   return Object.fromEntries(Object.entries(element.dataset)) as Record<string, string>;
 };
-export class Terminal{
+
+export class Terminal implements SearchData{
   channel_states
   term_text
   term_el
   search
+  highlight
+  plain_text
+  //text_index
   constructor(
     private parent:HTMLElement,
     private listener:TerminalListener,
@@ -63,7 +67,10 @@ export class Terminal{
     `,parent)
     this.term_text=this.term_el.querySelector<HTMLElement>('.term_text')!
     this.term_text.innerHTML=''
-    this.search=new TerminalSearch(this.term_el,this.term_text,this.make_highlight(id))
+    //this.text_index=new BigInt64Array()
+    this.plain_text=''
+    this.highlight=this.make_highlight(id)
+    this.search=new TerminalSearch(this)
     this.term_el.addEventListener('click',this.onclick)
   }
   make_highlight(id:string){

@@ -37,6 +37,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "types/*" 
+    "types/*",
+    "**/ai.ts" 
+ 
   ]
 }
