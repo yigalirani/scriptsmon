@@ -1,70 +1,45 @@
-export interface SearchData{
-  term_el:HTMLElement/*
-* typicly structures is
-  <div class=term_text>
-    <div class="line_stdout"><br></div> //new line is indicated by br because empty line
-    <div class="line_stdout"><span>hello</span></div>   /// new br here because no empty line, none the less new line is implied
-    <div class="line_stdout"><br></div>  
-    <div class="line_stdout"><span>world</span></div>  
-    <div class="line_stdout"><br></div>
-  </div>
-   */  
-  term_text:HTMLElement
-  highlight:Highlight  
-  term_plain_text:string //contains \n matching thew new lines as described the html above
+type font_style = 'bold' | 'italic' |'faint'| 'underline' | 'blinking' | 'inverse' | 'strikethrough';
+
+export interface Style {
+  foreground: string | undefined;
+  background: string | undefined;
+  font_styles: Set<font_style>;
 }
-
-interface NodeOffset{
-  node:Node
-  node_pos:number
+type Channel='stderr'|'stdout' 
+interface ChannelState{
+  last_line:string
+  parser_state:unknown
+  style:Style
 }
-
-
-  get_node_offsets(term_el:HTMLElement,plain_text:string,text_pos:number[]):NodeOffset[]{
-  /*text_pos are increasing and refer to postins within plain_text
-  term_el typicls strucuter is 
-  <div class=term_text>
-    <div class="line_stdout"><br></div> //new line is indicated by br because empty line
-    <div class="line_stdout"><span>hello</span></div>   /// new br here because no empty line, none the less new line is implied
-    <div class="line_stdout"><br></div>  
-    <div class="line_stdout"><span>world</span></div>  
-    <div class="line_stdout"><br></div>
-  </div>
-   */  
-    /*implment this stucure, algorithm: loop over the children of term_el, for children that have br, 
-        return the br,0 it its correspoding text pos is pos
-    for non br lines use document.createTreeWalker(line , NodeFilter.SHOW_TEXT);
-    use variables:
-      plain_text_head/
-      text_pos_head
-      i for linr number
-      line for childern[i]
-  
-
+class term{
+    line_to_html=(x:string,state:ChannelState,line_class:string)=>{
+    const {
+      plain_text,
+      style_positions,
+      link_inserts
+    }=strip_ansi(x, state.style)
+    state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
+    const {ranges,parser_state}=this.listener.parse(plain_text,state.parser_state)
+    state.parser_state=parser_state
+    const range_inserts=ranges_to_inserts(ranges)
+    const inserts=merge_inserts(range_inserts,link_inserts)
+    const html=generate_html({style_positions,inserts,plain_text})
+    const br=(plain_text===''?'<br>':'')
+    return `<div class="${line_class}">${html}${br}</div>`
   }
 
-}
-
-
-    for (let line=line_head;
-      
-
-      const {lastIndex}=this.regex
-      const match = this.regex.exec(this.data.term_plain_text)
-      if (match==null){
-        this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
-        return
-      }
-      const {length}=match[0]
-      if (length===0){
-        this.regex.lastIndex++
-        continue
-      }
-      const start=this.advance_head(match.index)
-      const end=this.advance_head(match.index + match[0].length)
-      const range = new Range();
-      range.setStart(start.node,start.pos)
-      range.setEnd(end.node,end.pos)
-      yield range
-    }
+  term_write(output:string[],channel:Channel){
+    if (output.length===0)
+      return
+    const channel_state=this.channel_states[channel]
+    const line_class=`line_${channel}`
+    const joined_lines=[channel_state.last_line,...output].join('').replaceAll('\r\n','\n')
+    const lines=joined_lines.split('\n')
+  
+    if (channel_state.last_line!=='')
+      this.term_text.querySelector(`.${line_class}:last-child`)?.remove()
+    channel_state.last_line=lines.at(-1)??''
+    const lines_to_render = channel_state.last_line === '' ? lines.slice(0,-1) : lines
+    const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
+    this.term_text.insertAdjacentHTML('beforeend',new_html)
   }

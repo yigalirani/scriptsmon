@@ -21,7 +21,8 @@
         "oxlint": "oxlint ",
         "biome": "biome lint --colors=force",
         "vsce": "vsce package", 
-        "find": "find c:\\windows\\system32 | grep --color=always -F '.ts'"
+        "find": "find c:\\windows\\system32 | grep --color=always -F '.ts'",
+        "tst_print": "node ./tst_print"
     },
     "workspaces": [
         "client"

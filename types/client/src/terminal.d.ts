@@ -15,7 +15,6 @@ export interface TerminalListener {
 }
 type Channel = 'stderr' | 'stdout';
 interface ChannelState {
-    last_line: string;
     parser_state: unknown;
     style: Style;
 }
@@ -28,6 +27,8 @@ export declare class Terminal implements SearchData {
     highlight: Highlight;
     term_plain_text: string;
     lines: BigInt64Array<ArrayBuffer>;
+    last_line: string;
+    last_write_channel: Channel;
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;

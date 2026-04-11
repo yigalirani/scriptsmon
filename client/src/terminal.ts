@@ -17,7 +17,6 @@ export interface TerminalListener{
 }
 type Channel='stderr'|'stdout' 
 interface ChannelState{
-  last_line:string
   parser_state:unknown
   style:Style
 }
@@ -28,8 +27,8 @@ const clear_style:Style={
 }
 function make_channel_states():Record<Channel,ChannelState>{
   return {
-    stdout:{last_line:'',parser_state:undefined,style:clear_style},
-    stderr:{last_line:'',parser_state:undefined,style:clear_style}
+    stdout:{parser_state:undefined,style:clear_style},
+    stderr:{parser_state:undefined,style:clear_style}
   }
 }
 function range_to_inserts(range:ParseRange):AnsiInsertCommand[]{
@@ -54,6 +53,8 @@ export class Terminal implements SearchData{
   highlight
   term_plain_text=''
   lines
+  last_line=''
+  last_write_channel:Channel="stdout"
   //text_index
   constructor(
     parent:HTMLElement,
@@ -122,13 +123,19 @@ export class Terminal implements SearchData{
       return
     const channel_state=this.channel_states[channel]
     const line_class=`line_${channel}`
-    const joined_lines=[channel_state.last_line,...output].join('').replaceAll('\r\n','\n')
+    
+    if (this.last_write_channel!==channel){ //forcing line break when switching channels
+      this.last_line=''
+    }
+    this.last_write_channel=channel
+
+    const joined_lines=[this.last_line,...output].join('').replaceAll('\r\n','\n')
     const lines=joined_lines.split('\n')
   
-    if (channel_state.last_line!=='')
-      this.term_text.querySelector(`.${line_class}:last-child`)?.remove()
-    channel_state.last_line=lines.at(-1)??''
-    const lines_to_render = channel_state.last_line === '' ? lines.slice(0,-1) : lines
+    if (this.last_line!=='')
+      this.term_text.querySelector(`& > :last-child`)?.remove()
+    this.last_line=lines.at(-1)??''
+    const lines_to_render = this.last_line === '' ? lines.slice(0,-1) : lines
     const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
     this.term_text.insertAdjacentHTML('beforeend',new_html)
   }

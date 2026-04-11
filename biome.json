@@ -54,7 +54,7 @@
       },
       "style":"on",
       "style": {
-        "noNonNullAssertion": "off",
+        "noNonNullAssertion": "warn",
         "useTemplate": "warn"
       }
     }
