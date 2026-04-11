@@ -151,9 +151,9 @@ function get_style_css(style: Style|undefined): string {
     return ''
   return `style='${css_parts.map(x=>`${x};`).join('')}'`
 }
-/*function is_clear_style(style:Style){
+function is_clear_style(style:Style){
   return style.background==null&&style.foreground==null&&style.font_styles.size===0
-}*/
+}
 
 function merge_one(a:AnsiCommand,b:AnsiCommand):AnsiStyleInsertCommand{
   if (is_style_command(a)&&is_insert_command(b) ){  
@@ -388,6 +388,12 @@ function dedup_positions(style_positions:Array<AnsiStyleCommand>){
 }
 export function strip_ansi(text: string, start_style: Style){
   const style_positions: Array<AnsiStyleCommand> = [];
+  if (!is_clear_style(start_style))
+    style_positions.push({
+        command:'style',
+        style:start_style,
+        position:0
+    })
   const strings=[]
   const current_style = { ...start_style, font_styles: new Set(start_style.font_styles) };
   const link_inserts:Array<AnsiInsertCommand>=[]

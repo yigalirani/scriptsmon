@@ -112,7 +112,7 @@ export class Terminal implements SearchData{
     const inserts=merge_inserts(range_inserts,link_inserts)
     const html=generate_html({style_positions,inserts,plain_text})
     const br=(plain_text===''?'<br>':'')
-    return `<div class="${line_class}">${html}${br}</div>`
+    return `<div class="${line_class}">${html}${br}</div>` 
   }
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
