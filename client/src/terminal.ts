@@ -67,15 +67,17 @@ export class Terminal implements SearchData{
   search
   highlight
   term_plain_text=''
-  lines
+  lines:Array<number>
   last_write_channel:Channel="stdout"
+  strings:string[]
   //text_index
   constructor(
     parent:HTMLElement,
     private listener:TerminalListener,
     id:string
   ){
-    this.lines=new BigInt64Array()
+    this.strings=[]
+    this.lines=[]
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term>
@@ -116,10 +118,22 @@ export class Terminal implements SearchData{
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
     this.term_text.lastElementChild?.classList.add('eof')
+    const joined_strings=this.strings.join('')
+    let acum=this.term_plain_text.length
+    for (const str of joined_strings.split('\n')){
+      acum+=str.length
+      this.lines.push(acum)
+    }
+    this.term_plain_text=[this.term_plain_text,joined_strings].join('')
+    console.log(this.term_plain_text)
+    console.log(this.lines)
+
   }
-  flush_channel(channel_state:ChannelState){
+  flush_channel(channel_state:ChannelState,append_nl:boolean){
     if (channel_state.last_line==='') //all flushed already
       return
+    if (append_nl)
+      this.strings.push('\n')
     channel_state.start_parser_state=channel_state.end_parser_state
     channel_state.start_style=channel_state.end_style
     channel_state.end_parser_state=undefined
@@ -150,7 +164,7 @@ export class Terminal implements SearchData{
     const channel_state=this.channel_states[channel]
     
     if (this.last_write_channel!==channel){ //forcing line break when switching channels
-      this.flush_channel(this.channel_states[this.last_write_channel])
+      this.flush_channel(this.channel_states[this.last_write_channel],true)
     }
     this.last_write_channel=channel
 
@@ -166,10 +180,11 @@ export class Terminal implements SearchData{
         style_positions,
         link_inserts
       }=strip_ansi(line, channel_state.start_style)
+      this.strings.push(plain_text)
       const is_last=(i===lines.length-1)
       if (is_last){
         if (line===''){
-          this.flush_channel(channel_state)
+          this.flush_channel(channel_state,false)
           break
         }
       }
@@ -184,7 +199,7 @@ export class Terminal implements SearchData{
       const br=(plain_text===''?'<br>':'')
       acum_html.push( `<div class="${channel_state.class_name}">${html}${br}</div>`)
       if (!is_last)
-        this.flush_channel(channel_state)
+        this.flush_channel(channel_state,true)
     }
 
     const new_html=acum_html.join('')
@@ -198,6 +213,9 @@ export class Terminal implements SearchData{
     this.term_text.innerHTML=''
     this.channel_states=make_channel_states()
     this.search.search_term_clear()
+    this.strings=[]
+    this.term_plain_text=''
+    this.lines=[]
       /*stdout:{last_line:'',ancore:undefined,style:clear_style},
       stderr:{last_line:'',ancore:undefined,style:clear_style}
     }   */ 

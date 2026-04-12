@@ -7,7 +7,7 @@ export interface SearchData {
     term_text: HTMLElement;
     highlight: Highlight;
     term_plain_text: string;
-    lines: BigInt64Array;
+    lines: Array<number>;
 }
 declare class RegExpSearcher {
     search_data: SearchData;

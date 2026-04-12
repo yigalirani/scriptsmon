@@ -13,7 +13,7 @@ export interface SearchData{
   term_text:HTMLElement
   highlight:Highlight  
   term_plain_text:string
-  lines:BigInt64Array
+  lines:Array<number>
   //new_line_pos:BigInt64Array
 }
 class RegExpSearcher{
@@ -31,12 +31,12 @@ class RegExpSearcher{
   advance_line(text_pos:number){
     const {children,search_data:{lines,term_plain_text}}=this
     while(true){
-      const next_line_pos=Number(lines[this.line+1]??term_plain_text.length)
+      const next_line_pos=lines[this.line+1]??term_plain_text.length
       if (next_line_pos>text_pos){
         if (this.walker==null){
           const cur_line_node=children[this.line]!
           this.walker=document.createTreeWalker(cur_line_node, NodeFilter.SHOW_TEXT);
-          this.text_head=Number(lines[this.line]!)
+          this.text_head=lines[this.line]!
         }
         return
       }

@@ -31,13 +31,14 @@ export declare class Terminal implements SearchData {
     search: TerminalSearch;
     highlight: Highlight;
     term_plain_text: string;
-    lines: BigInt64Array<ArrayBuffer>;
+    lines: Array<number>;
     last_write_channel: Channel;
+    strings: string[];
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
     after_write(): void;
-    flush_channel(channel_state: ChannelState): void;
+    flush_channel(channel_state: ChannelState, append_nl: boolean): void;
     del_last_html_line(channel_state: ChannelState): void;
     term_write(output: string[], channel: Channel): void;
     show_find(): void;
