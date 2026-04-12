@@ -17,6 +17,7 @@ type Channel = 'stderr' | 'stdout';
 interface ChannelState {
     parser_state: unknown;
     style: Style;
+    class_name: string;
 }
 export declare class Terminal implements SearchData {
     private listener;
@@ -32,7 +33,7 @@ export declare class Terminal implements SearchData {
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
-    line_to_html: (x: string, state: ChannelState, line_class: string) => string;
+    line_to_html: (x: string, state: ChannelState, update_state: boolean) => string;
     after_write(): void;
     term_write(output: string[], channel: Channel): void;
     show_find(): void;

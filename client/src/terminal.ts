@@ -19,6 +19,7 @@ type Channel='stderr'|'stdout'
 interface ChannelState{
   parser_state:unknown
   style:Style
+  class_name:string
 }
 const clear_style:Style={
   foreground: undefined,
@@ -27,8 +28,8 @@ const clear_style:Style={
 }
 function make_channel_states():Record<Channel,ChannelState>{
   return {
-    stdout:{parser_state:undefined,style:clear_style},
-    stderr:{parser_state:undefined,style:clear_style}
+    stdout:{parser_state:undefined,style:clear_style,class_name:'line_stdout'},
+    stderr:{parser_state:undefined,style:clear_style,class_name:'line_stderr'}
   }
 }
 function range_to_inserts(range:ParseRange):AnsiInsertCommand[]{
@@ -99,20 +100,22 @@ export class Terminal implements SearchData{
     else
       this.listener.dataset_click(dataset)
   }
-  line_to_html=(x:string,state:ChannelState,line_class:string)=>{
+  line_to_html=(x:string,state:ChannelState,update_state:boolean)=>{
     const {
       plain_text,
       style_positions,
       link_inserts
     }=strip_ansi(x, state.style)
-    state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
     const {ranges,parser_state}=this.listener.parse(plain_text,state.parser_state)
-    state.parser_state=parser_state
+    if (update_state){ //dont update state if its the last line because its going to affect own sttae
+      state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
+      state.parser_state=parser_state
+    }
     const range_inserts=ranges_to_inserts(ranges)
     const inserts=merge_inserts(range_inserts,link_inserts)
     const html=generate_html({style_positions,inserts,plain_text})
     const br=(plain_text===''?'<br>':'')
-    return `<div class="${line_class}">${html}${br}</div>` 
+    return `<div class="${state.class_name}">${html}${br}</div>` 
   }
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
@@ -136,7 +139,7 @@ export class Terminal implements SearchData{
       this.term_text.querySelector(`& > :last-child`)?.remove()
     this.last_line=lines.at(-1)??''
     const lines_to_render = this.last_line === '' ? lines.slice(0,-1) : lines
-    const new_html=lines_to_render.map(x=>this.line_to_html(x,channel_state,line_class)).join('')
+    const new_html=lines_to_render.map((x,i)=>this.line_to_html(x,channel_state,i<lines.length-1)).join('')
     this.term_text.insertAdjacentHTML('beforeend',new_html)
   }
   show_find(){
