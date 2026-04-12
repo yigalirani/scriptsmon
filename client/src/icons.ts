@@ -110,7 +110,7 @@ export class IconsAnimator{
       const {id,icon,icon_version}=node
       this.set_icon_version(id,icon,icon_version) //for the side effect of updating id_chaned
       const toggles=Object.entries(node.toggles).map(([k,v])=>`<div class='toggle_icon ${v} ${k}'>${this.calc_icon(k,v)}</div>`).join('') 
-      const commands_icons=node.commands.map(x=>`<div class="command_icon ${x}">${this.icons[x]}</div>`).join('')
+      const commands_icons=node.commands.map(x=>`<div class="command_icon ${x}" title="${x}">${this.icons[x]}</div>`).join('')
       const top=`#${id} > :not(.children)`
       update_child_html(document.body,`${top} .icon:not(.text)`,this.icons[icon]??'') //set the svg
       update_child_html(document.body,`${top} .icon.text`,` ${this.icons[icon]??''}&nbsp;&nbsp;&nbsp;${icon}`) ////set the svg +text

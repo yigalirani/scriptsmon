@@ -24,7 +24,7 @@ function the_convert(_report:unknown):TreeNode{
         type:'item',
         id,
         label:name,
-        commands:['play','stop'], 
+        commands:['play','stop','copy'], 
         children:[],
         description:script,
         icon:state,
