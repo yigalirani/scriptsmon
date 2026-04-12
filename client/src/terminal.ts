@@ -17,8 +17,12 @@ export interface TerminalListener{
 }
 type Channel='stderr'|'stdout' 
 interface ChannelState{
-  parser_state:unknown
-  style:Style
+  last_line:string
+  last_line_plain:string
+  start_parser_state:unknown
+  end_parser_state:unknown
+  start_style:Style
+  end_style:Style
   class_name:string
 }
 const clear_style:Style={
@@ -27,9 +31,19 @@ const clear_style:Style={
   font_styles: new Set()
 }
 function make_channel_states():Record<Channel,ChannelState>{
+  const stdout:ChannelState={
+    start_parser_state:undefined,
+    end_parser_state:undefined,
+    start_style:clear_style,
+    class_name:'line_stdout',
+    end_style:clear_style,
+    last_line:'',
+    last_line_plain:''
+  }
+  const stderr={...stdout,class_name:'line_stderr'}
   return {
-    stdout:{parser_state:undefined,style:clear_style,class_name:'line_stdout'},
-    stderr:{parser_state:undefined,style:clear_style,class_name:'line_stderr'}
+    stdout,
+    stderr
   }
 }
 function range_to_inserts(range:ParseRange):AnsiInsertCommand[]{
@@ -54,7 +68,6 @@ export class Terminal implements SearchData{
   highlight
   term_plain_text=''
   lines
-  last_line=''
   last_write_channel:Channel="stdout"
   //text_index
   constructor(
@@ -100,46 +113,81 @@ export class Terminal implements SearchData{
     else
       this.listener.dataset_click(dataset)
   }
-  line_to_html=(x:string,state:ChannelState,update_state:boolean)=>{
-    const {
-      plain_text,
-      style_positions,
-      link_inserts
-    }=strip_ansi(x, state.style)
-    const {ranges,parser_state}=this.listener.parse(plain_text,state.parser_state)
-    if (update_state){ //dont update state if its the last line because its going to affect own sttae
-      state.style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
-      state.parser_state=parser_state
-    }
-    const range_inserts=ranges_to_inserts(ranges)
-    const inserts=merge_inserts(range_inserts,link_inserts)
-    const html=generate_html({style_positions,inserts,plain_text})
-    const br=(plain_text===''?'<br>':'')
-    return `<div class="${state.class_name}">${html}${br}</div>` 
-  }
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
     this.term_text.lastElementChild?.classList.add('eof')
+  }
+  flush_channel(channel_state:ChannelState){
+    if (channel_state.last_line==='') //all flushed already
+      return
+    channel_state.start_parser_state=channel_state.end_parser_state
+    channel_state.start_style=channel_state.end_style
+    channel_state.end_parser_state=undefined
+    channel_state.end_parser_state=clear_style
+    channel_state.last_line=''
+    channel_state.last_line_plain=''
+
+  }
+  del_last_html_line(channel_state:ChannelState){
+    const {last_line,last_line_plain}=channel_state
+    if (last_line==='')
+      return
+    const line_to_delete=this.term_text.querySelector(`& > :last-child`)
+    if (line_to_delete==null){
+      console.error('missmatch:line_to_delete_null')
+      return
+    }
+    const {textContent}=line_to_delete
+    if (textContent!==last_line_plain){
+      console.error('missmatch:text_content')
+      return
+    }
+    line_to_delete.remove()
   }
   term_write(output:string[],channel:Channel){
     if (output.length===0)
       return
     const channel_state=this.channel_states[channel]
-    const line_class=`line_${channel}`
     
     if (this.last_write_channel!==channel){ //forcing line break when switching channels
-      this.last_line=''
+      this.flush_channel(this.channel_states[this.last_write_channel])
     }
     this.last_write_channel=channel
 
-    const joined_lines=[this.last_line,...output].join('').replaceAll('\r\n','\n')
+    const joined_lines=[channel_state.last_line,...output].join('').replaceAll('\r\n','\n')
     const lines=joined_lines.split('\n')
-  
-    if (this.last_line!=='')
-      this.term_text.querySelector(`& > :last-child`)?.remove()
-    this.last_line=lines.at(-1)??''
-    const lines_to_render = this.last_line === '' ? lines.slice(0,-1) : lines
-    const new_html=lines_to_render.map((x,i)=>this.line_to_html(x,channel_state,i<lines.length-1)).join('')
+    this.del_last_html_line(channel_state)
+//    const lines_to_render = this.last_line === '' ? lines.slice(0,-1) : lines 
+    const acum_html=[]
+    for (let i=0;i<lines.length;i++){
+      const line=lines[i]!
+      const {
+        plain_text,
+        style_positions,
+        link_inserts
+      }=strip_ansi(line, channel_state.start_style)
+      const is_last=(i===lines.length-1)
+      if (is_last){
+        if (line===''){
+          this.flush_channel(channel_state)
+          break
+        }
+      }
+      const {ranges,parser_state}=this.listener.parse(plain_text,channel_state.start_parser_state)
+      channel_state.end_style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
+      channel_state.end_parser_state=parser_state
+      channel_state.last_line=line
+      channel_state.last_line_plain=plain_text
+      const range_inserts=ranges_to_inserts(ranges)
+      const inserts=merge_inserts(range_inserts,link_inserts)
+      const html=generate_html({style_positions,inserts,plain_text})
+      const br=(plain_text===''?'<br>':'')
+      acum_html.push( `<div class="${channel_state.class_name}">${html}${br}</div>`)
+      if (!is_last)
+        this.flush_channel(channel_state)
+    }
+
+    const new_html=acum_html.join('')
     this.term_text.insertAdjacentHTML('beforeend',new_html)
   }
   show_find(){
