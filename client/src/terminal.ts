@@ -137,7 +137,7 @@ export class Terminal implements SearchData{
     channel_state.start_parser_state=channel_state.end_parser_state
     channel_state.start_style=channel_state.end_style
     channel_state.end_parser_state=undefined
-    channel_state.end_parser_state=clear_style
+    channel_state.end_style=clear_style
     channel_state.last_line=''
     ///channel_state.last_line_plain=''
 
