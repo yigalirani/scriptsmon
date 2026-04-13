@@ -16,7 +16,6 @@ export interface TerminalListener {
 type Channel = 'stderr' | 'stdout';
 interface ChannelState {
     last_line: string;
-    last_line_plain: string;
     start_parser_state: unknown;
     end_parser_state: unknown;
     start_style: Style;
@@ -32,15 +31,15 @@ export declare class Terminal implements SearchData {
     highlight: Highlight;
     term_plain_text: string;
     lines: Array<number>;
-    last_write_channel: Channel;
+    last_channel: ChannelState;
     strings: string[];
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
+    debug_print_state(): void;
     after_write(): void;
-    flush_channel(channel_state: ChannelState, append_nl: boolean): void;
-    del_last_html_line(channel_state: ChannelState): void;
-    term_write(output: string[], channel: Channel): void;
+    apply_styles(channel_state: ChannelState): void;
+    term_write(output: string[], channel_name: Channel): void;
     show_find(): void;
     term_clear(): void;
 }

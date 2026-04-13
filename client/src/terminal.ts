@@ -18,7 +18,7 @@ export interface TerminalListener{
 type Channel='stderr'|'stdout' 
 interface ChannelState{
   last_line:string
-  last_line_plain:string
+  //last_line_plain:string
   start_parser_state:unknown
   end_parser_state:unknown
   start_style:Style
@@ -38,7 +38,7 @@ function make_channel_states():Record<Channel,ChannelState>{
     class_name:'line_stdout',
     end_style:clear_style,
     last_line:'',
-    last_line_plain:''
+    //last_line_plain:''
   }
   const stderr={...stdout,class_name:'line_stderr'}
   return {
@@ -68,7 +68,7 @@ export class Terminal implements SearchData{
   highlight
   term_plain_text=''
   lines:Array<number>
-  last_write_channel:Channel="stdout"
+  last_channel
   strings:string[]
   //text_index
   constructor(
@@ -91,6 +91,7 @@ export class Terminal implements SearchData{
     this.highlight=this.make_highlight(id)
     this.search=new TerminalSearch(this)
     this.term_el.addEventListener('click',this.onclick)
+    this.last_channel=this.channel_states.stdout
   }
   make_highlight(id:string){
     const highlight_name=`search_${id}`
@@ -115,6 +116,10 @@ export class Terminal implements SearchData{
     else
       this.listener.dataset_click(dataset)
   }
+  debug_print_state(){
+    const {term_plain_text,lines}=this
+    console.log({term_plain_text,lines})
+  }
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
     this.term_text.lastElementChild?.classList.add('eof')
@@ -125,27 +130,20 @@ export class Terminal implements SearchData{
       this.lines.push(acum)
     }
     this.term_plain_text=[this.term_plain_text,joined_strings].join('')
-    console.log(this.term_plain_text)
-    console.log(this.lines)
+    this.debug_print_state()
 
   }
-  flush_channel(channel_state:ChannelState,append_nl:boolean){
-    if (channel_state.last_line==='') //all flushed already
-      return
-    if (append_nl)
-      this.strings.push('\n')
+  apply_styles(channel_state:ChannelState){
     channel_state.start_parser_state=channel_state.end_parser_state
     channel_state.start_style=channel_state.end_style
     channel_state.end_parser_state=undefined
     channel_state.end_parser_state=clear_style
     channel_state.last_line=''
-    channel_state.last_line_plain=''
+    ///channel_state.last_line_plain=''
 
   }
-  del_last_html_line(channel_state:ChannelState){
-    const {last_line,last_line_plain}=channel_state
-    if (last_line==='')
-      return
+  /*del_last_html_line(channel_state:ChannelState){
+    const {last_line_plain}=channel_state
     const line_to_delete=this.term_text.querySelector(`& > :last-child`)
     if (line_to_delete==null){
       console.error('missmatch:line_to_delete_null')
@@ -157,20 +155,23 @@ export class Terminal implements SearchData{
       return
     }
     line_to_delete.remove()
-  }
-  term_write(output:string[],channel:Channel){
+  }*/
+  term_write(output:string[],channel_name:Channel){
     if (output.length===0)
       return
-    const channel_state=this.channel_states[channel]
+    const channel=this.channel_states[channel_name]
     
-    if (this.last_write_channel!==channel){ //forcing line break when switching channels
-      this.flush_channel(this.channel_states[this.last_write_channel],true)
+    if (this.last_channel!==channel && this.last_channel.last_line!==''){ 
+      //forcing line break when switching channels
+      this.apply_styles(this.last_channel)
+      this.strings.push('\n')
     }
-    this.last_write_channel=channel
+    this.last_channel=channel
 
-    const joined_lines=[channel_state.last_line,...output].join('').replaceAll('\r\n','\n')
+    const joined_lines=[channel.last_line,...output].join('').replaceAll('\r\n','\n')
     const lines=joined_lines.split('\n')
-    this.del_last_html_line(channel_state)
+    if (channel.last_line!=='')
+      this.term_text.querySelector(`& > :last-child`)?.remove() //lat line did not end in \n so we are going to delte the html for it and crreate in again with new text
 //    const lines_to_render = this.last_line === '' ? lines.slice(0,-1) : lines 
     const acum_html=[]
     for (let i=0;i<lines.length;i++){
@@ -179,27 +180,27 @@ export class Terminal implements SearchData{
         plain_text,
         style_positions,
         link_inserts
-      }=strip_ansi(line, channel_state.start_style)
+      }=strip_ansi(line, channel.start_style)
       this.strings.push(plain_text)
       const is_last=(i===lines.length-1)
-      if (is_last){
-        if (line===''){
-          this.flush_channel(channel_state,false)
+      if (is_last&&line===''){ 
+        //output was finished with \n, no need to proccess it, just apply the style and add new line to strings
+          this.apply_styles(channel)
+          this.strings.push('\n')
           break
-        }
       }
-      const {ranges,parser_state}=this.listener.parse(plain_text,channel_state.start_parser_state)
-      channel_state.end_style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
-      channel_state.end_parser_state=parser_state
-      channel_state.last_line=line
-      channel_state.last_line_plain=plain_text
+      const {ranges,parser_state}=this.listener.parse(plain_text,channel.start_parser_state)
+      channel.end_style=style_positions.at(-1)!.style //strip_ansi is gurantied to have at least one in style positons. i tried to encode it in ts but was too verbose to my liking
+      channel.end_parser_state=parser_state
+      channel.last_line=line
       const range_inserts=ranges_to_inserts(ranges)
       const inserts=merge_inserts(range_inserts,link_inserts)
       const html=generate_html({style_positions,inserts,plain_text})
       const br=(plain_text===''?'<br>':'')
-      acum_html.push( `<div class="${channel_state.class_name}">${html}${br}</div>`)
+      acum_html.push( `<div class="${channel.class_name}">${html}${br}</div>`)
       if (!is_last)
-        this.flush_channel(channel_state,true)
+        this.apply_styles(channel)
+        this.strings.push('\n')
     }
 
     const new_html=acum_html.join('')
