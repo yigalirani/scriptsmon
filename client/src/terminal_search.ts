@@ -13,7 +13,7 @@ export interface SearchData{
   term_text:HTMLElement
   highlight:Highlight  
   term_plain_text:string
-  lines:Array<number>
+  lines_index:Array<number>
   //new_line_pos:BigInt64Array
 }
 class RegExpSearcher{
@@ -22,26 +22,30 @@ class RegExpSearcher{
   children
   walker:TreeWalker|undefined
   walker_offset=0
+  current_node:Node|null=null
+  current_node_length=0
   constructor(
     public search_data:SearchData,
     public regex:RegExp,
   ){
-    this.children=search_data.term_el.children
+    this.children=search_data.term_text.children
   }
   advance_line(text_pos:number){
-    const {children,search_data:{lines,term_plain_text}}=this
+    const {children,search_data:{lines_index,term_plain_text}}=this
     while(true){
-      const next_line_pos=lines[this.line+1]??term_plain_text.length
+      const next_line_pos=lines_index[this.line+1]??term_plain_text.length
       if (next_line_pos>text_pos){
         if (this.walker==null){
           const cur_line_node=children[this.line]!
           this.walker=document.createTreeWalker(cur_line_node, NodeFilter.SHOW_TEXT);
-          this.text_head=lines[this.line]!
+          this.text_head=lines_index[this.line]!
+          this.current_node=null
+          this.current_node_length=0
         }
         return
       }
       this.walker=undefined
-      if (this.line<lines.length)
+      if (this.line<lines_index.length)
         this.line++
     }
   }
@@ -49,18 +53,18 @@ class RegExpSearcher{
     this.advance_line(text_pos)
     if (this.walker==null)
       throw new Error('walker is null')
-    while (this.walker.nextNode()) {
-      const node = this.walker.currentNode;
-      const string=node.textContent??''
-      const {length}=string
-      this.text_head+=length
-      if (text_pos>=this.text_head-length&& text_pos <this.text_head)
-        return {
-          node,
-          node_pos:text_pos-this.text_head-length
+    while(true){
+      if (this.current_node!=null && this.text_head+this.current_node_length>text_pos)
+        return  {
+          node:this.current_node,
+          node_pos:text_pos-this.text_head+this.current_node_length
         } 
+      this.current_node=this.walker.nextNode()
+      if (this.current_node==null)
+        throw new Error('scriptsmon: not found')
+      this.current_node_length=this.current_node.textContent?.length||0
+      this.text_head+=this.current_node_length
     }
-    throw new Error("should not get here")
   }
   iter=()=>{
     /*if (this.text_head===this.search_data.term_plain_text.length)

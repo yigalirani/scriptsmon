@@ -67,7 +67,7 @@ export class Terminal implements SearchData{
   search
   highlight
   term_plain_text=''
-  lines:Array<number>
+  lines_index:Array<number>
   last_channel
   strings:string[]
   //text_index
@@ -77,7 +77,7 @@ export class Terminal implements SearchData{
     id:string
   ){
     this.strings=[]
-    this.lines=[]
+    this.lines_index=[0]
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term>
@@ -117,17 +117,17 @@ export class Terminal implements SearchData{
       this.listener.dataset_click(dataset)
   }
   debug_print_state(){
-    const {term_plain_text,lines}=this
-    console.log({term_plain_text,lines})
+    const {term_plain_text,lines_index}=this
+    console.log("scriptsmon",{term_plain_text,lines_index})
   }
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
     this.term_text.lastElementChild?.classList.add('eof')
     const joined_strings=this.strings.join('')
     let acum=this.term_plain_text.length
-    for (const str of joined_strings.split('\n')){
+    for (const str of joined_strings.split(/(?<=\n)/)){
       acum+=str.length
-      this.lines.push(acum)
+      this.lines_index.push(acum)
     }
     this.term_plain_text=[this.term_plain_text,joined_strings].join('')
     this.debug_print_state()
@@ -216,7 +216,7 @@ export class Terminal implements SearchData{
     this.search.search_term_clear()
     this.strings=[]
     this.term_plain_text=''
-    this.lines=[]
+    this.lines_index=[0]
       /*stdout:{last_line:'',ancore:undefined,style:clear_style},
       stderr:{last_line:'',ancore:undefined,style:clear_style}
     }   */ 

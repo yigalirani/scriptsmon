@@ -30,7 +30,7 @@ export declare class Terminal implements SearchData {
     search: TerminalSearch;
     highlight: Highlight;
     term_plain_text: string;
-    lines: Array<number>;
+    lines_index: Array<number>;
     last_channel: ChannelState;
     strings: string[];
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);

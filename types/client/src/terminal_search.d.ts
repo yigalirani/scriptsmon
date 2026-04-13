@@ -7,7 +7,7 @@ export interface SearchData {
     term_text: HTMLElement;
     highlight: Highlight;
     term_plain_text: string;
-    lines: Array<number>;
+    lines_index: Array<number>;
 }
 declare class RegExpSearcher {
     search_data: SearchData;
@@ -17,6 +17,8 @@ declare class RegExpSearcher {
     children: HTMLCollection;
     walker: TreeWalker | undefined;
     walker_offset: number;
+    current_node: Node | null;
+    current_node_length: number;
     constructor(search_data: SearchData, regex: RegExp);
     advance_line(text_pos: number): void;
     get_node_offset(text_pos: number): NodeOffset;
