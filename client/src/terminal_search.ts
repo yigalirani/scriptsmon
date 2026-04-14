@@ -34,7 +34,7 @@ class RangeFinder{
   }
   get_node_offset(pos:number):NodeOffset{
     while(true){
-      if (pos>=this.text_head&& pos<this.text_head+this.cur_length)
+      if (pos>=this.text_head&& pos<this.text_head+this.cur_length+1)
         return {
             node:this.cur_node!,
             node_pos:pos-this.text_head

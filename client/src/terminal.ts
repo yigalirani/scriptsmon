@@ -92,7 +92,7 @@ export class Terminal implements SearchData{
     const highlight=new Highlight()
     const dynamic_sheet = new CSSStyleSheet();
     document.adoptedStyleSheets.push(dynamic_sheet);    
-    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { background-color: red; }`);
+    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { background-color: cyan;color:black; }`);
     CSS.highlights.set(highlight_name, highlight);     
     return highlight   
   }
