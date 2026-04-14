@@ -12,6 +12,7 @@ export interface SearchData{
   term_el:HTMLElement
   term_text:HTMLElement
   highlight:Highlight  
+  all_ranges:Range[]
 }
 class RangeFinder{
   walker
@@ -51,7 +52,6 @@ interface LineRanges{
 
 class RegExpSearcher{
   children
-  all_ranges:Range[]
   last_line_ranges:LineRanges|undefined
   line_head=0
   constructor(
@@ -59,7 +59,7 @@ class RegExpSearcher{
     public regex:RegExp,
   ){
     this.children=search_data.term_text.children
-    this.all_ranges=[]
+    search_data.all_ranges=[]
   }
   add_line_ranges(ranges:Range[]){
     for (const range of ranges)
@@ -103,9 +103,9 @@ class RegExpSearcher{
       for (const range of this.last_line_ranges.ranges){
         this.search_data.highlight.delete(range)
       }
-      this.all_ranges.splice(-this.last_line_ranges.ranges.length)
+      this.search_data.all_ranges.splice(-this.last_line_ranges.ranges.length)
     }
-    this.all_ranges.push(...cur_ranges.ranges)
+    this.search_data.all_ranges.push(...cur_ranges.ranges)
     for (const range of cur_ranges.ranges){
       this.search_data.highlight.add(range)
     }
@@ -159,8 +159,6 @@ function get_regexp_string(pattern: RegExp|undefined): string {
   return `/${source}/`;
 }
 
-
-
 export class TerminalSearch{
   find_widget
   interval_id
@@ -212,6 +210,8 @@ export class TerminalSearch{
   }
   iter=()=>{
     this.regex_searcher?.iter()
+    update_child_html(this.find_widget,'#match_status',`${this.data.all_ranges.length}`)
+      
   }
   input(){
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
