@@ -29,14 +29,10 @@ export declare class Terminal implements SearchData {
     term_el: HTMLElement;
     search: TerminalSearch;
     highlight: Highlight;
-    term_plain_text: string;
-    lines_index: Array<number>;
     last_channel: ChannelState;
-    strings: string[];
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
-    debug_print_state(): void;
     after_write(): void;
     apply_styles(channel_state: ChannelState): void;
     term_write(output: string[], channel_name: Channel): void;

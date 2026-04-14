@@ -1,5 +1,5 @@
 import {create_element,get_parent_by_class,has_class,update_child_html} from './dom_utils.js'
-
+import {nl} from "@yigal/base_types"
 interface _StartEnd{
   start:number
   end:number
@@ -12,76 +12,110 @@ export interface SearchData{
   term_el:HTMLElement
   term_text:HTMLElement
   highlight:Highlight  
-  term_plain_text:string
-  lines_index:Array<number>
-  //new_line_pos:BigInt64Array
 }
-class RegExpSearcher{
+class RangeFinder{
+  walker
+  cur_node:Node|null=null
+  cur_length=0
   text_head=0
-  line=0
+  all_done=false
+  constructor(
+    public el:Element
+  ){
+    this.walker=document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    this.get_next_node()
+  }
+  get_next_node(){
+    this.text_head+=this.cur_length
+    this.cur_node=this.walker.nextNode()
+    if (this.cur_node==null)
+      throw new Error("scriptsmon:cur node is null")    
+    this.cur_length=this.cur_node.textContent?.length||0
+  }
+  get_node_offset(pos:number):NodeOffset{
+    while(true){
+      if (pos>=this.text_head&& pos<this.text_head+this.cur_length)
+        return {
+            node:this.cur_node!,
+            node_pos:pos-this.text_head
+        }
+      this.get_next_node()
+    }
+  }
+}
+interface LineRanges{
+  line_number:number
+  ranges:Array<Range>
+  line_length:number
+}
+
+class RegExpSearcher{
   children
-  walker:TreeWalker|undefined
-  walker_offset=0
-  current_node:Node|null=null
-  current_node_length=0
+  all_ranges:Range[]
+  last_line_ranges:LineRanges|undefined
+  line_head=0
   constructor(
     public search_data:SearchData,
     public regex:RegExp,
   ){
     this.children=search_data.term_text.children
+    this.all_ranges=[]
   }
-  advance_line(text_pos:number){
-    const {children,search_data:{lines_index,term_plain_text}}=this
-    while(true){
-      const next_line_pos=lines_index[this.line+1]??term_plain_text.length
-      if (next_line_pos>text_pos){
-        if (this.walker==null){
-          const cur_line_node=children[this.line]!
-          this.walker=document.createTreeWalker(cur_line_node, NodeFilter.SHOW_TEXT);
-          this.text_head=lines_index[this.line]!
-          this.current_node=null
-          this.current_node_length=0
-        }
-        return
-      }
-      this.walker=undefined
-      if (this.line<lines_index.length)
-        this.line++
-    }
+  add_line_ranges(ranges:Range[]){
+    for (const range of ranges)
+      this.search_data.highlight.add(range)
   }
-  get_node_offset(text_pos:number):NodeOffset{
-    this.advance_line(text_pos)
-    if (this.walker==null)
-      throw new Error('walker is null')
-    while(true){
-      if (this.current_node!=null && this.text_head+this.current_node_length>text_pos)
-        return  {
-          node:this.current_node,
-          node_pos:text_pos-this.text_head+this.current_node_length
-        } 
-      this.current_node=this.walker.nextNode()
-      if (this.current_node==null)
-        throw new Error('scriptsmon: not found')
-      this.current_node_length=this.current_node.textContent?.length||0
-      this.text_head+=this.current_node_length
-    }
-  }
-  iter=()=>{
-    /*if (this.text_head===this.search_data.term_plain_text.length)
-      return*/
-    while (true) {
-      const {lastIndex}=this.regex
-      const m = this.regex.exec(this.search_data.term_plain_text)
-      if (m==null){
-        this.regex.lastIndex=lastIndex // match causes redex.lastindex to reset - let put it back
-        return
-      }    
-      const start=this.get_node_offset(m.index)
-      const end=this.get_node_offset(m.index + m[0].length)
-      const range = new Range();
+  get_line_ranges(line_number:number):LineRanges{
+    const line=nl(this.children[line_number])
+    const {textContent}=line
+    const line_length=textContent.length
+    if (this.last_line_ranges &&
+      this.last_line_ranges.line_length===line_length&&
+      this.last_line_ranges.line_number===line_number
+    )
+    return this.last_line_ranges
+    const ranges=[]
+    let range_finder:RangeFinder|undefined
+    for (const match of textContent.matchAll(this.regex)){
+      if (range_finder==null) // error TS2448: Block-scoped variable 'range_finder' used before its declaration. why?
+          range_finder=new RangeFinder(line)
+      const range=new Range()
+      const start=range_finder.get_node_offset(match.index)
+      const end=range_finder.get_node_offset(match.index+match[0].length)
       range.setStart(start.node,start.node_pos)
       range.setEnd(end.node,end.node_pos)
+      ranges.push(range)
+    }
+    return {
+      line_length,
+      ranges,
+      line_number
+    }
+  }
+
+  get_start_line(){
+    if (this.last_line_ranges==null)
+      return 0
+    return this.last_line_ranges.line_number
+  }
+  apply_cur_ranges(cur_ranges:LineRanges){
+    if (this.last_line_ranges&&this.last_line_ranges.line_number===cur_ranges.line_number){
+      for (const range of this.last_line_ranges.ranges){
+        this.search_data.highlight.delete(range)
+      }
+      this.all_ranges.splice(-this.last_line_ranges.ranges.length)
+    }
+    this.all_ranges.push(...cur_ranges.ranges)
+    for (const range of cur_ranges.ranges){
       this.search_data.highlight.add(range)
+    }
+
+  }
+  iter=()=>{
+    for (let line=this.get_start_line();line<this.children.length;line++){
+      const cur_ranges=this.get_line_ranges(line)
+      this.apply_cur_ranges(cur_ranges)
+      this.last_line_ranges=cur_ranges
     }
   }
 }
