@@ -1,6 +1,6 @@
 
 import  {type Style,strip_ansi,generate_html,type AnsiInsertCommand, merge_inserts} from './terminals_ansi.js';
-import {get_parent_with_dataset,create_element} from './dom_utils.js'
+import {get_parent_with_dataset,create_element,HighlightEx} from './dom_utils.js'
 import {TerminalSearch,type SearchData} from './terminal_search.js'
 export interface ParseRange{
   start:number
@@ -83,20 +83,12 @@ export class Terminal implements SearchData{
     this.term_text=this.term_el.querySelector<HTMLElement>('.term_text')!
     this.term_text.innerHTML=''
     //this.text_index=new BigInt64Array()
-    this.highlight=this.make_highlight(id)
+    this.highlight=new HighlightEx(`search_${id}`)
     this.search=new TerminalSearch(this)
     this.term_el.addEventListener('click',this.onclick)
     this.last_channel=this.channel_states.stdout
   }
-  make_highlight(id:string){
-    const highlight_name=`search_${id}`
-    const highlight=new Highlight()
-    const dynamic_sheet = new CSSStyleSheet();
-    document.adoptedStyleSheets.push(dynamic_sheet);    
-    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { background-color: cyan;color:black; }`);
-    CSS.highlights.set(highlight_name, highlight);     
-    return highlight   
-  }
+
   onclick=(event:MouseEvent)=>{
     const {target}=event
     if (!(target instanceof HTMLElement))

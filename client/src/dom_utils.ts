@@ -143,3 +143,26 @@ export const re = (flags?: string) =>  //todo: move it to some generic lib like 
     const sanitized = raw.replace(/#.*$/gm, '').replace(/\s+/g, '');
     return new RegExp(sanitized, flags);
   };
+
+export class HighlightEx{
+  highlight
+  constructor(highlight_name:string){
+    this.highlight=new Highlight()
+    const dynamic_sheet = new CSSStyleSheet();
+    document.adoptedStyleSheets.push(dynamic_sheet);    
+    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { background-color: cyan;color:black; }`);
+    CSS.highlights.set(highlight_name,this.highlight);     
+  }  
+  clear(){
+    this.highlight.clear()
+  }
+  delete(range:Range){
+    this.highlight.delete(range)
+  }
+  add(range:Range){
+    this.highlight.add(range)
+  }
+  get size(){
+    return this.highlight.size
+  }
+}

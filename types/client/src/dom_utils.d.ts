@@ -27,4 +27,12 @@ export interface Component {
 }
 export declare const ctrl: CtrlTracker;
 export declare const re: (flags?: string) => (strings: TemplateStringsArray, ...values: unknown[]) => RegExp;
+export declare class HighlightEx {
+    highlight: Highlight;
+    constructor(highlight_name: string);
+    clear(): void;
+    delete(range: Range): void;
+    add(range: Range): void;
+    get size(): number;
+}
 export {};

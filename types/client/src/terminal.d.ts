@@ -1,4 +1,5 @@
 import { type Style } from './terminals_ansi.js';
+import { HighlightEx } from './dom_utils.js';
 import { TerminalSearch, type SearchData } from './terminal_search.js';
 export interface ParseRange {
     start: number;
@@ -28,10 +29,9 @@ export declare class Terminal implements SearchData {
     term_text: HTMLElement;
     term_el: HTMLElement;
     search: TerminalSearch;
-    highlight: Highlight;
+    highlight: HighlightEx;
     last_channel: ChannelState;
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
-    make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;
     after_write(): void;
     apply_styles(channel_state: ChannelState): void;

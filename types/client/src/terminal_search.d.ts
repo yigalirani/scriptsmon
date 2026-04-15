@@ -1,7 +1,8 @@
+import { HighlightEx } from './dom_utils.js';
 export interface SearchData {
     term_el: HTMLElement;
     term_text: HTMLElement;
-    highlight: Highlight;
+    highlight: HighlightEx;
 }
 interface LineRanges {
     line_number: number;

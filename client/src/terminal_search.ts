@@ -1,4 +1,4 @@
-import {create_element,get_parent_by_class,has_class,update_child_html} from './dom_utils.js'
+import {create_element,get_parent_by_class,has_class,update_child_html,HighlightEx} from './dom_utils.js'
 import {nl} from "@yigal/base_types"
 interface _StartEnd{
   start:number
@@ -8,10 +8,11 @@ interface NodeOffset{
   node:Node
   node_pos:number
 }
+
 export interface SearchData{
   term_el:HTMLElement
   term_text:HTMLElement
-  highlight:Highlight  
+  highlight:HighlightEx  
 }
 class RangeFinder{
   walker
