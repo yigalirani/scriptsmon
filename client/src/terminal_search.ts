@@ -12,7 +12,6 @@ export interface SearchData{
   term_el:HTMLElement
   term_text:HTMLElement
   highlight:Highlight  
-  //all_ranges:Range[]
 }
 class RangeFinder{
   walker
@@ -59,8 +58,9 @@ class RegExpSearcher{
     public regex:RegExp,
   ){
     this.children=search_data.term_text.children
-    search_data.highlight.clear()
+    this.search_data.highlight.clear()
   }
+
   get_line_ranges(line_number:number){
     const line=nl(this.children[line_number])
     const {textContent}=line
@@ -154,12 +154,20 @@ function get_regexp_string(pattern: RegExp|undefined): string {
 
   return `/${source}/`;
 }
-
+function trunk(x:number,min:number,max:number){
+  if (x>max)
+    return max
+  if (x<min)
+    return min
+  return x
+}
 export class TerminalSearch{
   find_widget
   interval_id
   regex_searcher:RegExpSearcher|undefined
   regex:RegExp|undefined
+  selection=0
+
   constructor(
     private data:SearchData
   ){
@@ -179,10 +187,10 @@ export class TerminalSearch{
               0 of 0
             </div>   
             <div class="nav_button" id="prev_match" title="Previous Match (Shift+F3)">
-              <div class="arrow_up"></div>
+               &#x2191;
             </div>             
             <div class="nav_button" id="next_match" title="Next Match (F3)">
-              <div class="arrow_down"></div>
+               &#x2193;
             </div>
             <div class="nav_button" id="close_widget" title="Close (Escape)">
               ×
@@ -198,19 +206,29 @@ export class TerminalSearch{
       this.data.term_el.addEventListener('click',this.onclick)    
       this.input()!.addEventListener('change',this.update_search)   
       this.input()!.addEventListener('input',this.update_search)   
-      this.interval_id=setInterval(this.iter,200)
+      this.interval_id=setInterval(this.iter,20)
   }
   show(){
     this.find_widget.classList.remove('hidden')
     this.input()?.focus();
   }
+  calc_match_status_and_apply_selection(){
+    if (this.data.highlight.size===0){
+      this.selection=1
+      if (this.regex_searcher!=null)
+        return `<div class='search_error'>No Results</div>`
+      return `<div>No Results</div>`
+    }
+    this.selection=trunk(this.selection,1,this.data.highlight.size)
+    return `${this.selection} of ${this.data.highlight.size}`
+  }
   iter=()=>{
     if (this.regex_searcher)
       this.regex_searcher.iter()
-    else
+    else{
       this.data.highlight.clear()
-    update_child_html(this.find_widget,'#match_status',`${this.data.highlight.size}`)
-      
+    }
+    update_child_html(this.find_widget,'#match_status',this.calc_match_status_and_apply_selection())
   }
   input(){
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
@@ -240,6 +258,15 @@ export class TerminalSearch{
       get_parent_by_class(target,'find_widget_container')?.classList.toggle("hidden");
       return
     }    
+    if (target.id==='prev_match'){
+      this.selection--
+      return
+    }
+    if (target.id==='next_match'){
+      this.selection++
+      return
+    }
+
     const icon_button=get_parent_by_class(target,'icon_button')
     if (icon_button!=null){
       icon_button.classList.toggle('checked')

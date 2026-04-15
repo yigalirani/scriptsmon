@@ -30,8 +30,10 @@ export declare class TerminalSearch {
     interval_id: NodeJS.Timeout;
     regex_searcher: RegExpSearcher | undefined;
     regex: RegExp | undefined;
+    selection: number;
     constructor(data: SearchData);
     show(): void;
+    calc_match_status_and_apply_selection(): string;
     iter: () => void;
     input(): HTMLInputElement | null;
     search_term_clear(): void;

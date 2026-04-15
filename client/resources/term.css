@@ -189,22 +189,10 @@ span.url{
     background-color: var(--vscode-toolbar-hoverBackground);
 }
 
-/* Simple arrow styling using CSS borders */
-.arrow_up {
-    width: 0; 
-    height: 0; 
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid currentColor;
-}
 
-.arrow_down {
-    width: 0; 
-    height: 0; 
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid currentColor;
-}
 .hidden{
   display: none;
+}
+.search_error{
+  color:red;
 }
