@@ -213,23 +213,31 @@ export class TerminalSearch{
     this.find_widget.classList.remove('hidden')
     this.input()?.focus();
   }
-  calc_match_status_and_apply_selection(){
+  apply_selection(diff:number){
+    this.selection+=diff
+    this.selection=trunk(this.selection,1,this.data.highlight.size)
+    if (this.selection!==0)
+      this.data.highlight.select(this.selection)    
+  }
+  calc_match_status(){
     if (this.data.highlight.size===0){
-      this.selection=1
+      //this.selection=1
       if (this.regex_searcher!=null)
         return `<div class='search_error'>No Results</div>`
       return `<div>No Results</div>`
     }
-    this.selection=trunk(this.selection,1,this.data.highlight.size)
     return `${this.selection} of ${this.data.highlight.size}`
   }
   iter=()=>{
-    if (this.regex_searcher)
+    if (this.regex_searcher){
       this.regex_searcher.iter()
+      this.apply_selection(0)
+    }
     else{
       this.data.highlight.clear()
     }
-    update_child_html(this.find_widget,'#match_status',this.calc_match_status_and_apply_selection())
+    
+    update_child_html(this.find_widget,'#match_status',this.calc_match_status())
   }
   input(){
     return this.find_widget.querySelector<HTMLInputElement>('#find_input')
@@ -251,6 +259,7 @@ export class TerminalSearch{
     if (regex!=null)
       this.regex_searcher=new  RegExpSearcher(this.data,regex)
   }
+
   onclick=(event:MouseEvent)=>{
     const {target}=event
     if (!(target instanceof HTMLElement))
@@ -260,11 +269,11 @@ export class TerminalSearch{
       return
     }    
     if (target.id==='prev_match'){
-      this.selection--
+      this.apply_selection(-1)
       return
     }
     if (target.id==='next_match'){
-      this.selection++
+      this.apply_selection(1)
       return
     }
 

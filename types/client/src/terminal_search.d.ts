@@ -34,7 +34,8 @@ export declare class TerminalSearch {
     selection: number;
     constructor(data: SearchData);
     show(): void;
-    calc_match_status_and_apply_selection(): string;
+    apply_selection(diff: number): void;
+    calc_match_status(): string;
     iter: () => void;
     input(): HTMLInputElement | null;
     search_term_clear(): void;

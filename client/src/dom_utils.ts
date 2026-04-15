@@ -155,7 +155,7 @@ export class HighlightEx{
     this.highlight=new Highlight()
     const dynamic_sheet = new CSSStyleSheet();
     document.adoptedStyleSheets.push(dynamic_sheet);    
-    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { background-color: cyan;color:black; }`);
+    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { text-decoration: underline; }`);
     CSS.highlights.set(highlight_name,this.highlight);     
   }  
   clear(){
@@ -164,7 +164,6 @@ export class HighlightEx{
     this.clear_selected_range()
   }
   delete(range:Range){
-    this.highlight.delete(range)
     this.ranges=undefined
   }
   add(range:Range){
@@ -183,12 +182,15 @@ export class HighlightEx{
     return this.ranges
   }
   select(range_num:number){
-    this.clear_selected_range()
-    const range=this.get_ranges()[range_num]
+    const range=this.get_ranges()[range_num-1]
     if (range==null){
       console.warn(`scriptsmon: cant find range by num ${range_num}`)
       return
     }
+    if (range===this.selected_range)
+      return 
+    this.clear_selected_range()
+    this.selected_range=range
     document.getSelection()?.addRange(range)
   }
   get size(){
