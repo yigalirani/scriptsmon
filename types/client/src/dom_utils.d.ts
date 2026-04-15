@@ -29,14 +29,14 @@ export declare const ctrl: CtrlTracker;
 export declare const re: (flags?: string) => (strings: TemplateStringsArray, ...values: unknown[]) => RegExp;
 export declare class HighlightEx {
     highlight: Highlight;
-    selected_range: Range | undefined;
-    ranges: Array<Range> | undefined;
+    selected_range: AbstractRange | undefined;
+    ranges: Array<AbstractRange> | undefined;
     constructor(highlight_name: string);
     clear(): void;
     delete(range: Range): void;
     add(range: Range): void;
     clear_selected_range(): void;
-    get_ranges(): Range[];
+    get_ranges(): AbstractRange[];
     select(range_num: number): void;
     get size(): number;
 }

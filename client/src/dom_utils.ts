@@ -144,13 +144,19 @@ export const re = (flags?: string) =>  //todo: move it to some generic lib like 
     return new RegExp(sanitized, flags);
   };
 function get_range_array(x: Highlight){
-  const ans=[...x.values()].map(x=>x as Range)
+  const ans=[...x.values()]
+  return ans
+}
+function range_from_abstract(a:AbstractRange){
+  const ans=new Range()
+  ans.setStart(a.startContainer,a.startOffset)
+  ans.setEnd(a.endContainer,a.endOffset)
   return ans
 }
 export class HighlightEx{
   highlight
-  selected_range:Range|undefined
-  ranges:Array<Range>|undefined
+  selected_range:AbstractRange|undefined
+  ranges:Array<AbstractRange>|undefined
   constructor(highlight_name:string){
     this.highlight=new Highlight()
     const dynamic_sheet = new CSSStyleSheet();
@@ -173,7 +179,7 @@ export class HighlightEx{
   clear_selected_range(){
     if (this.selected_range==null)
       return
-    document.getSelection()?.removeRange(this.selected_range)
+    document.getSelection()?.removeRange(range_from_abstract(this.selected_range))
     this.selected_range=undefined
   }
   get_ranges(){
@@ -181,6 +187,7 @@ export class HighlightEx{
       this.ranges= get_range_array(this.highlight)
     return this.ranges
   }
+  
   select(range_num:number){
     const range=this.get_ranges()[range_num-1]
     if (range==null){
@@ -191,7 +198,11 @@ export class HighlightEx{
       return 
     this.clear_selected_range()
     this.selected_range=range
-    document.getSelection()?.addRange(range)
+    const selection=document.getSelection()
+    if (!selection)
+      return
+    selection.removeAllRanges();
+    selection.addRange(range_from_abstract(range))
   }
   get size(){
     return this.highlight.size
