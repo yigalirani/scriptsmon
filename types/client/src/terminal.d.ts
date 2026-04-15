@@ -30,7 +30,6 @@ export declare class Terminal implements SearchData {
     search: TerminalSearch;
     highlight: Highlight;
     last_channel: ChannelState;
-    all_ranges: Range[];
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
     make_highlight(id: string): Highlight;
     onclick: (event: MouseEvent) => void;

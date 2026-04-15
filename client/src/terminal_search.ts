@@ -12,7 +12,7 @@ export interface SearchData{
   term_el:HTMLElement
   term_text:HTMLElement
   highlight:Highlight  
-  all_ranges:Range[]
+  //all_ranges:Range[]
 }
 class RangeFinder{
   walker
@@ -59,13 +59,9 @@ class RegExpSearcher{
     public regex:RegExp,
   ){
     this.children=search_data.term_text.children
-    search_data.all_ranges=[]
+    search_data.highlight.clear()
   }
-  add_line_ranges(ranges:Range[]){
-    for (const range of ranges)
-      this.search_data.highlight.add(range)
-  }
-  get_line_ranges(line_number:number):LineRanges{
+  get_line_ranges(line_number:number){
     const line=nl(this.children[line_number])
     const {textContent}=line
     const line_length=textContent.length
@@ -73,7 +69,7 @@ class RegExpSearcher{
       this.last_line_ranges.line_length===line_length&&
       this.last_line_ranges.line_number===line_number
     )
-    return this.last_line_ranges
+      return 
     const ranges=[]
     let range_finder:RangeFinder|undefined
     for (const match of textContent.matchAll(this.regex)){
@@ -103,9 +99,7 @@ class RegExpSearcher{
       for (const range of this.last_line_ranges.ranges){
         this.search_data.highlight.delete(range)
       }
-      this.search_data.all_ranges.splice(-this.last_line_ranges.ranges.length)
     }
-    this.search_data.all_ranges.push(...cur_ranges.ranges)
     for (const range of cur_ranges.ranges){
       this.search_data.highlight.add(range)
     }
@@ -114,6 +108,8 @@ class RegExpSearcher{
   iter=()=>{
     for (let line=this.get_start_line();line<this.children.length;line++){
       const cur_ranges=this.get_line_ranges(line)
+      if (cur_ranges==null) //cached result didnt change - already applied
+        continue
       this.apply_cur_ranges(cur_ranges)
       this.last_line_ranges=cur_ranges
     }
@@ -209,8 +205,11 @@ export class TerminalSearch{
     this.input()?.focus();
   }
   iter=()=>{
-    this.regex_searcher?.iter()
-    update_child_html(this.find_widget,'#match_status',`${this.data.all_ranges.length}`)
+    if (this.regex_searcher)
+      this.regex_searcher.iter()
+    else
+      this.data.highlight.clear()
+    update_child_html(this.find_widget,'#match_status',`${this.data.highlight.size}`)
       
   }
   input(){

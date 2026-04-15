@@ -67,14 +67,13 @@ export class Terminal implements SearchData{
   search
   highlight
   last_channel
-  all_ranges:Range[]
+
   //text_index
   constructor(
     parent:HTMLElement,
     private listener:TerminalListener,
     id:string
   ){
-    this.all_ranges=[]
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term>

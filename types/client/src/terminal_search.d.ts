@@ -2,7 +2,6 @@ export interface SearchData {
     term_el: HTMLElement;
     term_text: HTMLElement;
     highlight: Highlight;
-    all_ranges: Range[];
 }
 interface LineRanges {
     line_number: number;
@@ -16,8 +15,11 @@ declare class RegExpSearcher {
     last_line_ranges: LineRanges | undefined;
     line_head: number;
     constructor(search_data: SearchData, regex: RegExp);
-    add_line_ranges(ranges: Range[]): void;
-    get_line_ranges(line_number: number): LineRanges;
+    get_line_ranges(line_number: number): {
+        line_length: number;
+        ranges: Range[];
+        line_number: number;
+    } | undefined;
     get_start_line(): number;
     apply_cur_ranges(cur_ranges: LineRanges): void;
     iter: () => void;
