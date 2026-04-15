@@ -143,9 +143,14 @@ export const re = (flags?: string) =>  //todo: move it to some generic lib like 
     const sanitized = raw.replace(/#.*$/gm, '').replace(/\s+/g, '');
     return new RegExp(sanitized, flags);
   };
-
+function get_range_array(x: Highlight){
+  const ans=[...x.values()].map(x=>x as Range)
+  return ans
+}
 export class HighlightEx{
   highlight
+  selected_range:Range|undefined
+  ranges:Array<Range>|undefined
   constructor(highlight_name:string){
     this.highlight=new Highlight()
     const dynamic_sheet = new CSSStyleSheet();
@@ -155,12 +160,36 @@ export class HighlightEx{
   }  
   clear(){
     this.highlight.clear()
+    this.ranges=undefined
+    this.clear_selected_range()
   }
   delete(range:Range){
     this.highlight.delete(range)
+    this.ranges=undefined
   }
   add(range:Range){
     this.highlight.add(range)
+    this.ranges=undefined
+  }
+  clear_selected_range(){
+    if (this.selected_range==null)
+      return
+    document.getSelection()?.removeRange(this.selected_range)
+    this.selected_range=undefined
+  }
+  get_ranges(){
+    if (this.ranges==null)
+      this.ranges= get_range_array(this.highlight)
+    return this.ranges
+  }
+  select(range_num:number){
+    this.clear_selected_range()
+    const range=this.get_ranges()[range_num]
+    if (range==null){
+      console.warn(`scriptsmon: cant find range by num ${range_num}`)
+      return
+    }
+    document.getSelection()?.addRange(range)
   }
   get size(){
     return this.highlight.size
