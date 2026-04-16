@@ -147,12 +147,6 @@ function get_range_array(x: Highlight){
   const ans=[...x.values()]
   return ans
 }
-function range_from_abstract(a:AbstractRange){
-  const ans=new Range()
-  ans.setStart(a.startContainer,a.startOffset)
-  ans.setEnd(a.endContainer,a.endOffset)
-  return ans
-}
 export class HighlightEx{
   highlight
   selected_range:AbstractRange|undefined
@@ -170,6 +164,7 @@ export class HighlightEx{
     this.clear_selected_range()
   }
   delete(range:Range){
+    this.highlight.delete(range)
     this.ranges=undefined
   }
   add(range:Range){
@@ -179,7 +174,7 @@ export class HighlightEx{
   clear_selected_range(){
     if (this.selected_range==null)
       return
-    document.getSelection()?.removeRange(range_from_abstract(this.selected_range))
+    document.getSelection()?.removeAllRanges();
     this.selected_range=undefined
   }
   get_ranges(){
@@ -198,11 +193,8 @@ export class HighlightEx{
       return 
     this.clear_selected_range()
     this.selected_range=range
-    const selection=document.getSelection()
-    if (!selection)
-      return
-    selection.removeAllRanges();
-    selection.addRange(range_from_abstract(range))
+    document.getSelection()?.addRange(range as Range)
+
   }
   get size(){
     return this.highlight.size

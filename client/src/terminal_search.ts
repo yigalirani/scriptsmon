@@ -157,9 +157,9 @@ function get_regexp_string(pattern: RegExp|undefined): string {
 }
 function trunk(x:number,min:number,max:number){
   if (x>max)
-    return max
-  if (x<min)
     return min
+  if (x<min)
+    return max
   return x
 }
 export class TerminalSearch{
@@ -274,6 +274,7 @@ export class TerminalSearch{
     }
     if (target.id==='next_match'){
       this.apply_selection(1)
+     
       return
     }
 
