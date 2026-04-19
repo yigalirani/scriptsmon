@@ -205,6 +205,15 @@ export class TerminalSearch{
     
       </div>`,this.data.term_el)
       this.data.term_el.addEventListener('click',this.onclick)    
+      this.data.term_el.addEventListener("moupsedown", (e) => {
+  // This prevents the focus shift and selection clear
+        const {target}=e
+        if (!(target instanceof HTMLElement))
+          return
+        const parent=get_parent_by_class(target,'term_text')
+        if (parent!==this.data.term_text)
+          e.preventDefault();
+      });
       this.input()!.addEventListener('change',this.update_search)   
       this.input()!.addEventListener('input',this.update_search)   
       this.interval_id=setInterval(this.iter,20)
@@ -233,9 +242,6 @@ export class TerminalSearch{
       this.regex_searcher.iter()
       this.apply_selection(0)
     }
-    else{
-      this.data.highlight.clear()
-    }
     
     update_child_html(this.find_widget,'#match_status',this.calc_match_status())
   }
@@ -256,14 +262,27 @@ export class TerminalSearch{
     update_child_html(this.find_widget,'#regex',get_regexp_string(regex))
     this.data.highlight.clear()
     this.regex_searcher=undefined
+    this.data.highlight.clear()
+  
     if (regex!=null)
       this.regex_searcher=new  RegExpSearcher(this.data,regex)
   }
 
   onclick=(event:MouseEvent)=>{
     const {target}=event
+    if (target instanceof HTMLElement){
+      const parent=get_parent_by_class(target,'term_text')
+      if (parent!==this.data.term_text)
+        event.preventDefault();    
+    }
     if (!(target instanceof HTMLElement))
       return    
+    if (target.id==='find_input'){
+      target.focus()
+      this.apply_selection(0)
+      return
+    }
+
     if (target.id==='close_widget'){
       get_parent_by_class(target,'find_widget_container')?.classList.toggle("hidden");
       return

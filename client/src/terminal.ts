@@ -76,14 +76,14 @@ export class Terminal implements SearchData{
   ){
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
-<div class=term>
-  <div class="term_text"></div>
+<div class=term >
+  <div class="term_text" tabindex="0"></div>
 </div>
     `,parent)
     this.term_text=this.term_el.querySelector<HTMLElement>('.term_text')!
     this.term_text.innerHTML=''
     //this.text_index=new BigInt64Array()
-    this.highlight=new HighlightEx(`search_${id}`)
+    this.highlight=new HighlightEx(`search_${id}`,this.term_text)
     this.search=new TerminalSearch(this)
     this.term_el.addEventListener('click',this.onclick)
     this.last_channel=this.channel_states.stdout

@@ -21,7 +21,7 @@ h1 {
     margin: 0 auto;
     display: flex;
     flex-direction: row;
-    width:500px;
+    width:300px;
 }
 .terms_container{
   flex:1;

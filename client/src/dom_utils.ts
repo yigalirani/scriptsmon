@@ -147,21 +147,84 @@ function get_range_array(x: Highlight){
   const ans=[...x.values()]
   return ans
 }
+function get_element_selection(container:HTMLElement) {
+  const s = window.getSelection();
+  if (s==null)
+    return
+
+  if (s.rangeCount > 0) {
+    const r = s.getRangeAt(0);
+    const n = r.commonAncestorContainer;
+    const of_container=container.contains(n.nodeType === 1 ? n : n.parentNode)
+    return `of_container ${of_container}, ${s}`
+  }
+
+  return
+}
+function print_selection(el:unknown){
+  if (!(el instanceof HTMLElement))
+    return
+  console.log('scriptsmon: selection',get_element_selection(el))
+}
 export class HighlightEx{
   highlight
+  selected_highlight
+  focused=false
   selected_range:AbstractRange|undefined
   ranges:Array<AbstractRange>|undefined
-  constructor(highlight_name:string){
-    this.highlight=new Highlight()
+  constructor(highlight_name:string,el:Element){
+    this.highlight=this.make_highlight(highlight_name,'yellow',1)
+    this.selected_highlight=this.make_highlight(`selected_${highlight_name}`,'cyan',1)
+    el.addEventListener('blur',this.onblur,true)
+    el.addEventListener('focus',this.onfocus,true)
+  }  
+  onblur=(e:Event)=>{
+    this.focused=false
+    console.log('scriptsmon:blur',e.target,this.focused)
+    const s = window.getSelection();
+    if (!s || s.rangeCount === 0) {
+      return;
+    }
+    const r = s.getRangeAt(0);
+    this.selected_highlight.clear()
+    this.selected_highlight.add(r)
+    s.removeAllRanges()
+    //todo: get selectioin range and put it on the selected_highlight
+  }
+  onfocus=(e:Event)=>{
+    //todo:take the selected_highlight and put it on the highlight
+    this.focused=true
+    const s = window.getSelection();    
+    if (s==null)
+      return
+    for (const r of this.selected_highlight.keys()){
+      s.removeAllRanges()
+      s.addRange(r as Range)
+      break//by thoeram that is all selected_highlight have but break 
+    }
+    this.selected_highlight.clear()
+    console.log('scriptsmon:focus',e.target,this.focused)
+  }
+  
+  make_highlight(name:string,background:string,priority:number){
+    const ans=new Highlight()
     const dynamic_sheet = new CSSStyleSheet();
     document.adoptedStyleSheets.push(dynamic_sheet);    
-    dynamic_sheet.insertRule(`::highlight(${highlight_name}) { text-decoration: underline; }`);
-    CSS.highlights.set(highlight_name,this.highlight);     
-  }  
+    dynamic_sheet.insertRule(`::highlight(${name}) { background: ${background}; }`);
+    CSS.highlights.set(name,ans);
+    ans.priority=priority
+    return ans
+  }
+  get_range_by_index(highlight: Highlight, index: number){
+    const ranges = Array.from(highlight);
+    return ranges[index] 
+  }
   clear(){
     this.highlight.clear()
+    this.selected_highlight.clear()
+    //this.selected_range
     this.ranges=undefined
-    this.clear_selected_range()
+    //this.clear_selected_range()
   }
   delete(range:Range){
     this.highlight.delete(range)
@@ -171,12 +234,12 @@ export class HighlightEx{
     this.highlight.add(range)
     this.ranges=undefined
   }
-  clear_selected_range(){
+  /*clear_selected_range(){
     if (this.selected_range==null)
       return
     document.getSelection()?.removeAllRanges();
     this.selected_range=undefined
-  }
+  }*/
   get_ranges(){
     if (this.ranges==null)
       this.ranges= get_range_array(this.highlight)
@@ -191,9 +254,9 @@ export class HighlightEx{
     }
     if (range===this.selected_range)
       return 
-    this.clear_selected_range()
+    //this.clear_selected_range()
     this.selected_range=range
-    document.getSelection()?.addRange(range as Range)
+    //document.getSelection()?.addRange(range as Range)
 
   }
   get size(){
