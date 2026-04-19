@@ -1,4 +1,4 @@
-import type { s2t } from '@yigal/base_types';
+import { type s2t } from '@yigal/base_types';
 export declare function query_selector<T extends Element = Element>(el: Element, selector: string): T;
 export declare function create_element(html: string, parent?: HTMLElement): HTMLElement;
 export declare function divs(vals: s2t<string | undefined>): string;
@@ -36,7 +36,7 @@ export declare class HighlightEx {
     constructor(highlight_name: string, el: Element);
     onblur: (e: Event) => void;
     onfocus: (e: Event) => void;
-    make_highlight(name: string, background: string, priority: number): Highlight;
+    make_highlight(name: string, base: string, priority: number): Highlight;
     get_range_by_index(highlight: Highlight, index: number): AbstractRange | undefined;
     clear(): void;
     delete(range: Range): void;

@@ -1,4 +1,4 @@
-import type { s2t} from '@yigal/base_types'
+import  { type s2t,nl} from '@yigal/base_types'
 
 export function query_selector<T extends Element=Element>(el:Element,selector:string){ // 3:32  warning  Type parameter T is used only once in the function signature  @typescript-eslint/no-unnecessary-type-parameters why?
     const ans=el.querySelector<T>(selector);
@@ -173,8 +173,8 @@ export class HighlightEx{
   selected_range:AbstractRange|undefined
   ranges:Array<AbstractRange>|undefined
   constructor(highlight_name:string,el:Element){
-    this.highlight=this.make_highlight(highlight_name,'yellow',1)
-    this.selected_highlight=this.make_highlight(`selected_${highlight_name}`,'cyan',1)
+    this.highlight=this.make_highlight(highlight_name,'findMatch',0)
+    this.selected_highlight=this.make_highlight(`selected_${highlight_name}`,'findMatchHighlight',1)
     el.addEventListener('blur',this.onblur,true)
     el.addEventListener('focus',this.onfocus,true)
   }  
@@ -206,11 +206,18 @@ export class HighlightEx{
     console.log('scriptsmon:focus',e.target,this.focused)
   }
   
-  make_highlight(name:string,background:string,priority:number){
+  make_highlight(name:string,base:string,priority:number){
     const ans=new Highlight()
     const dynamic_sheet = new CSSStyleSheet();
     document.adoptedStyleSheets.push(dynamic_sheet);    
-    dynamic_sheet.insertRule(`::highlight(${name}) { background: ${background}; }`);
+    dynamic_sheet.insertRule(`
+  ::highlight(${name}) { 
+    background-color: var(--vscode-terminal-${base}Background);
+    outline: 1px solid var(--vscode-terminal-${base}Border);
+  }
+`)//this works for vscode plugin webview, but if i every want to use the module for other cases, this would have to change
+
+
     CSS.highlights.set(name,ans);
     ans.priority=priority
     return ans
@@ -254,10 +261,15 @@ export class HighlightEx{
     }
     if (range===this.selected_range)
       return 
-    //this.clear_selected_range()
     this.selected_range=range
-    //document.getSelection()?.addRange(range as Range)
-
+    if (this.focused){
+      const selection=nl(document.getSelection())
+      selection.removeAllRanges()
+      selection.addRange(range as Range)
+    }else{
+      this.selected_highlight.clear()
+      this.selected_highlight.add(range)
+    }
   }
   get size(){
     return this.highlight.size

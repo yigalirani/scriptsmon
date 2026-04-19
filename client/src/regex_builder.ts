@@ -1,6 +1,6 @@
 import {get_error} from '@yigal/base_types'
 export function re(flags = "") {
-  return function (strings: TemplateStringsArray, ...values: any[]) {
+  return function (strings: TemplateStringsArray, ...values: (string|number)[]) {
     // 1. Combine strings and interpolated values
     const full_raw = strings.raw.reduce((acc, str, i) => 
       acc + str + (values[i] ?? "")

@@ -197,6 +197,6 @@ span.url{
   color:red;
 }
 ::selection {
-  background-color: rgba(255, 255, 0, 0.3); /* Bright yellow */
-  color: #000;
+  background-color: var(--vscode-terminal-selectionBackground);
+  color:var(--vscode-terminal-selectionForeground);
 }
