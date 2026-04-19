@@ -288,12 +288,13 @@ export class TerminalSearch{
       return
     }    
     if (target.id==='prev_match'){
+      this.data.term_text.focus() //first focus then apply selection do that apply_selection will use selection rather than selection_highlight
       this.apply_selection(-1)
       return
     }
     if (target.id==='next_match'){
-      this.apply_selection(1)
-     
+      this.data.term_text.focus()
+      this.apply_selection(1)     
       return
     }
 
