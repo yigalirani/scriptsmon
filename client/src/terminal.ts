@@ -106,6 +106,7 @@ export class Terminal implements SearchData{
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
     this.term_text.lastElementChild?.classList.add('eof')
+    this.term_text.scrollTop = this.term_text.scrollHeight;
   }
   apply_styles(channel_state:ChannelState){
     channel_state.start_parser_state=channel_state.end_parser_state
