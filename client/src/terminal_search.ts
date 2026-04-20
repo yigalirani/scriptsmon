@@ -4,7 +4,7 @@ interface _StartEnd{
   start:number
   end:number
 }
-export type SearchCommandType="find"|"findnext"|"findprev"
+export type SearchCommandType="find"|"findnext"|"findprev"|"selectall"
 interface NodeOffset{
   node:Node
   node_pos:number
@@ -232,7 +232,16 @@ export class TerminalSearch{
         return this.findnext()
       case "findprev":
         return this.findprev()
+      case "selectall":
+        return this.selectall()        
     }
+  }
+  selectall(){
+    const s = nl(window.getSelection())
+    const r = document.createRange();
+    s.removeAllRanges()
+    r.selectNodeContents(this.data.term_text)
+    s.addRange(r)
   }
   apply_selection(diff:number){
     this.selection+=diff

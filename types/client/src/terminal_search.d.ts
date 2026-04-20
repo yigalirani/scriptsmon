@@ -1,5 +1,5 @@
 import { HighlightEx } from './dom_utils.js';
-export type SearchCommandType = "find" | "findnext" | "findprev";
+export type SearchCommandType = "find" | "findnext" | "findprev" | "selectall";
 export interface SearchData {
     term_el: HTMLElement;
     term_text: HTMLElement;
@@ -35,6 +35,7 @@ export declare class TerminalSearch {
     selection: number;
     constructor(data: SearchData);
     search_command(command: SearchCommandType): void;
+    selectall(): void;
     apply_selection(diff: number): void;
     calc_match_status(): string;
     iter: () => void;

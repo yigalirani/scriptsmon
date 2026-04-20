@@ -27,6 +27,7 @@ h1 {
   flex:1;
   overflow: hidden;
   display: flex;
+
 }
 .controlpanel{
   padding: 30px;

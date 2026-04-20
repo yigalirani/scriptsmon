@@ -9045,6 +9045,13 @@ async function activate(context) {
       post_message(global_webview, { command: "search_command", subcommand: "findnext" });
     }
   );
+  register_command(
+    context,
+    "scriptsmon.selectall",
+    () => {
+      post_message(global_webview, { command: "search_command", subcommand: "selectall" });
+    }
+  );
   vscode2.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event, null, 2));
   });

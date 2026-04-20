@@ -81,7 +81,13 @@
             "key": "shift+f3",
             "mac": "shift+f3",
             "when": "scriptsmon_focused"
-          }
+          },
+          {
+            "command": "scriptsmon.selectall",
+            "key": "ctrl+a",
+            "mac": "ctrl+a",
+            "when": "scriptsmon_focused"
+          }          
         ],    
         "commands": [
             {
@@ -121,7 +127,12 @@
             {
               "command": "scriptsmon.findprev",
               "title": "Scriptsmon: Find Prev"
+            },
+            {
+              "command": "scriptsmon.selectall",
+              "title": "Scriptsmon: Select All"
             }                       
+
             
         ],
         "menus": {

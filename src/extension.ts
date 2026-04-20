@@ -161,6 +161,10 @@ export  async function activate(context: vscode.ExtensionContext) {
       post_message(global_webview!,{command: "search_command",subcommand:"findnext"})
     }
   )
+  register_command(context, 'scriptsmon.selectall', () => {
+      post_message(global_webview!,{command: "search_command",subcommand:"selectall"})
+    }
+  )  
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event,null,2))
   })
