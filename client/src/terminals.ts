@@ -214,9 +214,10 @@ export class Terminals implements Component{
     }
     f(report.root)    
   }
-  command_find(){
-    this.visible_panel?.term.show_find()
+  get_search(){
+    return this.visible_panel?.term.search
   }
+
   set_selected(id:string){
     for (const [panel_id,panel] of Object.entries(this.terminals)){
       const visible=panel_id===id

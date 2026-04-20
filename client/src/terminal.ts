@@ -176,10 +176,7 @@ export class Terminal implements SearchData{
     const new_html=acum_html.join('')
     this.term_text.insertAdjacentHTML('beforeend',new_html)
   }
-  show_find(){
-    this.search.show()
-  }
- 
+
   term_clear(){
     this.term_text.innerHTML=''
     this.channel_states=make_channel_states()

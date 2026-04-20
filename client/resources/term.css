@@ -196,6 +196,10 @@ span.url{
 .search_error{
   color:red;
 }
+::selection_bright {
+  background-color: yellow;
+  color:var(--vscode-terminal-selectionForeground);
+}
 ::selection {
   background-color: var(--vscode-terminal-selectionBackground);
   color:var(--vscode-terminal-selectionForeground);

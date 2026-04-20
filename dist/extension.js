@@ -8968,6 +8968,7 @@ function make_loop_func(monitor) {
               "scriptsmon_focused",
               message.val
             );
+            console.log("scriptsmon_focused", message.val);
             break;
           }
           case "command_open_link": {
@@ -9027,7 +9028,21 @@ async function activate(context) {
     context,
     "scriptsmon.find",
     () => {
-      post_message(global_webview, { command: "command_find" });
+      post_message(global_webview, { command: "search_command", subcommand: "find" });
+    }
+  );
+  register_command(
+    context,
+    "scriptsmon.findprev",
+    () => {
+      post_message(global_webview, { command: "search_command", subcommand: "findprev" });
+    }
+  );
+  register_command(
+    context,
+    "scriptsmon.findnext",
+    () => {
+      post_message(global_webview, { command: "search_command", subcommand: "findnext" });
     }
   );
   vscode2.tasks.onDidEndTaskProcess((event) => {

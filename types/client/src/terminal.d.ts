@@ -36,7 +36,6 @@ export declare class Terminal implements SearchData {
     after_write(): void;
     apply_styles(channel_state: ChannelState): void;
     term_write(output: string[], channel_name: Channel): void;
-    show_find(): void;
     term_clear(): void;
 }
 export {};

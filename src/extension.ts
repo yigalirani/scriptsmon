@@ -1,6 +1,7 @@
 import {Monitor} from './monitor.js'
 import type {Folder,RunnerReport} from './data.js'
 import * as vscode from 'vscode';
+import type {SearchCommandType} from '../client/src/terminal_search.js'
 import {
   type WebviewFunc,
   define_webview,
@@ -33,8 +34,9 @@ export interface CommandOpenLink{
   command: "command_open_link"
   url:string
 }
-export interface CommandFind{
-  command: "command_find"
+export interface SearchCommand{
+  command: "search_command"
+  subcommand:SearchCommandType
 }
 export interface CommandFocus{
   command: "view_focus"
@@ -49,7 +51,7 @@ export type WebviewMessage=
   CommandOpenFileRowCol|
   CommandOpenFilePos|
   CommandOpenLink|
-  CommandFind|
+  SearchCommand|
   CommandFocus
 function post_message(view:vscode.Webview,msg:WebviewMessage){
   view.postMessage(msg)
@@ -83,6 +85,7 @@ function make_loop_func(monitor:Monitor){
             'scriptsmon_focused', 
             message.val
           )
+          console.log('scriptsmon_focused',message.val)
           //global_view_focus=message.val
           break
         }
@@ -147,9 +150,17 @@ export  async function activate(context: vscode.ExtensionContext) {
     outputChannel.append(`dump_debug_enabled=${monitor.dump_debug_enabled}`)
   })
   register_command(context, 'scriptsmon.find', () => {
-      post_message(global_webview!,{command: "command_find"})
+      post_message(global_webview!,{command: "search_command",subcommand:"find"})
     }
-  );  
+  )  
+  register_command(context, 'scriptsmon.findprev', () => {
+      post_message(global_webview!,{command: "search_command",subcommand:"findprev"})
+    }
+  )
+  register_command(context, 'scriptsmon.findnext', () => {
+      post_message(global_webview!,{command: "search_command",subcommand:"findnext"})
+    }
+  )
   vscode.tasks.onDidEndTaskProcess((event) => {
     outputChannel.append(JSON.stringify(event,null,2))
   })

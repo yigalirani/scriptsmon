@@ -4,6 +4,7 @@ interface _StartEnd{
   start:number
   end:number
 }
+export type SearchCommandType="find"|"findnext"|"findprev"
 interface NodeOffset{
   node:Node
   node_pos:number
@@ -218,9 +219,17 @@ export class TerminalSearch{
       this.input()!.addEventListener('input',this.update_search)   
       this.interval_id=setInterval(this.iter,20)
   }
-  show(){
-    this.find_widget.classList.remove('hidden')
-    this.input()?.focus();
+  search_command(command:SearchCommandType){
+    switch(command){
+      case "find":
+        this.find_widget.classList.remove('hidden')
+        this.input()?.focus();
+        break
+      case "findnext":
+        return this.findnext()
+      case "findprev":
+        return this.findprev()
+    }
   }
   apply_selection(diff:number){
     this.selection+=diff
@@ -267,7 +276,14 @@ export class TerminalSearch{
     if (regex!=null)
       this.regex_searcher=new  RegExpSearcher(this.data,regex)
   }
-
+  findprev(){
+    this.data.term_text.focus() //first focus then apply selection do that apply_selection will use selection rather than selection_highlight
+    this.apply_selection(-1)
+  }
+  findnext(){
+    this.data.term_text.focus()
+    this.apply_selection(1)   
+  }
   onclick=(event:MouseEvent)=>{
     const {target}=event
     if (target instanceof HTMLElement){
@@ -287,16 +303,10 @@ export class TerminalSearch{
       get_parent_by_class(target,'find_widget_container')?.classList.toggle("hidden");
       return
     }    
-    if (target.id==='prev_match'){
-      this.data.term_text.focus() //first focus then apply selection do that apply_selection will use selection rather than selection_highlight
-      this.apply_selection(-1)
-      return
-    }
-    if (target.id==='next_match'){
-      this.data.term_text.focus()
-      this.apply_selection(1)     
-      return
-    }
+    if (target.id==='prev_match')
+      return this.findprev()
+    if (target.id==='next_match')
+      return this.findnext()
 
     const icon_button=get_parent_by_class(target,'icon_button')
     if (icon_button!=null){

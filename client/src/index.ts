@@ -137,8 +137,11 @@ function start(){
             
             break
           }
-          case 'command_find':{
-            terminals.command_find()
+          case 'search_command':{
+            const search=terminals.get_search()
+            const {subcommand}=message
+            if (search!=null)
+              search.search_command(subcommand)
             break
           }
       

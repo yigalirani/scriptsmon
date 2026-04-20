@@ -24,7 +24,7 @@ export declare class Terminals implements Component {
     get_terminal(runner: Runner): TerminalPanel;
     on_interval(): void;
     on_data(data: unknown): void;
-    command_find(): void;
+    get_search(): import("./terminal_search.js").TerminalSearch | undefined;
     set_selected(id: string): void;
 }
 export {};
