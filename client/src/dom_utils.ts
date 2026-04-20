@@ -293,9 +293,10 @@ export class HighlightEx{
       console.warn(`scriptsmon: cant find range by num ${range_num}`)
       return
     }
-    scroll_to_view(this.el,range as Range)
+
     if (range===this.selected_range)
-      return 
+      return  range
+    scroll_to_view(this.el,range as Range)    
     this.selected_range=range
     if (this.focused){
       const selection=nl(document.getSelection())

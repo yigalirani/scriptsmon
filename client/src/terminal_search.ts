@@ -157,6 +157,8 @@ function get_regexp_string(pattern: RegExp|undefined): string {
   return `/${source}/`;
 }
 function trunk(x:number,min:number,max:number){
+  if (max===0)
+    return 0 //so caller knows that there is problem hack
   if (x>max)
     return min
   if (x<min)
@@ -240,7 +242,7 @@ export class TerminalSearch{
   }
   calc_match_status(){
     if (this.data.highlight.size===0){
-      //this.selection=1
+      //this.selec tion=1
       if (this.regex_searcher!=null)
         return `<div class='search_error'>No Results</div>`
       return `<div>No Results</div>`

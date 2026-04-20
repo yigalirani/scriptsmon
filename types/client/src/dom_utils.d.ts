@@ -43,7 +43,7 @@ export declare class HighlightEx {
     delete(range: Range): void;
     add(range: Range): void;
     get_ranges(): AbstractRange[];
-    select(range_num: number): void;
+    select(range_num: number): AbstractRange | undefined;
     get size(): number;
 }
 export {};
