@@ -166,13 +166,47 @@ function print_selection(el:unknown){
     return
   console.log('scriptsmon: selection',get_element_selection(el))
 }
+function scroll_to_view(el: HTMLElement, r: Range) { //https://gemini.google.com/share/e3034a913279
+  const rect = r.getBoundingClientRect();
+  const cont = el.getBoundingClientRect();
+
+  const off_y = rect.top - cont.top;
+  const h = rect.height;
+  const ch = el.clientHeight;
+
+  // Vertical: Ensure not on first or last line
+  // Move down if at the very top
+  if (off_y <= 0) {
+    el.scrollTop += (off_y - h);
+  }
+
+  // Move up if at the very bottom
+  if (off_y + h >= ch) {
+    el.scrollTop += (off_y + h - ch + h);
+  }
+
+  // Horizontal: Scroll all the way left if visible
+  const off_x = rect.left - cont.left;
+  const is_v = off_x >= 0 && (off_x + rect.width) <= el.clientWidth;
+
+  if (is_v) {
+    el.scrollLeft = 0;
+  }
+
+  if (!is_v) {
+    el.scrollLeft += off_x;
+  }
+
+  const ans = el.scrollTop;
+  return ans;
+}
 export class HighlightEx{
   highlight
   selected_highlight
   focused=false
   selected_range:AbstractRange|undefined
   ranges:Array<AbstractRange>|undefined
-  constructor(highlight_name:string,el:Element){
+  constructor(highlight_name:string,private el:HTMLElement){
     this.highlight=this.make_highlight(highlight_name,'findMatch',0)
     this.selected_highlight=this.make_highlight(`selected_${highlight_name}`,'findMatchHighlight',1)
     el.addEventListener('blur',this.onblur,true)
@@ -259,6 +293,7 @@ export class HighlightEx{
       console.warn(`scriptsmon: cant find range by num ${range_num}`)
       return
     }
+    scroll_to_view(this.el,range as Range)
     if (range===this.selected_range)
       return 
     this.selected_range=range

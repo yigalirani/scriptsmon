@@ -28,12 +28,13 @@ export interface Component {
 export declare const ctrl: CtrlTracker;
 export declare const re: (flags?: string) => (strings: TemplateStringsArray, ...values: unknown[]) => RegExp;
 export declare class HighlightEx {
+    private el;
     highlight: Highlight;
     selected_highlight: Highlight;
     focused: boolean;
     selected_range: AbstractRange | undefined;
     ranges: Array<AbstractRange> | undefined;
-    constructor(highlight_name: string, el: Element);
+    constructor(highlight_name: string, el: HTMLElement);
     onblur: (e: Event) => void;
     onfocus: (e: Event) => void;
     make_highlight(name: string, base: string, priority: number): Highlight;

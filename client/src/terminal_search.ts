@@ -163,6 +163,7 @@ function trunk(x:number,min:number,max:number){
     return max
   return x
 }
+
 export class TerminalSearch{
   find_widget
   interval_id
