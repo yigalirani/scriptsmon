@@ -9,7 +9,7 @@ export type Scriptsmon = Record<string, Watcher | string[]> & {
     $watch?: string[];
     watched?: string[];
 };
-export type State = "ready" | "done" | "error" | "running" | "stopped";
+export type State = "ready" | "done" | "error" | "running" | "stopped" | "warning";
 export interface Lstr extends Pos {
     str: string;
 }
@@ -33,6 +33,7 @@ export interface Run {
     exit_code: number | undefined;
     stopped: undefined | true;
     run_id: number;
+    last_k: string;
 }
 export interface RunnerBase {
     pos: Pos | undefined;

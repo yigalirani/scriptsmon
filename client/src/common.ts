@@ -1,3 +1,4 @@
+import {strip_ansi} from './terminals_ansi.js'
 import type {WebviewMessage} from '../../src/extension.js'
 import {vscode} from './dom_utils.js'
 import type {RunnerReport,Runner,State} from '../../src/data.js';
@@ -22,15 +23,23 @@ export function calc_runner_status(report:RunnerReport ,runner:Runner):{
   const last_run=calc_last_run(report,runner)
   if (last_run==null)
     return{version:0,state:'ready'}
-  const {end_time,run_id:version,exit_code,stopped}=last_run
+  const {end_time,run_id:version,exit_code,stopped,last_k}=last_run
   if (end_time==null){
       return {version,state:'running'}
   }
   if (stopped) 
     return {version,state:'stopped'}
 
-  if (exit_code===0)
+  if (exit_code===0){
+    const {plain_text}=strip_ansi(last_k,{
+      foreground:undefined,
+      background:undefined,
+      font_styles: new Set()
+    })
+    if (plain_text.match(/\d+\s+warnings/gi)!=null)
+      return {version,state:'warning'}
     return {version,state:'done'}
+  }
   return {version,state:'error'}
 }
 

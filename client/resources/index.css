@@ -391,6 +391,13 @@ span.term_title_watch{
 .error{
   background-color: red;
 }
+.warning{
+  background-color:yellow;
+  color:black;
+}
+.icon.warning svg{
+ fill:black
+}
 .icon.background_ready,.icon.background_folder{
   border: 0px solid #474747;  
 }

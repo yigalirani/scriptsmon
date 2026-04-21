@@ -8584,10 +8584,11 @@ async function mkdir_write_file(filePath, data2, cache = false) {
   }
 }
 function attach(child, run, resolve6) {
-  child.stdout.on(
-    "data",
-    (data2) => run.stdout.push(String(data2))
-  );
+  child.stdout.on("data", (data2) => {
+    const data_string = String(data2);
+    run.stdout.push(data_string);
+    run.last_k = (run.last_k + data_string).slice(-500);
+  });
   child.stderr.on(
     "data",
     (data2) => run.stderr.push(String(data2))
@@ -8705,7 +8706,8 @@ var Monitor = class {
         //initialy is undefined then maybe changes to error and stop changing
         exit_code: void 0,
         stopped: void 0,
-        run_id
+        run_id,
+        last_k: ""
       };
       this.get_runner_runs(runner).push(run);
       try {

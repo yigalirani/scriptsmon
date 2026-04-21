@@ -50,9 +50,11 @@ export async function mkdir_write_file(filePath:string,data:string,cache=false){
   }
 }
 function attach(child:ChildProcessWithoutNullStreams,run:Run,resolve:(a:unknown)=>void){
-  child.stdout.on("data",(data:unknown)=>
-    run.stdout.push(String(data))
-  )
+  child.stdout.on("data",(data:unknown)=>{
+    const data_string=String(data)
+    run.stdout.push(data_string)
+    run.last_k=(run.last_k+data_string).slice(-500)
+  })
   child.stderr.on("data",(data:unknown)=>
     run.stderr.push(String(data))
   )
@@ -188,7 +190,8 @@ export class Monitor{
         Err      : undefined,   //initialy is undefined then maybe changes to error and stop changing
         exit_code: undefined,
         stopped  : undefined,
-        run_id 
+        run_id ,
+        last_k:''
       }
     
     this.get_runner_runs(runner).push(run)      
