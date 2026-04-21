@@ -54,7 +54,7 @@ function calc_box_shadow(icon:string,timeOffset:number){
   if (icon==='stopped')
     return f('rgba(128, 0, 128, 0.5)')
   if (icon==='warning')
-    return f('yellow')  
+    return f('rgba(255, 255, 0, .5)')  
   return ''
 }
 
