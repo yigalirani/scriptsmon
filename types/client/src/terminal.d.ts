@@ -31,7 +31,10 @@ export declare class Terminal implements SearchData {
     search: TerminalSearch;
     highlight: HighlightEx;
     last_channel: ChannelState;
+    auto_scroll_mode: boolean;
     constructor(parent: HTMLElement, listener: TerminalListener, id: string);
+    onscroll: (event: Event) => void;
+    onkeydown: (event: KeyboardEvent) => void;
     onclick: (event: MouseEvent) => void;
     after_write(): void;
     apply_styles(channel_state: ChannelState): void;

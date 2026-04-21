@@ -67,13 +67,14 @@ export class Terminal implements SearchData{
   search
   highlight
   last_channel
-
+  auto_scroll_mode
   //text_index
   constructor(
     parent:HTMLElement,
     private listener:TerminalListener,
     id:string
   ){
+    this.auto_scroll_mode=true
     this.channel_states=make_channel_states()
     this.term_el=create_element(`
 <div class=term >
@@ -87,8 +88,29 @@ export class Terminal implements SearchData{
     this.search=new TerminalSearch(this)
     this.term_el.addEventListener('click',this.onclick)
     this.last_channel=this.channel_states.stdout
+    this.term_el.addEventListener('keydown',this.onkeydown)
+    this.term_text.addEventListener('scroll',this.onscroll)
   }
-
+  onscroll=(event: Event): void => {
+    const {target}=event
+    if (!(target instanceof HTMLElement))
+      return    
+    const { scrollTop, clientHeight, scrollHeight } = this.term_text; //https://gemini.google.com/share/dcdd882b165b
+    const is_bottom = scrollTop + clientHeight >= scrollHeight;
+    this.auto_scroll_mode = (is_bottom)
+  }
+  onkeydown=(event: KeyboardEvent): void => {
+    if (event.key === 'End') {
+      console.log('The "End" button was pressed!');
+      this.auto_scroll_mode=true
+      //this.term_text.scrollTop = this.term_text.scrollHeight;
+    }
+    if (event.key === 'Home') {
+      console.log('The "End" button was pressed!');
+      this.auto_scroll_mode=false
+      //this.term_text.scrollTop = this.term_text.scrollHeight;
+    }    
+  }
   onclick=(event:MouseEvent)=>{
     const {target}=event
     if (!(target instanceof HTMLElement))
@@ -106,7 +128,8 @@ export class Terminal implements SearchData{
   after_write(){
     this.term_text.querySelector('.eof')?.classList.remove('eof')
     this.term_text.lastElementChild?.classList.add('eof')
-    this.term_text.scrollTop = this.term_text.scrollHeight;
+    if (this.auto_scroll_mode)
+      this.term_text.scrollTop = this.term_text.scrollHeight;
   }
   apply_styles(channel_state:ChannelState){
     channel_state.start_parser_state=channel_state.end_parser_state
