@@ -162,14 +162,26 @@ function attach_splitter(){
       save_width(width);
   })
 }
+function collect_tags(report:RunnerReport){
+  const ans=new Set<string>
+  function f(folder:Folder){
+    folder.folders.map(f)
+    folder.runners.forEach(runner=>{
+      runner.tags.map(x=>ans.add(x))
+    })
+  }
+  f(report.root)
+  return [...ans]
+}
 function make_selector(report:RunnerReport){
+  const tags_options=collect_tags(report).map(x=>`<option value="#${x}">#${x}</option>`)
   return `<select name="status_filter" class="vscode_selector">
-  <option value="watchables">watchables</option>
-  <option value="watching">watching</option>
-  <option value="errors_warnings">errors/warnnings</option>
-  <option value="dev">#dev</option>
-  <option value="prod">#prod</option>
-  <option value="all">all</option>
+  <option value="all">All</option>
+  <option value="watchables">Watchables</option>
+  <option value="watching">Watching now</option>
+  <option value="watching">Started</option>
+  <option value="errors_warnings">With errors/warnnings</option>
+  ${tags_options}
 </select>`
 }
 function start(){
