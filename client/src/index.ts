@@ -126,13 +126,25 @@ function attach_splitter(){
       offset=orig_width-e.clientX
   });
   
-  // Track movement
+
   document.addEventListener('pointermove', (e) => {
       if (!is_resizing) return;
-      const { clientX } = e;
-      const ans = `${clientX+offset}px`;
-      
-      left_panel.style.width = ans;
+      const new_width=function(){
+        const { clientX,target } = e;
+        const new_width=clientX+offset
+        if (!(target instanceof HTMLElement)||target.parentElement==null)
+          return
+        const {clientWidth:parent_width}=target.parentElement
+        //console.log('parent_width',parent_width)
+        if (new_width<100)
+          return 100
+        if (new_width>parent_width-100) //todo: run this limit also when parent resize
+          return parent_width-100
+        return new_width
+      }()
+      if (new_width==null)
+        return
+      left_panel.style.width = `${new_width}px`
       //for (const child of left_panel.children) //this trix was need for mousemove, but noy for pointer move
         //child.scrollLeft=0
         
