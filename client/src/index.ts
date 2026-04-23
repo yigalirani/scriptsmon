@@ -1,6 +1,6 @@
 
 import type {WebviewMessage} from '../../src/extension.js'
-import {query_selector,ctrl} from './dom_utils.js'
+import {query_selector,ctrl,update_child_html} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
 import type { Folder,Runner,FolderError,RunnerReport} from '../../src/data.js';
 import {find_base} from '../../src/parser.js';
@@ -162,7 +162,16 @@ function attach_splitter(){
       save_width(width);
   })
 }
-
+function make_selector(report:RunnerReport){
+  return `<select name="status_filter" class="vscode_selector">
+  <option value="watchables">watchables</option>
+  <option value="watching">watching</option>
+  <option value="errors_warnings">errors/warnnings</option>
+  <option value="dev">#dev</option>
+  <option value="prod">#prod</option>
+  <option value="all">all</option>
+</select>`
+}
 function start(){
   attach_splitter()
   console.log('start')
@@ -192,6 +201,8 @@ function start(){
           case 'RunnerReport':{
             provider.report=message            
             terminals.on_data(message)
+            const tree_selector=make_selector(message)
+            update_child_html(document.body,'#tree_selector',tree_selector)
             const tree_node=the_convert(message)
             //base_uri=message.base_uri
             tree.on_data(tree_node)

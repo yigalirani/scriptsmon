@@ -492,3 +492,20 @@ span.term_title_watch{
     /* Uses the same color as the VS Code draggable sashes */
     background-color: var(--vscode-sash-hoverBorder);
 }
+.vscode_selector {
+  background-color: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+  border: 1px solid var(--vscode-dropdown-border);
+  padding: 2px 4px;
+  border-radius: 2px;
+  outline: none;
+}
+
+.vscode_selector:focus {
+  border-color: var(--vscode-focusBorder);
+}
+
+.vscode_selector option {
+  background-color: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+}
