@@ -101,8 +101,60 @@ class TheTreeProvider implements TreeDataProvider{
     })
   }
 }
+function save_width(_width:string){
+}
+function attach_splitter(){
+  const splitter = document.querySelector<HTMLElement>('#splitter');
+
+  const left_panel = document.querySelector<HTMLElement>('.container');
+  if (splitter==null||left_panel==null){
+    console.warn('splitter the_tree is null')
+    return
+  }  
+  let orig_width = left_panel.offsetWidth //i want width to be int
+  let offset=0
+  let is_resizing = false;
+
+  // Start dragging
+  splitter.addEventListener('pointerdown', (e) => { //type of e is Event and not MouseEvent, why?
+      is_resizing = true;
+      const {target,pointerId}=e
+      if (!(target instanceof HTMLElement))
+        return
+      orig_width = left_panel.offsetWidth
+      target.setPointerCapture(pointerId);
+      offset=orig_width-e.clientX
+  });
+  
+  // Track movement
+  document.addEventListener('pointermove', (e) => {
+      if (!is_resizing) return;
+      const { clientX } = e;
+      const ans = `${clientX+offset}px`;
+      
+      left_panel.style.width = ans;
+      //for (const child of left_panel.children) //this trix was need for mousemove, but noy for pointer move
+        //child.scrollLeft=0
+        
+  });
+
+  // Stop dragging
+  document.addEventListener('pointerup', (e) => {
+      const {target,pointerId}=e
+      if (!(target instanceof HTMLElement)||!is_resizing)
+        return
+      target.releasePointerCapture(pointerId);
+      is_resizing = false;
+      document.body.style.cursor = 'default';
+      
+      // Save the final width to VS Code state
+      const { width } = left_panel.style;
+      save_width(width);
+  })
+}
 
 function start(){
+  attach_splitter()
   console.log('start')
   const terminals=new Terminals()
   // /let base_uri=''

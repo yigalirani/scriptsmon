@@ -202,7 +202,7 @@ span.term_title_watch{
     padding: 1px;
     white-space: nowrap;
     display: flex;
-    width: 1000px;
+    width: 500px;
     align-items: center;
     position: relative;
 }
@@ -254,7 +254,8 @@ span.term_title_watch{
 
 }
 #the_tree{
-  overflow: auto;
+  overflow:overlay;
+  width: 100%;
 }
 .commands_icons{
   margin-left: auto;
@@ -274,9 +275,7 @@ span.term_title_watch{
 .command_icon:hover{
   background-color:var(--vscode-toolbar-hoverBackground);
 }
-.command_icon > img {
-  filter: invert(1);
-}
+
 
 .commands_icons  svg{
   width: 16px;
@@ -471,4 +470,22 @@ span.term_title_watch{
 .term_title_bar .term_title_duration{
      min-width:60px
 
+}
+#splitter {
+    width: 4px;
+    cursor: col-resize;
+    /* Invisible by default */
+    background-color: transparent; 
+    /* Smooth transition when the user hovers */
+    transition: background-color 0.1s ease-in-out;
+}
+
+#splitter:hover {
+    /* Standard VS Code sash hover color */
+    background-color: var(--vscode-sash-hoverBorder);
+}
+#splitter:hover, 
+#splitter:active {
+    /* Uses the same color as the VS Code draggable sashes */
+    background-color: var(--vscode-sash-hoverBorder);
 }
