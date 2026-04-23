@@ -9,8 +9,7 @@ import ICONS_HTML from '../resources/icons.html'
 import {Terminals} from './terminals.js'
 import {IconsAnimator,parse_icons} from './icons.js'
 
-function the_convert(_report:unknown):TreeNode{
-  const report=_report as RunnerReport //deliberatly makes less strok typen
+function the_convert(report:RunnerReport):TreeNode{
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch,tags}=runner
       const watched=function(){
@@ -77,7 +76,6 @@ function the_convert(_report:unknown):TreeNode{
 class TheTreeProvider implements TreeDataProvider{
   constructor(public terminals:Terminals){}
   toggle_order=['watched']
-  //convert=the_convert
   report:RunnerReport|undefined
   command(id:string,command_name:string){//Parameter 'command_name' implicitly has an 'any' type.ts(7006) why
     post_message({

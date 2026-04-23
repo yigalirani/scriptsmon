@@ -20,8 +20,10 @@ h1 {
 .container {
     margin: 0 auto;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width:300px;
+    overflow: hidden;
+
 }
 .terms_container{
   flex:1;
@@ -256,6 +258,7 @@ span.term_title_watch{
 #the_tree{
   overflow:overlay;
   width: 100%;
+  flex: 1;
 }
 .commands_icons{
   margin-left: auto;
