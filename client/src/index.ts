@@ -2,14 +2,31 @@
 import type {WebviewMessage} from '../../src/extension.js'
 import {query_selector,ctrl,update_child_html} from './dom_utils.js'
 import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
-import type { Folder,Runner,FolderError,RunnerReport} from '../../src/data.js';
+import type { Folder,Runner,FolderError,RunnerReport,State} from '../../src/data.js';
 import {find_base} from '../../src/parser.js';
 import {post_message,calc_runner_status} from './common.js'
 import ICONS_HTML from '../resources/icons.html'
 import {Terminals} from './terminals.js'
 import {IconsAnimator,parse_icons} from './icons.js'
-
+type Tag=`#${string}`
+type FilterType=State|'All'|'Watchable'|'Watching'|'Error or Warning'|Tag
+function is_tag(x:string):x is Tag{
+  return x.startsWith('#')
+}
+const build_in_filters:Array<FilterType>=["All",'Watchable','Watching',"Ready","Running","Done","Stopped","Warning","Error",'Error or Warning']
+function is_filter(x:string):x is FilterType{
+  if ((build_in_filters as string[]).includes(x))
+    return true
+  return is_tag(x)
+}
+function get_filter():FilterType{
+  const value=document.body.querySelector<HTMLSelectElement>('#status_filter')?.value||''
+  if (!is_filter(value))
+    return 'All'
+  return value
+}
 function the_convert(report:RunnerReport):TreeNode{
+  
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch,tags}=runner
       const watched=function(){
@@ -51,10 +68,29 @@ function the_convert(report:RunnerReport):TreeNode{
     }
 
   }  
+  function filter_runner(runner:TreeNode):boolean{
+    return true
+    //"Ready","Running","Done","Stopped","Warning","Error",'Error or Warning'
+    const {icon,toggles,tags}=runner
+    const filter=get_filter()
+    if (filter.startsWith('#'))
+      return tags.includes(filter)
+    if (filter==='All')
+      return true
+    if (filter==='Watchable')
+      return toggles.watched===false
+    if (filter==='Watching')
+      return toggles.watched===true    
+    if (filter===icon)
+      return true
+    if (filter==='Error or Warning')
+      return ['Error','Warning'].includes(icon)
+    throw new Error('should not get here')
+  }
   function convert_folder(root:Folder):TreeNode{
       const {name,id}=root
       const folders=root.folders.map(convert_folder)
-      const items=root.runners.map(convert_runner)
+      const items=root.runners.map(convert_runner)//.filter(filter_runner)
       const errors=root.errors.map(convert_error)  
       const children=[...folders,...items,...errors]
       const icon=errors.length===0?'folder':'foldersyntaxerror'
@@ -162,27 +198,25 @@ function attach_splitter(){
       save_width(width);
   })
 }
-function collect_tags(report:RunnerReport){
-  const ans=new Set<string>
+
+function collect_tags(report:RunnerReport):Array<Tag>{
+  const ans=new Set<Tag>
   function f(folder:Folder){
     folder.folders.map(f)
-    folder.runners.forEach(runner=>{
-      runner.tags.map(x=>ans.add(x))
-    })
+    for (const runner of folder.runners)
+      for (const tag of runner.tags)  
+        if (is_tag(tag))
+          ans.add(tag)
   }
   f(report.root)
   return [...ans]
 }
 function make_selector(report:RunnerReport){
-  const tags_options=collect_tags(report).map(x=>`<option value="#${x}">#${x}</option>`)
-  return `<select name="status_filter" class="vscode_selector">
-  <option value="all">All</option>
-  <option value="watchables">Watchables</option>
-  <option value="watching">Watching now</option>
-  <option value="watching">Started</option>
-  <option value="errors_warnings">With errors/warnnings</option>
-  ${tags_options}
-</select>`
+  const options=[...build_in_filters,...collect_tags(report)]
+  const option_html=options.map(x=>`<option value="${x}">${x}</option>`)
+  return `<select id="status_filter" class="vscode_selector">
+    ${option_html}
+    </select>`
 }
 function start(){
   attach_splitter()

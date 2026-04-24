@@ -1,4 +1,4 @@
-import { HighlightEx } from './dom_utils.js';
+import { type HighlightEx } from './dom_utils.js';
 export type SearchCommandType = "find" | "findnext" | "findprev" | "selectall";
 export interface SearchData {
     term_el: HTMLElement;

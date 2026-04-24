@@ -22,13 +22,13 @@ export function calc_runner_status(report:RunnerReport ,runner:Runner):{
 }{
   const last_run=calc_last_run(report,runner)
   if (last_run==null)
-    return{version:0,state:'ready'}
+    return{version:0,state:'Ready'}
   const {end_time,run_id:version,exit_code,stopped,last_k}=last_run
   if (end_time==null){
-      return {version,state:'running'}
+      return {version,state:'Running'}
   }
   if (stopped) 
-    return {version,state:'stopped'}
+    return {version,state:'Stopped'}
 
   if (exit_code===0){
     const {plain_text}=strip_ansi(last_k,{
@@ -37,9 +37,9 @@ export function calc_runner_status(report:RunnerReport ,runner:Runner):{
       font_styles: new Set()
     })
     if (plain_text.match(/\d+\s+warnings/gi)!=null)
-      return {version,state:'warning'}
-    return {version,state:'done'}
+      return {version,state:'Warning'}
+    return {version,state:'Done'}
   }
-  return {version,state:'error'}
+  return {version,state:'Error'}
 }
 

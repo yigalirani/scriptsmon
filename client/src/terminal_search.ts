@@ -1,4 +1,4 @@
-import {create_element,get_parent_by_class,has_class,update_child_html,HighlightEx} from './dom_utils.js'
+import {create_element,get_parent_by_class,has_class,update_child_html,type HighlightEx} from './dom_utils.js'
 import {nl} from "@yigal/base_types"
 interface _StartEnd{
   start:number
