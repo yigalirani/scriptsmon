@@ -309,6 +309,14 @@ span.term_title_watch{
   height: 16px;
   color: white;
 }
+.toggles_icons > .watched.halfchecked svg{
+  color: gray;
+}
+.toggles_icons > .watched.halfchecked svg:hover{
+  width: 16px;
+  height: 16px;
+  color: white;
+}
 .watched_undefined > .label_row path{
   fill:lightyellow
 }

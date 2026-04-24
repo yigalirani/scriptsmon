@@ -94,7 +94,7 @@ function the_convert(report:RunnerReport):TreeNode{
       return a
     }
     if (a==="unchecked"){
-      if (b==="unchecked"||b==="halfchecked")
+      if (b==="checked"||b==="halfchecked")
         return "halfchecked"
       return a
     }    
