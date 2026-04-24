@@ -1,4 +1,4 @@
-import type {TreeNode} from './tree_internals.js'
+import type {TreeNode,ToggleValue} from './tree_internals.js'
 import {post_message} from './common.js'
 import {update_child_html,update_class_name,get_parent_by_classes,get_parent_id} from './dom_utils.js'
 export function parse_icons(html: string): Record<string, string> {
@@ -102,7 +102,7 @@ export class IconsAnimator{
     this.id_changed[id]=Date.now()
     this.icon_versions[id]={icon,version}
   }
-  private calc_icon(k:string,v:boolean|undefined){
+  private calc_icon(k:string,v:ToggleValue){
     if (v===undefined)
       return ''
     return this.icons[`${k}_${v}`]

@@ -298,13 +298,13 @@ span.term_title_watch{
 /*.watched_true > .label_row #watched svg{
   color: darkorange;
 }*/
-.toggles_icons > .watched.true svg{
+.toggles_icons > .watched.checked svg{
   color: darkorange;
 }
-.toggles_icons > .watched.false svg{
+.toggles_icons > .watched.unchecked svg{
   color: gray;
 }
-.toggles_icons > .watched.false svg:hover{
+.toggles_icons > .watched.unchecked svg:hover{
   width: 16px;
   height: 16px;
   color: white;

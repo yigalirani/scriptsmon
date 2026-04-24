@@ -1,4 +1,5 @@
 import type { MaybePromise } from '@yigal/base_types';
+export type ToggleValue = "checked" | "unchecked" | "halfchecked" | undefined;
 export interface TreeNode {
     type: 'item' | 'folder';
     label: string;
@@ -9,7 +10,7 @@ export interface TreeNode {
     commands: string[];
     children: TreeNode[];
     icon_version: number;
-    toggles: Record<string, boolean | undefined>;
+    toggles: Record<string, ToggleValue>;
     tags: string[];
 }
 export interface TreeDataProvider {

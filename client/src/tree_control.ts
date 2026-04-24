@@ -5,9 +5,10 @@ import {
   type TreeDataProvider,
   element_for_up_arrow,
   element_for_down_arrow,
-  need_full_render
+  need_full_render,
+  type ToggleValue
 }from './tree_internals.js'
-export type {TreeDataProvider,TreeNode}
+export type {TreeDataProvider,TreeNode,ToggleValue}
 export class TreeControl{
   //private root:unknown
   private collapsed=new Set<string>()

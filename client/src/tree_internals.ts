@@ -1,5 +1,6 @@
 import  type { MaybePromise} from '@yigal/base_types'
 import {get_parent_by_class} from './dom_utils.js'
+export type ToggleValue="checked"|"unchecked"|"halfchecked"|undefined
 export interface TreeNode{
   type                   : 'item'|'folder'   //is this needed?
   label                  : string,
@@ -10,7 +11,7 @@ export interface TreeNode{
   commands               : string[]          //hard codded commmand: checkbox clicked
   children               : TreeNode[]
   icon_version           : number,
-  toggles                : Record<string,boolean|undefined>
+  toggles                : Record<string,ToggleValue>
   tags:                  string[]
   //checkbox_state         : boolean|undefined
   //default_checkbox_state : boolean|undefined

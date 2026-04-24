@@ -1,6 +1,6 @@
 import { type s2s } from '@yigal/base_types';
-import { type TreeNode, type TreeDataProvider } from './tree_internals.js';
-export type { TreeDataProvider, TreeNode };
+import { type TreeNode, type TreeDataProvider, type ToggleValue } from './tree_internals.js';
+export type { TreeDataProvider, TreeNode, ToggleValue };
 export declare class TreeControl {
     private parent;
     private provider;

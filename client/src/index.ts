@@ -1,7 +1,7 @@
 
 import type {WebviewMessage} from '../../src/extension.js'
 import {query_selector,ctrl,update_child_html} from './dom_utils.js'
-import {TreeControl,type TreeDataProvider,type TreeNode} from './tree_control.js';
+import {TreeControl,type TreeDataProvider,type TreeNode,type ToggleValue} from './tree_control.js';
 import type { Folder,Runner,FolderError,RunnerReport,State} from '../../src/data.js';
 import {find_base} from '../../src/parser.js';
 import {post_message,calc_runner_status} from './common.js'
@@ -26,13 +26,12 @@ function get_filter():FilterType{
   return value
 }
 function the_convert(report:RunnerReport):TreeNode{
-  
   function convert_runner(runner:Runner):TreeNode{
       const {script,id,name,effective_watch,tags}=runner
-      const watched=function(){
+      const watched:ToggleValue=function(){
         if (effective_watch.length===0)
-          return
-        return report.monitored.includes(id)
+          return 
+        return report.monitored.includes(id)?"checked":"unchecked"
       }()
       const {version,state}=calc_runner_status(report,runner)
       //const className=(watched?'watched':undefined
@@ -79,12 +78,37 @@ function the_convert(report:RunnerReport):TreeNode{
     if (filter==='Watchable')
       return toggles.watched!=null
     if (filter==='Watching')
-      return toggles.watched===true    
+      return toggles.watched==="checked"
     if (filter===icon)
       return true
     if (filter==='Error or Warning')
       return ['Error','Warning'].includes(icon)
     return false
+  }
+  function combine_checked(a:ToggleValue,b:ToggleValue){
+    if (a==null)
+      return b
+    if (a==="checked"){
+      if (b==="unchecked"||b==="halfchecked")
+        return "halfchecked"
+      return a
+    }
+    if (a==="unchecked"){
+      if (b==="unchecked"||b==="halfchecked")
+        return "halfchecked"
+      return a
+    }    
+    return a
+  }
+  function collect_toggles(items:TreeNode[]){
+    const ans:Record<string,ToggleValue>={}
+    
+    for (const item of items){
+      for (const [k,v] of Object.entries(item.toggles)){
+        ans[k]=combine_checked(ans[k],v)
+      }
+    }
+    return ans
   }
   function convert_folder(root:Folder):TreeNode{
       const {name,id}=root
@@ -93,6 +117,7 @@ function the_convert(report:RunnerReport):TreeNode{
       const errors=root.errors.map(convert_error)  
       const children=[...folders,...items,...errors]
       const icon=errors.length===0?'folder':'foldersyntaxerror'
+      const toggles=collect_toggles([...items,...folders])
       return {
         children,
         type:'folder',
@@ -101,7 +126,7 @@ function the_convert(report:RunnerReport):TreeNode{
         icon,
         icon_version:0,
         className:undefined,
-        toggles: {},
+        toggles,
         tags:[]
       }
   }
