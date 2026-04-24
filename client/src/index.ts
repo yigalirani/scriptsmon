@@ -69,7 +69,6 @@ function the_convert(report:RunnerReport):TreeNode{
 
   }  
   function filter_runner(runner:TreeNode):boolean{
-    return true
     //"Ready","Running","Done","Stopped","Warning","Error",'Error or Warning'
     const {icon,toggles,tags}=runner
     const filter=get_filter()
@@ -78,19 +77,19 @@ function the_convert(report:RunnerReport):TreeNode{
     if (filter==='All')
       return true
     if (filter==='Watchable')
-      return toggles.watched===false
+      return toggles.watched!=null
     if (filter==='Watching')
       return toggles.watched===true    
     if (filter===icon)
       return true
     if (filter==='Error or Warning')
       return ['Error','Warning'].includes(icon)
-    throw new Error('should not get here')
+    return false
   }
   function convert_folder(root:Folder):TreeNode{
       const {name,id}=root
       const folders=root.folders.map(convert_folder)
-      const items=root.runners.map(convert_runner)//.filter(filter_runner)
+      const items=root.runners.map(convert_runner).filter(filter_runner)
       const errors=root.errors.map(convert_error)  
       const children=[...folders,...items,...errors]
       const icon=errors.length===0?'folder':'foldersyntaxerror'

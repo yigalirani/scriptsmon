@@ -141,27 +141,27 @@ span.term_title_watch{
   min-width: 50px;
   text-align: center;
 }
-.term_title_status.status_ready{
+.term_title_status.status_Ready{
   background-color: var(--vscode-button-secondaryBackground, #3c3c3c);
   color: var(--vscode-button-secondaryForeground, #cccccc);
 }
-.term_title_status.status_running{
+.term_title_status.status_Running{
   background-color:#0e639c;
   color:  #ffffff;
 }
-.term_title_status.status_stopped{
+.term_title_status.status_Stopped{
   background-color:#a20790;
   color:  #ffffff;
 }
-.term_title_status.status_ready{
+.term_title_status.status_Ready{
   background-color:#0e639c;
   color:  #ffffff;
 }
-.term_title_status.status_done{
+.term_title_status.status_Done{
   background-color: #4caf50;
   color: #ffffff;
 }
-.term_title_status.status_error{
+.term_title_status.status_Error{
   background-color: #f44336;
   color: #ffffff;
 }
@@ -373,34 +373,34 @@ span.term_title_watch{
   height: 14px;
   fill: var(--vscode-checkbox-foreground);
 }
-.done{
+.Done{
   background-color: green;
 }
 
-.running{
+.Running{
   background-color: darkorange;
   border: 0px solid #474747;  
   
 }
-.value.background_ready{
+.value.background_Ready{
   background-color: blue;
   border: 0px solid #474747;  
 }
-.stopped{
+.Stopped{
   background-color:purple;
   border: 0px solid #474747;  
 }
-.error{
+.Error{
   background-color: red;
 }
-.warning{
+.Warning{
   background-color:yellow;
   color:black;
 }
-.icon.warning svg{
+.icon.Warning svg{
  fill:black
 }
-.icon.background_ready,.icon.background_folder{
+.icon.background_Ready,.icon.background_folder{
   border: 0px solid #474747;  
 }
 .watched2 .label_row::before {

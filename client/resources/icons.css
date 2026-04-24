@@ -25,12 +25,12 @@ svg{
 }
 
 
-.runningicon{
-  animation: running_animation 2s  linear infinite;
+.Runningicon{
+  animation: Running_animation 2s  linear infinite;
   transform-origin: center;
 }
 
-@keyframes running_animation {
+@keyframes Running_animation {
   from {
     transform: rotate(0deg);
   }
@@ -44,7 +44,7 @@ svg{
 
 
 
-.ready_background{
+.Ready_background{
   background-color: gray;
 }
 
