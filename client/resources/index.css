@@ -245,6 +245,7 @@ span.term_title_watch{
   font-size: 12px;
   pointer-events: none;
   filter: invert(1);
+  z-index: 1
 }
 .tree_folder:not(.collapsed)>.label_row>.shifter::before {
   content: url('icons/chevron-down.svg');
@@ -253,7 +254,29 @@ span.term_title_watch{
   font-size: 12px;
   pointer-events: none;
   filter: invert(1);
+  z-index: 1
 
+}
+.tree_folder > .label_row > .shifter  .toggle_icon{
+  width: 16px;
+  height: 12px; /* Shorter to account for the tab */
+  background: #f3d060;
+  position: relative;
+  border-radius: 0 2px 2px 2px;
+  margin-top: 4px; /* Space for the tab */
+
+}
+
+.tree_folder > .label_row > .shifter  .toggle_icon::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 8px;
+  height: 4px;
+  background: #f3d060;
+  border-radius: 2px 2px 0 0;
+  z-index: 2
 }
 #the_tree{
   overflow:overlay;
@@ -524,6 +547,7 @@ span.term_title_watch{
 }
 .toggles_icons{
   width: 16px;
+  height: 16px;
 }
 .tree_left_margin{
     width: 23px;

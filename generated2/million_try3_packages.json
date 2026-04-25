@@ -87,7 +87,7 @@
             ],
             "id": "c--yigal-million_try3--biome",
             "tags": [
-              "dev"
+              "extra"
             ]
           },
           {
@@ -168,7 +168,7 @@
             ],
             "id": "c--yigal-million_try3--eslint",
             "tags": [
-              "dev"
+              "extra"
             ]
           },
           {
@@ -264,7 +264,8 @@
             ],
             "id": "c--yigal-million_try3--eslint_plain",
             "tags": [
-              "dev"
+              "dev",
+              "extra"
             ]
           },
           {
@@ -345,7 +346,7 @@
             ],
             "id": "c--yigal-million_try3--oxlint",
             "tags": [
-              "dev"
+              "extra"
             ]
           },
           {
@@ -447,7 +448,8 @@
             ],
             "id": "c--yigal-million_try3--tsc",
             "tags": [
-              "dev"
+              "dev",
+              "extra"
             ]
           },
           {
