@@ -259,9 +259,10 @@ span.term_title_watch{
     height: 12px;
     /* background: #f3d06000; */
     position: relative;
-    border-radius: 0 2px 2px 2px;
+    border-radius: 4px;
     margin-top: 0px;
-    border-left: 0px solid gray;
+    border-left: 2px solid gray;
+    border-right: 2px solid gray;    
     padding-left:2px;
 }
 .tree_folder>.label_row>.shifter>.toggles_icons .watched.checked{
@@ -340,7 +341,7 @@ span.term_title_watch{
 .toggles_icons > .watched.unchecked svg{
   color: gray;
 }
-.toggles_icons > .watched.unchecked svg:hover{
+.toggles_icons > .watched svg:hover{
   color: white;
 }
 .toggles_icons > .watched.halfchecked svg{
