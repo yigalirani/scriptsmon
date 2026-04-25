@@ -57,7 +57,9 @@ export class TreeControl{
     const ans= create_element(` 
   <div  class="${node_class}" id="${id}" >
     <div  class="label_row">
-      <div class="icon"> </div>
+      <div class=tree_left_margin>
+        <div class="icon"> </div>
+      </div>
       <div  class=shifter style='margin-left:${margin}px'>
       <div class=toggles_icons></div>        
         ${divs({label,vtags,description})}
@@ -133,7 +135,7 @@ export class TreeControl{
     const children_el=(()=>{
       if (depth===0)
         return create_element('<div class=children></div>',parent)
-      const new_parent=this.create_node_element(node,depth*20+16+16,parent)
+      const new_parent=this.create_node_element(node,depth*20+8,parent)
       return new_parent.querySelector('.children') //return value might be null for item node  
     })()
     if (children_el==null){

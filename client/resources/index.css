@@ -201,7 +201,7 @@ span.term_title_watch{
 
 }
 .label_row{
-    padding: 1px;
+    padding: 0px;
     white-space: nowrap;
     display: flex;
     width: 500px;
@@ -241,7 +241,7 @@ span.term_title_watch{
 .tree_folder.collapsed>.label_row>.shifter>::before {
   content: url('icons/chevron-right.svg');
   position: absolute;
-  left: -20px;
+  left: -16px;
   font-size: 12px;
   pointer-events: none;
   filter: invert(1);
@@ -249,7 +249,7 @@ span.term_title_watch{
 .tree_folder:not(.collapsed)>.label_row>.shifter::before {
   content: url('icons/chevron-down.svg');
   position: absolute;
-  left: -20px;
+  left: -16px;
   font-size: 12px;
   pointer-events: none;
   filter: invert(1);
@@ -524,4 +524,10 @@ span.term_title_watch{
 }
 .toggles_icons{
   width: 16px;
+}
+.tree_left_margin{
+    width: 23px;
+    height: 22px;
+    border-right: 1px dotted gray;
+    
 }
