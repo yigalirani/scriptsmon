@@ -522,3 +522,6 @@ span.term_title_watch{
   background-color: var(--vscode-dropdown-background);
   color: var(--vscode-dropdown-foreground);
 }
+.toggles_icons{
+  width: 16px;
+}

@@ -57,9 +57,9 @@ export class TreeControl{
     const ans= create_element(` 
   <div  class="${node_class}" id="${id}" >
     <div  class="label_row">
-      <div class=toggles_icons></div>
+      <div class="icon"> </div>
       <div  class=shifter style='margin-left:${margin}px'>
-        <div class="icon"> </div>
+      <div class=toggles_icons></div>        
         ${divs({label,vtags,description})}
       </div>
       <div class=commands_icons></div>
