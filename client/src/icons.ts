@@ -45,15 +45,15 @@ function calc_box_shadow(icon:string,timeOffset:number){
     const px=deceleratingMap(timeOffset)
     return `0px 0px ${px}px ${px}px ${color}`
   }
-  if (icon==='done')
+  if (icon==='Done')
     return f('rgba(0, 255, 0,.5)')
-  if (icon==='error')
+  if (icon==='Error')
     return f('rgba(255, 0, 0, .5)')
-  if (icon==='running')
+  if (icon==='Running')
     return f('rgba(255, 140, 0, 0.5)')
-  if (icon==='stopped')
+  if (icon==='Stopped')
     return f('rgba(128, 0, 128, 0.5)')
-  if (icon==='warning')
+  if (icon==='Warning')
     return f('rgba(255, 255, 0, .5)')  
   return ''
 }
