@@ -5,7 +5,10 @@ html,body {
     width: 100%;
 
 }
-
+:root {
+  --checked_color: darkorange;
+  --halfchecked_color: brown;
+}
 
 #parent {
   flex: 1;              /* fills remaining vertical space */
@@ -266,13 +269,13 @@ span.term_title_watch{
 }
 .tree_folder>.label_row>.shifter>.toggles_icons .watched.checked{
     box-shadow: 0 0 2px 0px darkorange;
-    border-color: brown;
+    border-color: var(--checked_color);
 }
 .tree_folder>.label_row>.shifter>.toggles_icons .watched.checked svg{
-    color: #984b4b;
+    color: var(--checked_color);
 }
 .tree_folder>.label_row>.shifter>.toggles_icons .watched.halfchecked svg{
-    color: var(--checked_color);
+    color: var(--halfchecked_color);
 }
 .tree_folder>.label_row>.shifter>.toggles_icons .watched.checked::before{
    box-shadow: 0 0 2px 0px darkorange;
