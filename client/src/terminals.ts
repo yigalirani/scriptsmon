@@ -63,13 +63,14 @@ function make_onclick(effective_watch:Filename[]){
 
 function create_terminal_element(runner:Runner): HTMLElement {
   const terms_container=query_selector<HTMLElement>(document.body,'.terms_container')
-  const {id}=runner
+  const {id,name}=runner
   const ret=terms_container.querySelector<HTMLElement>(`#${id}`)
   if (ret!=null)
     return ret //todo check that it is HTMLElement
   const ans=create_element(  `
 <div class="term_panel" id="${id}" style="display: none;">
   <div class="term_title_bar">
+    <div class="term_name">${name}</div>
     <div class="icon text"></div>
     <div class=commands_icons></div>
     <div class=term_title_duration></div>

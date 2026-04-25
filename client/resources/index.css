@@ -8,10 +8,10 @@ html,body {
 
 
 #parent {
-    flex: 1;              /* fills remaining vertical space */
-    width: 100%;          /* full width */
-     height: 100%;
-   overflow: hidden;
+  flex: 1;              /* fills remaining vertical space */
+  width: 100%;          /* full width */
+  height: 100%;
+  overflow: hidden;
 }
 h1 {
     color: var(--vscode-textLink-foreground);
@@ -310,7 +310,7 @@ span.term_title_watch{
   color: white;
 }
 .toggles_icons > .watched.halfchecked svg{
-  color: gray;
+  color: orange;
 }
 .toggles_icons > .watched.halfchecked svg:hover{
   width: 16px;
@@ -369,11 +369,7 @@ span.term_title_watch{
   border-color: var(--vscode-checkbox-border);
 }
 
-/* Active/Checked state logic */
-.checked {
-  background: var(--vscode-checkbox-background);
-  border-color: var(--vscode-checkbox-border);
-}
+
 
 /* Style for the SVG checkmark inside */
 .tree_checkbox svg {
@@ -401,6 +397,10 @@ span.term_title_watch{
 .Error{
   background-color: red;
 }
+.Ready.text{
+  background-color: black
+}
+
 .Warning{
   background-color:yellow;
   color:black;
@@ -430,6 +430,11 @@ span.term_title_watch{
 }
 .term_title_duration {
   font-family: monospace;
+}
+.term_name{
+  font-size: 22px;
+  color:white;
+  min-width: 100px;  
 }
 
 .term_title_duration .ms {
@@ -466,7 +471,7 @@ span.term_title_watch{
 .sep{
   color: #875eba;
 }
-.watching:has(.watched.true){
+.watching:has(.watched.checked){
   color: white;
 }
 .watching:has(.watched.false){
