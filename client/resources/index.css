@@ -5,10 +5,7 @@ html,body {
     width: 100%;
 
 }
-:root {
-  --checked_color: darkorange;
-  --halfchecked_color: brown;
-}
+
 
 #parent {
   flex: 1;              /* fills remaining vertical space */
@@ -266,31 +263,7 @@ span.term_title_watch{
     margin-top: 0px;
     border: 1px solid gray;
     padding-left:2px;
-}
-.tree_folder>.label_row>.shifter>.toggles_icons .watched.checked{
-    box-shadow: 0 0 2px 0px darkorange;
-    border-color: var(--checked_color);
-}
-.tree_folder>.label_row>.shifter>.toggles_icons .watched.checked svg{
-    color: var(--checked_color);
-}
-.tree_folder>.label_row>.shifter>.toggles_icons .watched.halfchecked svg{
-    color: var(--halfchecked_color);
-}
-.tree_folder>.label_row>.shifter>.toggles_icons .watched.checked::before{
-   box-shadow: 0 0 2px 0px darkorange;
-    border-color: var(--checked_color);
-    border-bottom: 1px solid black;
-}
 
-.tree_folder>.label_row>.shifter>.toggles_icons .watched.halfchecked{
-    box-shadow: 0 0 2px 0px darkorange;
-    border-color:  var(--halfchecked_color);
-}
-.tree_folder>.label_row>.shifter>.toggles_icons .watched.halfchecked::before{
-      box-shadow: 0 0 2px 0px darkorange;
-    border-color: var(--halfchecked_color);
-    border-bottom: 1px solid black;
 }
 
 .tree_folder > .label_row > .shifter  .toggle_icon::before {
