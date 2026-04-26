@@ -9,7 +9,6 @@ import {Watcher,type IdRelPath} from './watcher.js'
 import {
   sleep,
   toggle_set,
-  Repeater,
   get_error
 } from "@yigal/base_types";
 
@@ -93,16 +92,13 @@ export class Monitor{
   root?:Folder
   watcher=new Watcher()
   //monitored_runners:Runner[]=[]
-  repeater=new Repeater(100)
+ 
   dump_debug_enabled=false
   constructor(
     public workspace_folders:string[]    
   ){}
   async start_monitor(){
     await this.read_package_json_and_start_watching()
-    await new Repeater(2000).repeat(this.dump_debug)
-    return await this.repeater.repeat(this.iter)
-
   }
   get_runner_runs(runner:Runner):Run[]{
     const {id}=runner

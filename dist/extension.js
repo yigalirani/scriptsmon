@@ -6344,26 +6344,6 @@ function default_get(obj, k, maker) {
   }
   return obj[k];
 }
-var Repeater = class {
-  constructor(delay = 200) {
-    this.delay = delay;
-  }
-  is_running = true;
-  loop = async (f) => {
-    while (this.is_running) {
-      try {
-        await f();
-      } catch (error) {
-        console.error("Error:", error);
-      }
-      await sleep(this.delay);
-    }
-  };
-  async repeat(f) {
-    await f();
-    void this.loop(f);
-  }
-};
 function toggle_set(set, value) {
   if (set.has(value)) {
     set.delete(value);
@@ -8621,12 +8601,9 @@ var Monitor = class {
   root;
   watcher = new Watcher();
   //monitored_runners:Runner[]=[]
-  repeater = new Repeater(100);
   dump_debug_enabled = false;
   async start_monitor() {
     await this.read_package_json_and_start_watching();
-    await new Repeater(2e3).repeat(this.dump_debug);
-    return await this.repeater.repeat(this.iter);
   }
   get_runner_runs(runner) {
     const { id } = runner;
@@ -9002,6 +8979,19 @@ function make_loop_func(monitor) {
   };
   return ans;
 }
+function async_set_interval(task, timeout) {
+  let is_executing = false;
+  function stopped() {
+    is_executing = false;
+  }
+  function f() {
+    if (is_executing)
+      return;
+    is_executing = true;
+    task().then(stopped).catch(stopped);
+  }
+  setInterval(f, timeout);
+}
 async function activate(context) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
   const outputChannel = vscode2.window.createOutputChannel("Scriptsmon");
@@ -9016,6 +9006,7 @@ async function activate(context) {
   outputChannel.append(to_json({ workspace_folders }));
   const monitor = new Monitor(workspace_folders);
   await monitor.start_monitor();
+  async_set_interval(monitor.iter, 100);
   const the_loop = make_loop_func(monitor);
   define_webview({ context, id: "Scriptsmon.webview", html_filename: "index.html", f: the_loop });
   register_command(context, "Scriptsmon.startWatching", () => {

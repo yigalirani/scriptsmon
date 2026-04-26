@@ -1,6 +1,5 @@
 import type { Run, Runner, Folder, Runs, RunnerReport, FullReason } from './data.js';
 import { Watcher, type IdRelPath } from './watcher.js';
-import { Repeater } from "@yigal/base_types";
 export declare function mkdir_write_file(filePath: string, data: string, cache?: boolean): Promise<void>;
 export declare class Monitor {
     workspace_folders: string[];
@@ -9,7 +8,6 @@ export declare class Monitor {
     monitored: Set<string>;
     root?: Folder;
     watcher: Watcher;
-    repeater: Repeater;
     dump_debug_enabled: boolean;
     constructor(workspace_folders: string[]);
     start_monitor(): Promise<void>;

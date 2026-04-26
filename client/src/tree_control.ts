@@ -135,7 +135,7 @@ export class TreeControl{
     const children_el=(()=>{
       if (depth===0)
         return create_element('<div class=children></div>',parent)
-      const new_parent=this.create_node_element(node,depth*20+8,parent)
+      const new_parent=this.create_node_element(node,depth*20,parent)
       return new_parent.querySelector('.children') //return value might be null for item node  
     })()
     if (children_el==null){

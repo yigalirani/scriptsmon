@@ -119,7 +119,19 @@ function make_loop_func(monitor:Monitor){
   }
   return ans
 }
-
+function async_set_interval(task:()=>Promise<void>,timeout:number){
+  let is_executing=false
+  function stopped(){
+    is_executing=false
+  }
+  function f(){
+    if (is_executing)
+      return //still executing, skip this tick
+    is_executing=true
+    task().then(stopped).catch(stopped)
+  }
+  setInterval(f,timeout)
+}
 
 export  async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Scriptsmon" is now active!');
@@ -130,14 +142,15 @@ export  async function activate(context: vscode.ExtensionContext) {
     if (ans.length===0)
 //      return ['c:/yigal/myfastifyapp']
       return [String.raw`c:\yigal\scriptsmon`]
-      //return [String.raw`c:\yigal\million_try3`]
+      
       return ans
   }() 
   if (workspace_folders==null) 
     return  
   outputChannel.append(to_json({workspace_folders}))
   const monitor=new Monitor(workspace_folders)
-  await monitor.start_monitor() 
+  await monitor.start_monitor()
+  async_set_interval(monitor.iter,100)
   const the_loop=make_loop_func(monitor)
   define_webview({context,id:"Scriptsmon.webview",html_filename:'index.html',f:the_loop})
 
