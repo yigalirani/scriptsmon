@@ -29,7 +29,7 @@ declare class RegExpSearcher {
 export declare class TerminalSearch {
     private data;
     find_widget: HTMLElement;
-    interval_id: NodeJS.Timeout;
+    interval_id: number;
     regex_searcher: RegExpSearcher | undefined;
     regex: RegExp | undefined;
     selection: number;

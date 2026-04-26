@@ -23,7 +23,7 @@ export declare class Monitor {
         full_reason: FullReason;
     }): Promise<void>;
     find_runners(root: Folder, filter: (x: Runner) => boolean): Runner[];
-    calc_one_debug_name: (workspace_folder: string) => string;
+    calc_one_debug_name: (workspace_folder: string) => any;
     collect_watch_requests(folder: Folder): IdRelPath[];
     dump_debug: () => Promise<void>;
     toggle_dump_debug(): void;

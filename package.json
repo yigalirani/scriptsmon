@@ -1,7 +1,7 @@
 {
     "name": "Scriptsmon",
     "publisher": "yigal",
-    "version": "1.22.0",
+    "version": "1.23.0",
     "description": "",
     "license": "ISC",
     "author": "",
@@ -19,7 +19,7 @@
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ",
         "biome": "biome lint --colors=force",
-        "vsce": "vsce package", 
+        "vsce": "vsce package",
         "find": "find c:\\windows\\system32 | grep --color=always -F '.ts'",
         "tst_print": "node ./tst_print"
     },
@@ -63,31 +63,31 @@
     "keywords": [],
     "contributes": {
         "keybindings": [
-          {
-            "command": "scriptsmon.find",
-            "key": "ctrl+f",
-            "mac": "cmd+f",
-            "when": "scriptsmon_focused"
-          },
-          {
-            "command": "scriptsmon.findnext",
-            "key": "f3",
-            "mac": "f3",
-            "when": "scriptsmon_focused"
-          },
-          {
-            "command": "scriptsmon.findprev",
-            "key": "shift+f3",
-            "mac": "shift+f3",
-            "when": "scriptsmon_focused"
-          },
-          {
-            "command": "scriptsmon.selectall",
-            "key": "ctrl+a",
-            "mac": "ctrl+a",
-            "when": "scriptsmon_focused"
-          }          
-        ],    
+            {
+                "command": "scriptsmon.find",
+                "key": "ctrl+f",
+                "mac": "cmd+f",
+                "when": "scriptsmon_focused"
+            },
+            {
+                "command": "scriptsmon.findnext",
+                "key": "f3",
+                "mac": "f3",
+                "when": "scriptsmon_focused"
+            },
+            {
+                "command": "scriptsmon.findprev",
+                "key": "shift+f3",
+                "mac": "shift+f3",
+                "when": "scriptsmon_focused"
+            },
+            {
+                "command": "scriptsmon.selectall",
+                "key": "ctrl+a",
+                "mac": "ctrl+a",
+                "when": "scriptsmon_focused"
+            }
+        ],
         "commands": [
             {
                 "command": "Scriptsmon.start",
@@ -116,29 +116,27 @@
                 "title": "Toggle Dump Debug"
             },
             {
-              "command": "scriptsmon.find",
-              "title": "Scriptsmon: Find"
+                "command": "scriptsmon.find",
+                "title": "Scriptsmon: Find"
             },
             {
-              "command": "scriptsmon.findnext",
-              "title": "Scriptsmon: Find Next"
+                "command": "scriptsmon.findnext",
+                "title": "Scriptsmon: Find Next"
             },
             {
-              "command": "scriptsmon.findprev",
-              "title": "Scriptsmon: Find Prev"
+                "command": "scriptsmon.findprev",
+                "title": "Scriptsmon: Find Prev"
             },
             {
-              "command": "scriptsmon.selectall",
-              "title": "Scriptsmon: Select All"
-            }                       
-
-            
+                "command": "scriptsmon.selectall",
+                "title": "Scriptsmon: Select All"
+            }
         ],
         "menus": {
             "commandPalette": [
                 {
-                  "command": "scriptsmon.find",
-                  "when": "scriptsmon_focused"
+                    "command": "scriptsmon.find",
+                    "when": "scriptsmon_focused"
                 }
             ],
             "view/item/context": [
@@ -177,26 +175,25 @@
         "vscode": "^1.100.0"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.7",
-        "@eslint/js": "^9",
+        "@biomejs/biome": "^2.4.13",
+        "@eslint/js": "^10",
         "@types/lodash.clonedeep": "^4.5.9",
-        "@types/node": "25.5.0",
-        "@types/vscode": "^1.100",
-        "esbuild": "0.27.4",
+        "@types/node": "^25.6.0",
+        "@types/vscode": "^1.116",
+        "esbuild": "0.28.0",
+        "eslint": "^10",
         "eslint-import-resolver-typescript": "4.4.4",
         "eslint-plugin-import-x": "4.16.2",
-        "oxlint": "^1.55.0",
-        "typescript": "5.9.3",
-        "typescript-eslint": "8.57.0",
-        "oxlint-tsgolint": "^0.17.0",
-        "eslint": "^9",              
-        "globals": "^17.4.0"
+        "globals": "^17.5.0",
+        "oxlint": "^1.61.0",
+        "oxlint-tsgolint": "^0.22.0",
+        "typescript": "6.0.3",
+        "typescript-eslint": "8.59.0"
     },
     "dependencies": {
         "@yigal/base_types": "file:../base_types",
         "acorn": "^8.16.0",
         "chokidar": "^5.0.0",
         "lodash.clonedeep": "^4.5.0"
-
     }
 }
