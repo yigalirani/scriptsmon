@@ -4,12 +4,10 @@ await esbuild.build({
   platform: 'node',
   bundle: true,
   outdir: './dist', 
-  sourcemap: true,
+  sourcemap: 'inline',
   target: 'node22',
   minifySyntax:false,
   format: 'esm',
   external:['vscode','node','@homebridge/node-pty-prebuilt-multiarch']
 })
 console.log('build done')
- 
-

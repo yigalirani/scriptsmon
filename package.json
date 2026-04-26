@@ -16,7 +16,6 @@
         "eslint": "eslint . --color ",
         "ls": "ls --color=always --hyperlink=always -la",
         "compile": "npm run build & cd client & npm run build",
-        "vscode:prepublish": "npm run compile",
         "oxlinttypeaware": "oxlint . --type-aware",
         "oxlint": "oxlint ",
         "biome": "biome lint --colors=force",
